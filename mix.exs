@@ -17,7 +17,14 @@ defmodule BattleSnakeServer.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [mod: {BattleSnakeServer, []},
-     applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext]]
+     applications: applications(Mix.env)]
+  end
+
+  def applications(:dev) do
+    [:reprise | applications(:all)]
+  end
+  def applications(_all) do
+    [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext]
   end
 
   # Specifies which paths to compile per environment.
@@ -32,6 +39,7 @@ defmodule BattleSnakeServer.Mixfile do
      {:phoenix_pubsub, "~> 1.0"},
      {:phoenix_html, "~> 2.6"},
      {:phoenix_live_reload, "~> 1.0", only: :dev},
+     {:reprise, "~> 0.5.0", only: :dev},
      {:gettext, "~> 0.11"},
      {:cowboy, "~> 1.0"}]
   end
