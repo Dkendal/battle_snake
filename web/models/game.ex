@@ -1,7 +1,7 @@
 defmodule BattleSnakeServer.Game do
   use BattleSnakeServer.Web, :model
 
-  @fields [:id, :state, :width, :height]
+  @fields [:id, :state, :width, :height, :snakes]
 
   defstruct @fields
 
