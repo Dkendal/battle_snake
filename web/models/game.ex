@@ -13,4 +13,10 @@ defmodule BattleSnakeServer.Game do
     attrs = Enum.map(fields, get)
     List.to_tuple [__MODULE__ |attrs]
   end
+
+  def load(record) do
+    [__MODULE__ |attrs] = Tuple.to_list(record)
+    attrs = Enum.zip(fields, attrs)
+    struct(__MODULE__, attrs)
+  end
 end

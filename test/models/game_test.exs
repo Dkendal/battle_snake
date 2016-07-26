@@ -15,4 +15,11 @@ defmodule BattleSnakeServer.GameTest do
       assert Game.record(game) == {Game, 1, %{}}
     end
   end
+
+  describe "#load" do
+    test "converts a record to a struct" do
+      record = {Game, 1, %{}}
+      assert Game.load(record) == %Game{id: 1, state: %{}}
+    end
+  end
 end
