@@ -1,7 +1,7 @@
 <h2>Show game</h2>
 
 <%= @game.id %>
-<%= inspect @game.state %>
+<%= inspect @game %>
 
 <%= link "Edit", to: game_path(@conn, :edit, @game) %>
 <%= link "Back", to: game_path(@conn, :index) %>
