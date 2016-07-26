@@ -9,6 +9,8 @@ defmodule BattleSnakeServer.GameController do
   end
 
   def new(conn, _params) do
+
+    render(conn, "new.html")
   end
 
   def create(conn, %{"game" => game_params}) do
