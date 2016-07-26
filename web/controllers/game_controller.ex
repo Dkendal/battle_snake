@@ -5,7 +5,7 @@ defmodule BattleSnakeServer.GameController do
   alias Snake.World
 
   def index(conn, _params) do
-    games = []
+    games = all
     render(conn, "index.html", games: games)
   end
 
@@ -51,6 +51,14 @@ defmodule BattleSnakeServer.GameController do
   end
 
   def delete(conn, %{"id" => id}) do
+  end
+
+  def all do
+    fn ->
+      :qlc.e(:mnesia.table Game)
+    end
+    |> :mnesia.async_dirty()
+    |> Enum.map(&Game.load/1)
   end
 
   def load(id) do
