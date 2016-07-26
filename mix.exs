@@ -24,7 +24,7 @@ defmodule BattleSnakeServer.Mixfile do
     [:reprise | applications(:all)]
   end
   def applications(_all) do
-    [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext]
+    [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext, :mnesia]
   end
 
   # Specifies which paths to compile per environment.
