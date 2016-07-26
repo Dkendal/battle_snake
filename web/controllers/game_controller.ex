@@ -14,7 +14,6 @@ defmodule BattleSnakeServer.GameController do
 
   def create(conn, %{"game" => game_params}) do
     game = %Game{id: 1}
-
     redirect(conn, to: game_path(conn, :show, game))
   end
 
