@@ -5,21 +5,21 @@ defmodule BattleSnakeServer.GameTest do
 
   describe "#table" do
     test "returns the decleration for mnesia" do
-      assert Game.table == [attributes: [:id, :state]]
+      assert Game.table == [attributes: [:id, :state, :width, :height]]
     end
   end
 
   describe "#record" do
     test "converts a struct into a record" do
-      game = %Game{state: %{}, id: 1}
-      assert Game.record(game) == {Game, 1, %{}}
+      game = %Game{state: %{}, id: 1, width: 20, height: 40}
+      assert Game.record(game) == {Game, 1, %{}, 20, 40}
     end
   end
 
   describe "#load" do
     test "converts a record to a struct" do
-      record = {Game, 1, %{}}
-      assert Game.load(record) == %Game{id: 1, state: %{}}
+      record = {Game, 1, %{}, 20, 40}
+      assert Game.load(record) == %Game{id: 1, state: %{}, width: 20, height: 40}
     end
   end
 end
