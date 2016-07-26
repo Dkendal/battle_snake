@@ -1,6 +1,6 @@
 <h2>New game</h2>
 
-<%= form_for @conn, game_path(@conn, :new), [as: :game], fn f -> %>
+<%= form_for @conn, game_path(@conn, :create), [as: :game], fn f -> %>
 <div>
   <%= label :width, "width:" %>
   <%= number_input f, :width %>

@@ -9,11 +9,13 @@ defmodule BattleSnakeServer.GameController do
   end
 
   def new(conn, _params) do
-
     render(conn, "new.html")
   end
 
   def create(conn, %{"game" => game_params}) do
+    game = %Game{id: 1}
+
+    redirect(conn, to: game_path(conn, :show, game))
   end
 
   def show(conn, %{"id" => id}) do
