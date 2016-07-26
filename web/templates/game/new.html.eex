@@ -1,6 +1,28 @@
 <h2>New game</h2>
 
-<%= render "form.html", changeset: @changeset,
-                        action: game_path(@conn, :create) %>
+<%= form_for @conn, game_path(@conn, :new), [as: :game], fn f -> %>
+<div>
+  <%= label :width, "width:" %>
+  <%= number_input f, :width %>
+</div>
+
+<div>
+  <%= label :height, "height:" %>
+ <%= number_input f, :height %>
+</div>
+
+<div>
+ <%= submit "Create game" %>
+</div>
+
+
+<h3>Snakes</h3>
+
+<%= inputs_for f, :snakes, [:append], fn fp -> %>
+  <%= label :url, "url:" %>
+  <%= text_input fp, :url %>
+<% end %>
+
+<% end %>
 
 <%= link "Back", to: game_path(@conn, :index) %>
