@@ -18,7 +18,8 @@ defmodule BattleSnakeServer.Web do
 
   def model do
     quote do
-      # Define common model functionality
+      use Ecto.Schema
+      import Ecto.Changeset
     end
   end
 

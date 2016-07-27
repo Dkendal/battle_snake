@@ -10,7 +10,9 @@ defmodule BattleSnakeServer.GameController do
   end
 
   def new(conn, _params) do
-    render(conn, "new.html")
+    changeset = Game.changeset(%Game{})
+
+    render(conn, "new.html", changeset: changeset)
   end
 
   def create(conn, %{"game" => params}) do
@@ -31,19 +33,17 @@ defmodule BattleSnakeServer.GameController do
   def edit(conn, %{"id" => id}) do
     game = load(id)
 
-    render(conn, "edit.html", game: game)
+    changeset = Game.changeset game
+
+    render(conn, "edit.html", game: game, changeset: changeset)
   end
 
   def update(conn, %{"id" => id, "game" => params}) do
     game = load(id)
 
-    params = update_params(params)
+    game = Game.changeset(game, params)
 
-    callback = fn (_, new, old) ->
-      new || old
-    end
-
-    game = Map.merge(game, params, callback)
+    game = Ecto.Changeset.apply_changes(game)
 
     save(game)
 

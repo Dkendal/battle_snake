@@ -1,14 +1,15 @@
 defmodule BattleSnakeServer.Game do
-  use Ecto.Schema
-  use BattleSnakeServer.Web, :model
-  import Ecto.Changeset
+  alias BattleSnakeServer.{Snake}
+  alias Snake.{World}
 
-  @permitted [:height, :snakes, :state, :width]
+  use BattleSnakeServer.Web, :model
+
+  @permitted [:height, :width]
 
   schema "game" do
     field :height, :integer
-    field :snakes, {:array, :map}
-    field :state, :map
+    embeds_many :snakes, Snake
+    embeds_one :state, World
     field :width, :integer
   end
 
@@ -31,5 +32,21 @@ defmodule BattleSnakeServer.Game do
   def changeset(game, params \\ %{}) do
     game
     |> cast(params, @permitted)
+    |> cast_embed(:state)
+    |> cast_embed(:snakes)
+    |> remove_empty_snakes()
+  end
+
+  def remove_empty_snakes(changeset) do
+    changeset
+    |> update_change(:snakes, &reject_deleted_snakes/1)
+  end
+
+  def reject_deleted_snakes(changeset) do
+    delete = fn changeset ->
+      get_field(changeset, :delete) || get_field(changeset, :url) == ""
+    end
+
+    Enum.reject(changeset, delete)
   end
 end
