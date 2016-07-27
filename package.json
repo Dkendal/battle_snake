@@ -11,6 +11,8 @@
   },
   "devDependencies": {
     "babel-brunch": "~6.0.0",
+    "babel-preset-es2015": "^6.9.0",
+    "babel-preset-es2016": "^6.11.3",
     "brunch": "2.7.4",
     "clean-css-brunch": "~2.0.0",
     "css-brunch": "~2.0.0",
