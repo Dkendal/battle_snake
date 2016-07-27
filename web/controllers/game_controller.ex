@@ -21,7 +21,7 @@ defmodule BattleSnakeServer.GameController do
     game = %Game{params | id: new_id, state: world}
     save(game)
 
-    redirect(conn, to: game_path(conn, :show, game))
+    redirect(conn, to: game_path(conn, :edit, game))
   end
 
   def show(conn, %{"id" => id}) do
@@ -47,7 +47,7 @@ defmodule BattleSnakeServer.GameController do
 
     save(game)
 
-    redirect(conn, to: game_path(conn, :show, game))
+    redirect(conn, to: game_path(conn, :edit, game))
   end
 
   def delete(conn, %{"id" => id}) do
