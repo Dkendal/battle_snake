@@ -1,6 +1,6 @@
 <h2>New game</h2>
 
-<%= form_for @conn, game_path(@conn, :create), [as: :game], fn f -> %>
+<%= form_for @changeset, game_path(@conn, :create), fn f -> %>
 <div>
   <%= label :width, "width:" %>
   <%= number_input f, :width %>
@@ -8,20 +8,15 @@
 
 <div>
   <%= label :height, "height:" %>
- <%= number_input f, :height %>
+  <%= number_input f, :height %>
 </div>
 
 <div>
- <%= submit "Create game" %>
+  <%= submit "Create game" %>
 </div>
 
 
 <h3>Snakes</h3>
-
-<%= inputs_for f, :snakes, [:append], fn fp -> %>
-  <%= label :url, "url:" %>
-  <%= text_input fp, :url %>
-<% end %>
 
 <% end %>
 
