@@ -29,6 +29,35 @@ defmodule BattleSnakeServer.Game do
     struct(__MODULE__, attrs)
   end
 
+
+  def all do
+    fn ->
+      :qlc.e(:mnesia.table __MODULE__)
+    end
+    |> :mnesia.async_dirty()
+    |> Enum.map(&load/1)
+  end
+
+  def get(id) do
+    read = fn ->
+      :mnesia.read __MODULE__, id
+    end
+
+    {:atomic, [game]} = :mnesia.transaction read
+
+    load(game)
+  end
+
+  def save(game) do
+    write = fn ->
+      :mnesia.write(record(game))
+    end
+
+    {:atomic, :ok} = :mnesia.transaction write
+
+    game
+  end
+
   def changeset(game, params \\ %{}) do
     game
     |> cast(params, @permitted)
