@@ -17,6 +17,8 @@ defmodule BattleSnakeServer.Router do
     pipe_through :browser # Use the default browser stack
 
     resources "/", GameController
+
+    resources "/play", PlayController, only: [:show]
   end
 
   # Other scopes may use custom stacks.
