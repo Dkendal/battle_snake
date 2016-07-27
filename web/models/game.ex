@@ -1,12 +1,20 @@
 defmodule BattleSnakeServer.Game do
+  use Ecto.Schema
   use BattleSnakeServer.Web, :model
+  import Ecto.Changeset
 
-  @fields [:id, :state, :width, :height, :snakes]
+  @permitted [:height, :snakes, :state, :width]
 
-  defstruct @fields
+  schema "game" do
+    field :height, :integer
+    field :snakes, {:array, :map}
+    field :state, :map
+    field :width, :integer
+  end
 
-  def fields, do: @fields
-  def table, do: [attributes: @fields]
+  def fields, do: __schema__(:fields)
+
+  def table, do: [attributes: fields]
 
   def record(game) do
     get = &Map.get(game, &1)
@@ -18,5 +26,10 @@ defmodule BattleSnakeServer.Game do
     [__MODULE__ |attrs] = Tuple.to_list(record)
     attrs = Enum.zip(fields, attrs)
     struct(__MODULE__, attrs)
+  end
+
+  def changeset(game, params \\ %{}) do
+    game
+    |> cast(params, @permitted)
   end
 end
