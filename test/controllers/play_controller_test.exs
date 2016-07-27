@@ -6,7 +6,10 @@ defmodule BattleSnakeServer.PlayControllerTest do
     test "it is OK" do
       game = %Game{id: "sup"}
 
+      Game.save game
+
       conn = get conn, play_path(conn, :show, game)
+
       assert html_response(conn, 200)
     end
   end

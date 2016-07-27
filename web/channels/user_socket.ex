@@ -3,7 +3,7 @@ defmodule BattleSnakeServer.UserSocket do
 
   ## Channels
   # channel "room:*", BattleSnakeServer.RoomChannel
-  channel "game:lobby", BattleSnakeServer.GameChannel
+  channel "game:*", BattleSnakeServer.GameChannel
 
 
   ## Transports
