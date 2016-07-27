@@ -23,7 +23,7 @@ defmodule BattleSnakeServer.GameControllerTest do
         :mnesia.last(Game)
       end
 
-      assert redirected_to(conn, 302) == game_path(conn, :show, id)
+      assert redirected_to(conn, 302) == game_path(conn, :edit, id)
     end
   end
 end

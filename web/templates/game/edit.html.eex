@@ -6,12 +6,12 @@
 <%= form_for @changeset, game_path(@conn, :update, @game), [method: :put], fn f -> %>
 <div>
   <%= label :f, :width %>
-  <%= number_input f, :width, readonly: true %>
+  <%= number_input f, :width %>
 </div>
 
 <div>
   <%= label f, :height %>
-  <%= number_input f, :height, readonly: true %>
+  <%= number_input f, :height %>
 </div>
 
 <%= inputs_for f, :snakes, [append: [snake]], fn g -> %>
