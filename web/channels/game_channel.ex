@@ -12,15 +12,68 @@ defmodule BattleSnakeServer.GameChannel do
   # Channels can be used in a request/response fashion
   # by sending replies to requests from the client
   def handle_in("start", payload, socket) do
-    html = Phoenix.View.render_to_string(
-      BattleSnakeServer.PlayView,
-      "board.html",
-      %{}
-    )
+    spawn fn ->
+      snake = Snek.Snake.new(%{}, 20, 20)
 
-    broadcast socket, "tick", %{html: html}
+      world_params = %{
+        "snakes" => [snake],
+        "turn" => 0,
+        rows: 20,
+        cols: 20,
+      }
+
+      world = Snek.World.new(world_params, width: 20, height: 20)
+      |> Snek.Server.init_food(4)
+      |> Snek.World.update_board
+
+      draw = fn (socket) ->
+        fn (state) ->
+          html = Phoenix.View.render_to_string(
+            BattleSnakeServer.PlayView,
+            "board.html",
+            world: state,
+          )
+          broadcast socket, "tick", %{html: html}
+        end
+      end
+
+      tick(world, world, draw.(socket))
+    end
 
     {:reply, {:ok, payload}, socket}
+  end
+
+  def tick(%{"snakes" => []} = state, previous, draw) do
+    # print previous
+    # IO.puts "Game Over"
+    :ok
+  end
+
+  def tick(state, previous, draw) do
+    Process.sleep 50
+
+    spawn_link fn ->
+      draw.(state)
+    end
+
+    state
+    |> update_in(["turn"], & &1 + 1)
+    |> make_move
+    |> Snek.World.step
+    |> Snek.Server.add_new_food
+    |> Snek.World.update_board
+    |> tick(state, draw)
+  end
+
+  def make_move state do
+    moves = for snake <- state["snakes"] do
+      name = snake["name"]
+      {name, "up"}
+    end
+
+    moves = Enum.into moves, %{}
+
+    Snek.World.apply_moves(state, moves)
   end
 
   # It is also common to receive messages from the client and
