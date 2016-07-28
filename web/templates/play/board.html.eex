@@ -1,0 +1,5 @@
+<div>
+  <h1>title</h1>
+  <span>sup</span>
+  <span><%= :random.uniform(999_999) %></span>
+</div>

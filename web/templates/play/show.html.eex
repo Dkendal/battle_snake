@@ -1,1 +1,7 @@
-<%= @game.id %>
+<script>
+  window.gameId = <%= @game.id %>
+</script>
+
+<%= link("Start game", to: "#", data: [js: "game.start"]) %>
+
+<div id="gameBoard"></div>
