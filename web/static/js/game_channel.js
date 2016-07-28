@@ -1,11 +1,30 @@
+import $ from "jquery";
 import socket from "./socket";
 
-let game_id = window.game_id;
+let gameId = window.gameId;
 
-if (game_id) {
-  let channel = socket.channel(`game:${game_id}`, {});
+function init(gameId) {
+  let channel = socket.channel(`game:${gameId}`, {});
+  let gameBoard = $("#gameBoard");
 
-  channel.join()
-    .receive("ok", resp => { console.log("Joined successfully", resp) })
-    .receive("error", resp => { console.log("Unable to join", resp) });
+  function startGame(e) {
+    channel.push("start", {})
+  }
+
+  function handleTick({html}) {
+    gameBoard.html(html);
+  }
+
+  $(document).on("click", '[data-js="game.start"]', startGame);
+
+  // replace the board on each tick
+  channel.on("tick", handleTick);
+
+  channel.join().
+    receive("ok", resp => { console.log("Joined channel", resp) }).
+    receive("error", resp => { console.log("Unable to join", resp) });
+}
+
+if (typeof gameId !== 'undefined') {
+  init(gameId);
 }

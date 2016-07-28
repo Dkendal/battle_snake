@@ -12,6 +12,14 @@ defmodule BattleSnakeServer.GameChannel do
   # Channels can be used in a request/response fashion
   # by sending replies to requests from the client
   def handle_in("start", payload, socket) do
+    html = Phoenix.View.render_to_string(
+      BattleSnakeServer.PlayView,
+      "board.html",
+      %{}
+    )
+
+    broadcast socket, "tick", %{html: html}
+
     {:reply, {:ok, payload}, socket}
   end
 
