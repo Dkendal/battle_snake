@@ -1,5 +1,15 @@
 <div>
   <h1>title</h1>
-  <span>sup</span>
-  <span><%= :random.uniform(999_999) %></span>
+    <table>
+      <%= for row <- Snek.Server.draw(@world) do %>
+        <tr>
+          <%= for col <- row do %>
+            <td><span><%= col %></span></td>
+          <%= end %>
+        </tr>
+      <% end %>
+    </table>
+    <pre>
+      <%= inspect @world %>
+    </pre>
 </div>
