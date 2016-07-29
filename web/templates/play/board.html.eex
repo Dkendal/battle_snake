@@ -1,15 +1,13 @@
 <div>
   <h1>title</h1>
-    <table>
-      <%= for row <- Snek.Server.draw(@world) do %>
-        <tr>
-          <%= for col <- row do %>
-            <td><span><%= col %></span></td>
-          <%= end %>
-        </tr>
-      <% end %>
-    </table>
-    <pre>
-      <%= inspect @world %>
-    </pre>
+
+  <%= content_tag :svg, width: "500px", height: "500px", viewBox: "0 0 #{@world.rows}, #{@world.cols}" do %>
+    <%= for y <- 0..@world.rows, x <- 0..@world.cols do %>
+      <%= render "square.html", state: @world, x: x, y: y %>
+    <% end %>
+  <%= end %>
+
+  <pre>
+    <%= inspect @world %>
+  </pre>
 </div>
