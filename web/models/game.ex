@@ -81,7 +81,13 @@ defmodule BattleSnakeServer.Game do
   end
 
   def set_id(changeset) do
+    set_id(changeset, get_field(changeset, :id))
+  end
+
+  def set_id(changeset, nil) do
     id = Enum.join(Tuple.to_list(:erlang.now), "-")
     put_change(changeset, :id, id)
   end
+
+  def set_id(changeset, _id), do: changeset
 end
