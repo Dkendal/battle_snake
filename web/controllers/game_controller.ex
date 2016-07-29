@@ -1,8 +1,7 @@
 defmodule BattleSnakeServer.GameController do
   use BattleSnakeServer.Web, :controller
 
-  alias BattleSnakeServer.Game
-  alias Snake.World
+  alias BattleSnakeServer.{Game, World}
 
   def index(conn, _params) do
     games = Game.all
@@ -16,13 +15,11 @@ defmodule BattleSnakeServer.GameController do
   end
 
   def create(conn, %{"game" => params}) do
-    world = struct(World)
-
-    params = create_params(params)
-
-    game = %Game{params | id: new_id, state: world}
-
-    Game.save(game)
+    game = %Game{}
+    |> Game.changeset(params)
+    # |> Ecto.Changeset.put_embed(:state, )
+    |> Ecto.Changeset.apply_changes
+    |> Game.save
 
     redirect(conn, to: game_path(conn, :edit, game))
   end
@@ -43,12 +40,9 @@ defmodule BattleSnakeServer.GameController do
 
   def update(conn, %{"id" => id, "game" => params}) do
     game = Game.get(id)
-
-    game = Game.changeset(game, params)
-
-    game = Ecto.Changeset.apply_changes(game)
-
-    Game.save(game)
+    |> Game.changeset(params)
+    |> Ecto.Changeset.apply_changes
+    |> Game.save
 
     redirect(conn, to: game_path(conn, :edit, game))
   end
@@ -66,9 +60,5 @@ defmodule BattleSnakeServer.GameController do
   def update_params(_params) do
     %Game{
     }
-  end
-
-  def new_id do
-    Enum.join(Tuple.to_list(:erlang.now), "-")
   end
 end

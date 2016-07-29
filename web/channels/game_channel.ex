@@ -1,5 +1,11 @@
 defmodule BattleSnakeServer.GameChannel do
-  alias BattleSnake.{Snake, World}
+  alias BattleSnake.{
+    Snake,
+    World,
+  }
+  alias BattleSnakeServer.{
+    Game,
+  }
   use BattleSnakeServer.Web, :channel
 
   def join("game:" <> game_id, payload, socket) do
@@ -13,19 +19,15 @@ defmodule BattleSnakeServer.GameChannel do
   # Channels can be used in a request/response fashion
   # by sending replies to requests from the client
   def handle_in("start", payload, socket) do
+    "game:" <> id = socket.topic
+    game = Game.get(id)
+
     spawn fn ->
-      snake = Snake.new(%{}, 20, 20)
+      # HTTPoison.start
 
-      world_params = %{
-        "snakes" => [snake],
-        "turn" => 0,
-        rows: 20,
-        cols: 20,
-      }
-
-      world = World.new(world_params, width: 20, height: 20)
-      |> World.init_food(4)
-      |> World.update_board
+      world = game.state
+      # |> World.init_food(4)
+      # |> World.update_board
 
       draw = fn (socket) ->
         fn (state) ->
@@ -38,7 +40,7 @@ defmodule BattleSnakeServer.GameChannel do
         end
       end
 
-      tick(world, world, draw.(socket))
+      # tick(world, world, draw.(socket))
     end
 
     {:reply, {:ok, payload}, socket}
@@ -69,6 +71,9 @@ defmodule BattleSnakeServer.GameChannel do
   def make_move state do
     moves = for snake <- state["snakes"] do
       name = snake["name"]
+      # url = snake["url"]
+      # body = "{}"
+      # HTTPoison.post!(url, body)
       {name, "up"}
     end
 

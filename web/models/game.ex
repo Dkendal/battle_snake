@@ -1,6 +1,6 @@
 defmodule BattleSnakeServer.Game do
   alias BattleSnakeServer.{Snake}
-  alias Snake.{World}
+  alias BattleSnake.{World}
 
   use BattleSnakeServer.Web, :model
 
@@ -63,6 +63,7 @@ defmodule BattleSnakeServer.Game do
     |> cast(params, @permitted)
     |> cast_embed(:state)
     |> cast_embed(:snakes)
+    |> set_id()
     |> remove_empty_snakes()
   end
 
@@ -77,5 +78,10 @@ defmodule BattleSnakeServer.Game do
     end
 
     Enum.reject(changeset, delete)
+  end
+
+  def set_id(changeset) do
+    id = Enum.join(Tuple.to_list(:erlang.now), "-")
+    put_change(changeset, :id, id)
   end
 end

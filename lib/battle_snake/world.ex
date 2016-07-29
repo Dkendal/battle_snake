@@ -1,5 +1,18 @@
 defmodule BattleSnake.World do
-  alias BattleSnake.{Snake, Board, World}
+  use Ecto.Schema
+  import Ecto.Changeset
+  alias BattleSnake.{Snake, Board}
+
+  schema "world" do
+    # field :board
+    # embeds_many :dead_snakes, Snake
+    # field :food
+    # field :height
+    # field :id
+    # field :snakes
+    # field :turn
+    # field :width
+  end
 
   @size 4
   @max_food 1

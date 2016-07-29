@@ -12,18 +12,17 @@ defmodule BattleSnakeServer.GameControllerTest do
 
   describe "POST create" do
     test "does the thing", %{conn: conn} do
-      game = %{
-        "width" => "20",
-        "height" => "20",
-      }
+        game = %{
+          "width" => "20",
+          "height" => "20",
+        }
 
-      conn = post conn, game_path(conn, :create), game: game
+      :mnesia.transaction fn ->
+        conn = post conn, game_path(conn, :create), game: game
 
-      {:atomic, id} = :mnesia.transaction fn ->
-        :mnesia.last(Game)
+        {:atomic, id} = :mnesia.last(Game)
+        assert redirected_to(conn, 302) == game_path(conn, :edit, id)
       end
-
-      assert redirected_to(conn, 302) == game_path(conn, :edit, id)
     end
   end
 end
