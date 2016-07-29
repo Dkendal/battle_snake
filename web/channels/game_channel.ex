@@ -1,5 +1,5 @@
 defmodule BattleSnakeServer.GameChannel do
-  alias BattleSnake.World
+  alias BattleSnake.{Snake, World}
   use BattleSnakeServer.Web, :channel
 
   def join("game:" <> game_id, payload, socket) do
@@ -14,7 +14,7 @@ defmodule BattleSnakeServer.GameChannel do
   # by sending replies to requests from the client
   def handle_in("start", payload, socket) do
     spawn fn ->
-      snake = Snek.Snake.new(%{}, 20, 20)
+      snake = Snake.new(%{}, 20, 20)
 
       world_params = %{
         "snakes" => [snake],

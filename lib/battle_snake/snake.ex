@@ -1,4 +1,4 @@
-defmodule Snek.Snake do
+defmodule BattleSnake.Snake do
   def new(params, rows, cols) do
     starting_pos = [:rand.uniform(rows), :rand.uniform(cols)]
 
