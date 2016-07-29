@@ -6,14 +6,20 @@ defmodule BattleSnakeServer.PlayView do
 
     square_state = square["state"]
 
+    rect(square_state, x, y)
+  end
+
+  def rect(nil, _, _) do
+    ""
+  end
+
+  def rect(square_state, x, y) do
     fill = case square_state do
       "head" -> "red"
 
       "body" -> "blue"
 
       "food" -> "green"
-
-      _ -> "black"
     end
 
     style = "fill: #{fill};"
