@@ -3,7 +3,7 @@ defmodule BattleSnakeServer.PlayControllerTest do
   use BattleSnakeServer.ConnCase
 
   describe "GET show" do
-    test "it is OK" do
+    test "it is OK", %{conn: conn} do
       game = %Game{id: "sup"}
 
       Game.save game
