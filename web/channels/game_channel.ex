@@ -1,4 +1,5 @@
 defmodule BattleSnakeServer.GameChannel do
+  alias BattleSnake.World
   use BattleSnakeServer.Web, :channel
 
   def join("game:" <> game_id, payload, socket) do
@@ -22,9 +23,9 @@ defmodule BattleSnakeServer.GameChannel do
         cols: 20,
       }
 
-      world = Snek.World.new(world_params, width: 20, height: 20)
-      |> Snek.Server.init_food(4)
-      |> Snek.World.update_board
+      world = World.new(world_params, width: 20, height: 20)
+      |> World.init_food(4)
+      |> World.update_board
 
       draw = fn (socket) ->
         fn (state) ->
@@ -59,9 +60,9 @@ defmodule BattleSnakeServer.GameChannel do
     state
     |> update_in(["turn"], & &1 + 1)
     |> make_move
-    |> Snek.World.step
-    |> Snek.Server.add_new_food
-    |> Snek.World.update_board
+    |> World.step
+    |> World.add_new_food
+    |> World.update_board
     |> tick(state, draw)
   end
 
