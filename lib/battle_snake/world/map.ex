@@ -1,5 +1,5 @@
-defmodule Snek.World.Map do
-  alias Snek.{Board}
+defmodule BattleSnake.World.Map do
+  alias BattleSnake.{Board}
 
   # set the :snake_map index
   def put_snakes_in_map state do

@@ -1,5 +1,5 @@
 defmodule BattleSnake.World do
-  alias Snek.{Snake, Board, World}
+  alias BattleSnake.{Snake, Board, World}
 
   @size 4
   @max_food 1

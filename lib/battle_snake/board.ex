@@ -1,4 +1,4 @@
-defmodule Snek.Board do
+defmodule BattleSnake.Board do
   def new(width, height) do
     for _ <- 1..width do
       for _ <- 1..height do
