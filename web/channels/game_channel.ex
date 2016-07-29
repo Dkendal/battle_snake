@@ -74,7 +74,7 @@ defmodule BattleSnakeServer.GameChannel do
 
     moves = Enum.into moves, %{}
 
-    Snek.World.apply_moves(state, moves)
+    World.apply_moves(state, moves)
   end
 
   # It is also common to receive messages from the client and
