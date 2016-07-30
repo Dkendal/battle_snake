@@ -25,6 +25,39 @@ defmodule BattleSnake.Snake do
     length snake.coords
   end
 
+  def resolve_head_to_head(snakes, acc \\ [])
+
+  def resolve_head_to_head([], acc) do
+    acc
+  end
+
+  def resolve_head_to_head(snakes, acc) do
+    snakes
+    |> Enum.group_by(& hd(&1.coords))
+    |> Enum.map(fn
+       {_, [snake]} ->
+         snake
+
+       {_, snakes} ->
+         snakes = snakes
+         |> Enum.map(& {len(&1), &1})
+         |> Enum.sort_by(& - elem(&1, 0))
+
+         case snakes do
+           [{size, _}, {size, _} | _] ->
+             # one or more are the same size
+             # all die
+             nil
+           [{_, snake} | victims] ->
+             growth = victims
+             |> Enum.map(& elem(&1, 0))
+             |> Enum.sum
+             growth = round(growth / 2)
+             grow(snake, growth)
+         end
+    end) |> Enum.reject(& &1 == nil)
+  end
+
   def head_to_head(snakes, acc \\ [])
 
   def head_to_head([], acc) do

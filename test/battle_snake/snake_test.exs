@@ -59,4 +59,45 @@ defmodule BattleSnake.SnakeTest do
       assert Snake.len(snake) == 5
     end
   end
+
+  describe "#resolve_head_to_head" do
+    test "kills both snakes in the event of a tie" do
+      snakes = [
+        %Snake{coords: [%Point{y: 5, x: 5}, %Point{y: 5, x: 4},]},
+        %Snake{coords: [%Point{y: 5, x: 5}, %Point{y: 4, x: 5},]},
+      ]
+
+      assert Snake.resolve_head_to_head(snakes) == []
+    end
+
+    test "kills the smaller snakes, and grows the victor" do
+      snakes = [
+        %Snake{coords: [%Point{y: 5, x: 5}, %Point{y: 5, x: 4},]},
+        %Snake{coords: [%Point{y: 5, x: 5}, %Point{y: 4, x: 5}, %Point{y: 3, x: 5},]},
+      ]
+
+      assert(Snake.resolve_head_to_head(snakes) == [
+        %Snake{
+          coords: [
+            %Point{y: 5, x: 5},
+            %Point{y: 4, x: 5},
+            %Point{y: 3, x: 5},
+            %Point{y: 3, x: 5}
+          ]
+        }
+      ])
+    end
+
+    test "does nothing to nonoverlapping snakes" do
+      snakes = [
+        %Snake{coords: [%Point{y: 5, x: 5}, %Point{y: 5, x: 4}]},
+        %Snake{coords: [%Point{y: 5, x: 5}, %Point{y: 4, x: 5}]},
+        %Snake{coords: [%Point{y: 6, x: 6}, %Point{y: 6, x: 7}]},
+      ]
+
+      assert(Snake.resolve_head_to_head(snakes) == [
+        %Snake{coords: [%Point{y: 6, x: 6}, %Point{y: 6, x: 7}]}
+      ])
+    end
+  end
 end
