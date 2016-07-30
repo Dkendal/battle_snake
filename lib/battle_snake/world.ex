@@ -1,18 +1,14 @@
 defmodule BattleSnake.World do
-  use Ecto.Schema
-  import Ecto.Changeset
-  alias BattleSnake.{Snake, Board}
+  alias BattleSnake.{Snake, Board, Point, World}
 
-  schema "world" do
-    # field :board
-    # embeds_many :dead_snakes, Snake
-    # field :food
-    # field :height
-    # field :id
-    # field :snakes
-    # field :turn
-    # field :width
-  end
+  defstruct [
+    :board,
+    food: [],
+    snakes: [],
+    max_food: 0,
+    height: 0,
+    width: 0,
+  ]
 
   @size 4
   @max_food 1
@@ -20,16 +16,45 @@ defmodule BattleSnake.World do
   @turn_delay 100
   @clear false
 
+  def up,     do: [0, -1]
+  def down,   do: [0,  1]
+  def right,  do: [1,  0]
+  def left,   do: [-1,  0]
+
+  def moves do
+    [
+      up,
+      down,
+      left,
+      right,
+    ]
+  end
+
+
+  def new(params, width: width, height: height) do
+    board = Board.new(width, height)
+
+    default = %{
+      "snakes" => [],
+      "food" => [],
+      "board" => board
+    }
+
+    Dict.merge default, params
+  end
+
+
   def tick(%{"snakes" => []} = state, previous) do
     :ok
   end
 
   def tick(state), do: tick(state, state)
 
-  def init_food state, max do
-    Enum.reduce 1..max, state, fn _, state ->
-      update_in state["food"], fn food ->
-        [rand_unoccupied_space(state) | food]
+  def init_food world do
+    max = world.max_food
+    Enum.reduce 1..max, world, fn _, world ->
+      update_in world.food, fn food ->
+        [rand_unoccupied_space(world) | food]
       end
     end
   end
@@ -51,60 +76,18 @@ defmodule BattleSnake.World do
     |> add_new_food
   end
 
-  def rand_unoccupied_space(state) do
-    snakes = Enum.flat_map state["snakes"], & &1["coords"]
-    food = state["food"]
-    rand_unoccupied_space(snakes, food)
-  end
+  def rand_unoccupied_space(world) do
+    h = world.height
+    w = world.width
+    snakes = get_in(world.snakes, [Access.all, :coords])
+    food = world.food
 
-  def rand_unoccupied_space(snakes, food) do
-    x = :rand.uniform(20) - 1
-    y = :rand.uniform(20) - 1
+    open_spaces = for y <- 0..h, x <- 0..w,
+      not %Point{y: y, x: x} in snakes,
+      not %Point{y: y, x: x} in food,
+      do: %Point{y: y, x: x}
 
-    new_pos = [x, y]
-
-    if not new_pos in snakes and not new_pos in food do
-      new_pos
-    else
-      rand_unoccupied_space(snakes, food)
-    end
-  end
-
-  def new(params, width: width, height: height) do
-    board = Board.new(width, height)
-
-    default = %{
-      "snakes" => [],
-      "food" => [],
-      "board" => board
-    }
-
-    Dict.merge default, params
-  end
-
-  def up,     do: [0, -1]
-  def down,   do: [0,  1]
-  def right,  do: [1,  0]
-  def left,   do: [-1,  0]
-
-  def moves do
-    [
-      up,
-      down,
-      left,
-      right,
-    ]
-  end
-
-  # set :rows and :cols on world state
-  def set_dimensions state do
-    board = board(state)
-    height = Board.height(board)
-    width = Board.width(board)
-
-    state
-    |> put_in([:rows], height)
-    |> put_in([:cols], width)
+    Enum.random open_spaces
   end
 
   def step(state) do

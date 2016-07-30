@@ -1,4 +1,18 @@
 defmodule BattleSnake.Snake do
+  defstruct [
+    coords: []
+  ]
+
+  def dead?(%{coords: [%{y: y, x: x} |_]}, %{width: w, height: h})
+  when y == h or y == 0 or x == h or x == 0,
+  do: true
+
+  def dead?(snake, world) do
+    head = hd snake.coords
+    stream = Stream.map(world.snakes, & tl(&1.coords))
+    Enum.member? stream, head
+  end
+
   def new(params, rows, cols) do
     starting_pos = [:rand.uniform(rows), :rand.uniform(cols)]
 
