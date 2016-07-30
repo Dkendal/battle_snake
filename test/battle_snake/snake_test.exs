@@ -100,4 +100,23 @@ defmodule BattleSnake.SnakeTest do
       ])
     end
   end
+
+  describe "#move" do
+    test "moves a snake in the direction" do
+      coords = [
+        %Point{y: 5, x: 5},
+        %Point{y: 4, x: 5},
+      ]
+
+      snake = %Snake{coords: coords}
+      move = %Point{y: 1, x: 0}
+
+      assert(Snake.move(snake, move) == %Snake{
+        coords: [
+          %Point{y: 6, x: 5},
+          %Point{y: 5, x: 5},
+        ]
+      })
+    end
+  end
 end

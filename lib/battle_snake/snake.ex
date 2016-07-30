@@ -1,4 +1,6 @@
 defmodule BattleSnake.Snake do
+  alias BattleSnake.{Point}
+
   defstruct [
     coords: []
   ]
@@ -23,6 +25,18 @@ defmodule BattleSnake.Snake do
 
   def len(snake) do
     length snake.coords
+  end
+
+  def head(snake) do
+    hd body snake
+  end
+
+  def tail(snake) do
+    tl body snake
+  end
+
+  def body(snake) do
+    snake.coords
   end
 
   def resolve_head_to_head(snakes, acc \\ [])
@@ -56,5 +70,13 @@ defmodule BattleSnake.Snake do
              grow(snake, growth)
          end
     end) |> Enum.reject(& &1 == nil)
+  end
+
+  def move(snake, move) do
+    body = body snake
+    head = head snake
+    body = List.delete_at(body, -1)
+    body = [Point.add(head, move) | body]
+    put_in(snake.coords, body)
   end
 end
