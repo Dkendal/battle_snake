@@ -30,6 +30,14 @@ defmodule BattleSnake.World do
     ]
   end
 
+  def convert(direction) do
+    case direction do
+      "up" -> up
+      "down" -> down
+      "left" -> left
+      "right" -> right
+    end
+  end
 
   def new(params, width: width, height: height) do
     board = Board.new(width, height)
@@ -178,29 +186,10 @@ defmodule BattleSnake.World do
       for snake <- snakes do
         name = snake["name"]
         direction = get_in moves, [name]
-
-        move(snake, direction)
+        move = convert(direction)
+        Snake.move(snake, move)
       end
     end
-  end
-
-  def move(snake, direction) do
-    [dx, dy] = case direction do
-      "up" -> up
-      "down" -> down
-      "left" -> left
-      "right" -> right
-    end
-
-    body = snake["coords"]
-
-    [x, y] = hd(body)
-
-    tail = List.delete_at(body, -1)
-
-    new_coords = [[dx + x, dy + y]] ++ tail
-
-    put_in snake["coords"], new_coords
   end
 
   def board(state) do
