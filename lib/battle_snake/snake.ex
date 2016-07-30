@@ -13,16 +13,16 @@ defmodule BattleSnake.Snake do
     Enum.member? stream, head
   end
 
-  def len(snake) do
-    length snake["coords"]
-  end
-
   def grow(snake, size) do
     update_in snake["coords"], fn coords ->
       last = List.last coords
       new_segments = for i <- 0..size, i > 0, do: last
       coords ++ new_segments
     end
+  end
+
+  def len(snake) do
+    length snake.coords
   end
 
   def head_to_head(snakes, acc \\ [])

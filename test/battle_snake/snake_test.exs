@@ -44,4 +44,11 @@ defmodule BattleSnake.SnakeTest do
       assert Snake.dead?(snake, world) == false
     end
   end
+
+  describe "#len" do
+    test "returns the length of the snake" do
+      snake = %Snake{coords: [0, 0, 0]}
+      assert Snake.len(snake) == 3
+    end
+  end
 end
