@@ -14,9 +14,9 @@ defmodule BattleSnake.Snake do
   end
 
   def grow(snake, size) do
-    update_in snake["coords"], fn coords ->
+    update_in snake.coords, fn coords ->
       last = List.last coords
-      new_segments = for i <- 0..size, i > 0, do: last
+      new_segments = List.duplicate(last, size)
       coords ++ new_segments
     end
   end

@@ -51,4 +51,12 @@ defmodule BattleSnake.SnakeTest do
       assert Snake.len(snake) == 3
     end
   end
+
+  describe "#grow" do
+    test "increases the length of the snake" do
+      snake = %Snake{coords: [0]}
+      snake = Snake.grow(snake, 4)
+      assert Snake.len(snake) == 5
+    end
+  end
 end
