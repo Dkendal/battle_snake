@@ -39,19 +39,6 @@ defmodule BattleSnake.World do
     end
   end
 
-  def new(params, width: width, height: height) do
-    board = Board.new(width, height)
-
-    default = %{
-      "snakes" => [],
-      "food" => [],
-      "board" => board
-    }
-
-    Dict.merge default, params
-  end
-
-
   def tick(%{"snakes" => []} = state, previous) do
     :ok
   end
