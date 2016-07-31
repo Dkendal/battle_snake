@@ -1,13 +1,22 @@
 <div>
   <h1>title</h1>
 
-  <%= content_tag :svg, width: "500px", height: "500px", viewBox: "0 0 #{@world.rows}, #{@world.cols}" do %>
-    <%= for y <- 0..@world.rows, x <- 0..@world.cols do %>
-      <%= render "square.html", world: @world, x: x, y: y %>
-    <% end %>
-  <%= end %>
+  <% width = @world.width %>
+  <% height = @world.height %>
 
-  <pre>
-    <%= inspect @world %>
-  </pre>
+  <%= content_tag :svg, height: "100%", width: "100%", viewBox: "0 0 #{width} #{height}" do %>
+    <%# background %>
+    <%= content_tag :rect, "", y: 0, x: 0, width: width, height: height, fill: "lightgrey" %>
+
+    <%= for food <- @world.food do %>
+      <%=
+        content_tag :rect, "",
+        y: food.y,
+        x: food.x,
+        width: 1,
+        height: 1,
+        fill: :green
+      %>
+    <% end %>
+  <% end %>
 </div>
