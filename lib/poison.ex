@@ -19,3 +19,9 @@ defimpl Poison.Encoder, for: BattleSnake.World do
     Poison.encode!(map, opts)
   end
 end
+
+defimpl Poison.Encoder, for: BattleSnake.Point do
+  def encode(%{x: x, y: y}, opts) do
+    Poison.encode!([x, y], opts)
+  end
+end
