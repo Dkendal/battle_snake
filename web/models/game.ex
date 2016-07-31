@@ -7,10 +7,10 @@ defmodule BattleSnakeServer.Game do
   @permitted [:height, :width]
 
   schema "game" do
-    field :height, :integer
     embeds_many :snakes, Snake
     embeds_one :world, World
-    field :width, :integer
+    field :width, :integer, default: 20
+    field :height, :integer, default: 20
   end
 
   def fields, do: __schema__(:fields)
