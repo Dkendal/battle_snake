@@ -38,6 +38,10 @@ defmodule BattleSnakeServer.Game do
     |> Enum.map(&load/1)
   end
 
+  def last do
+    load :mnesia.last(__MODULE__)
+  end
+
   def get(id) do
     read = fn ->
       :mnesia.read __MODULE__, id
