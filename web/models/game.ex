@@ -9,7 +9,7 @@ defmodule BattleSnakeServer.Game do
   schema "game" do
     field :height, :integer
     embeds_many :snakes, Snake
-    embeds_one :state, World
+    embeds_one :world, World
     field :width, :integer
   end
 
@@ -61,7 +61,7 @@ defmodule BattleSnakeServer.Game do
   def changeset(game, params \\ %{}) do
     game
     |> cast(params, @permitted)
-    |> cast_embed(:state)
+    |> cast_embed(:world)
     |> cast_embed(:snakes)
     |> set_id()
     |> remove_empty_snakes()
