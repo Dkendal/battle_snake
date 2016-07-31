@@ -35,15 +35,13 @@ defmodule BattleSnakeServer.GameChannel do
         broadcast socket, "tick", %{html: html}
       end
 
-      draw.(world)
+      tick(world, world, draw)
     end
 
     {:reply, :ok, socket}
   end
 
-  def tick(%{"snakes" => []} = world, previous, draw) do
-    # print previous
-    # IO.puts "Game Over"
+  def tick(%{snakes: []}, _, _) do
     :ok
   end
 
@@ -54,21 +52,18 @@ defmodule BattleSnakeServer.GameChannel do
       draw.(world)
     end
 
+    world = update_in(world.turn, &(&1+1))
+
     world
-    |> update_in(["turn"], & &1 + 1)
     |> make_move
     |> World.step
-    |> World.add_new_food
-    |> World.update_board
+    |> World.stock_food
     |> tick(world, draw)
   end
 
   def make_move world do
-    moves = for snake <- world["snakes"] do
-      name = snake["name"]
-      # url = snake["url"]
-      # body = "{}"
-      # HTTPoison.post!(url, body)
+    moves = for snake <- world.snakes do
+      name = snake.name
       {name, "up"}
     end
 

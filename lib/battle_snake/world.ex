@@ -8,6 +8,7 @@ defmodule BattleSnake.World do
     max_food: 2,
     height: 0,
     width: 0,
+    turn: 0,
   ]
 
   @size 4
@@ -16,10 +17,10 @@ defmodule BattleSnake.World do
   @turn_delay 100
   @clear false
 
-  def up,     do: [0, -1]
-  def down,   do: [0,  1]
-  def right,  do: [1,  0]
-  def left,   do: [-1,  0]
+  def up,     do: %Point{x: 0,  y: -1}
+  def down,   do: %Point{x: 0,  y: 1}
+  def right,  do: %Point{x: 1,  y: 0}
+  def left,   do: %Point{x: -1, y: 0}
 
   def moves do
     [
@@ -109,7 +110,7 @@ defmodule BattleSnake.World do
   end
 
   def grow_snakes world do
-    world = update_in world["snakes"], fn snakes ->
+    world = update_in world.snakes, fn snakes ->
       for snake <- snakes do
         increase = grew(world, snake)
         Snake.grow(snake, increase)
@@ -118,14 +119,14 @@ defmodule BattleSnake.World do
   end
 
   def remove_eaten_food(world) do
-    update_in world["food"], fn food ->
+    update_in world.food, fn food ->
       Enum.reject food, &eaten?(world, &1)
     end
   end
 
   def eaten?(world, apple) do
-    Enum.any? world["snakes"], fn
-      %{"coords" => [^apple | _]} ->
+    Enum.any? world.snakes, fn
+      %{coords: [^apple | _]} ->
         true
       _ ->
         false
@@ -134,9 +135,9 @@ defmodule BattleSnake.World do
 
 
   def grew(world, snake) do
-    head = hd snake["coords"]
+    head = hd snake.coords
 
-    if head in world["food"] do
+    if head in world.food do
       1
     else
       0
@@ -144,9 +145,9 @@ defmodule BattleSnake.World do
   end
 
   def apply_moves world, moves do
-    update_in world["snakes"], fn snakes ->
+    update_in world.snakes, fn snakes ->
       for snake <- snakes do
-        name = snake["name"]
+        name = snake.name
         direction = get_in moves, [name]
         move = convert(direction)
         Snake.move(snake, move)
