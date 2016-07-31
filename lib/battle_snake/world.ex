@@ -92,23 +92,6 @@ defmodule BattleSnake.World do
     |> remove_eaten_food
   end
 
-  def update_board world do
-    world = World.Map.set_objects(world)
-    max_y = world.rows - 1
-    max_x = world.cols - 1
-
-    board = for x <- 0..max_x do
-      for y <- 0..max_y do
-        case world[:map][x][y] do
-          %{} = obj -> obj
-          _ -> Board.empty
-        end
-      end
-    end
-
-    world = put_in world["board"], board
-  end
-
   def clean_up_dead world do
     snakes = world.snakes
 
