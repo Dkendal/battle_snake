@@ -4,6 +4,7 @@ defmodule BattleSnake.Snake do
   defstruct [
     coords: [],
     url: "",
+    name: "default",
   ]
 
   def dead?(%{coords: [%{y: y, x: x} |_]}, %{width: w, height: h})
