@@ -22,6 +22,8 @@ defmodule BattleSnakeServer.GameChannel do
     "game:" <> id = socket.topic
     game = Game.get(id)
 
+    HTTPoison.start
+
     spawn fn ->
       game = Game.reset_world game
       world = game.world
@@ -64,7 +66,16 @@ defmodule BattleSnakeServer.GameChannel do
   def make_move world do
     moves = for snake <- world.snakes do
       name = snake.name
-      {name, "up"}
+      {:ok, payload} = Poison.encode %{}, []
+
+      with response <- HTTPoison.post!(snake.url <> "/move", payload),
+      {:ok, body} <- Poison.decode(response.body),
+      %{"move" => move} <- body do
+        {name, move}
+      else
+        _ ->
+          {name, "up"}
+      end
     end
 
     moves = Enum.into moves, %{}
