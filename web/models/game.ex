@@ -52,6 +52,17 @@ defmodule BattleSnakeServer.Game do
     load(game)
   end
 
+  def reset_world(game) do
+    world = %World{
+      width: game.width,
+      height: game.height,
+    }
+
+    world = World.stock_food(world)
+
+    put_in game.world, world
+  end
+
   def save(game) do
     write = fn ->
       :mnesia.write(record(game))
