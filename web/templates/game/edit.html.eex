@@ -30,4 +30,14 @@
 <% end %>
 
 
-<%= link "Back", to: game_path(@conn, :index) %>
+<div>
+  <%= link "Play", to: play_path(@conn, :show, @game) %>
+</div>
+
+<div>
+  <%= link "Show", to: game_path(@conn, :show, @game) %>
+</div>
+
+<div>
+  <%= link "Back", to: game_path(@conn, :index) %>
+</div>
