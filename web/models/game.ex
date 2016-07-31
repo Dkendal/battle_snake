@@ -53,9 +53,12 @@ defmodule BattleSnakeServer.Game do
   end
 
   def reset_world(game) do
+    snakes = []
+
     world = %World{
       width: game.width,
       height: game.height,
+      snakes: snakes,
     }
 
     world = World.stock_food(world)
