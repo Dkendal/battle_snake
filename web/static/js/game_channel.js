@@ -15,7 +15,16 @@ function init(gameId) {
     gameBoard.html(html);
   }
 
+  function keydownHandler(event) {
+    switch (event.key) {
+      case "r":
+        startGame(event);
+        break;
+    }
+  }
+
   $(document).on("click", '[data-js="game.start"]', startGame);
+  $(document).on("keydown", "body", keydownHandler);
 
   // replace the board on each tick
   channel.on("tick", handleTick);
