@@ -46,12 +46,14 @@ defmodule BattleSnake.World do
   def tick(world), do: tick(world, world)
 
   def init_food world do
-    max = world.max_food
-    Enum.reduce 1..max, world, fn _, world ->
-      update_in world.food, fn food ->
-        [rand_unoccupied_space(world) | food]
-      end
+    f = fn (_i, world) ->
+      add_food = & [rand_unoccupied_space(world) | &1]
+      update_in(world.food, add_food)
     end
+
+    world.max_food
+    |> times
+    |> Enum.reduce(world, f)
   end
 
   def add_new_food(world) do
@@ -162,7 +164,8 @@ defmodule BattleSnake.World do
     end
   end
 
-  def board(world) do
-    world["board"]
+  defp times(n) do
+    Stream.iterate(0, &(&1+1))
+    |> Stream.take(n)
   end
 end

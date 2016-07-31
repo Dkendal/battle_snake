@@ -23,6 +23,12 @@ defmodule BattleSnake.WorldTest do
       world = World.init_food(world)
       assert length(world.food) == 4
     end
+
+    test "sets no food if set to 0", %{world: world} do
+      world = put_in world.max_food, 0
+      world = World.init_food(world)
+      assert length(world.food) == 0
+    end
   end
 
   describe "#clean_up_dead" do
