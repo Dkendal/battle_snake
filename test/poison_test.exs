@@ -1,11 +1,10 @@
 defmodule PoisonTest do
-  alias BattleSnake.{World, Point}
+  alias BattleSnake.{World, Point, Snake}
 
   use ExUnit.Case, async: true
 
   describe "BattleSnake.World" do
-
-    test "is encoded" do
+    test "encode" do
       world = %World{
         turn: 0,
         food: [],
@@ -28,11 +27,32 @@ defmodule PoisonTest do
   describe "BattleSnake.Point" do
     test "encoding" do
       point = %Point{x: 1, y: 2}
+
       expected = [1, 2]
 
       actual = cast! point
 
-      assert expected == expected
+      assert expected == actual
+    end
+  end
+
+  describe "BattleSnake.Snake" do
+    test "encoding" do
+      snake = %Snake{
+        coords: [%Point{x: 0, y: 1}],
+        name: "snake",
+        url: "example.com"
+      }
+
+      expected = %{
+        "name" => "snake",
+        "coords" => [[0, 1]],
+        "url" => "example.com",
+      }
+
+      actual = cast! snake
+
+      assert expected == actual
     end
   end
 

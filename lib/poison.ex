@@ -25,3 +25,22 @@ defimpl Poison.Encoder, for: BattleSnake.Point do
     Poison.encode!([x, y], opts)
   end
 end
+
+defimpl Poison.Encoder, for: BattleSnake.Snake do
+  def encode(snake, opts) do
+    attrs = [
+      :url,
+      :name,
+      :coords
+    ]
+
+    map = %{
+    }
+
+    map = snake
+    |> Map.take(attrs)
+    |> Dict.merge(map)
+
+    Poison.encode!(map, opts)
+  end
+end
