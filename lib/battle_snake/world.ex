@@ -64,8 +64,8 @@ defmodule BattleSnake.World do
   end
 
   def rand_unoccupied_space(world) do
-    h = world.height
-    w = world.width
+    h = world.height - 1
+    w = world.width - 1
     snakes = get_in(world.snakes, [Access.all, :coords])
     food = world.food
 
