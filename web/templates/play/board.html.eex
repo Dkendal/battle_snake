@@ -8,6 +8,17 @@
     <%# background %>
     <%= content_tag :rect, "", y: 0, x: 0, width: width, height: height, fill: "lightgrey" %>
 
+    <%= for snake <- @world.snakes, point <- snake.coords do %>
+      <%=
+        content_tag :rect, "",
+        y: point.y,
+        x: point.x,
+        width: 1,
+        height: 1,
+        fill: :red
+      %>
+    <% end %>
+
     <%= for food <- @world.food do %>
       <%=
         content_tag :rect, "",
