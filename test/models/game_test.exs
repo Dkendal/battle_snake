@@ -54,4 +54,28 @@ defmodule BattleSnakeServer.GameTest do
       assert get_field(Game.set_id(game), :id) == 1
     end
   end
+
+  describe "#reset_world" do
+    test "sets up a world struct based on this game" do
+      game = %Game{
+        width: 15,
+        height: 15,
+        snakes: [
+          %BattleSnakeServer.Snake{
+            url: "example.com:3000"
+          }
+        ]
+      }
+
+      world = Game.reset_world(game).world
+
+      assert %BattleSnake.World{
+        width: 15,
+        height: 15,
+        food: [_, _],
+        max_food: 2,
+        snakes: [],
+      } = world
+    end
+  end
 end
