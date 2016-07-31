@@ -69,13 +69,20 @@ defmodule BattleSnakeServer.GameTest do
 
       world = Game.reset_world(game).world
 
-      assert %BattleSnake.World{
-        width: 15,
-        height: 15,
-        food: [_, _],
-        max_food: 2,
-        snakes: [],
-      } = world
+      assert(
+        %BattleSnake.World{
+          width: 15,
+          height: 15,
+          food: [_, _],
+          max_food: 2,
+        } = world
+      )
+
+      assert([
+        %BattleSnake.Snake{
+          url: "example.com:3000",
+        }
+      ] == world.snakes)
     end
   end
 end

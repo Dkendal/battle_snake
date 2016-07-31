@@ -52,14 +52,27 @@ defmodule BattleSnakeServer.Game do
     load(game)
   end
 
-  def reset_world(game) do
-    snakes = []
+  def reset_snake(game, snake) do
+    %BattleSnake.Snake{
+      url: snake.url
+    }
+  end
 
+  def reset_world(game) do
     world = %World{
       width: game.width,
       height: game.height,
-      snakes: snakes,
+      snakes: [],
     }
+
+    snakes = game.snakes
+
+    f = fn snake, world ->
+      snake = reset_snake(world, snake)
+      update_in(world.snakes, &[snake|&1])
+    end
+
+    world = Enum.reduce snakes, world, f
 
     world = World.stock_food(world)
 
