@@ -82,13 +82,6 @@ defmodule BattleSnakeServer.GameChannel do
     World.apply_moves(world, moves)
   end
 
-  # It is also common to receive messages from the client and
-  # broadcast to everyone in the current topic (game:lobby).
-  def handle_in("tick", payload, socket) do
-    broadcast socket, "tick", payload
-    {:noreply, socket}
-  end
-
   # Add authorization logic here as required.
   defp authorized?(_payload) do
     true

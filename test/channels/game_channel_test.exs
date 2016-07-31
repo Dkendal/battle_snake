@@ -7,26 +7,15 @@ defmodule BattleSnakeServer.GameChannelTest do
 
   describe "PUSH start" do
     test "start replies with status ok", %{socket: socket} do
-      ref = push socket, "start", %{"hello" => "there"}
-      assert_reply ref, :ok, %{"hello" => "there"}
-    end
-  end
-
-  describe "BROADCAST tick" do
-    test "shout broadcasts to game:lobby", %{socket: socket} do
-      push socket, "tick", %{"hello" => "all"}
-      assert_broadcast "tick", %{"hello" => "all"}
-    end
-
-    test "broadcasts are pushed to the client", %{socket: socket} do
-      broadcast_from! socket, "tick", %{"some" => "data"}
-      assert_push "tick", %{"some" => "data"}
+      ref = push socket, "start"
+      assert_reply ref, :ok
     end
   end
 
   def join(context) do
+    %{game: game} = context
     {:ok, _, socket} = socket("user_id", %{some: :assign})
-    |> subscribe_and_join(GameChannel, "game:#{context.id}")
+    |> subscribe_and_join(GameChannel, "game:#{game.id}")
 
     Map.put(context, :socket, socket)
   end
@@ -37,6 +26,6 @@ defmodule BattleSnakeServer.GameChannelTest do
     |> Ecto.Changeset.apply_changes
     |> Game.save
 
-    Map.put(context, :id, game.id)
+    Map.put(context, :game, game)
   end
 end
