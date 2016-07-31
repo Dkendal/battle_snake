@@ -2,7 +2,6 @@ defmodule BattleSnake.World do
   alias BattleSnake.{Snake, Board, Point, World}
 
   defstruct [
-    :board,
     food: [],
     snakes: [],
     dead_snakes: [],
