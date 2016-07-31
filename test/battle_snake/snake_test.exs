@@ -28,12 +28,12 @@ defmodule BattleSnake.SnakeTest do
 
       assert Snake.dead?(snake, world) == true
 
-      snake = %{snake | coords: [%Point{y: 0, x: 5}]}
+      snake = %{snake | coords: [%Point{y: -1, x: 5}]}
       world = %{world | snakes: [snake]}
 
       assert Snake.dead?(snake, world) == true
 
-      snake = %{snake | coords: [%Point{y: 5, x: 0}]}
+      snake = %{snake | coords: [%Point{y: 5, x: -1}]}
       world = %{world | snakes: [snake]}
 
       assert Snake.dead?(snake, world) == true
