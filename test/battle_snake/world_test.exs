@@ -18,16 +18,29 @@ defmodule BattleSnake.WorldTest do
     end
   end
 
-  describe "#init_food" do
+  describe "#stock_food" do
     test "sets food on the board, up to a max", %{world: world} do
-      world = World.init_food(world)
+      world = World.stock_food(world)
       assert length(world.food) == 4
     end
 
     test "sets no food if set to 0", %{world: world} do
       world = put_in world.max_food, 0
-      world = World.init_food(world)
+      world = World.stock_food(world)
       assert length(world.food) == 0
+    end
+
+    test "adds to existing stocks", %{world: world} do
+      food = %Point{y: 5, x: 5}
+      world = put_in world.food, [food]
+      world = put_in world.max_food, 2
+
+      world = World.stock_food(world)
+
+      assert([
+        %Point{},
+        ^food
+      ] = world.food)
     end
   end
 
