@@ -5,7 +5,7 @@ defmodule BattleSnake.World do
     food: [],
     snakes: [],
     dead_snakes: [],
-    max_food: 0,
+    max_food: 2,
     height: 0,
     width: 0,
   ]
