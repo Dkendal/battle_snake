@@ -11,12 +11,6 @@ defmodule BattleSnake.World do
     turn: 0,
   ]
 
-  @size 4
-  @max_food 1
-  @draw_frames 1
-  @turn_delay 100
-  @clear false
-
   def up,     do: %Point{x: 0,  y: -1}
   def down,   do: %Point{x: 0,  y: 1}
   def right,  do: %Point{x: 1,  y: 0}
