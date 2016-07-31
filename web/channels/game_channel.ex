@@ -23,27 +23,22 @@ defmodule BattleSnakeServer.GameChannel do
     game = Game.get(id)
 
     spawn fn ->
-      # HTTPoison.start
-
+      game = Game.reset_world game
       world = game.world
-      # |> World.init_food(4)
-      # |> World.update_board
 
-      draw = fn (socket) ->
-        fn (world) ->
-          html = Phoenix.View.render_to_string(
-            BattleSnakeServer.PlayView,
-            "board.html",
-            world: world,
-          )
-          broadcast socket, "tick", %{html: html}
-        end
+      draw = fn (world) ->
+        html = Phoenix.View.render_to_string(
+          BattleSnakeServer.PlayView,
+          "board.html",
+          world: world,
+        )
+        broadcast socket, "tick", %{html: html}
       end
 
-      # tick(world, world, draw.(socket))
+      draw.(world)
     end
 
-    {:reply, {:ok, payload}, socket}
+    {:reply, :ok, socket}
   end
 
   def tick(%{"snakes" => []} = world, previous, draw) do

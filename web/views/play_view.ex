@@ -2,7 +2,7 @@ defmodule BattleSnakeServer.PlayView do
   use BattleSnakeServer.Web, :view
 
   def render("square.html", %{world: world, y: y, x: x}) do
-    square = world.map[x][y]
+    square = world.board[x][y]
 
     square_world = square["world"]
 
