@@ -10,7 +10,7 @@ defmodule BattleSnakeServer.GameTest do
         :id,
         :height,
         :snakes,
-        :state,
+        :world,
         :width,
       ]]
     end
@@ -18,7 +18,7 @@ defmodule BattleSnakeServer.GameTest do
 
   describe "#record" do
     test "converts a struct into a record" do
-      game = %Game{state: %{}, id: 1, width: 20, height: 40, snakes: []}
+      game = %Game{world: %{}, id: 1, width: 20, height: 40, snakes: []}
       assert Game.record(game) == {Game, 1, 40, [], %{}, 20}
     end
   end
@@ -26,7 +26,8 @@ defmodule BattleSnakeServer.GameTest do
   describe "#load" do
     test "converts a record to a struct" do
       record = {Game, 1, 40, [], %{}, 20}
-      assert Game.load(record) == %Game{id: 1, state: %{}, width: 20, height: 40, snakes: []}
+      game = %Game{id: 1, world: %{}, width: 20, height: 40, snakes: []}
+      assert Game.load(record) == game
     end
   end
 

@@ -1,20 +1,20 @@
 defmodule BattleSnakeServer.PlayView do
   use BattleSnakeServer.Web, :view
 
-  def render("square.html", %{state: state, y: y, x: x}) do
-    square = state.map[x][y]
+  def render("square.html", %{world: world, y: y, x: x}) do
+    square = world.map[x][y]
 
-    square_state = square["state"]
+    square_world = square["world"]
 
-    rect(square_state, x, y)
+    rect(square_world, x, y)
   end
 
   def rect(nil, _, _) do
     ""
   end
 
-  def rect(square_state, x, y) do
-    fill = case square_state do
+  def rect(square_world, x, y) do
+    fill = case square_world do
       "head" -> "red"
 
       "body" -> "blue"

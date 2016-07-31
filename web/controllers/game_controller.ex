@@ -17,7 +17,7 @@ defmodule BattleSnakeServer.GameController do
   def create(conn, %{"game" => params}) do
     game = %Game{}
     |> Game.changeset(params)
-    # |> Ecto.Changeset.put_embed(:state, )
+    # |> Ecto.Changeset.put_embed(:world, )
     |> Ecto.Changeset.apply_changes
     |> Game.save
 
