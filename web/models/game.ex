@@ -52,9 +52,12 @@ defmodule BattleSnakeServer.Game do
     load(game)
   end
 
-  def reset_snake(game, snake) do
+  def reset_snake(world, snake) do
+    coords = List.duplicate(World.rand_unoccupied_space(world), 3)
+
     %BattleSnake.Snake{
-      url: snake.url
+      url: snake.url,
+      coords: coords,
     }
   end
 

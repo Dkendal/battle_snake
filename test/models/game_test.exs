@@ -81,8 +81,9 @@ defmodule BattleSnakeServer.GameTest do
       assert([
         %BattleSnake.Snake{
           url: "example.com:3000",
+          coords: [_, _, _]
         }
-      ] == world.snakes)
+      ] = world.snakes)
     end
   end
 end
