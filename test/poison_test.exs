@@ -5,14 +5,34 @@ defmodule PoisonTest do
 
   describe "BattleSnake.World" do
     test "encode" do
-      food = [
-        %Point{x: 0, y: 0},
-      ]
+      head = %{
+        "state" => "head",
+        "snake" => "bar",
+      }
 
+      body = %{
+        "state" => "body",
+        "snake" => "bar",
+      }
+
+      #   0 1
+      # 0   h
+      # 1 f b
       world = %World{
         turn: 0,
-        food: food,
-        snakes: [],
+        food: [
+          %Point{x: 0, y: 1},
+        ],
+        snakes: [
+          %Snake{
+            coords: [
+              %Point{x: 1, y: 0},
+              %Point{x: 1, y: 1},
+            ],
+            name: "bar",
+            url: "example.com",
+          }
+        ],
         height: 2,
         width: 2,
       }
@@ -21,11 +41,17 @@ defmodule PoisonTest do
 
       expected = %{
         "board" => [
-          [Board.food, Board.empty],
-          [Board.empty, Board.empty],
+          [Board.empty, Board.food],
+          [head, body],
         ],
-        "food" => [[0,0]],
-        "snakes" => [],
+        "food" => [[0,1]],
+        "snakes" => [
+          %{
+            "name" => "bar",
+            "coords" => [[1,0],[1,1]],
+            "url" => "example.com",
+          }
+        ],
         "turn" => 0,
       }
 

@@ -1,5 +1,5 @@
 defimpl Poison.Encoder, for: BattleSnake.World do
-  alias BattleSnake.{Board, Point}
+  alias BattleSnake.{Board, Point, World}
 
   def encode(world, opts) do
     attrs = [
@@ -22,9 +22,6 @@ defimpl Poison.Encoder, for: BattleSnake.World do
   end
 
   def board(world) do
-    rows = 0..(world.height - 1)
-    cols = 0..(world.width - 1)
-
     add = fn board, p, value ->
       Map.put board, p, value
     end
@@ -37,15 +34,32 @@ defimpl Poison.Encoder, for: BattleSnake.World do
 
     board = Enum.reduce world.food, board, f
 
-    for x <- cols do
-      for y <- rows do
-        p = %Point{x: x, y: y}
-        case board[p] do
-          nil ->
-            Board.empty
-          value ->
-            value
-        end
+    board = Enum.reduce world.snakes, board, fn snake, board ->
+      [head |body] = snake.coords
+
+      board = Enum.reduce body, board, fn p, board ->
+        value = %{
+          "state" => "body",
+          "snake" => snake.name,
+        }
+
+        Map.put board, p, value
+      end
+
+      value = %{
+        "state" => "head",
+        "snake" => snake.name,
+      }
+
+      Map.put board, head, value
+    end
+
+    World.map world, fn p ->
+      case board[p] do
+        nil ->
+          Board.empty
+        value ->
+          value
       end
     end
   end
