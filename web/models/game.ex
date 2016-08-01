@@ -58,6 +58,7 @@ defmodule BattleSnakeServer.Game do
     %BattleSnake.Snake{
       url: snake.url,
       coords: coords,
+      name: "Snek",
     }
   end
 

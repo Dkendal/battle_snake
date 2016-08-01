@@ -37,6 +37,8 @@
           <%= content_tag :dt, snake.url %>
           <dd>length</dd>
           <%= content_tag :dt, Snake.len(snake) %>
+          <dd>move</dd>
+          <%= content_tag :dt, @world.moves[snake.name] %>
         </dl>
       <% end %>
     </div>

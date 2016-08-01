@@ -74,4 +74,42 @@ defmodule BattleSnake.WorldTest do
       assert world.dead_snakes == [snake]
     end
   end
+
+  describe "#tick" do
+    test "eating food" do
+      world = %World{
+        width: 10,
+        height: 10,
+        max_food: 1,
+        food: [
+          %Point{x: 0, y: 0},
+        ],
+        snakes: [
+          %Snake{
+            name: "Snake",
+            coords: [
+              %Point{x: 0, y: 1},
+              %Point{x: 1, y: 1},
+            ]
+          }
+        ]
+      }
+
+      moves = %{"Snake" => "up"}
+
+      world = World.tick(world, moves)
+
+      assert([
+        %Snake{
+          name: "Snake",
+          coords: [
+            %Point{x: 0, y: 0},
+            %Point{x: 0, y: 1},
+            %Point{x: 0, y: 1},
+          ]
+        }
+      ]
+      == world.snakes)
+    end
+  end
 end
