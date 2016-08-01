@@ -62,7 +62,7 @@ defmodule BattleSnake.World do
   def rand_unoccupied_space(world) do
     h = world.height - 1
     w = world.width - 1
-    snakes = for s <- world.snakes, do: s.coords
+    snakes = Enum.flat_map world.snakes, & &1.coords
     food = world.food
 
     open_spaces = for y <- 0..h, x <- 0..w,

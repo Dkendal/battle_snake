@@ -12,9 +12,15 @@ defmodule BattleSnake.WorldTest do
   end
 
   describe "#rand_unoccupied_space" do
-    test "returns a Point with nothing in it", %{world: world} do
-      point = World.rand_unoccupied_space(world)
-      assert %Point{} = point
+    test "returns a Point with nothing in it" do
+      world = %World{
+        height: 1,
+        width: 3,
+        food: [%Point{x: 1, y: 0}],
+        snakes: [%Snake{coords: [%Point{x: 2, y: 0}]}],
+      }
+
+      assert World.rand_unoccupied_space(world) == %Point{x: 0, y: 0}
     end
   end
 
