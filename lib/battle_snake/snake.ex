@@ -13,7 +13,7 @@ defmodule BattleSnake.Snake do
 
   def dead?(snake, world) do
     head = hd snake.coords
-    stream = Stream.map(world.snakes, & tl(&1.coords))
+    stream = Stream.flat_map(world.snakes, & tl(&1.coords))
     Enum.member? stream, head
   end
 

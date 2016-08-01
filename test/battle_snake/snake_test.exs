@@ -7,8 +7,8 @@ defmodule BattleSnake.SnakeTest do
     test "detects body collisions" do
       world = %World{width: 10, height: 10}
       coords = [
-        %Point{y: 10, x: 5},
-        %Point{y: 10, x: 5}
+        %Point{y: 5, x: 5},
+        %Point{y: 5, x: 5}
       ]
       snake = %Snake{coords: coords}
       world = %{world | snakes: [snake]}
