@@ -28,27 +28,27 @@ defmodule BattleSnakeServer.GameChannel do
       game = Game.reset_world game
       world = game.world
 
-      draw = fn (world) ->
+      draw = fn (w) ->
         html = Phoenix.View.render_to_string(
           BattleSnakeServer.PlayView,
           "board.html",
-          world: world,
+          world: w,
         )
         broadcast socket, "tick", %{html: html}
       end
 
-      tick(world, world, draw)
+      tick(world, draw)
     end
 
     {:reply, :ok, socket}
   end
 
-  def tick(%{snakes: []}, _, _) do
+  def tick(%{snakes: []}, _) do
     :ok
   end
 
-  def tick(world, previous, draw) do
-    Process.sleep 50
+  def tick(world, draw) do
+    Process.sleep 300
 
     spawn_link fn ->
       draw.(world)
@@ -60,10 +60,11 @@ defmodule BattleSnakeServer.GameChannel do
     |> make_move
     |> World.step
     |> World.stock_food
-    |> tick(world, draw)
+    |> tick(draw)
   end
 
   def make_move world do
+    IO.inspect world
     payload = Poison.encode! world
 
     moves = for snake <- world.snakes do
@@ -71,17 +72,15 @@ defmodule BattleSnakeServer.GameChannel do
       url = snake.url <> "/move"
       headers = [{"content-type", "application/json"}]
 
-      with response <- HTTPoison.post!(url, payload, headers),
-           {:ok, body} <- Poison.decode(response.body),
-           %{"move" => move} <- body do
-        {name, move}
-      else
-        _ ->
-          {name, "up"}
-      end
+      response = HTTPoison.post!(url, payload, headers)
+      {:ok, body} = Poison.decode(response.body)
+      %{"move" => move} = body
+      {name, move}
     end
 
     moves = Enum.into moves, %{}
+
+    world = put_in world.moves, moves
 
     World.apply_moves(world, moves)
   end

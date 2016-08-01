@@ -9,6 +9,7 @@ defmodule BattleSnake.World do
     height: 0,
     width: 0,
     turn: 0,
+    moves: %{}
   ]
 
   def up,     do: %Point{x: 0,  y: -1}
@@ -74,6 +75,14 @@ defmodule BattleSnake.World do
 
   def step(world) do
     world
+    |> clean_up_dead
+    |> grow_snakes
+    |> remove_eaten_food
+  end
+
+  def tick(world, moves) do
+    world
+    |> apply_moves(moves)
     |> clean_up_dead
     |> grow_snakes
     |> remove_eaten_food
