@@ -149,6 +149,23 @@ defmodule BattleSnake.World do
     end
   end
 
+  def cols(world) do
+    cols = 0..(world.width - 1)
+  end
+
+  def rows(world) do
+    rows = 0..(world.height - 1)
+  end
+
+  def map(world, f) do
+    for x <- cols(world) do
+      for y <- rows(world) do
+        p = %Point{x: x, y: y}
+        f.(p)
+      end
+    end
+  end
+
   defp times(n) when n <= 0, do: []
 
   defp times(n) do

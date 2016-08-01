@@ -1,5 +1,5 @@
 defmodule BattleSnake.Board do
-  alias BattleSnake.{Row}
+  alias BattleSnake.{Point}
 
   def height(board) do
     length board
