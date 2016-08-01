@@ -56,6 +56,15 @@ defmodule BattleSnake.WorldTest do
       assert world.dead_snakes == [snake, snake]
     end
 
+    test "removes snakes that died in body collisions", %{world: world} do
+      snake = %Snake{coords: [%Point{y: 5, x: 5}, %Point{y: 5, x: 5}]}
+      world = put_in world.snakes, [snake]
+
+      world = World.clean_up_dead(world)
+      assert world.snakes == []
+      assert world.dead_snakes == [snake]
+    end
+
     test "removes any snakes that die this turn", %{world: world} do
       snake = %Snake{coords: [%Point{y: 10, x: 10}]}
       world = put_in world.snakes, [snake]
