@@ -3,9 +3,12 @@ defmodule BattleSnakeServer.GameChannel do
     Snake,
     World,
   }
+
   alias BattleSnakeServer.{
     Game,
+    Snake.Api
   }
+
   use BattleSnakeServer.Web, :channel
 
   def join("game:" <> game_id, payload, socket) do
@@ -22,7 +25,7 @@ defmodule BattleSnakeServer.GameChannel do
     "game:" <> id = socket.topic
     game = Game.get(id)
 
-    HTTPoison.start
+    Api.start
 
     spawn fn ->
       game = Game.reset_world game
@@ -64,17 +67,9 @@ defmodule BattleSnakeServer.GameChannel do
   end
 
   def make_move world do
-    payload = Poison.encode! world
-
     moves = for snake <- world.snakes do
-      name = snake.name
-      url = snake.url <> "/move"
-      headers = [{"content-type", "application/json"}]
-
-      response = HTTPoison.post!(url, payload, headers)
-      body = Poison.decode!(response.body)
-      %{"move" => move} = body
-      {name, move}
+      move = Api.move(snake, world)
+      {snake.name, move.move}
     end
 
     moves = Enum.into moves, %{}
