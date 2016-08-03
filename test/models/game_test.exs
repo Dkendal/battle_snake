@@ -6,6 +6,11 @@ defmodule BattleSnakeServer.GameTest do
   alias BattleSnakeServer.Snake, as: Form
   alias BattleSnake.{Snake, World}
 
+  defmodule MockApi do
+    def start, do: :ok
+    def load(_, _), do: %Snake{}
+  end
+
   describe "#table" do
     test "returns the decleration for mnesia" do
       assert Game.table == [attributes: [
@@ -63,13 +68,19 @@ defmodule BattleSnakeServer.GameTest do
         width: 15,
         height: 15,
         snakes: [
-          %BattleSnakeServer.Snake{
+          %Form{
             url: "localhost:4000"
           }
-        ]
+        ],
+        world: %World{
+          height: 15,
+          width: 15,
+        }
       }
 
-      world = Game.reset_world(game).world
+      load_fn = (fn _, game -> game end)
+
+      world = Game.reset_world(game, load_fn).world
 
       assert(
         %BattleSnake.World{
@@ -79,13 +90,21 @@ defmodule BattleSnakeServer.GameTest do
           max_food: 2,
         } = world
       )
+    end
+  end
 
-      assert([
-        %BattleSnake.Snake{
-          url: "example.com:3000",
-          coords: [_, _, _]
-        }
-      ] = world.snakes)
+  describe "#load_snake_form_fn" do
+    test "loads the snake" do
+      form = %Form{url: "localhost:4000"}
+      world = %World{width: 10, height: 10}
+      game = %Game{world: world}
+
+      f = Game.load_snake_form_fn(MockApi)
+      game = f.(form, game)
+
+      assert([snake] = game.world.snakes)
+      assert [_,_,_] = snake.coords
+      assert "localhost:4000" == snake.url
     end
   end
 

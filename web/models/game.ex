@@ -1,14 +1,14 @@
 defmodule BattleSnakeServer.Game do
-  alias BattleSnakeServer.Snake
+  alias BattleSnakeServer.Snake, as: Form
   alias BattleSnakeServer.Snake.Api
-  alias BattleSnake.{World}
+  alias BattleSnake.{World, Snake}
 
   use BattleSnakeServer.Web, :model
 
   @permitted [:height, :width]
 
   schema "game" do
-    embeds_many :snakes, Snake
+    embeds_many :snakes, Form
     embeds_one :world, World
     field :width, :integer, default: 20
     field :height, :integer, default: 20
@@ -53,18 +53,31 @@ defmodule BattleSnakeServer.Game do
     load(game)
   end
 
-  def reset_snake(world, snake) do
+  def reset_snake(%World{} = world, %Snake{} = snake) do
     coords = new_coords(world)
     %{snake| coords: coords}
   end
 
-  def new_coords(game) do
-    point = World.rand_unoccupied_space(game)
+  def new_coords(%World{} = world) do
+    point = World.rand_unoccupied_space(world)
     coords = List.duplicate(point, 3)
   end
 
+  def load_snake_form_fn(api \\ Api) do
+    fn form, game ->
+      snake = api.load(form, game)
+      snake = reset_snake(game.world, snake)
+      snake = %{snake| url: form.url}
+      update_in(game.world.snakes, &[snake|&1])
+    end
+  end
+
   def reset_world(game) do
-    Api.start
+    reset_world(game, load_snake_form_fn())
+  end
+
+  def reset_world(game, load_fn) do
+    load_fn = load_fn
 
     world = %World{
       width: game.width,
@@ -72,13 +85,11 @@ defmodule BattleSnakeServer.Game do
       snakes: [],
     }
 
+    game = put_in game.world, world
+
     snakes = game.snakes
 
-    game = Enum.reduce(snakes, game, fn form, game ->
-      snake = Api.load(form, game)
-      snake = reset_snake(game.world, form)
-      update_in(game.world.snakes, &[snake|&1])
-    end)
+    game = Enum.reduce(snakes, game, load_fn)
 
     world = World.stock_food(game.world)
 
