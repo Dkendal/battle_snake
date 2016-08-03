@@ -1,0 +1,27 @@
+[
+  {
+    "request": {
+      "body": "{\"turn\":0,\"snakes\":[{\"url\":\"localhost:4000\",\"name\":\"Snek\",\"coords\":[[0,0]]}],\"food\":[],\"board\":[[{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"}],[{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"}],[{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"}],[{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"}],[{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"}],[{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"}],[{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"}],[{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"}],[{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"}],[{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"},{\"state\":\"empty\"}]]}",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "http://localhost:4000/move"
+    },
+    "response": {
+      "body": "{\"taunt\":\"down\",\"move\":\"down\"}",
+      "headers": {
+        "server": "Cowboy",
+        "date": "Wed, 03 Aug 2016 02:29:11 GMT",
+        "content-length": "30",
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "max-age=0, private, must-revalidate",
+        "x-request-id": "flkustkkula3vt4mfv4d15oinfisch02"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
