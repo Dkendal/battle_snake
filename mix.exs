@@ -9,6 +9,7 @@ defmodule BattleSnakeServer.Mixfile do
      compilers: [:phoenix, :gettext] ++ Mix.compilers,
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
+     preferred_cli_env: preferred_cli_env,
      deps: deps()]
   end
 
@@ -31,6 +32,12 @@ defmodule BattleSnakeServer.Mixfile do
   defp elixirc_paths(:test), do: ["lib", "web", "test/support"]
   defp elixirc_paths(_),     do: ["lib", "web"]
 
+  def preferred_cli_env do
+    [
+      vcr: :test, "vcr.delete": :test, "vcr.check": :test, "vcr.show": :test
+    ]
+  end
+
   # Specifies your project dependencies.
   #
   # Type `mix help deps` for examples and options.
@@ -38,6 +45,7 @@ defmodule BattleSnakeServer.Mixfile do
     [
       {:cowboy, "~> 1.0"},
       {:ecto, "~> 2.0.2"},
+      {:exvcr, "0.7.0"},
       {:gettext, "~> 0.11"},
       {:httpoison, "~> 0.9.0"},
       {:phoenix, "~> 1.2.0"},
