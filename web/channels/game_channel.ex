@@ -64,7 +64,6 @@ defmodule BattleSnakeServer.GameChannel do
   end
 
   def make_move world do
-    IO.inspect world
     payload = Poison.encode! world
 
     moves = for snake <- world.snakes do
@@ -73,7 +72,7 @@ defmodule BattleSnakeServer.GameChannel do
       headers = [{"content-type", "application/json"}]
 
       response = HTTPoison.post!(url, payload, headers)
-      {:ok, body} = Poison.decode(response.body)
+      body = Poison.decode!(response.body)
       %{"move" => move} = body
       {name, move}
     end

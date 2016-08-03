@@ -3,6 +3,8 @@ defmodule BattleSnakeServer.GameTest do
   import Ecto.Changeset
 
   alias BattleSnakeServer.Game
+  alias BattleSnakeServer.Snake, as: Form
+  alias BattleSnake.{Snake, World}
 
   describe "#table" do
     test "returns the decleration for mnesia" do
@@ -62,7 +64,7 @@ defmodule BattleSnakeServer.GameTest do
         height: 15,
         snakes: [
           %BattleSnakeServer.Snake{
-            url: "example.com:3000"
+            url: "localhost:4000"
           }
         ]
       }
@@ -84,6 +86,25 @@ defmodule BattleSnakeServer.GameTest do
           coords: [_, _, _]
         }
       ] = world.snakes)
+    end
+  end
+
+  describe "#reset_snake" do
+    test "resets the coordinates" do
+      snake = %Snake{url: "localhost:4000"}
+
+      world = %World{
+        width: 10,
+        height: 10,
+        snakes: [snake]
+      }
+
+      snake = Game.reset_snake(world, snake)
+
+      assert(%Snake{
+        url: "localhost:4000",
+        coords: [_,_,_],
+      } = snake)
     end
   end
 end
