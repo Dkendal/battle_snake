@@ -2,9 +2,12 @@ defmodule BattleSnake.Snake do
   alias BattleSnake.{Point}
 
   defstruct [
+    color: "",
     coords: [],
+    head_url: "",
+    name: "",
+    taunt: "",
     url: "",
-    name: "default",
   ]
 
   def dead?(%{coords: [%{y: y, x: x} |_]}, %{width: w, height: h})

@@ -1,0 +1,27 @@
+[
+  {
+    "request": {
+      "body": "{\"width\":20,\"height\":20,\"game_id\":\"sup\"}",
+      "headers": {
+        "content-type": "application/json"
+      },
+      "method": "post",
+      "options": [],
+      "request_body": "",
+      "url": "http://localhost:4000/start"
+    },
+    "response": {
+      "body": "{\"taunt\":\"gotta go fast\",\"name\":\"Snek\",\"head_url\":\"\",\"color\":\"#6699ff\"}",
+      "headers": {
+        "server": "Cowboy",
+        "date": "Wed, 03 Aug 2016 01:54:46 GMT",
+        "content-length": "71",
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "max-age=0, private, must-revalidate",
+        "x-request-id": "il2s6h77jngag2dpiviijudlkgscn88h"
+      },
+      "status_code": 200,
+      "type": "ok"
+    }
+  }
+]
