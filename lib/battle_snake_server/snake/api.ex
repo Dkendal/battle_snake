@@ -1,5 +1,5 @@
 defmodule BattleSnakeServer.Snake.Api do
-  alias BattleSnake.Snake
+  alias BattleSnake.{Snake, Move}
 
   use HTTPoison.Base
 
@@ -7,21 +7,22 @@ defmodule BattleSnakeServer.Snake.Api do
   def load(snake, game) do
     url = snake.url <> "/start"
     response = post! url, payload(game), headers
-    Poison.decode!(response.body, as: %Snake{})
+    Poison.decode!(response.body, as: %Snake{url: snake.url})
   end
 
-  def load(snake, game) do
-    url = snake.url <> "/start"
-    response = post! url, payload(game), headers
-    Poison.decode!(response.body, as: %Snake{})
+  def move(snake, world) do
+    url = snake.url <> "/move"
+    payload = Poison.encode!(world)
+    response = post! url, payload, headers
+    Poison.decode!(response.body, as: %Move{})
   end
 
   def payload(game) do
-    %{
+    Poison.encode! %{
       game_id: game.id,
       height: game.height,
       width: game.width,
-    } |> Poison.encode!
+    }
   end
 
   def headers() do
