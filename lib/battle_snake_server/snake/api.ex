@@ -4,8 +4,8 @@ defmodule BattleSnakeServer.Snake.Api do
   use HTTPoison.Base
 
   @spec load(BattleSnakeServer.Snake, BattleSnakeServer.Game) :: BattleSnake.Snake
-  def load(snake, game) do
-    url = snake.url <> "/start"
+  def load(form, game) do
+    url = form.url <> "/start"
 
     payload = Poison.encode! %{
       game_id: game.id,
@@ -15,7 +15,7 @@ defmodule BattleSnakeServer.Snake.Api do
 
     response = post! url, payload, headers
 
-    Poison.decode!(response.body, as: %Snake{url: snake.url})
+    Poison.decode!(response.body, as: %Snake{url: form.url})
   end
 
   def move(snake, world) do
