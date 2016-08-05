@@ -6,16 +6,8 @@ defmodule BattleSnake.GameServerTest do
 
   setup do
     world = %World{}
-
-    this = self
-
-    f = fn world ->
-      world = update_in world.turn, & &1+1
-      send this, {:turn, world.turn}
-      world
-    end
-
     opts = [delay: 0]
+    f = phone_home(self)
 
     {:ok, pid} = GameServer.start_link({world, f, opts})
 
@@ -36,6 +28,21 @@ defmodule BattleSnake.GameServerTest do
 
   describe ".pause_game" do
     test "stops the tick function from being called" do
+      world = %World{}
+      opts = [delay: 0]
+      f = self_destruct(self)
+
+      {:ok, pid} = GameServer.start_link({world, f, opts})
+
+      GameServer.resume_game(pid)
+
+      assert_receive {:tick, 1}, 100
+      refute_receive {:tick, _}, 100
+
+      GameServer.resume_game(pid)
+
+      assert_receive {:tick, 2}, 100
+      refute_receive _, 100
     end
   end
 
@@ -44,5 +51,36 @@ defmodule BattleSnake.GameServerTest do
 
   def start(pid) do
     GameServer.resume_game(pid)
+  end
+
+  def self_destruct(pid) do
+    # will get spammed by this
+    tick = fn world ->
+      send pid, {:tick, world.turn}
+    end
+
+    # pause the game after first tick
+    fn world ->
+      world = update_in world.turn, & &1+1
+
+      tick.(world)
+
+      this = self
+
+      spawn_link fn ->
+        GameServer.pause_game(this)
+      end
+
+      world
+    end
+  end
+
+  def phone_home(pid) do
+    fn world ->
+      world = update_in world.turn, & &1+1
+      send pid, {:turn, world.turn}
+
+      world
+    end
   end
 end
