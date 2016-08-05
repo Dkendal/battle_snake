@@ -22,9 +22,9 @@ defmodule BattleSnake.GameServerTest do
     %{pid: pid}
   end
 
-  describe ".start_game" do
+  describe ".resume_game" do
     test "returns the world", %{pid: pid} do
-      %World{} = GameServer.start_game(pid)
+      %World{} = GameServer.resume_game(pid)
     end
 
     test "calls the tick function repeatably", %{pid: pid} do
@@ -35,12 +35,14 @@ defmodule BattleSnake.GameServerTest do
   end
 
   describe ".pause_game" do
+    test "stops the tick function from being called" do
+    end
   end
 
   describe ".stop_game" do
   end
 
   def start(pid) do
-    GameServer.start_game(pid)
+    GameServer.resume_game(pid)
   end
 end

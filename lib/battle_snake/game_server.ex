@@ -7,8 +7,8 @@ defmodule BattleSnake.GameServer do
     GenServer.start_link(__MODULE__, default)
   end
 
-  def start_game(pid) do
-    GenServer.call(pid, :start_game)
+  def resume_game(pid) do
+    GenServer.call(pid, :resume_game)
   end
 
   def pause_game(pid, _)
@@ -17,7 +17,7 @@ defmodule BattleSnake.GameServer do
   # Server (callbacks)
 
   # Calls
-  def handle_call(:start_game, from, state) do
+  def handle_call(:resume_game, from, state) do
     {world, _, opts} = state
 
     tick(state)
