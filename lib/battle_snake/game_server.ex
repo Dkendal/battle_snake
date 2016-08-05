@@ -18,7 +18,11 @@ defmodule BattleSnake.GameServer do
 
   # Calls
   def handle_call(:start_game, from, state) do
-    {:reply, state, state}
+    {world, _, opts} = state
+
+    tick(state)
+
+    {:reply, world, state}
   end
 
   def handle_call(request, from, state) do
@@ -30,5 +34,25 @@ defmodule BattleSnake.GameServer do
 
   def handle_cast(request, state) do
     super(request, state)
+  end
+
+  def handle_info(:tick, state) do
+    {world, f, opts} = state
+    world = f.(world)
+    state = {world, f, opts}
+
+    tick(state)
+
+    {:noreply, state}
+  end
+
+  # Private
+
+  defp delay({_, _, opts}) do
+    opts[:delay]
+  end
+
+  defp tick(state) do
+    Process.send_after(self(), :tick, delay(state))
   end
 end
