@@ -37,12 +37,8 @@ defmodule BattleSnake.GameServer do
   end
 
   def handle_info(:tick, state) do
-    {world, f, opts} = state
-    world = f.(world)
-    state = {world, f, opts}
-
+    state = next_turn(state)
     tick(state)
-
     {:noreply, state}
   end
 
@@ -54,5 +50,10 @@ defmodule BattleSnake.GameServer do
 
   defp tick(state) do
     Process.send_after(self(), :tick, delay(state))
+  end
+
+  defp next_turn({world, f, opts} = state) do
+    world = f.(world)
+    put_elem state, 0, world
   end
 end
