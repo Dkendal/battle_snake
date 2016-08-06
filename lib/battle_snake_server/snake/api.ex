@@ -5,7 +5,7 @@ defmodule BattleSnakeServer.Snake.Api do
 
   use HTTPoison.Base
 
-  @callback start() :: :ok | {:error, any}
+  @callback start() :: {:ok, [atom]} | {:error, any}
 
   @callback load(%SnakeForm{}, %Game{}) :: %Snake{}
 

@@ -10,7 +10,7 @@ defmodule BattleSnakeServer.Snake.MockApi do
     %BattleSnake.Snake{}
   end
 
-  def start, do: :ok
+  def start, do: {:ok, [:fake]}
 
   def move(_, _), do: @move
 end
