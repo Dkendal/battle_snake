@@ -28,7 +28,7 @@ defmodule BattleSnakeServer.GameChannel do
     world = game.world
 
     opts = [
-      delay: 300,
+      delay: game.delay,
       objective: &BattleSnake.WinConditions.single_player/1
     ]
 
