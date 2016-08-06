@@ -15,6 +15,10 @@ function init(gameId) {
     channel.push("start", {})
   }
 
+  function stopGame(e) {
+    channel.push("stop", {})
+  }
+
   function handleTick({html}) {
     gameBoard.html(html);
   }
@@ -27,11 +31,15 @@ function init(gameId) {
       case " ":
         pauseGame(event);
         break;
+      case "q":
+        stopGame(event);
+        break;
     }
   }
 
   $(document).on("click", '[data-js="game.start"]', startGame);
   $(document).on("click", '[data-js="game.pause"]', pauseGame);
+  $(document).on("click", '[data-js="game.stop"]', stopGame);
   $(document).on("keydown", "body", keydownHandler);
 
   // replace the board on each tick
