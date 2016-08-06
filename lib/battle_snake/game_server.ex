@@ -3,8 +3,8 @@ defmodule BattleSnake.GameServer do
 
   # Client
 
-  def start_link({_, _, _} = state) do
-    GenServer.start_link(__MODULE__, {:suspend, state})
+  def start_link({_, _, _} = state, opts \\ []) do
+    GenServer.start_link(__MODULE__, {:suspend, state}, opts)
   end
 
   def resume(pid) do
