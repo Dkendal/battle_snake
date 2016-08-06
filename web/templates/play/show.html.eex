@@ -2,6 +2,11 @@
   window.gameId = "<%= @game.id %>"
 </script>
 
-<%= link("Start game", to: "#", data: [js: "game.start"]) %>
+
+<%= link("■", to: "#", data: [js: "game.stop"]) %>
+<%= link("▮◀", to: "#", data: [js: "game.prev"]) %>
+<%= link("▮▮", to: "#", data: [js: "game.pause"]) %>
+<%= link("▶", to: "#", data: [js: "game.start"]) %>
+<%= link("▶▮", to: "#", data: [js: "game.next"]) %>
 
 <div id="gameBoard"></div>
