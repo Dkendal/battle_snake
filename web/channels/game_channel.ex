@@ -23,20 +23,17 @@ defmodule BattleSnakeServer.GameChannel do
   end
 
   def handle_in("pause", _, socket) do
-    socket
-    |> name()
-    |> GameServer.pause()
+    with pid when is_pid(pid) <- whereis(socket),
+      GameServer.pause(pid),
+      do: :ok
 
     {:reply, :ok, socket}
   end
 
   def handle_in("stop", _, socket) do
-    case whereis(socket) do
-      nil ->
-        :ok
-      pid ->
-        GenServer.stop(pid, :normal)
-    end
+    with pid when is_pid(pid) <- whereis(socket),
+      GenServer.stop(pid, :normal),
+      do: :ok
 
     {:reply, :ok, socket}
   end
