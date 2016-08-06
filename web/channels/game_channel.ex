@@ -83,7 +83,11 @@ defmodule BattleSnakeServer.GameChannel do
 
     reducer = reducer(socket)
 
-    state = {world, reducer, opts}
+    state = %GameServer.State{
+      world: world,
+      reducer: reducer,
+      opts: opts
+    }
   end
 
   # game name
