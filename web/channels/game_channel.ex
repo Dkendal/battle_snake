@@ -47,6 +47,10 @@ defmodule BattleSnakeServer.GameChannel do
     {:reply, :ok, socket}
   end
 
+  def handle_in("pause", _, socket) do
+    {:reply, :ok, socket}
+  end
+
   def tick(%{snakes: []}, _) do
     :ok
   end
