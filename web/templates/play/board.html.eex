@@ -7,14 +7,15 @@
       <%# background %>
       <%= content_tag :rect, "", y: 0, x: 0, width: width, height: height, fill: "lightgrey" %>
 
-      <%= for snake <- @world.snakes, point <- snake.coords do %>
+      <%= for snake <- @world.snakes, {point, index} <- Enum.with_index(snake.coords, 1) do %>
         <%=
           content_tag :rect, "",
           y: point.y,
           x: point.x,
           width: 1,
           height: 1,
-          fill: snake.color
+          fill: snake.color,
+          fill_opacity: 1 - index / length(snake.coords) + 0.3
         %>
       <% end %>
 
