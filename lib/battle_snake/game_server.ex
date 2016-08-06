@@ -7,12 +7,12 @@ defmodule BattleSnake.GameServer do
     GenServer.start_link(__MODULE__, {:suspend, state})
   end
 
-  def resume_game(pid) do
-    GenServer.call(pid, :resume_game)
+  def resume(pid) do
+    GenServer.call(pid, :resume)
   end
 
-  def pause_game(pid) do
-    GenServer.call(pid, :pause_game)
+  def pause(pid) do
+    GenServer.call(pid, :pause)
   end
 
   def stop_game(pid, _)
@@ -20,11 +20,11 @@ defmodule BattleSnake.GameServer do
   # Server (callbacks)
 
   # Calls
-  def handle_call(:pause_game, from, {:cont, state}) do
+  def handle_call(:pause, from, {:cont, state}) do
     {:reply, :ok, {:suspend, state}}
   end
 
-  def handle_call(:resume_game, from, {:suspend, state}) do
+  def handle_call(:resume, from, {:suspend, state}) do
     tick(state)
     {:reply, :ok, {:cont, state}}
   end
@@ -42,18 +42,26 @@ defmodule BattleSnake.GameServer do
 
   def handle_info(:tick, {:cont, state}) do
     state = next_turn(state)
-    tick(state)
-    {:noreply, {:cont, state}}
+    if done?(state) do
+      {:noreply, {:halted, state}}
+    else
+      tick(state)
+      {:noreply, {:cont, state}}
+    end
   end
 
   def handle_info(:tick, {:suspend, state}) do
     {:noreply, {:suspend, state}}
   end
 
+  def handle_info(:tick, {:halted, state}) do
+    {:noreply, {:halted, state}}
+  end
+
   # Private
 
   defp delay({_, _, opts}) do
-    opts[:delay]
+    Dict.fetch!(opts, :delay)
   end
 
   defp tick(state) do
@@ -63,5 +71,11 @@ defmodule BattleSnake.GameServer do
   defp next_turn({world, reducer, opts}) do
     world = reducer.(world)
     {world, reducer, opts}
+  end
+
+  # check if the game is over
+  def done?({world, _, opts}) do
+    fun = Dict.fetch!(opts, :objective)
+    fun.(world)
   end
 end

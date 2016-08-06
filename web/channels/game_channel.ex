@@ -48,13 +48,16 @@ defmodule BattleSnakeServer.GameChannel do
       |> World.stock_food
     end
 
-    opts = [delay: 300]
+    opts = [
+      delay: 300,
+      objective: &BattleSnake.WinConditions.single_player/1
+    ]
 
     state = {world, f, opts}
 
     {:ok, pid} = GameServer.start_link(state)
 
-    GameServer.resume_game(pid)
+    GameServer.resume(pid)
 
     {:reply, :ok, socket}
   end

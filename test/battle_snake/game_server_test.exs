@@ -6,7 +6,8 @@ defmodule BattleSnake.GameServerTest do
 
   setup do
     world = %World{}
-    opts = [delay: 0]
+    objective = fn _ -> false end
+    opts = [delay: 0, objective: objective]
     f = phone_home(self)
 
     {:ok, pid} = GameServer.start_link({world, f, opts})
@@ -14,9 +15,9 @@ defmodule BattleSnake.GameServerTest do
     %{pid: pid}
   end
 
-  describe ".resume_game" do
+  describe ".resume" do
     test "returns the world", %{pid: pid} do
-      assert :ok = GameServer.resume_game(pid)
+      assert :ok = GameServer.resume(pid)
     end
 
     test "calls the tick function repeatably", %{pid: pid} do
@@ -26,20 +27,21 @@ defmodule BattleSnake.GameServerTest do
     end
   end
 
-  describe ".pause_game" do
+  describe ".pause" do
     test "stops the tick function from being called" do
       world = %World{}
-      opts = [delay: 0]
+      objective = fn _ -> false end
+      opts = [delay: 0, objective: objective]
       f = self_destruct(self)
 
       {:ok, pid} = GameServer.start_link({world, f, opts})
 
-      :ok = GameServer.resume_game(pid)
+      :ok = GameServer.resume(pid)
 
       assert_receive {:tick, 1}, 100
       refute_receive {:tick, _}, 100
 
-      :ok = GameServer.resume_game(pid)
+      :ok = GameServer.resume(pid)
 
       assert_receive {:tick, 2}, 100
       refute_receive _, 100
@@ -50,7 +52,7 @@ defmodule BattleSnake.GameServerTest do
   end
 
   def start(pid) do
-    GameServer.resume_game(pid)
+    GameServer.resume(pid)
   end
 
   def self_destruct(pid) do
@@ -68,7 +70,7 @@ defmodule BattleSnake.GameServerTest do
       this = self
 
       spawn_link fn ->
-        GameServer.pause_game(this)
+        GameServer.pause(this)
       end
 
       world
