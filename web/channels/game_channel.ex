@@ -1,4 +1,6 @@
 defmodule BattleSnakeServer.GameChannel do
+  @api Application.get_env(:battle_snake_server, :snake_api)
+
   alias BattleSnake.{
     Snake,
     World,
@@ -6,7 +8,6 @@ defmodule BattleSnakeServer.GameChannel do
 
   alias BattleSnakeServer.{
     Game,
-    Snake.Api
   }
 
   use BattleSnakeServer.Web, :channel
@@ -25,7 +26,7 @@ defmodule BattleSnakeServer.GameChannel do
     "game:" <> id = socket.topic
     game = Game.get(id)
 
-    Api.start
+    @api.start
 
     spawn fn ->
       game = Game.reset_world game
@@ -68,7 +69,7 @@ defmodule BattleSnakeServer.GameChannel do
 
   def make_move world do
     moves = for snake <- world.snakes do
-      move = Api.move(snake, world)
+      move = @api.move(snake, world)
       {snake.name, move.move}
     end
 

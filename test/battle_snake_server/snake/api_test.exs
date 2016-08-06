@@ -7,8 +7,6 @@ defmodule BattleSnakeServer.Snake.ApiTest do
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
 
   setup do
-    Api.start
-
     snake_form = %BattleSnakeServer.Snake{url: "localhost:4000"}
 
     snake = %BattleSnake.Snake{

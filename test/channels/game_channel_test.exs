@@ -2,6 +2,7 @@ defmodule BattleSnakeServer.GameChannelTest do
   use BattleSnakeServer.ChannelCase
 
   alias BattleSnakeServer.{Game, GameChannel}
+  alias BattleSnakeServer.Snake, as: SnakeForm
 
   setup [:create_game, :join]
 
@@ -9,6 +10,7 @@ defmodule BattleSnakeServer.GameChannelTest do
     test "start replies with status ok", %{socket: socket} do
       ref = push socket, "start"
       assert_reply ref, :ok
+      assert_broadcast "tick", _, 500
     end
   end
 
@@ -21,7 +23,11 @@ defmodule BattleSnakeServer.GameChannelTest do
   end
 
   def create_game(context) do
-    game = %Game{}
+    snakes = [
+      %SnakeForm{url: "localhost:3000"}
+    ]
+
+    game = %Game{snakes: snakes}
     |> Game.changeset
     |> Ecto.Changeset.apply_changes
     |> Game.save
