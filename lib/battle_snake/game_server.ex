@@ -24,20 +24,21 @@ defmodule BattleSnake.GameServer do
     {:reply, :ok, {:suspend, state}}
   end
 
-  # calling pause on an aldready paused game has no effect
-  def handle_call(:pause, _from, {:suspend, state}) do
-    {:reply, :ok, {:suspend, state}}
+  # calling pause on an already paused or stopped game has no effect
+  def handle_call(:pause, _from, state) do
+    {:reply, :ok, state}
   end
 
-  # calling resume on an already running game
-  # doesn't do anything
-  def handle_call(:resume, _from, {:cont, state}) do
-    {:reply, :ok, {:cont, state}}
-  end
 
   def handle_call(:resume, _from, {:suspend, state}) do
     tick(state)
     {:reply, :ok, {:cont, state}}
+  end
+
+  # calling resume on an already running game or stopped game doesn't do
+    # anything
+  def handle_call(:resume, _from, state) do
+    {:reply, :ok, state}
   end
 
   def handle_call(request, from, state) do
