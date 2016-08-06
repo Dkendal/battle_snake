@@ -27,35 +27,18 @@ defmodule BattleSnakeServer.GameChannel do
 
     world = game.world
 
-    draw = fn
-      world ->
-        html = Phoenix.View.render_to_string(
-          BattleSnakeServer.PlayView,
-          "board.html",
-          world: world,
-        )
-        broadcast socket, "tick", %{html: html}
-    end
-
-    f = fn world ->
-      draw.(world)
-
-      world = update_in(world.turn, &(&1+1))
-
-      world
-      |> make_move
-      |> World.step
-      |> World.stock_food
-    end
-
     opts = [
       delay: 300,
       objective: &BattleSnake.WinConditions.single_player/1
     ]
 
-    state = {world, f, opts}
+    reducer = reducer(socket)
 
-    {:ok, pid} = GameServer.start_link(state, name: name(socket))
+    state = {world, reducer, opts}
+
+    name = name(socket)
+
+    {:ok, pid} = GameServer.start_link(state, name: name)
 
     GameServer.resume(pid)
 
@@ -87,6 +70,33 @@ defmodule BattleSnakeServer.GameChannel do
 
     World.apply_moves(world, moves)
   end
+
+  defp draw(socket) do
+    fn (world) ->
+      html = Phoenix.View.render_to_string(
+        BattleSnakeServer.PlayView,
+        "board.html",
+        world: world,
+      )
+      broadcast socket, "tick", %{html: html}
+    end
+  end
+
+  def reducer(socket) do
+    draw_fun = draw(socket)
+
+    fn world ->
+      draw_fun.(world)
+
+      world = update_in(world.turn, &(&1+1))
+
+      world
+      |> make_move
+      |> World.step
+      |> World.stock_food
+    end
+  end
+
 
   # Add authorization logic here as required.
   defp authorized?(_payload) do
