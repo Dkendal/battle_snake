@@ -14,7 +14,7 @@
           x: point.x,
           width: 1,
           height: 1,
-          fill: :red
+          fill: snake.color
         %>
       <% end %>
 
