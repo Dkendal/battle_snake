@@ -21,9 +21,14 @@ defmodule BattleSnake.GameServerTest do
     end
 
     test "calls the tick function repeatably", %{pid: pid} do
-      start(pid)
+      GameServer.resume(pid)
       assert_receive {:turn, 1}, 100
       assert_receive {:turn, 2}, 100
+    end
+
+    test "is idempotent", %{pid: pid} do
+      :ok = GameServer.resume(pid)
+      :ok = GameServer.resume(pid)
     end
   end
 
@@ -46,13 +51,15 @@ defmodule BattleSnake.GameServerTest do
       assert_receive {:tick, 2}, 100
       refute_receive _, 100
     end
+
+    test "is idempotent", %{pid: pid} do
+      :ok = GameServer.resume(pid)
+      :ok = GameServer.pause(pid)
+      :ok = GameServer.pause(pid)
+    end
   end
 
   describe ".stop_game" do
-  end
-
-  def start(pid) do
-    GameServer.resume(pid)
   end
 
   def self_destruct(pid) do
