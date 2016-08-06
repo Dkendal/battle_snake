@@ -1,9 +1,13 @@
 defmodule BattleSnake.GameServer do
   use GenServer
 
+  defmodule State do
+    defstruct [:world, :reducer, :opts]
+  end
+
   # Client
 
-  def start_link({_, _, _} = state, opts \\ []) do
+  def start_link(%State{} = state, opts \\ []) do
     GenServer.start_link(__MODULE__, {:suspend, state}, opts)
   end
 
@@ -14,8 +18,6 @@ defmodule BattleSnake.GameServer do
   def pause(pid) do
     GenServer.call(pid, :pause)
   end
-
-  def stop_game(pid, _)
 
   # Server (callbacks)
 
@@ -72,7 +74,8 @@ defmodule BattleSnake.GameServer do
 
   # Private
 
-  defp delay({_, _, opts}) do
+  defp delay(state) do
+    opts = state.opts
     Dict.fetch!(opts, :delay)
   end
 
@@ -80,13 +83,17 @@ defmodule BattleSnake.GameServer do
     Process.send_after(self(), :tick, delay(state))
   end
 
-  defp next_turn({world, reducer, opts}) do
+  defp next_turn(state) do
+    reducer = state.reducer
+    world = state.world
     world = reducer.(world)
-    {world, reducer, opts}
+    %{state| world: world}
   end
 
   # check if the game is over
-  def done?({world, _, opts}) do
+  defp done?(state) do
+    opts = state.opts
+    world = state.world
     fun = Dict.fetch!(opts, :objective)
     fun.(world)
   end

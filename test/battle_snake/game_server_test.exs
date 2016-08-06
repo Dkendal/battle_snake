@@ -10,7 +10,8 @@ defmodule BattleSnake.GameServerTest do
     opts = [delay: 0, objective: objective]
     f = phone_home(self)
 
-    {:ok, pid} = GameServer.start_link({world, f, opts})
+    state = %GameServer.State{world: world, reducer: f, opts: opts}
+    {:ok, pid} = GameServer.start_link(state)
 
     %{pid: pid}
   end
@@ -39,7 +40,8 @@ defmodule BattleSnake.GameServerTest do
       opts = [delay: 0, objective: objective]
       f = self_destruct(self)
 
-      {:ok, pid} = GameServer.start_link({world, f, opts})
+      state = %GameServer.State{world: world, reducer: f, opts: opts}
+      {:ok, pid} = GameServer.start_link(state)
 
       :ok = GameServer.resume(pid)
 
