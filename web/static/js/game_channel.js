@@ -24,6 +24,9 @@ function init(gameId) {
       case "r":
         startGame(event);
         break;
+      case " ":
+        pauseGame(event);
+        break;
     }
   }
 
