@@ -19,10 +19,17 @@ defmodule BattleSnakeServer.GameChannelTest do
     test "pauses the game", %{socket: socket} do
       ref = push socket, "start"
       assert_reply ref, :ok
+
       assert_broadcast "tick", _, 500
       ref = push socket, "pause"
+
       assert_reply ref, :ok
       refute_broadcast "tick", _, 500
+    end
+
+    test "does nothing if the game there is no running game", %{socket: socket} do
+      ref = push socket, "pause"
+      assert_reply ref, :ok
     end
   end
 
