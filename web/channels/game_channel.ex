@@ -1,14 +1,8 @@
 defmodule BattleSnakeServer.GameChannel do
   @api Application.get_env(:battle_snake_server, :snake_api)
 
-  alias BattleSnake.{
-    Snake,
-    World,
-  }
-
-  alias BattleSnakeServer.{
-    Game,
-  }
+  alias BattleSnake.{Snake, World, GameServer}
+  alias BattleSnakeServer.{Game}
 
   use BattleSnakeServer.Web, :channel
 
@@ -23,52 +17,50 @@ defmodule BattleSnakeServer.GameChannel do
   # Channels can be used in a request/response fashion
   # by sending replies to requests from the client
   def handle_in("start", payload, socket) do
+    {:ok, _} = @api.start
+
     "game:" <> id = socket.topic
+
     game = Game.get(id)
 
-    @api.start
+    game = Game.reset_world game
 
-    spawn fn ->
-      game = Game.reset_world game
-      world = game.world
+    world = game.world
 
-      draw = fn (w) ->
+    draw = fn
+      world ->
         html = Phoenix.View.render_to_string(
           BattleSnakeServer.PlayView,
           "board.html",
-          world: w,
+          world: world,
         )
         broadcast socket, "tick", %{html: html}
-      end
-
-      tick(world, draw)
     end
+
+    f = fn world ->
+      draw.(world)
+
+      world = update_in(world.turn, &(&1+1))
+
+      world
+      |> make_move
+      |> World.step
+      |> World.stock_food
+    end
+
+    opts = [delay: 300]
+
+    state = {world, f, opts}
+
+    {:ok, pid} = GameServer.start_link(state)
+
+    GameServer.resume_game(pid)
 
     {:reply, :ok, socket}
   end
 
   def handle_in("pause", _, socket) do
     {:reply, :ok, socket}
-  end
-
-  def tick(%{snakes: []}, _) do
-    :ok
-  end
-
-  def tick(world, draw) do
-    Process.sleep 300
-
-    spawn_link fn ->
-      draw.(world)
-    end
-
-    world = update_in(world.turn, &(&1+1))
-
-    world
-    |> make_move
-    |> World.step
-    |> World.stock_food
-    |> tick(draw)
   end
 
   def make_move world do
