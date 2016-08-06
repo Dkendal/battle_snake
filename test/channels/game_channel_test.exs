@@ -10,7 +10,8 @@ defmodule BattleSnakeServer.GameChannelTest do
     test "start replies with status ok", %{socket: socket} do
       ref = push socket, "start"
       assert_reply ref, :ok
-      assert_broadcast "tick", _, 500
+      assert_broadcast "tick", %{html: html}, 500
+      assert html =~ "svg"
     end
   end
 
