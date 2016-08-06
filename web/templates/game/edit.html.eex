@@ -14,6 +14,11 @@
   <%= number_input f, :height %>
 </div>
 
+<div>
+  <%= label f, :delay %>
+  <%= number_input f, :delay %>
+</div>
+
 <%= inputs_for f, :snakes, [append: [snake]], fn g -> %>
 <div>
   <%= label g, :url %>
