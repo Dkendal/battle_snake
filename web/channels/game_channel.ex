@@ -16,7 +16,42 @@ defmodule BattleSnakeServer.GameChannel do
 
   # Channels can be used in a request/response fashion
   # by sending replies to requests from the client
-  def handle_in("start", payload, socket) do
+  def handle_in("start", _, socket) do
+    game_server(socket) |> GameServer.resume()
+
+    {:reply, :ok, socket}
+  end
+
+  def handle_in("pause", _, socket) do
+    socket
+    |> name()
+    |> GameServer.pause()
+
+    {:reply, :ok, socket}
+  end
+
+  # get the game by name if it's already running, or start a new game
+  def game_server(socket) do
+    name(socket) |> game_server(socket)
+  end
+
+  def game_server(name, socket) do
+    GenServer.whereis(name) |> game_server(name, socket)
+  end
+
+  # start a new game and return the pid
+  def game_server(nil, name, socket) do
+    state = new_game_state(socket)
+    {:ok, pid} = GameServer.start_link(state, name: name)
+    pid
+  end
+
+  # return the already running game
+  def game_server(pid, _, _) when is_pid(pid) do
+    pid
+  end
+
+  def new_game_state(socket) do
     {:ok, _} = @api.start
 
     "game:" <> id = socket.topic
@@ -35,22 +70,6 @@ defmodule BattleSnakeServer.GameChannel do
     reducer = reducer(socket)
 
     state = {world, reducer, opts}
-
-    name = name(socket)
-
-    {:ok, pid} = GameServer.start_link(state, name: name)
-
-    GameServer.resume(pid)
-
-    {:reply, :ok, socket}
-  end
-
-  def handle_in("pause", _, socket) do
-    socket
-    |> name()
-    |> GameServer.pause()
-
-    {:reply, :ok, socket}
   end
 
   # game name
