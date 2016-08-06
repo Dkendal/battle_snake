@@ -16,7 +16,7 @@ defmodule BattleSnake.GameServerTest do
 
   describe ".resume_game" do
     test "returns the world", %{pid: pid} do
-      %World{} = GameServer.resume_game(pid)
+      assert :ok = GameServer.resume_game(pid)
     end
 
     test "calls the tick function repeatably", %{pid: pid} do
@@ -34,12 +34,12 @@ defmodule BattleSnake.GameServerTest do
 
       {:ok, pid} = GameServer.start_link({world, f, opts})
 
-      GameServer.resume_game(pid)
+      :ok = GameServer.resume_game(pid)
 
       assert_receive {:tick, 1}, 100
       refute_receive {:tick, _}, 100
 
-      GameServer.resume_game(pid)
+      :ok = GameServer.resume_game(pid)
 
       assert_receive {:tick, 2}, 100
       refute_receive _, 100

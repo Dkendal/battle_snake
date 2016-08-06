@@ -4,7 +4,7 @@ defmodule BattleSnake.GameServer do
   # Client
 
   def start_link({_, _, _} = state) do
-    GenServer.start_link(__MODULE__, {:paused, state})
+    GenServer.start_link(__MODULE__, {:suspend, state})
   end
 
   def resume_game(pid) do
@@ -20,18 +20,13 @@ defmodule BattleSnake.GameServer do
   # Server (callbacks)
 
   # Calls
-  def handle_call(:pause_game, from, {:running, state}) do
-    {world, _, opts} = state
-
-    {:reply, world, {:paused, state}}
+  def handle_call(:pause_game, from, {:cont, state}) do
+    {:reply, :ok, {:suspend, state}}
   end
 
-  def handle_call(:resume_game, from, {:paused, state}) do
-    {world, _, opts} = state
-
+  def handle_call(:resume_game, from, {:suspend, state}) do
     tick(state)
-
-    {:reply, world, {:running, state}}
+    {:reply, :ok, {:cont, state}}
   end
 
   def handle_call(request, from, state) do
@@ -45,14 +40,14 @@ defmodule BattleSnake.GameServer do
     super(request, state)
   end
 
-  def handle_info(:tick, {:running, state}) do
+  def handle_info(:tick, {:cont, state}) do
     state = next_turn(state)
     tick(state)
-    {:noreply, {:running, state}}
+    {:noreply, {:cont, state}}
   end
 
-  def handle_info(:tick, {:paused, state}) do
-    {:noreply, {:paused, state}}
+  def handle_info(:tick, {:suspend, state}) do
+    {:noreply, {:suspend, state}}
   end
 
   # Private
@@ -65,8 +60,8 @@ defmodule BattleSnake.GameServer do
     Process.send_after(self(), :tick, delay(state))
   end
 
-  defp next_turn({world, f, opts} = state) do
-    world = f.(world)
-    put_elem state, 0, world
+  defp next_turn({world, reducer, opts}) do
+    world = reducer.(world)
+    {world, reducer, opts}
   end
 end
