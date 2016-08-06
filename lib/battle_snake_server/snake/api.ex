@@ -1,9 +1,14 @@
 defmodule BattleSnakeServer.Snake.Api do
-  alias BattleSnake.{Snake, Move}
+  alias BattleSnake.{Snake, Move, World}
+  alias BattleSnakeServer.Snake, as: SnakeForm
+  alias BattleSnakeServer.Game
 
   use HTTPoison.Base
 
-  @spec load(BattleSnakeServer.Snake, BattleSnakeServer.Game) :: BattleSnake.Snake
+  @callback start() :: :ok | {:error, any}
+
+  @callback load(%SnakeForm{}, %Game{}) :: %Snake{}
+
   def load(form, game) do
     url = form.url <> "/start"
 
@@ -17,6 +22,8 @@ defmodule BattleSnakeServer.Snake.Api do
 
     Poison.decode!(response.body, as: %Snake{url: form.url})
   end
+
+  @callback move(%Snake{}, %World{}) :: %Move{}
 
   def move(snake, world) do
     url = snake.url <> "/move"

@@ -1,6 +1,7 @@
 defmodule BattleSnakeServer.Game do
+  @api Application.get_env(:battle_snake_server, :snake_api)
+
   alias BattleSnakeServer.Snake, as: Form
-  alias BattleSnakeServer.Snake.Api
   alias BattleSnake.{World, Snake}
 
   use BattleSnakeServer.Web, :model
@@ -63,9 +64,9 @@ defmodule BattleSnakeServer.Game do
     coords = List.duplicate(point, 3)
   end
 
-  def load_snake_form_fn(api \\ Api) do
+  def load_snake_form_fn() do
     fn form, game ->
-      snake = api.load(form, game)
+      snake = @api.load(form, game)
       snake = reset_snake(game.world, snake)
       snake = %{snake| url: form.url}
       update_in(game.world.snakes, &[snake|&1])
@@ -73,12 +74,6 @@ defmodule BattleSnakeServer.Game do
   end
 
   def reset_world(game) do
-    reset_world(game, load_snake_form_fn())
-  end
-
-  def reset_world(game, load_fn) do
-    load_fn = load_fn
-
     world = %World{
       width: game.width,
       height: game.height,
@@ -89,7 +84,7 @@ defmodule BattleSnakeServer.Game do
 
     snakes = game.snakes
 
-    game = Enum.reduce(snakes, game, load_fn)
+    game = Enum.reduce(snakes, game, load_snake_form_fn)
 
     world = World.stock_food(game.world)
 

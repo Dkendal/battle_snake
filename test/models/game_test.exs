@@ -6,11 +6,6 @@ defmodule BattleSnakeServer.GameTest do
   alias BattleSnakeServer.Snake, as: Form
   alias BattleSnake.{Snake, World}
 
-  defmodule MockApi do
-    def start, do: :ok
-    def load(_, _), do: %Snake{}
-  end
-
   describe "#table" do
     test "returns the decleration for mnesia" do
       assert Game.table == [attributes: [
@@ -78,9 +73,7 @@ defmodule BattleSnakeServer.GameTest do
         }
       }
 
-      load_fn = (fn _, game -> game end)
-
-      world = Game.reset_world(game, load_fn).world
+      world = Game.reset_world(game).world
 
       assert(
         %BattleSnake.World{
@@ -99,7 +92,7 @@ defmodule BattleSnakeServer.GameTest do
       world = %World{width: 10, height: 10}
       game = %Game{world: world}
 
-      f = Game.load_snake_form_fn(MockApi)
+      f = Game.load_snake_form_fn()
       game = f.(form, game)
 
       assert([snake] = game.world.snakes)

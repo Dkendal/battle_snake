@@ -1,4 +1,5 @@
 use Mix.Config
+config :battle_snake_server, snake_api: BattleSnakeServer.Snake.Api
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
