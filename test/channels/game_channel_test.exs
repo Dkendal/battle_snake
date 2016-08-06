@@ -26,6 +26,22 @@ defmodule BattleSnakeServer.GameChannelTest do
     end
   end
 
+  describe "PUSH stop" do
+    test "stops a running game", %{socket: socket} do
+      ref = push socket, "start"
+      assert_reply ref, :ok
+      assert_broadcast "tick", _, 500
+      ref = push socket, "stop"
+      assert_reply ref, :ok
+      refute_broadcast "tick", _, 500
+    end
+
+    test "does nothing if there is no game running", %{socket: socket} do
+      ref = push socket, "stop"
+      assert_reply ref, :ok
+    end
+  end
+
   def join(context) do
     %{game: game} = context
     {:ok, _, socket} = socket("user_id", %{})
@@ -39,7 +55,7 @@ defmodule BattleSnakeServer.GameChannelTest do
       %SnakeForm{url: "localhost:3000"}
     ]
 
-    game = %Game{snakes: snakes}
+    game = %Game{snakes: snakes, delay: 0}
     |> Game.changeset
     |> Ecto.Changeset.apply_changes
     |> Game.save

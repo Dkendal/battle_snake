@@ -30,6 +30,23 @@ defmodule BattleSnakeServer.GameChannel do
     {:reply, :ok, socket}
   end
 
+  def handle_in("stop", _, socket) do
+    case whereis(socket) do
+      nil ->
+        :ok
+      pid ->
+        GenServer.stop(pid, :normal)
+    end
+
+    {:reply, :ok, socket}
+  end
+
+  def whereis(socket) do
+    socket
+    |> name()
+    |> GenServer.whereis()
+  end
+
   # get the game by name if it's already running, or start a new game
   def game_server(socket) do
     name(socket) |> game_server(socket)
