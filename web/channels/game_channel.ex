@@ -55,7 +55,7 @@ defmodule BattleSnakeServer.GameChannel do
 
     state = {world, f, opts}
 
-    {:ok, pid} = GameServer.start_link(state)
+    {:ok, pid} = GameServer.start_link(state, name: name(socket))
 
     GameServer.resume(pid)
 
@@ -63,7 +63,16 @@ defmodule BattleSnakeServer.GameChannel do
   end
 
   def handle_in("pause", _, socket) do
+    socket
+    |> name()
+    |> GameServer.pause()
+
     {:reply, :ok, socket}
+  end
+
+  # game name
+  def name(socket) do
+    {:global, socket.topic}
   end
 
   def make_move world do

@@ -15,9 +15,20 @@ defmodule BattleSnakeServer.GameChannelTest do
     end
   end
 
+  describe "PUSH pause" do
+    test "pauses the game", %{socket: socket} do
+      ref = push socket, "start"
+      assert_reply ref, :ok
+      assert_broadcast "tick", _, 500
+      ref = push socket, "pause"
+      assert_reply ref, :ok
+      refute_broadcast "tick", _, 500
+    end
+  end
+
   def join(context) do
     %{game: game} = context
-    {:ok, _, socket} = socket("user_id", %{some: :assign})
+    {:ok, _, socket} = socket("user_id", %{})
     |> subscribe_and_join(GameChannel, "game:#{game.id}")
 
     Map.put(context, :socket, socket)

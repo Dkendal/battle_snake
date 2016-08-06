@@ -7,6 +7,10 @@ function init(gameId) {
   let channel = socket.channel(`game:${gameId}`, {});
   let gameBoard = $("#gameBoard");
 
+  function pauseGame(e) {
+    channel.push("pause", {})
+  }
+
   function startGame(e) {
     channel.push("start", {})
   }
@@ -24,6 +28,7 @@ function init(gameId) {
   }
 
   $(document).on("click", '[data-js="game.start"]', startGame);
+  $(document).on("click", '[data-js="game.pause"]', pauseGame);
   $(document).on("keydown", "body", keydownHandler);
 
   // replace the board on each tick
