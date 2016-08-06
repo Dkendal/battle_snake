@@ -59,9 +59,6 @@ defmodule BattleSnake.GameServerTest do
     end
   end
 
-  describe ".stop_game" do
-  end
-
   def self_destruct(pid) do
     # will get spammed by this
     tick = fn world ->
