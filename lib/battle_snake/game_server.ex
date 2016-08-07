@@ -19,6 +19,10 @@ defmodule BattleSnake.GameServer do
     GenServer.call(pid, :pause)
   end
 
+  def next(pid) do
+    GenServer.call(pid, :next)
+  end
+
   # Server (callbacks)
 
   # Calls

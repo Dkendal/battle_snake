@@ -62,7 +62,13 @@ defmodule BattleSnake.GameServerTest do
     end
   end
 
-  describe ".next" do
+  test ".next" do
+    {:ok, pid} = GameServer.start_link %State{world: 1, reducer: &(&1 + 1)}
+    GameServer.next(pid)
+    GenServer.stop(pid, :normal)
+  end
+
+  describe ".handle_call :next" do
     test "executes the reducer once if the game is not ended" do
       state = %State{world: 1, reducer: &(&1+1)}
 
