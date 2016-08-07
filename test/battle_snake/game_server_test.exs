@@ -92,10 +92,10 @@ defmodule BattleSnake.GameServerTest do
       state = %State{world: 1, reducer: &(&1+1)}
 
       assert(GameServer.handle_call(:next, self, {:cont, state}) ==
-       {:reply, :ok, {:suspend, %{state| world: 2}}})
+       {:reply, :ok, {:suspend, %{state| world: 2, hist: [1]}}})
 
       assert(GameServer.handle_call(:next, self, {:suspend, state}) ==
-       {:reply, :ok, {:suspend, %{state| world: 2}}})
+       {:reply, :ok, {:suspend, %{state| world: 2, hist: [1]}}})
 
       assert(GameServer.handle_call(:next, self, {:halted, state}) ==
        {:reply, :ok, {:halted, state}})

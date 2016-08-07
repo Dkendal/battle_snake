@@ -1,8 +1,10 @@
 defmodule BattleSnake.GameServer do
   use GenServer
 
+  @max_history 20
+
   defmodule State do
-    defstruct [:world, :reducer, opts: []]
+    defstruct [:world, :reducer, opts: [], hist: []]
   end
 
   # Client
@@ -52,7 +54,7 @@ defmodule BattleSnake.GameServer do
   end
 
   def handle_call(:next, _from, {_, state}) do
-    state = apply_reducer(state)
+    state = step(state)
     {:reply, :ok, {:suspend, state}}
   end
 
@@ -67,9 +69,11 @@ defmodule BattleSnake.GameServer do
     super(request, state)
   end
 
-  #
+  # Everything Else
+
   def handle_info(:tick, {:cont, state}) do
-    state = apply_reducer(state)
+    state = step(state)
+
     if done?(state) do
       {:noreply, {:halted, state}}
     else
@@ -86,6 +90,22 @@ defmodule BattleSnake.GameServer do
     {:noreply, {:halted, state}}
   end
 
+  def step(state) do
+    state
+    |> save_history()
+    |> apply_reducer()
+  end
+
+  def save_history(%{world: h} = state) do
+    update_in state.hist, fn t ->
+      [h |Enum.take(t, @max_history)]
+    end
+  end
+
+  def apply_reducer(%{world: w, reducer: f} = state) do
+    %{state| world: f.(w)}
+  end
+
   # Private
 
   defp delay(state) do
@@ -95,10 +115,6 @@ defmodule BattleSnake.GameServer do
 
   defp tick(state) do
     Process.send_after(self(), :tick, delay(state))
-  end
-
-  defp apply_reducer(state) do
-    %{state| world: state.reducer.(state.world)}
   end
 
   # check if the game is over
