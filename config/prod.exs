@@ -14,8 +14,9 @@ config :battle_snake_server, snake_api: BattleSnakeServer.Snake.Api
 # which you typically run after static files are built.
 config :battle_snake_server, BattleSnakeServer.Endpoint,
   http: [port: {:system, "PORT"}],
-  url: [host: "example.com", port: 80],
-  cache_static_manifest: "priv/static/manifest.json"
+  url: [host: {:system, "HOST"}, port: {:system, "PORT"}],
+  cache_static_manifest: "priv/static/manifest.json",
+  server: true
 
 # Do not print debug messages in production
 config :logger, level: :info
