@@ -30,6 +30,13 @@ defmodule BattleSnakeServer.GameChannel do
     {:reply, :ok, socket}
   end
 
+  def handle_in("next", _, socket) do
+    game_server(socket) |> GameServer.next()
+
+    {:reply, :ok, socket}
+  end
+
+
   def handle_in("stop", _, socket) do
     with pid when is_pid(pid) <- whereis(socket),
       GenServer.stop(pid, :normal),

@@ -49,6 +49,27 @@ defmodule BattleSnakeServer.GameChannelTest do
     end
   end
 
+  describe "PUSH next" do
+    test "steps through a single move", %{socket: socket} do
+      ref = push socket, "start"
+      ref = push socket, "pause"
+
+      # flush all messages
+      receive do
+        _ -> :ok
+      after 10 -> :ok
+      end
+
+      ref = push socket, "next"
+      assert_broadcast "tick", _
+    end
+
+    test "starts a new game if none are running", %{socket: socket} do
+      ref = push socket, "next"
+      assert_broadcast "tick", _
+    end
+  end
+
   def join(context) do
     %{game: game} = context
     {:ok, _, socket} = socket("user_id", %{})
