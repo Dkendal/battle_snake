@@ -19,6 +19,10 @@ function init(gameId) {
     channel.push("stop", {})
   }
 
+  function nextTurn(e) {
+    channel.push("next", {})
+  }
+
   function handleTick({html}) {
     gameBoard.html(html);
   }
@@ -34,12 +38,19 @@ function init(gameId) {
       case "q":
         stopGame(event);
         break;
+      case "j":
+        nextTurn(event);
+        break;
+      case "ArrowRight":
+        nextTurn(event);
+        break;
     }
   }
 
   $(document).on("click", '[data-js="game.start"]', startGame);
   $(document).on("click", '[data-js="game.pause"]', pauseGame);
   $(document).on("click", '[data-js="game.stop"]', stopGame);
+  $(document).on("click", '[data-js="game.next"]', nextTurn);
   $(document).on("keydown", "body", keydownHandler);
 
   // replace the board on each tick
