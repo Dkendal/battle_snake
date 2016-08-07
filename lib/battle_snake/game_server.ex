@@ -2,7 +2,7 @@ defmodule BattleSnake.GameServer do
   use GenServer
 
   defmodule State do
-    defstruct [:world, :reducer, :opts]
+    defstruct [:world, :reducer, opts: []]
   end
 
   # Client
@@ -43,6 +43,15 @@ defmodule BattleSnake.GameServer do
     {:reply, :ok, state}
   end
 
+  def handle_call(:next, _from, {:halted, state}) do
+    {:reply, :ok, {:halted, state}}
+  end
+
+  def handle_call(:next, _from, {_, state}) do
+    state = next_turn(state)
+    {:reply, :ok, {:suspend, state}}
+  end
+
   def handle_call(request, from, state) do
     # Call the default implementation from GenServer
     super(request, from, state)
@@ -54,6 +63,7 @@ defmodule BattleSnake.GameServer do
     super(request, state)
   end
 
+  #
   def handle_info(:tick, {:cont, state}) do
     state = next_turn(state)
     if done?(state) do

@@ -1,5 +1,6 @@
 defmodule BattleSnake.GameServerTest do
   alias BattleSnake.GameServer
+  alias BattleSnake.GameServer.State
   alias BattleSnake.World
 
   use ExUnit.Case, async: true
@@ -58,6 +59,21 @@ defmodule BattleSnake.GameServerTest do
       :ok = GameServer.resume(pid)
       :ok = GameServer.pause(pid)
       :ok = GameServer.pause(pid)
+    end
+  end
+
+  describe ".next" do
+    test "executes the reducer once if the game is not ended" do
+      state = %State{world: 1, reducer: &(&1+1)}
+
+      assert(GameServer.handle_call(:next, self, {:cont, state}) ==
+       {:reply, :ok, {:suspend, %{state| world: 2}}})
+
+      assert(GameServer.handle_call(:next, self, {:suspend, state}) ==
+       {:reply, :ok, {:suspend, %{state| world: 2}}})
+
+      assert(GameServer.handle_call(:next, self, {:halted, state}) ==
+       {:reply, :ok, {:halted, state}})
     end
   end
 
