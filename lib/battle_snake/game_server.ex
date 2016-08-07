@@ -52,7 +52,7 @@ defmodule BattleSnake.GameServer do
   end
 
   def handle_call(:next, _from, {_, state}) do
-    state = next_turn(state)
+    state = apply_reducer(state)
     {:reply, :ok, {:suspend, state}}
   end
 
@@ -69,7 +69,7 @@ defmodule BattleSnake.GameServer do
 
   #
   def handle_info(:tick, {:cont, state}) do
-    state = next_turn(state)
+    state = apply_reducer(state)
     if done?(state) do
       {:noreply, {:halted, state}}
     else
@@ -97,11 +97,8 @@ defmodule BattleSnake.GameServer do
     Process.send_after(self(), :tick, delay(state))
   end
 
-  defp next_turn(state) do
-    reducer = state.reducer
-    world = state.world
-    world = reducer.(world)
-    %{state| world: world}
+  defp apply_reducer(state) do
+    %{state| world: state.reducer.(state.world)}
   end
 
   # check if the game is over
