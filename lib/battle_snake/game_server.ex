@@ -25,6 +25,10 @@ defmodule BattleSnake.GameServer do
     GenServer.call(pid, :next)
   end
 
+  def prev(pid) do
+    GenServer.call(pid, :prev)
+  end
+
   # Server (callbacks)
 
   # Calls
@@ -55,6 +59,15 @@ defmodule BattleSnake.GameServer do
 
   def handle_call(:next, _from, {_, state}) do
     state = step(state)
+    {:reply, :ok, {:suspend, state}}
+  end
+
+  def handle_call(:prev, _from, {:halted, state}) do
+    {:reply, :ok, {:halted, state}}
+  end
+
+  def handle_call(:prev, _from, {_, state}) do
+    state = step_back(state)
     {:reply, :ok, {:suspend, state}}
   end
 
@@ -94,6 +107,13 @@ defmodule BattleSnake.GameServer do
     state
     |> save_history()
     |> apply_reducer()
+  end
+
+  def step_back(state) do
+    [h|t] = state.hist
+
+    state = put_in state.world, h
+    put_in state.hist, t
   end
 
   def save_history(%{world: h} = state) do
