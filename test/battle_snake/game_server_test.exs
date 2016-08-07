@@ -125,6 +125,12 @@ defmodule BattleSnake.GameServerTest do
   end
 
   describe ".step_back" do
+    test "does nothing when the history is empty" do
+      state = %State{world: 1, hist: []}
+
+      assert GameServer.step_back(state) == state
+    end
+
     test "rewinds the state to the last move" do
       state = %State{world: 10, hist: [9, 8, 7]}
 
