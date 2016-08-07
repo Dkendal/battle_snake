@@ -45,6 +45,7 @@ defmodule BattleSnakeServer.Mixfile do
     [
       {:cowboy, "~> 1.0"},
       {:ecto, "~> 2.0.2"},
+      {:exrm, "~> 1.0.0"},
       {:exvcr, "0.7.0"},
       {:gettext, "~> 0.11"},
       {:httpoison, "~> 0.9.0"},
