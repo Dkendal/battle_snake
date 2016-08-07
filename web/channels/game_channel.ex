@@ -45,6 +45,14 @@ defmodule BattleSnakeServer.GameChannel do
     {:reply, :ok, socket}
   end
 
+  def handle_in("prev", _, socket) do
+    with pid when is_pid(pid) <- whereis(socket),
+      GameServer.prev(pid),
+      do: :ok
+
+    {:reply, :ok, socket}
+  end
+
   def whereis(socket) do
     socket
     |> name()

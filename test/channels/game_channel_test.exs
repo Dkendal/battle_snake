@@ -15,6 +15,19 @@ defmodule BattleSnakeServer.GameChannelTest do
     end
   end
 
+  describe "PUSH prev" do
+    test "responds with ok", %{socket: socket} do
+      ref = push socket, "start"
+      ref = push socket, "prev"
+      assert_reply ref, :ok
+    end
+
+    test "does nothing if the game there is no running game", %{socket: socket} do
+      ref = push socket, "prev"
+      assert_reply ref, :ok
+    end
+  end
+
   describe "PUSH pause" do
     test "pauses the game", %{socket: socket} do
       ref = push socket, "start"
@@ -53,13 +66,7 @@ defmodule BattleSnakeServer.GameChannelTest do
     test "steps through a single move", %{socket: socket} do
       ref = push socket, "start"
       ref = push socket, "pause"
-
-      # flush all messages
-      receive do
-        _ -> :ok
-      after 10 -> :ok
-      end
-
+      flush()
       ref = push socket, "next"
       assert_broadcast "tick", _
     end
@@ -89,5 +96,13 @@ defmodule BattleSnakeServer.GameChannelTest do
     |> Game.save
 
     Map.put(context, :game, game)
+  end
+
+  def flush() do
+    # flush all messages
+    receive do
+      _ -> :ok
+    after 10 -> :ok
+    end
   end
 end

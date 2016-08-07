@@ -102,6 +102,37 @@ defmodule BattleSnake.GameServerTest do
     end
   end
 
+  describe ".handle_call :prev" do
+    setup do
+      state = %State{world: 10, hist: [9, 8, 7]}
+      prev = %State{world: 9, hist: [8, 7]}
+
+      %{state: state, prev: prev}
+    end
+
+    test "does nothing when the server is stopped", %{state: state} do
+      assert GameServer.handle_call(:prev, self, {:halted, state}) ==
+        {:reply, :ok, {:halted, state}}
+    end
+
+    test "rewinds to the last move and pauses", %{state: state, prev: prev} do
+      assert GameServer.handle_call(:prev, self, {:suspend, state}) ==
+        {:reply, :ok, {:suspend, prev}}
+
+      assert GameServer.handle_call(:prev, self, {:cont, state}) ==
+        {:reply, :ok, {:suspend, prev}}
+    end
+  end
+
+  describe ".step_back" do
+    test "rewinds the state to the last move" do
+      state = %State{world: 10, hist: [9, 8, 7]}
+
+      assert GameServer.step_back(state) ==
+        %State{world: 9, hist: [8, 7]}
+    end
+  end
+
   def self_destruct(pid) do
     # will get spammed by this
     tick = fn world ->
