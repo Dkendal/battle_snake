@@ -23,3 +23,5 @@ erl_crash.dump
 # variables.
 /config/prod.secret.exs
 Mnesia.nonode@nohost
+
+rel
