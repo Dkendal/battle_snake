@@ -18,7 +18,7 @@ defmodule BattleSnake.GameServerTest do
   end
 
   describe ".resume" do
-    test "returns the world", %{pid: pid} do
+    test "returns :ok", %{pid: pid} do
       assert :ok = GameServer.resume(pid)
     end
 
@@ -31,6 +31,25 @@ defmodule BattleSnake.GameServerTest do
     test "is idempotent", %{pid: pid} do
       :ok = GameServer.resume(pid)
       :ok = GameServer.resume(pid)
+    end
+  end
+
+  describe ".handle_call :resume" do
+    test "sends a tick message after the delay" do
+      state = %State{opts: [delay: 0]}
+
+      assert(GameServer.handle_call(:resume, self, {:suspend, state}) ==
+       {:reply, :ok, {:cont, state}})
+
+      assert_receive :tick
+    end
+
+    test "does nothing when the game is already running or stopped" do
+      assert(GameServer.handle_call(:resume, self, {:cont, 1}) ==
+       {:reply, :ok, {:cont, 1}})
+
+      assert(GameServer.handle_call(:resume, self, {:halted, 1}) ==
+       {:reply, :ok, {:halted, 1}})
     end
   end
 
