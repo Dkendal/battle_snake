@@ -4,7 +4,20 @@ defmodule BattleSnake.GameServer do
   @max_history 20
 
   defmodule State do
-    defstruct [:world, :reducer, opts: [], hist: []]
+    defstruct [
+      :world,
+      reducer: &State.identity/1,
+      on_change: &State.identity/1,
+      opts: [],
+      hist: []
+    ]
+
+    def change(t) do
+      t.on_change.(t)
+      t
+    end
+
+    def identity(x), do: x
   end
 
   # Client
@@ -41,7 +54,6 @@ defmodule BattleSnake.GameServer do
     {:reply, :ok, state}
   end
 
-
   def handle_call(:resume, _from, {:suspend, state}) do
     tick(state)
     {:reply, :ok, {:cont, state}}
@@ -66,8 +78,9 @@ defmodule BattleSnake.GameServer do
     {:reply, :ok, {:halted, state}}
   end
 
-  def handle_call(:prev, _from, {_, state}) do
-    state = step_back(state)
+  def handle_call(:prev, from, {_, state}) do
+    state = state
+    |> step_back()
     {:reply, :ok, {:suspend, state}}
   end
 
@@ -107,13 +120,20 @@ defmodule BattleSnake.GameServer do
     state
     |> save_history()
     |> apply_reducer()
+    |> State.change()
   end
 
+  def step_back(%{hist: []} = s), do: s
   def step_back(state) do
-    [h|t] = state.hist
+    state
+    |> prev_turn
+    |> State.change()
+  end
 
+  def prev_turn(state) do
+    [h|t] = state.hist
     state = put_in state.world, h
-    put_in state.hist, t
+    put_in(state.hist, t)
   end
 
   def save_history(%{world: h} = state) do

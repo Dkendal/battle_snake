@@ -97,11 +97,13 @@ defmodule BattleSnakeServer.GameChannel do
     ]
 
     reducer = reducer(socket)
+    on_change = draw(socket)
 
     state = %GameServer.State{
       world: world,
       reducer: reducer,
-      opts: opts
+      opts: opts,
+      on_change: on_change,
     }
   end
 
@@ -124,7 +126,7 @@ defmodule BattleSnakeServer.GameChannel do
   end
 
   defp draw(socket) do
-    fn (world) ->
+    fn (%{world: world}) ->
       html = Phoenix.View.render_to_string(
         BattleSnakeServer.PlayView,
         "board.html",
@@ -135,11 +137,7 @@ defmodule BattleSnakeServer.GameChannel do
   end
 
   def reducer(socket) do
-    draw_fun = draw(socket)
-
     fn world ->
-      draw_fun.(world)
-
       world = update_in(world.turn, &(&1+1))
 
       world
