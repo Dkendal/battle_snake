@@ -68,6 +68,7 @@ defmodule BattleSnakeServer.GameTest do
       game = %Game{
         width: 15,
         height: 15,
+        max_food: 1,
         snakes: [
           %Form{
             url: "localhost:4000"
@@ -85,8 +86,8 @@ defmodule BattleSnakeServer.GameTest do
         %BattleSnake.World{
           width: 15,
           height: 15,
-          food: [_, _],
-          max_food: 2,
+          food: [_],
+          max_food: 1,
         } = world
       )
     end
