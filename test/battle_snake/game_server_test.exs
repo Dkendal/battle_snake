@@ -5,79 +5,52 @@ defmodule BattleSnake.GameServerTest do
 
   use ExUnit.Case, async: true
 
-  @state %State{world: 10, hist: [9, 8, 7]}
-  @prev %State{world: 9, hist: [8, 7]}
+  @opts [delay: 0]
+  @state %State{world: 10, hist: [9, 8, 7], opts: @opts}
+  @prev %State{world: 9, hist: [8, 7], opts: @opts}
   @empty_state %State{world: 1, hist: []}
-
-  def self_destruct(pid) do
-    # will get spammed by this
-    tick = fn world ->
-      send pid, {:tick, world.turn}
-    end
-
-    # pause the game after first tick
-    fn world ->
-      world = update_in world.turn, & &1+1
-
-      tick.(world)
-
-      this = self
-
-      spawn_link fn ->
-        GameServer.pause(this)
-      end
-
-      world
-    end
-  end
-
-  def phone_home(pid) do
-    fn world ->
-      world = update_in world.turn, & &1+1
-      send pid, {:turn, world.turn}
-
-      world
-    end
-  end
 
   def ping(pid), do: &send(pid, {:ping, &1})
 
-  setup do
-    world = %World{}
-    objective = fn _ -> false end
-    opts = [delay: 0, objective: objective]
-    f = phone_home(self)
-
-    state = %GameServer.State{world: world, reducer: f, opts: opts}
-    {:ok, pid} = GameServer.start_link(state)
-
-    %{pid: pid}
-  end
-
-  describe ".resume" do
-    test "returns :ok", %{pid: pid} do
-      assert :ok = GameServer.resume(pid)
+  describe ".handle_info :tick" do
+    setup do
+      reducer = & &1 + 1
+      halt = fn _ -> true end
+      cont = fn _ -> false end
+      finished = %{@state| reducer: reducer, opts: [objective: halt]}
+      running = %{@state| reducer: reducer, opts: [objective: cont, delay: 0]}
+      %{finished: finished, running: running}
     end
 
-    test "calls the tick function repeatably", %{pid: pid} do
-      GameServer.resume(pid)
-      assert_receive {:turn, 1}, 100
-      assert_receive {:turn, 2}, 100
+    test "stops the game if the objective is met", %{finished: state} do
+      assert({:noreply, {:halted, _}} =
+       GameServer.handle_info(:tick, {:cont, state}))
     end
 
-    test "is idempotent", %{pid: pid} do
-      :ok = GameServer.resume(pid)
-      :ok = GameServer.resume(pid)
+    test "executes the reducer", %{running: state} do
+      assert({_, {_, %{world: 11, hist: [10, 9, 8, 7]}}} =
+       GameServer.handle_info(:tick, {:cont, state}))
+    end
+
+    test "sends a tick message to itself if the game isn't over", %{running: state} do
+      GameServer.handle_info(:tick, {:cont, state})
+      assert_receive :tick
+    end
+
+    test "maintains the running state", %{running: state} do
+      assert({:noreply, {:cont, _}} =
+       GameServer.handle_info(:tick, {:cont, state}))
     end
   end
 
   describe ".handle_call :resume" do
-    test "sends a tick message after the delay" do
-      state = %State{opts: [delay: 0]}
+    test "returns ok and sets the state to :cont" do
+      assert(GameServer.handle_call(:resume, self, {:suspend, @state}) ==
+       {:reply, :ok, {:cont, @state}})
+    end
 
-      assert(GameServer.handle_call(:resume, self, {:suspend, state}) ==
-       {:reply, :ok, {:cont, state}})
-
+    test "sends a tick message to itself after the caller" do
+      GameServer.handle_call(:resume, self, {:suspend, @state})
       assert_receive :tick
     end
 
@@ -90,38 +63,19 @@ defmodule BattleSnake.GameServerTest do
     end
   end
 
-  describe ".pause" do
-    test "stops the tick function from being called" do
-      world = %World{}
-      objective = fn _ -> false end
-      opts = [delay: 0, objective: objective]
-      f = self_destruct(self)
-
-      state = %GameServer.State{world: world, reducer: f, opts: opts}
-      {:ok, pid} = GameServer.start_link(state)
-
-      :ok = GameServer.resume(pid)
-
-      assert_receive {:tick, 1}, 100
-      refute_receive {:tick, _}, 100
-
-      :ok = GameServer.resume(pid)
-
-      assert_receive {:tick, 2}, 100
-      refute_receive _, 100
+  describe ".handle_call :pause" do
+    test "suspend's running games" do
+      assert(GameServer.handle_call(:pause, self, {:cont, @state}) ==
+       {:reply, :ok, {:suspend, @state}})
     end
 
-    test "is idempotent", %{pid: pid} do
-      :ok = GameServer.resume(pid)
-      :ok = GameServer.pause(pid)
-      :ok = GameServer.pause(pid)
-    end
-  end
+    test "does nothing when the game is anything else" do
+      assert(GameServer.handle_call(:pause, self, {:suspend, @state}) ==
+       {:reply, :ok, {:suspend, @state}})
 
-  test ".next" do
-    {:ok, pid} = GameServer.start_link %State{world: 1, reducer: &(&1 + 1)}
-    GameServer.next(pid)
-    GenServer.stop(pid, :normal)
+      assert(GameServer.handle_call(:pause, self, {:halted, @state}) ==
+       {:reply, :ok, {:halted, @state}})
+    end
   end
 
   describe ".handle_call :next" do
@@ -133,24 +87,26 @@ defmodule BattleSnake.GameServerTest do
 
       assert(GameServer.handle_call(:next, self, {:suspend, state}) ==
        {:reply, :ok, {:suspend, %{state| world: 2, hist: [1]}}})
+    end
 
-      assert(GameServer.handle_call(:next, self, {:halted, state}) ==
-       {:reply, :ok, {:halted, state}})
+    test "does nothing when the game is stopped" do
+      assert(GameServer.handle_call(:next, self, {:halted, @state}) ==
+       {:reply, :ok, {:halted, @state}})
     end
   end
 
   describe ".handle_call :prev" do
     test "does nothing when the server is stopped" do
-      assert GameServer.handle_call(:prev, self, {:halted, @state}) ==
-        {:reply, :ok, {:halted, @state}}
+      assert(GameServer.handle_call(:prev, self, {:halted, @state}) ==
+        {:reply, :ok, {:halted, @state}})
     end
 
     test "rewinds to the last move and pauses" do
-      assert GameServer.handle_call(:prev, self, {:suspend, @state}) ==
-        {:reply, :ok, {:suspend, @prev}}
+      assert(GameServer.handle_call(:prev, self, {:suspend, @state}) ==
+       {:reply, :ok, {:suspend, @prev}})
 
-      assert GameServer.handle_call(:prev, self, {:cont, @state}) ==
-        {:reply, :ok, {:suspend, @prev}}
+      assert(GameServer.handle_call(:prev, self, {:cont, @state}) ==
+        {:reply, :ok, {:suspend, @prev}})
     end
   end
 
