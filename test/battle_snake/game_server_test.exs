@@ -5,6 +5,43 @@ defmodule BattleSnake.GameServerTest do
 
   use ExUnit.Case, async: true
 
+  @state %State{world: 10, hist: [9, 8, 7]}
+  @prev %State{world: 9, hist: [8, 7]}
+  @empty_state %State{world: 1, hist: []}
+
+  def self_destruct(pid) do
+    # will get spammed by this
+    tick = fn world ->
+      send pid, {:tick, world.turn}
+    end
+
+    # pause the game after first tick
+    fn world ->
+      world = update_in world.turn, & &1+1
+
+      tick.(world)
+
+      this = self
+
+      spawn_link fn ->
+        GameServer.pause(this)
+      end
+
+      world
+    end
+  end
+
+  def phone_home(pid) do
+    fn world ->
+      world = update_in world.turn, & &1+1
+      send pid, {:turn, world.turn}
+
+      world
+    end
+  end
+
+  def ping(pid), do: &send(pid, {:ping, &1})
+
   setup do
     world = %World{}
     objective = fn _ -> false end
@@ -103,70 +140,36 @@ defmodule BattleSnake.GameServerTest do
   end
 
   describe ".handle_call :prev" do
-    setup do
-      state = %State{world: 10, hist: [9, 8, 7]}
-      prev = %State{world: 9, hist: [8, 7]}
-
-      %{state: state, prev: prev}
+    test "does nothing when the server is stopped" do
+      assert GameServer.handle_call(:prev, self, {:halted, @state}) ==
+        {:reply, :ok, {:halted, @state}}
     end
 
-    test "does nothing when the server is stopped", %{state: state} do
-      assert GameServer.handle_call(:prev, self, {:halted, state}) ==
-        {:reply, :ok, {:halted, state}}
-    end
+    test "rewinds to the last move and pauses" do
+      assert GameServer.handle_call(:prev, self, {:suspend, @state}) ==
+        {:reply, :ok, {:suspend, @prev}}
 
-    test "rewinds to the last move and pauses", %{state: state, prev: prev} do
-      assert GameServer.handle_call(:prev, self, {:suspend, state}) ==
-        {:reply, :ok, {:suspend, prev}}
-
-      assert GameServer.handle_call(:prev, self, {:cont, state}) ==
-        {:reply, :ok, {:suspend, prev}}
+      assert GameServer.handle_call(:prev, self, {:cont, @state}) ==
+        {:reply, :ok, {:suspend, @prev}}
     end
   end
 
   describe ".step_back" do
     test "does nothing when the history is empty" do
-      state = %State{world: 1, hist: []}
-
-      assert GameServer.step_back(state) == state
+      assert GameServer.step_back(@empty_state) == @empty_state
     end
 
     test "rewinds the state to the last move" do
-      state = %State{world: 10, hist: [9, 8, 7]}
-
-      assert GameServer.step_back(state) ==
-        %State{world: 9, hist: [8, 7]}
-    end
-  end
-
-  def self_destruct(pid) do
-    # will get spammed by this
-    tick = fn world ->
-      send pid, {:tick, world.turn}
+      assert GameServer.step_back(@state) == @prev
     end
 
-    # pause the game after first tick
-    fn world ->
-      world = update_in world.turn, & &1+1
+    test "calls the on_change function" do
+      state = %{@state| on_change: ping(self)}
+      prev = %{@prev| on_change: ping(self)}
 
-      tick.(world)
+      GameServer.step_back(state)
 
-      this = self
-
-      spawn_link fn ->
-        GameServer.pause(this)
-      end
-
-      world
-    end
-  end
-
-  def phone_home(pid) do
-    fn world ->
-      world = update_in world.turn, & &1+1
-      send pid, {:turn, world.turn}
-
-      world
+      assert_receive {:ping, ^prev}
     end
   end
 end
