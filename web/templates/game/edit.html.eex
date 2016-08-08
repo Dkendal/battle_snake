@@ -19,6 +19,11 @@
   <%= number_input f, :delay %>
 </div>
 
+<div>
+  <%= label f, :max_food %>
+  <%= number_input f, :max_food %>
+</div>
+
 <%= inputs_for f, :snakes, [append: [snake]], fn g -> %>
 <div>
   <%= label g, :url %>

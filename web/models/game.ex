@@ -6,7 +6,7 @@ defmodule BattleSnakeServer.Game do
 
   use BattleSnakeServer.Web, :model
 
-  @permitted [:height, :width, :delay]
+  @permitted [:height, :width, :delay, :max_food]
 
   schema "game" do
     embeds_many :snakes, Form
@@ -14,6 +14,7 @@ defmodule BattleSnakeServer.Game do
     field :width, :integer, default: 20
     field :height, :integer, default: 20
     field :delay, :integer, default: 300
+    field :max_food, :integer, default: 1
   end
 
   def fields, do: __schema__(:fields)
