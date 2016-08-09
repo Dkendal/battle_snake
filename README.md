@@ -1,5 +1,5 @@
 # BattleSnakeServer
-
+![](http://imgur.com/Ytvm290.jpg)
 ## Quick Start
 
   * Install dependencies with `mix deps.get`
