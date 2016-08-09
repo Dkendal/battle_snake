@@ -1,5 +1,7 @@
-# BattleSnakeServer
-![](http://imgur.com/Ytvm290.jpg)
+# Battle Snake Server ![Build Status](https://travis-ci.org/Dkendal/battle_snake_server.svg?branch=master) [![Coverage Status](https://coveralls.io/repos/github/Dkendal/battle_snake_server/badge.svg?branch=master)](https://coveralls.io/github/Dkendal/battle_snake_server?branch=master)
+
+![it's just a prank bro](http://imgur.com/Ytvm290.jpg)
+
 ## Quick Start
 
   * Install dependencies with `mix deps.get`
