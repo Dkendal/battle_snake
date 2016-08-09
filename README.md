@@ -11,7 +11,7 @@
 
 ## Perquisites
   * Erlang OTP 18
-  * Elixir 1.2
+  * Elixir 1.3
 
   I suggest managing your OTP version with
   [evm](https://github.com/robisonsantos/evm) and your elixir version with
