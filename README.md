@@ -10,3 +10,7 @@
 ## Perquisites
   * Erlang OTP 18
   * Elixir 1.2
+
+  I suggest managing your OTP version with
+  [evm](https://github.com/robisonsantos/evm) and your elixir version with
+  [kiex](https://github.com/taylor/kie://github.com/taylor/kiex)
