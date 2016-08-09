@@ -9,4 +9,8 @@ otp_release:
 env:
   - MIX_ENV=test
 
+cache:
+  directories:
+    - ./deps
+
 script: mix coveralls.travis
