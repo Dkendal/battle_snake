@@ -12,5 +12,6 @@ env:
 cache:
   directories:
     - ./deps
+    - ./_build
 
 script: mix coveralls.travis
