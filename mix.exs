@@ -10,6 +10,7 @@ defmodule BattleSnakeServer.Mixfile do
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      preferred_cli_env: preferred_cli_env,
+     test_coverage: [tool: ExCoveralls],
      deps: deps()]
   end
 
@@ -45,7 +46,14 @@ defmodule BattleSnakeServer.Mixfile do
 
   def preferred_cli_env do
     [
-      vcr: :test, "vcr.delete": :test, "vcr.check": :test, "vcr.show": :test
+      vcr: :test,
+      "vcr.delete": :test,
+      "vcr.check": :test,
+      "vcr.show": :test,
+      "coveralls": :test,
+      "coveralls.detail": :test,
+      "coveralls.post": :test,
+      "coveralls.html": :test,
     ]
   end
 
@@ -56,6 +64,7 @@ defmodule BattleSnakeServer.Mixfile do
     [
       {:cowboy, "~> 1.0"},
       {:ecto, "~> 2.0.2"},
+      {:excoveralls, "~> 0.5", only: :test},
       {:exrm, "~> 1.0.0"},
       {:exvcr, "0.7.0", only: :test},
       {:gettext, "~> 0.11"},
