@@ -92,7 +92,7 @@ defmodule BattleSnakeServer.Game do
   end
 
   def set_id(changeset, nil) do
-    id = Enum.join(Tuple.to_list(:erlang.now), "-")
+    id = to_string DateTime.to_unix(DateTime.utc_now)
     put_change(changeset, :id, id)
   end
 
