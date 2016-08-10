@@ -1,5 +1,5 @@
 defimpl Poison.Encoder, for: BattleSnake.World do
-  alias BattleSnake.{Board, Point, World}
+  alias BattleSnake.{Board, World}
 
   def encode(world, opts) do
     attrs = [

@@ -23,8 +23,9 @@ defmodule BattleSnakeServer.Game do
   end
 
   def new_coords(%World{} = world) do
-    point = World.rand_unoccupied_space(world)
-    coords = List.duplicate(point, 3)
+    world
+    |> World.rand_unoccupied_space()
+    |> List.duplicate(3)
   end
 
   def load_snake_form_fn() do

@@ -50,7 +50,7 @@ defmodule BattleSnake.Snake do
     acc
   end
 
-  def resolve_head_to_head(snakes, acc) do
+  def resolve_head_to_head(snakes, _acc) do
     snakes
     |> Enum.group_by(& hd(&1.coords))
     |> Enum.map(fn

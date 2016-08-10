@@ -1,6 +1,4 @@
 defmodule BattleSnake.Board do
-  alias BattleSnake.{Point}
-
   def height(board) do
     length board
   end

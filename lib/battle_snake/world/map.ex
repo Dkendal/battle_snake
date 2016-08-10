@@ -8,7 +8,7 @@ defmodule BattleSnake.World.Map do
       put_in acc[name], snake
     end
 
-    world = put_in world[:snake_map], snake_map
+    put_in world[:snake_map], snake_map
   end
 
   def set_objects world do
