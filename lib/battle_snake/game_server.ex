@@ -78,7 +78,7 @@ defmodule BattleSnake.GameServer do
     {:reply, :ok, {:halted, state}}
   end
 
-  def handle_call(:prev, from, {_, state}) do
+  def handle_call(:prev, _from, {_, state}) do
     state = state
     |> step_back()
     {:reply, :ok, {:suspend, state}}

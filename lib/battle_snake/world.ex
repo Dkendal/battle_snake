@@ -1,5 +1,5 @@
 defmodule BattleSnake.World do
-  alias BattleSnake.{Snake, Board, Point}
+  alias BattleSnake.{Snake, Point}
 
   defstruct [
     food: [],
@@ -35,7 +35,7 @@ defmodule BattleSnake.World do
     end
   end
 
-  def tick(%{"snakes" => []} = world, previous) do
+  def tick(%{"snakes" => []}, _) do
     :ok
   end
 
@@ -113,7 +113,7 @@ defmodule BattleSnake.World do
   end
 
   def grow_snakes world do
-    world = update_in world.snakes, fn snakes ->
+    update_in world.snakes, fn snakes ->
       for snake <- snakes do
         increase = grew(world, snake)
         Snake.grow(snake, increase)
@@ -159,11 +159,11 @@ defmodule BattleSnake.World do
   end
 
   def cols(world) do
-    cols = 0..(world.width - 1)
+    0..(world.width - 1)
   end
 
   def rows(world) do
-    rows = 0..(world.height - 1)
+    0..(world.height - 1)
   end
 
   def map(world, f) do
