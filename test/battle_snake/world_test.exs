@@ -1,6 +1,5 @@
 defmodule BattleSnake.WorldTest do
   alias BattleSnake.{World, Point, Snake}
-  alias BattleSnake.Point, as: P
   use ExUnit.Case, async: true
   use Property
 
