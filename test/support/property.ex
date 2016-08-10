@@ -3,11 +3,24 @@ defmodule Property do
   # -define(DELAY(X), fun() -> X end).
   # -define(LAZY(X), proper_types:lazy(?DELAY(X))).
   # -define(SIZED(SizeArg,Gen), proper_types:sized(fun(SizeArg) -> Gen end)).
+
   # -define(LET(X,RawType,Gen), proper_types:bind(RawType,fun(X) -> Gen end,false)).
+  def let(raw_type, gen) do
+    :proper_types.bind(raw_type, gen, false)
+  end
+
   # -define(SHRINK(Gen,AltGens),
+  def shrink(gen, alt_gens) do
+    :proper_types.shrinkwith(fn -> gen end, fn -> alt_gens end)
+  end
+
   #  proper_types:shrinkwith(?DELAY(Gen),?DELAY(AltGens))).
+
   # -define(LETSHRINK(Xs,RawType,Gen),
-  #  proper_types:bind(RawType,fun(Xs) -> Gen end,true)).
+  def letshrink(raw_type, gen) do
+    :proper_types.bind(raw_type, gen, true)
+  end
+
   # -define(SUCHTHAT(X,RawType,Condition),
   #  proper_types:add_constraint(RawType,fun(X) -> Condition end,true)).
   # -define(SUCHTHATMAYBE(X,RawType,Condition),
@@ -24,9 +37,6 @@ defmodule Property do
       case contents do
         [do: block] ->
           quote do
-            import :proper
-            import :proper_types
-
             property = fn ->
               unquote(block)
             end
@@ -71,8 +81,11 @@ defmodule Property do
 
   defmacro __using__(_) do
     quote do
+      import :proper
+      import :proper_types
       import Property
       require Property
+      import Types
     end
   end
 end
