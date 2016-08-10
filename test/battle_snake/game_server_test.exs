@@ -1,7 +1,6 @@
 defmodule BattleSnake.GameServerTest do
   alias BattleSnake.GameServer
   alias BattleSnake.GameServer.State
-  alias BattleSnake.World
 
   use ExUnit.Case, async: true
 
