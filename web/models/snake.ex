@@ -1,6 +1,11 @@
 defmodule BattleSnakeServer.Snake do
   use BattleSnakeServer.Web, :model
 
+  @type t :: %__MODULE__{
+    url: String.t,
+    delete: boolean,
+  }
+
   schema "snake" do
     field :url
     field :delete, :boolean, virtual: true
