@@ -75,6 +75,7 @@ defmodule BattleSnakeServer.Mixfile do
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:phoenix_pubsub, "~> 1.0"},
       {:reprise, "~> 0.5.0", only: :dev},
+      {:proper, github: "manopapad/proper", only: :test},
     ]
   end
 end
