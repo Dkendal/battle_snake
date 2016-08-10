@@ -1,7 +1,7 @@
 defmodule BattleSnakeServer.GameController do
   use BattleSnakeServer.Web, :controller
 
-  alias BattleSnakeServer.{Game, World}
+  alias BattleSnakeServer.Game
 
   def index(conn, _params) do
     games = Game.all
@@ -47,7 +47,7 @@ defmodule BattleSnakeServer.GameController do
     redirect(conn, to: game_path(conn, :edit, game))
   end
 
-  def delete(conn, %{"id" => id}) do
+  def delete(_conn, %{"id" => _id}) do
   end
 
   def create_params(params) do

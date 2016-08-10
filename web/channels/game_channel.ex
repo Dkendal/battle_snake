@@ -1,12 +1,12 @@
 defmodule BattleSnakeServer.GameChannel do
   @api Application.get_env(:battle_snake_server, :snake_api)
 
-  alias BattleSnake.{Snake, World, GameServer}
+  alias BattleSnake.{World, GameServer}
   alias BattleSnakeServer.{Game}
 
   use BattleSnakeServer.Web, :channel
 
-  def join("game:" <> game_id, payload, socket) do
+  def join("game:" <> _id, payload, socket) do
     if authorized?(payload) do
       {:ok, socket}
     else
@@ -96,12 +96,11 @@ defmodule BattleSnakeServer.GameChannel do
       objective: &BattleSnake.WinConditions.single_player/1
     ]
 
-    reducer = reducer(socket)
     on_change = draw(socket)
 
-    state = %GameServer.State{
+    %GameServer.State{
       world: world,
-      reducer: reducer,
+      reducer: reducer(),
       opts: opts,
       on_change: on_change,
     }
@@ -136,7 +135,7 @@ defmodule BattleSnakeServer.GameChannel do
     end
   end
 
-  def reducer(socket) do
+  def reducer do
     fn world ->
       world = update_in(world.turn, &(&1+1))
 
