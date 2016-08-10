@@ -53,7 +53,6 @@ defmodule BattleSnake.WorldTest do
   describe "#clean_up_dead" do
     test "removes any snakes that die in head to heads", %{world: world} do
       snake = %Snake{coords: [%Point{y: 5, x: 5}]}
-      snake = %Snake{coords: [%Point{y: 5, x: 5}]}
 
       world = put_in world.snakes, [snake, snake]
 
