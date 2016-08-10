@@ -1,4 +1,5 @@
 defmodule Property do
+  ExUnit.plural_rule("property", "properties")
   # -define(FORCE(X), (X)()).
   # -define(DELAY(X), fun() -> X end).
   # -define(LAZY(X), proper_types:lazy(?DELAY(X))).
