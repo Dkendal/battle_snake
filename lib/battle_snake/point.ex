@@ -1,4 +1,9 @@
 defmodule BattleSnake.Point do
+  @type t :: %__MODULE__{
+    x: integer,
+    y: integer,
+  }
+
   defstruct [:x, :y]
 
   def sub(a, b) do

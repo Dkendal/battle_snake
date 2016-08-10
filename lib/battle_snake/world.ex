@@ -1,6 +1,17 @@
 defmodule BattleSnake.World do
   alias BattleSnake.{Snake, Point}
 
+  @type t :: %__MODULE__{
+    food: [any],
+    snakes: [any],
+    dead_snakes: [any],
+    max_food: pos_integer,
+    height: pos_integer,
+    width: pos_integer,
+    turn: pos_integer,
+    moves: any,
+  }
+
   defstruct [
     food: [],
     snakes: [],
@@ -67,6 +78,7 @@ defmodule BattleSnake.World do
     |> stock_food
   end
 
+  # @spec rand_unoccupied_space(t) :: any
   def rand_unoccupied_space(world) do
     h = world.height - 1
     w = world.width - 1
