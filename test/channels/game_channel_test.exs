@@ -17,7 +17,7 @@ defmodule BattleSnakeServer.GameChannelTest do
 
   describe "PUSH prev" do
     test "responds with ok", %{socket: socket} do
-      ref = push socket, "start"
+      push socket, "start"
       ref = push socket, "prev"
       assert_reply ref, :ok
     end
@@ -64,15 +64,15 @@ defmodule BattleSnakeServer.GameChannelTest do
 
   describe "PUSH next" do
     test "steps through a single move", %{socket: socket} do
-      ref = push socket, "start"
-      ref = push socket, "pause"
+      push socket, "start"
+      push socket, "pause"
       flush()
-      ref = push socket, "next"
+      push socket, "next"
       assert_broadcast "tick", _
     end
 
     test "starts a new game if none are running", %{socket: socket} do
-      ref = push socket, "next"
+      push socket, "next"
       assert_broadcast "tick", _
     end
   end
