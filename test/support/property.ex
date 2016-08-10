@@ -53,8 +53,12 @@ defmodule Property do
 
             output = Agent.get(pid, &(&1))
 
-            message = Enum.join Enum.map(output, fn {x, y}->
-              :io_lib.format(x, y)
+            message = Enum.join Enum.map(output, fn
+              {x, [%{__struct__: _} = y]} ->
+                inspect(y)
+
+              {x, y} ->
+                :io_lib.format(x, y)
             end)
 
             Agent.stop pid, :normal
