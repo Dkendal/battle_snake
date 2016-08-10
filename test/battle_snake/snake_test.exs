@@ -2,6 +2,27 @@ defmodule BattleSnake.SnakeTest do
   alias BattleSnake.{World, Snake, Point}
 
   use ExUnit.Case, async: true
+  use Property
+
+  @world %World{width: 10, height: 10}
+
+  property "inside the bounds of the board" do
+    forall({range(0, 9), range(0, 9)}, fn {x, y} ->
+      snake = %Snake{coords: [%Point{x: x, y: y}]}
+
+      Snake.dead?(snake, @world) == false
+    end)
+  end
+
+  property "wall collision" do
+    xs = suchthat(integer, & not &1 in 0..9)
+
+    forall({xs, xs}, fn {x, y} ->
+      snake = %Snake{coords: [%Point{x: x, y: y}]}
+
+      Snake.dead?(snake, @world) == true
+    end)
+  end
 
   describe "#dead?" do
     test "detects body collisions" do

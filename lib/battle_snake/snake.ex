@@ -11,7 +11,7 @@ defmodule BattleSnake.Snake do
   ]
 
   def dead?(%{coords: [%{y: y, x: x} |_]}, %{width: w, height: h})
-  when y == h or y == -1 or x == h or x == -1,
+  when not y in 0..(w-1) or not x in 0..(h-1),
   do: true
 
   def dead?(snake, world) do
