@@ -1,6 +1,8 @@
 defmodule BattleSnake.WorldTest do
   alias BattleSnake.{World, Point, Snake}
+  alias BattleSnake.Point, as: P
   use ExUnit.Case, async: true
+  use Property
 
   setup context do
     world = %World{
@@ -12,15 +14,17 @@ defmodule BattleSnake.WorldTest do
   end
 
   describe "#rand_unoccupied_space" do
-    test "returns a Point with nothing in it" do
-      world = %World{
-        height: 1,
-        width: 3,
-        food: [%Point{x: 1, y: 0}],
-        snakes: [%Snake{coords: [%Point{x: 2, y: 0}]}],
-      }
+    property "in the bounds of the board, on an unoccupied space" do
+      forall world(), fn w ->
+        point = World.rand_unoccupied_space(w)
 
-      assert World.rand_unoccupied_space(world) == %Point{x: 0, y: 0}
+        coords = Enum.flat_map w.snakes, &(&1.coords)
+
+        ( not point in w.food and
+          not point in coords and
+          point.x in World.cols(w) and
+          point.y in World.rows(w))
+      end
     end
   end
 
