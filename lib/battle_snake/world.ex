@@ -35,11 +35,19 @@ defmodule BattleSnake.World do
     end
   end
 
+  def tick(world), do: tick(world, world)
+
   def tick(%{"snakes" => []}, _) do
     :ok
   end
 
-  def tick(world), do: tick(world, world)
+  def tick(world, moves) do
+    world
+    |> apply_moves(moves)
+    |> clean_up_dead
+    |> grow_snakes
+    |> remove_eaten_food
+  end
 
   def stock_food(world) do
     f = fn (_i, world) ->
@@ -75,14 +83,6 @@ defmodule BattleSnake.World do
 
   def step(world) do
     world
-    |> clean_up_dead
-    |> grow_snakes
-    |> remove_eaten_food
-  end
-
-  def tick(world, moves) do
-    world
-    |> apply_moves(moves)
     |> clean_up_dead
     |> grow_snakes
     |> remove_eaten_food
