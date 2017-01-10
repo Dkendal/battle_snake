@@ -3,7 +3,7 @@ defmodule BattleSnakeServer.GameTest do
   import Ecto.Changeset
 
   alias BattleSnakeServer.GameForm
-  alias BattleSnakeServer.Snake, as: Form
+  alias BattleSnakeServer.SnakeForm
   alias BattleSnake.{Snake, World}
 
   describe "#table" do
@@ -70,7 +70,7 @@ defmodule BattleSnakeServer.GameTest do
         height: 15,
         max_food: 1,
         snakes: [
-          %Form{
+          %SnakeForm{
             url: "localhost:4000"
           }
         ],
@@ -95,7 +95,7 @@ defmodule BattleSnakeServer.GameTest do
 
   describe "#load_snake_form_fn" do
     test "loads the snake" do
-      form = %Form{url: "localhost:4000"}
+      form = %SnakeForm{url: "localhost:4000"}
       world = %World{width: 10, height: 10}
       game = %GameForm{world: world}
 
