@@ -1,5 +1,5 @@
 use Mix.Config
-config :battle_snake_server, snake_api: BattleSnakeServer.Api
+config :battle_snake_server, snake_api: BattleSnake.Api
 
 # For production, we configure the host to read the PORT
 # from the system environment. Therefore, you will need
