@@ -19,7 +19,7 @@ defmodule BattleSnakeServer.Web do
   def model do
     quote do
       use Ecto.Schema
-      use BattleSnake.Mnesia.Repo
+      use Mnesia.Repo
       import Ecto.Changeset
     end
   end
