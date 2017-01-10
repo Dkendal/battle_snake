@@ -1,4 +1,4 @@
-defmodule BattleSnakeServer.MockApi do
+defmodule BattleSnake.MockApi do
   @behaviour BattleSnake.Api
 
   @move %BattleSnake.Move{
