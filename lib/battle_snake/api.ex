@@ -1,7 +1,7 @@
 defmodule BattleSnake.Api do
   alias BattleSnake.{Snake, Move, World}
-  alias BattleSnakeServer.SnakeForm
-  alias BattleSnakeServer.GameForm
+  alias BattleSnake.SnakeForm
+  alias BattleSnake.GameForm
 
   use HTTPoison.Base
 

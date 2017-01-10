@@ -1,7 +1,7 @@
-defmodule BattleSnakeServer.GameController do
-  use BattleSnakeServer.Web, :controller
+defmodule BattleSnake.GameController do
+  use BattleSnake.Web, :controller
 
-  alias BattleSnakeServer.GameForm
+  alias BattleSnake.GameForm
 
   def index(conn, _params) do
     games = GameForm.all

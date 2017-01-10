@@ -1,13 +1,13 @@
 defmodule BattleSnake.ApiTest do
   alias BattleSnake.{World, Move}
-  alias BattleSnakeServer.GameForm
+  alias BattleSnake.GameForm
   alias BattleSnake.Api
 
   use ExUnit.Case, async: true
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
 
   setup do
-    snake_form = %BattleSnakeServer.Snake{url: "localhost:4000"}
+    snake_form = %BattleSnake.Snake{url: "localhost:4000"}
 
     snake = %BattleSnake.Snake{
       url: "localhost:4000",
