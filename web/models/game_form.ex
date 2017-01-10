@@ -1,7 +1,7 @@
 defmodule BattleSnakeServer.GameForm do
   @api Application.get_env(:battle_snake_server, :snake_api)
 
-  alias BattleSnakeServer.Snake, as: Form
+  alias BattleSnakeServer.SnakeForm
   alias BattleSnake.{World, Snake}
 
   use BattleSnakeServer.Web, :model
@@ -9,7 +9,7 @@ defmodule BattleSnakeServer.GameForm do
   @permitted [:height, :width, :delay, :max_food]
 
   schema "game" do
-    embeds_many :snakes, Form
+    embeds_many :snakes, SnakeForm
     embeds_one :world, World
     field :width, :integer, default: 20
     field :height, :integer, default: 20

@@ -1,5 +1,5 @@
-<% alias BattleSnakeServer.Snake %>
-<% snake = %Snake{} %>
+<% alias BattleSnakeServer.SnakeForm %>
+<% snake = %SnakeForm{} %>
 
 <h2>Edit game</h2>
 

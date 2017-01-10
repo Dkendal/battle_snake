@@ -1,8 +1,7 @@
 defmodule BattleSnakeServer.GameChannelTest do
   use BattleSnakeServer.ChannelCase
 
-  alias BattleSnakeServer.{GameForm, GameChannel}
-  alias BattleSnakeServer.Snake, as: SnakeForm
+  alias BattleSnakeServer.{GameForm, GameChannel, SnakeForm}
 
   setup [:create_game, :join]
 
