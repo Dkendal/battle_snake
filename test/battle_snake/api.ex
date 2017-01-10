@@ -1,7 +1,7 @@
-defmodule BattleSnakeServer.ApiTest do
+defmodule BattleSnake.ApiTest do
   alias BattleSnake.{World, Move}
   alias BattleSnakeServer.Game
-  alias BattleSnakeServer.Api
+  alias BattleSnake.Api
 
   use ExUnit.Case, async: true
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney

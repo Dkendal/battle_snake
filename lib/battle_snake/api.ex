@@ -1,4 +1,4 @@
-defmodule BattleSnakeServer.Api do
+defmodule BattleSnake.Api do
   alias BattleSnake.{Snake, Move, World}
   alias BattleSnakeServer.Snake, as: SnakeForm
   alias BattleSnakeServer.Game

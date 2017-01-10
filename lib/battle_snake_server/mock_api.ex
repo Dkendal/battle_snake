@@ -1,5 +1,5 @@
 defmodule BattleSnakeServer.MockApi do
-  @behaviour BattleSnakeServer.Api
+  @behaviour BattleSnake.Api
 
   @move %BattleSnake.Move{
     taunt: "test",
