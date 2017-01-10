@@ -1,4 +1,4 @@
-defmodule BattleSnakeServer.Mixfile do
+defmodule BattleSnake.Mixfile do
   use Mix.Project
 
   def project do
@@ -18,7 +18,7 @@ defmodule BattleSnakeServer.Mixfile do
   #
   # Type `mix help compile.app` for more information.
   def application do
-    [mod: {BattleSnakeServer, []},
+    [mod: {BattleSnake, []},
      applications: applications(Mix.env)]
   end
 

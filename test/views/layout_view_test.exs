@@ -1,3 +1,3 @@
-defmodule BattleSnakeServer.LayoutViewTest do
-  use BattleSnakeServer.ConnCase, async: true
+defmodule BattleSnake.LayoutViewTest do
+  use BattleSnake.ConnCase, async: true
 end

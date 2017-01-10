@@ -7,7 +7,7 @@ config :battle_snake_server, snake_api: BattleSnake.Api
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we use it
 # with brunch.io to recompile .js and .css sources.
-config :battle_snake_server, BattleSnakeServer.Endpoint,
+config :battle_snake_server, BattleSnake.Endpoint,
   http: [port: {:system, "PORT"}],
   debug_errors: true,
   code_reloader: true,
@@ -17,7 +17,7 @@ config :battle_snake_server, BattleSnakeServer.Endpoint,
 
 
 # Watch static and templates for browser reloading.
-config :battle_snake_server, BattleSnakeServer.Endpoint,
+config :battle_snake_server, BattleSnake.Endpoint,
   live_reload: [
     patterns: [
       ~r{priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$},

@@ -1,5 +1,5 @@
-defmodule Mix.Tasks.BattleSnakeServer.Createdb do
-  alias BattleSnakeServer.GameForm
+defmodule Mix.Tasks.BattleSnake.Createdb do
+  alias BattleSnake.GameForm
 
   use Mix.Task
 

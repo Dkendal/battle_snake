@@ -1,10 +1,10 @@
-defmodule BattleSnakeServer.GameChannel do
+defmodule BattleSnake.GameChannel do
   @api Application.get_env(:battle_snake_server, :snake_api)
 
   alias BattleSnake.{World, GameServer}
-  alias BattleSnakeServer.{GameForm}
+  alias BattleSnake.{GameForm}
 
-  use BattleSnakeServer.Web, :channel
+  use BattleSnake.Web, :channel
 
   def join("game:" <> _id, payload, socket) do
     if authorized?(payload) do
@@ -131,7 +131,7 @@ defmodule BattleSnakeServer.GameChannel do
   defp draw(socket) do
     fn (%{world: world}) ->
       html = Phoenix.View.render_to_string(
-        BattleSnakeServer.PlayView,
+        BattleSnake.PlayView,
         "board.html",
         world: world,
       )

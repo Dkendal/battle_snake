@@ -1,3 +1,3 @@
-defmodule BattleSnakeServer.GameView do
-  use BattleSnakeServer.Web, :view
+defmodule BattleSnake.GameView do
+  use BattleSnake.Web, :view
 end

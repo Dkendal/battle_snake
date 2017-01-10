@@ -1,12 +1,12 @@
-defmodule BattleSnakeServer.Web do
+defmodule BattleSnake.Web do
   @moduledoc """
   A module that keeps using definitions for controllers,
   views and so on.
 
   This can be used in your application as:
 
-      use BattleSnakeServer.Web, :controller
-      use BattleSnakeServer.Web, :view
+      use BattleSnake.Web, :controller
+      use BattleSnake.Web, :view
 
   The definitions below will be executed for every view,
   controller, etc, so keep them short and clean, focused
@@ -28,8 +28,8 @@ defmodule BattleSnakeServer.Web do
     quote do
       use Phoenix.Controller
 
-      import BattleSnakeServer.Router.Helpers
-      import BattleSnakeServer.Gettext
+      import BattleSnake.Router.Helpers
+      import BattleSnake.Gettext
     end
   end
 
@@ -43,9 +43,9 @@ defmodule BattleSnakeServer.Web do
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
 
-      import BattleSnakeServer.Router.Helpers
-      import BattleSnakeServer.ErrorHelpers
-      import BattleSnakeServer.Gettext
+      import BattleSnake.Router.Helpers
+      import BattleSnake.ErrorHelpers
+      import BattleSnake.Gettext
     end
   end
 
@@ -58,7 +58,7 @@ defmodule BattleSnakeServer.Web do
   def channel do
     quote do
       use Phoenix.Channel
-      import BattleSnakeServer.Gettext
+      import BattleSnake.Gettext
     end
   end
 

@@ -1,7 +1,7 @@
-defmodule BattleSnakeServer.Endpoint do
+defmodule BattleSnake.Endpoint do
   use Phoenix.Endpoint, otp_app: :battle_snake_server
 
-  socket "/socket", BattleSnakeServer.UserSocket
+  socket "/socket", BattleSnake.UserSocket
 
   # Serve at "/" the static files from "priv/static" directory.
   #
@@ -38,5 +38,5 @@ defmodule BattleSnakeServer.Endpoint do
     key: "_battle_snake_server_key",
     signing_salt: "FYK+D7zm"
 
-  plug BattleSnakeServer.Router
+  plug BattleSnake.Router
 end

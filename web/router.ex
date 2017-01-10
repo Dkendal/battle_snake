@@ -1,5 +1,5 @@
-defmodule BattleSnakeServer.Router do
-  use BattleSnakeServer.Web, :router
+defmodule BattleSnake.Router do
+  use BattleSnake.Web, :router
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -13,7 +13,7 @@ defmodule BattleSnakeServer.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", BattleSnakeServer do
+  scope "/", BattleSnake do
     pipe_through :browser # Use the default browser stack
 
     resources "/", GameController
@@ -22,7 +22,7 @@ defmodule BattleSnakeServer.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", BattleSnakeServer do
+  # scope "/api", BattleSnake do
   #   pipe_through :api
   # end
 end

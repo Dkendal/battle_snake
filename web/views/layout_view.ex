@@ -1,3 +1,3 @@
-defmodule BattleSnakeServer.LayoutView do
-  use BattleSnakeServer.Web, :view
+defmodule BattleSnake.LayoutView do
+  use BattleSnake.Web, :view
 end

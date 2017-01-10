@@ -1,10 +1,10 @@
-defmodule BattleSnakeServer.GameForm do
+defmodule BattleSnake.GameForm do
   @api Application.get_env(:battle_snake_server, :snake_api)
 
-  alias BattleSnakeServer.SnakeForm
+  alias BattleSnake.SnakeForm
   alias BattleSnake.{World, Snake}
 
-  use BattleSnakeServer.Web, :model
+  use BattleSnake.Web, :model
 
   @permitted [:height, :width, :delay, :max_food]
 

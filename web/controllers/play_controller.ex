@@ -1,7 +1,7 @@
-defmodule BattleSnakeServer.PlayController do
-  alias BattleSnakeServer.{GameForm}
+defmodule BattleSnake.PlayController do
+  alias BattleSnake.{GameForm}
 
-  use BattleSnakeServer.Web, :controller
+  use BattleSnake.Web, :controller
 
   def show(conn, %{"id" => id}) do
     game = GameForm.get(id)
