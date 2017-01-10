@@ -111,13 +111,17 @@ defmodule BattleSnakeServer.GameChannel do
     {:global, socket.topic}
   end
 
+  @doc "Contact all clients and update the world state with their move."
+  @spec make_move(World.t) :: World.t
   def make_move world do
-    moves = for snake <- world.snakes do
+    moves = Task.async_stream(world.snakes, fn snake ->
       move = @api.move(snake, world)
       {snake.name, move.move}
-    end
+    end)
 
-    moves = Enum.into moves, %{}
+    moves = Enum.into(moves, %{}, fn {:ok, move} ->
+      move
+    end)
 
     world = put_in world.moves, moves
 

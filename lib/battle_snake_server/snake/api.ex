@@ -25,6 +25,7 @@ defmodule BattleSnakeServer.Snake.Api do
 
   @callback move(%Snake{}, %World{}) :: %Move{}
 
+  @doc "Get the move for a single snake."
   def move(snake, world) do
     url = snake.url <> "/move"
 
