@@ -1,7 +1,7 @@
 defmodule BattleSnakeServer.GameControllerTest do
   use BattleSnakeServer.ConnCase
 
-  alias BattleSnakeServer.Game
+  alias BattleSnakeServer.GameForm
 
   describe "GET index" do
     test "lists all entries on index", %{conn: conn} do
@@ -20,11 +20,11 @@ defmodule BattleSnakeServer.GameControllerTest do
       :mnesia.transaction fn ->
         conn = post conn, game_path(conn, :create), game: game
 
-        {:atomic, game} = Game.last
+        {:atomic, game} = GameForm.last
 
         assert redirected_to(conn, 302) == game_path(conn, :edit, game)
 
-        assert(%Game{
+        assert(%GameForm{
           width: 100,
           height: 100,
         } = game)

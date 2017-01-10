@@ -1,5 +1,5 @@
 defmodule Mix.Tasks.BattleSnakeServer.Createdb do
-  alias BattleSnakeServer.Game
+  alias BattleSnakeServer.GameForm
 
   use Mix.Task
 
@@ -9,6 +9,6 @@ defmodule Mix.Tasks.BattleSnakeServer.Createdb do
     :ok = :mnesia.delete_schema([node])
     :ok = :mnesia.create_schema([node])
     :ok = :mnesia.start()
-    {:atomic, :ok} = :mnesia.create_table Game, Game.table
+    {:atomic, :ok} = :mnesia.create_table GameForm, GameForm.table
   end
 end

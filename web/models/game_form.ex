@@ -1,4 +1,4 @@
-defmodule BattleSnakeServer.Game do
+defmodule BattleSnakeServer.GameForm do
   @api Application.get_env(:battle_snake_server, :snake_api)
 
   alias BattleSnakeServer.Snake, as: Form

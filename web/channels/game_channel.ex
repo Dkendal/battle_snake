@@ -2,7 +2,7 @@ defmodule BattleSnakeServer.GameChannel do
   @api Application.get_env(:battle_snake_server, :snake_api)
 
   alias BattleSnake.{World, GameServer}
-  alias BattleSnakeServer.{Game}
+  alias BattleSnakeServer.{GameForm}
 
   use BattleSnakeServer.Web, :channel
 
@@ -85,9 +85,9 @@ defmodule BattleSnakeServer.GameChannel do
 
     "game:" <> id = socket.topic
 
-    game = Game.get(id)
+    game = GameForm.get(id)
 
-    game = Game.reset_world game
+    game = GameForm.reset_world game
 
     world = game.world
 

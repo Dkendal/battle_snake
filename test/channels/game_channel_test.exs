@@ -1,7 +1,7 @@
 defmodule BattleSnakeServer.GameChannelTest do
   use BattleSnakeServer.ChannelCase
 
-  alias BattleSnakeServer.{Game, GameChannel}
+  alias BattleSnakeServer.{GameForm, GameChannel}
   alias BattleSnakeServer.Snake, as: SnakeForm
 
   setup [:create_game, :join]
@@ -90,10 +90,10 @@ defmodule BattleSnakeServer.GameChannelTest do
       %SnakeForm{url: "localhost:3000"}
     ]
 
-    game = %Game{snakes: snakes, delay: 0}
-    |> Game.changeset
+    game = %GameForm{snakes: snakes, delay: 0}
+    |> GameForm.changeset
     |> Ecto.Changeset.apply_changes
-    |> Game.save
+    |> GameForm.save
 
     Map.put(context, :game, game)
   end

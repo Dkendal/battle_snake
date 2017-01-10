@@ -1,6 +1,6 @@
 defmodule BattleSnake.ApiTest do
   alias BattleSnake.{World, Move}
-  alias BattleSnakeServer.Game
+  alias BattleSnakeServer.GameForm
   alias BattleSnake.Api
 
   use ExUnit.Case, async: true
@@ -17,7 +17,7 @@ defmodule BattleSnake.ApiTest do
       taunt: "gotta go fast",
     }
 
-    game = %Game{id: "sup", width: 20, height: 20}
+    game = %GameForm{id: "sup", width: 20, height: 20}
 
     world = %World{
       width: 10,
