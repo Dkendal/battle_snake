@@ -1,4 +1,9 @@
-defmodule BattleSnake.Mnesia.Repo do
+defmodule Mnesia.Repo do
+  @moduledoc """
+  Thin wrapper between Ecto and Mnesia, allows Ecto.Changeset's to be used in
+  conjunction with ETS.
+  """
+
   defmacro __using__(_) do
     quote do
       use Ecto.Schema
