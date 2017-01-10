@@ -1,12 +1,12 @@
 defmodule BattleSnakeServer.PlayControllerTest do
-  alias BattleSnakeServer.{Game}
+  alias BattleSnakeServer.{GameForm}
   use BattleSnakeServer.ConnCase
 
   describe "GET show" do
     test "it is OK", %{conn: conn} do
-      game = %Game{id: "sup"}
+      game = %GameForm{id: "sup"}
 
-      Game.save game
+      GameForm.save game
 
       conn = get conn, play_path(conn, :show, game)
 

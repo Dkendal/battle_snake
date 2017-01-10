@@ -2,13 +2,13 @@ defmodule BattleSnakeServer.GameTest do
   use ExUnit.Case, async: true
   import Ecto.Changeset
 
-  alias BattleSnakeServer.Game
+  alias BattleSnakeServer.GameForm
   alias BattleSnakeServer.Snake, as: Form
   alias BattleSnake.{Snake, World}
 
   describe "#table" do
     test "returns the decleration for mnesia" do
-      assert Game.table == [attributes: [
+      assert GameForm.table == [attributes: [
         :id,
         :snakes,
         :world,
@@ -22,7 +22,7 @@ defmodule BattleSnakeServer.GameTest do
 
   describe "#record" do
     test "converts a struct into a record" do
-      game = %Game{
+      game = %GameForm{
         id: 1,
         snakes: [],
         world: %{},
@@ -31,15 +31,15 @@ defmodule BattleSnakeServer.GameTest do
         delay: 300,
         max_food: 1,
       }
-      assert Game.record(game) == {Game, 1, [], %{}, 20, 40, 300, 1}
+      assert GameForm.record(game) == {GameForm, 1, [], %{}, 20, 40, 300, 1}
     end
   end
 
   describe "#load" do
     test "converts a record to a struct" do
-      record = {Game, 1, [], %{}, 20, 40, 300, 1}
+      record = {GameForm, 1, [], %{}, 20, 40, 300, 1}
 
-      game = %Game{
+      game = %GameForm{
         id: 1,
         snakes: [],
         world: %{},
@@ -49,23 +49,23 @@ defmodule BattleSnakeServer.GameTest do
         max_food: 1,
       }
 
-      assert Game.load(record) == game
+      assert GameForm.load(record) == game
     end
   end
 
   describe "#set_id" do
     test "adds an id if the id is missing" do
-      game = Game.changeset %Game{id: nil}, %{}
-      assert get_field(Game.set_id(game), :id) != nil
+      game = GameForm.changeset %GameForm{id: nil}, %{}
+      assert get_field(GameForm.set_id(game), :id) != nil
 
-      game = Game.changeset %Game{id: 1}, %{}
-      assert get_field(Game.set_id(game), :id) == 1
+      game = GameForm.changeset %GameForm{id: 1}, %{}
+      assert get_field(GameForm.set_id(game), :id) == 1
     end
   end
 
   describe "#reset_world" do
     test "sets up a world struct based on this game" do
-      game = %Game{
+      game = %GameForm{
         width: 15,
         height: 15,
         max_food: 1,
@@ -80,7 +80,7 @@ defmodule BattleSnakeServer.GameTest do
         }
       }
 
-      world = Game.reset_world(game).world
+      world = GameForm.reset_world(game).world
 
       assert(
         %BattleSnake.World{
@@ -97,9 +97,9 @@ defmodule BattleSnakeServer.GameTest do
     test "loads the snake" do
       form = %Form{url: "localhost:4000"}
       world = %World{width: 10, height: 10}
-      game = %Game{world: world}
+      game = %GameForm{world: world}
 
-      f = Game.load_snake_form_fn()
+      f = GameForm.load_snake_form_fn()
       game = f.(form, game)
 
       assert([snake] = game.world.snakes)
@@ -118,7 +118,7 @@ defmodule BattleSnakeServer.GameTest do
         snakes: [snake]
       }
 
-      snake = Game.reset_snake(world, snake)
+      snake = GameForm.reset_snake(world, snake)
 
       assert(%Snake{
         url: "localhost:4000",

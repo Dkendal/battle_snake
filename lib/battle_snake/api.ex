@@ -1,13 +1,13 @@
 defmodule BattleSnake.Api do
   alias BattleSnake.{Snake, Move, World}
   alias BattleSnakeServer.Snake, as: SnakeForm
-  alias BattleSnakeServer.Game
+  alias BattleSnakeServer.GameForm
 
   use HTTPoison.Base
 
   @callback start() :: {:ok, [atom]} | {:error, any}
 
-  @callback load(%SnakeForm{}, %Game{}) :: %Snake{}
+  @callback load(%SnakeForm{}, %GameForm{}) :: %Snake{}
 
   def load(form, game) do
     url = form.url <> "/start"
