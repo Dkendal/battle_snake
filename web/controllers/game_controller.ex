@@ -14,10 +14,9 @@ defmodule BattleSnakeServer.GameController do
     render(conn, "new.html", changeset: changeset)
   end
 
-  def create(conn, %{"game" => params}) do
+  def create(conn, %{"game_form" => params}) do
     game = %GameForm{}
     |> GameForm.changeset(params)
-    # |> Ecto.Changeset.put_embed(:world, )
     |> Ecto.Changeset.apply_changes
     |> GameForm.save
 
@@ -38,7 +37,7 @@ defmodule BattleSnakeServer.GameController do
     render(conn, "edit.html", game: game, changeset: changeset)
   end
 
-  def update(conn, %{"id" => id, "game" => params}) do
+  def update(conn, %{"id" => id, "game_form" => params}) do
     game = GameForm.get(id)
     |> GameForm.changeset(params)
     |> Ecto.Changeset.apply_changes

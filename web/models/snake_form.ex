@@ -1,4 +1,4 @@
-defmodule BattleSnakeServer.Snake do
+defmodule BattleSnakeServer.SnakeForm do
   use BattleSnakeServer.Web, :model
 
   @type t :: %__MODULE__{
