@@ -1,5 +1,5 @@
-defmodule BattleSnakeServer.ErrorView do
-  use BattleSnakeServer.Web, :view
+defmodule BattleSnake.ErrorView do
+  use BattleSnake.Web, :view
 
   def render("404.html", _assigns) do
     "Page not found"

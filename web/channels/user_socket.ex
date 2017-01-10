@@ -1,9 +1,9 @@
-defmodule BattleSnakeServer.UserSocket do
+defmodule BattleSnake.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "room:*", BattleSnakeServer.RoomChannel
-  channel "game:*", BattleSnakeServer.GameChannel
+  # channel "room:*", BattleSnake.RoomChannel
+  channel "game:*", BattleSnake.GameChannel
 
 
   ## Transports
@@ -32,7 +32,7 @@ defmodule BattleSnakeServer.UserSocket do
   # Would allow you to broadcast a "disconnect" event and terminate
   # all active sockets and channels for a given user:
   #
-  #     BattleSnakeServer.Endpoint.broadcast("users_socket:#{user.id}", "disconnect", %{})
+  #     BattleSnake.Endpoint.broadcast("users_socket:#{user.id}", "disconnect", %{})
   #
   # Returning `nil` makes this socket anonymous.
   def id(_socket), do: nil

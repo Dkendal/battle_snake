@@ -1,9 +1,9 @@
-defmodule BattleSnakeServer.GameTest do
+defmodule BattleSnake.GameTest do
   use ExUnit.Case, async: true
   import Ecto.Changeset
 
-  alias BattleSnakeServer.GameForm
-  alias BattleSnakeServer.SnakeForm
+  alias BattleSnake.GameForm
+  alias BattleSnake.SnakeForm
   alias BattleSnake.{Snake, World}
 
   describe "#table" do

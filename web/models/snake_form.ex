@@ -1,5 +1,5 @@
-defmodule BattleSnakeServer.SnakeForm do
-  use BattleSnakeServer.Web, :model
+defmodule BattleSnake.SnakeForm do
+  use BattleSnake.Web, :model
 
   @type t :: %__MODULE__{
     url: String.t,

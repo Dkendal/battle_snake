@@ -1,4 +1,4 @@
-defmodule BattleSnakeServer.ErrorHelpers do
+defmodule BattleSnake.ErrorHelpers do
   @moduledoc """
   Conveniences for translating and building error messages.
   """
@@ -32,9 +32,9 @@ defmodule BattleSnakeServer.ErrorHelpers do
     #     dgettext "errors", "is invalid"
     #
     if count = opts[:count] do
-      Gettext.dngettext(BattleSnakeServer.Gettext, "errors", msg, msg, count, opts)
+      Gettext.dngettext(BattleSnake.Gettext, "errors", msg, msg, count, opts)
     else
-      Gettext.dgettext(BattleSnakeServer.Gettext, "errors", msg, opts)
+      Gettext.dgettext(BattleSnake.Gettext, "errors", msg, opts)
     end
   end
 end
