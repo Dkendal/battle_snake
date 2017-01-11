@@ -20,5 +20,5 @@ defmodule BattleSnake.Gettext do
 
   See the [Gettext Docs](https://hexdocs.pm/gettext) for detailed usage.
   """
-  use Gettext, otp_app: :battle_snake_server
+  use Gettext, otp_app: :battle_snake
 end

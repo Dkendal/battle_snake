@@ -6,7 +6,7 @@
 use Mix.Config
 
 # Configures the endpoint
-config :battle_snake_server, BattleSnake.Endpoint,
+config :battle_snake, BattleSnake.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "lYYgnflsbniY0f9RgALnSmr0nGSwGWkm+rMqgDHhrywKUolAqni+7zdTKAumE5R/",
   render_errors: [view: BattleSnake.ErrorView, accepts: ~w(html json)],
