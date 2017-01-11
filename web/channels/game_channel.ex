@@ -1,5 +1,5 @@
 defmodule BattleSnake.GameChannel do
-  @api Application.get_env(:battle_snake_server, :snake_api)
+  @api Application.get_env(:battle_snake, :snake_api)
 
   alias BattleSnake.{World, GameServer}
   alias BattleSnake.{GameForm}
