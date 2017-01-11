@@ -1,5 +1,5 @@
 defmodule BattleSnake.Endpoint do
-  use Phoenix.Endpoint, otp_app: :battle_snake_server
+  use Phoenix.Endpoint, otp_app: :battle_snake
 
   socket "/socket", BattleSnake.UserSocket
 
@@ -8,7 +8,7 @@ defmodule BattleSnake.Endpoint do
   # You should set gzip to true if you are running phoenix.digest
   # when deploying your static files in production.
   plug Plug.Static,
-    at: "/", from: :battle_snake_server, gzip: false,
+    at: "/", from: :battle_snake, gzip: false,
     only: ~w(css fonts images js favicon.ico robots.txt)
 
   # Code reloading can be explicitly enabled under the
