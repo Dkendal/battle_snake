@@ -30,19 +30,19 @@ defmodule BattleSnake.World do
 
   def moves do
     [
-      up,
-      down,
-      left,
-      right,
+      up(),
+      down(),
+      left(),
+      right(),
     ]
   end
 
   def convert(direction) do
     case direction do
-      "up" -> up
-      "down" -> down
-      "left" -> left
-      "right" -> right
+      "up" -> up()
+      "down" -> down()
+      "left" -> left()
+      "right" -> right()
     end
   end
 
