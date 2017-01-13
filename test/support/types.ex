@@ -13,8 +13,13 @@ defmodule Types do
     end
   end
 
+  @doc """
+  Generate a snake that occupies at least one tile on the world.
+  """
   def snake(world) do
-    let list(point(world)), fn coords ->
+    coords = suchthat(list(point(world)), & length(&1) > 0)
+
+    let coords, fn coords ->
       %BattleSnake.Snake{
         coords: coords
       }
