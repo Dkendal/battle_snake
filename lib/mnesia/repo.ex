@@ -8,19 +8,19 @@ defmodule Mnesia.Repo do
     quote do
       use Ecto.Schema
 
-      def table, do: [attributes: fields]
+      def table, do: [attributes: fields()]
 
       def fields, do: __schema__(:fields)
 
       def record(game) do
         get = &Map.get(game, &1)
-        attrs = Enum.map(fields, get)
+        attrs = Enum.map(fields(), get)
         List.to_tuple [__MODULE__ |attrs]
       end
 
       def load(record) do
         [__MODULE__ |attrs] = Tuple.to_list(record)
-        attrs = Enum.zip(fields, attrs)
+        attrs = Enum.zip(fields(), attrs)
         struct(__MODULE__, attrs)
       end
 

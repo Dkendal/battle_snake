@@ -49,7 +49,7 @@ defmodule BattleSnake.GameForm do
 
     snakes = game.snakes
 
-    game = Enum.reduce(snakes, game, load_snake_form_fn)
+    game = Enum.reduce(snakes, game, load_snake_form_fn())
 
     world = World.stock_food(game.world)
 

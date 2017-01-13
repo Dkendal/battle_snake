@@ -44,35 +44,35 @@ defmodule BattleSnake.GameServerTest do
 
   describe ".handle_call :resume" do
     test "returns ok and sets the state to :cont" do
-      assert(GameServer.handle_call(:resume, self, {:suspend, @state}) ==
+      assert(GameServer.handle_call(:resume, self(), {:suspend, @state}) ==
        {:reply, :ok, {:cont, @state}})
     end
 
     test "sends a tick message to itself after the caller" do
-      GameServer.handle_call(:resume, self, {:suspend, @state})
+      GameServer.handle_call(:resume, self(), {:suspend, @state})
       assert_receive :tick
     end
 
     test "does nothing when the game is already running or stopped" do
-      assert(GameServer.handle_call(:resume, self, {:cont, 1}) ==
+      assert(GameServer.handle_call(:resume, self(), {:cont, 1}) ==
        {:reply, :ok, {:cont, 1}})
 
-      assert(GameServer.handle_call(:resume, self, {:halted, 1}) ==
+      assert(GameServer.handle_call(:resume, self(), {:halted, 1}) ==
        {:reply, :ok, {:halted, 1}})
     end
   end
 
   describe ".handle_call :pause" do
     test "suspend's running games" do
-      assert(GameServer.handle_call(:pause, self, {:cont, @state}) ==
+      assert(GameServer.handle_call(:pause, self(), {:cont, @state}) ==
        {:reply, :ok, {:suspend, @state}})
     end
 
     test "does nothing when the game is anything else" do
-      assert(GameServer.handle_call(:pause, self, {:suspend, @state}) ==
+      assert(GameServer.handle_call(:pause, self(), {:suspend, @state}) ==
        {:reply, :ok, {:suspend, @state}})
 
-      assert(GameServer.handle_call(:pause, self, {:halted, @state}) ==
+      assert(GameServer.handle_call(:pause, self(), {:halted, @state}) ==
        {:reply, :ok, {:halted, @state}})
     end
   end
@@ -81,30 +81,30 @@ defmodule BattleSnake.GameServerTest do
     test "executes the reducer once if the game is not ended" do
       state = %State{world: 1, reducer: &(&1+1)}
 
-      assert(GameServer.handle_call(:next, self, {:cont, state}) ==
+      assert(GameServer.handle_call(:next, self(), {:cont, state}) ==
        {:reply, :ok, {:suspend, %{state| world: 2, hist: [1]}}})
 
-      assert(GameServer.handle_call(:next, self, {:suspend, state}) ==
+      assert(GameServer.handle_call(:next, self(), {:suspend, state}) ==
        {:reply, :ok, {:suspend, %{state| world: 2, hist: [1]}}})
     end
 
     test "does nothing when the game is stopped" do
-      assert(GameServer.handle_call(:next, self, {:halted, @state}) ==
+      assert(GameServer.handle_call(:next, self(), {:halted, @state}) ==
        {:reply, :ok, {:halted, @state}})
     end
   end
 
   describe ".handle_call :prev" do
     test "does nothing when the server is stopped" do
-      assert(GameServer.handle_call(:prev, self, {:halted, @state}) ==
+      assert(GameServer.handle_call(:prev, self(), {:halted, @state}) ==
         {:reply, :ok, {:halted, @state}})
     end
 
     test "rewinds to the last move and pauses" do
-      assert(GameServer.handle_call(:prev, self, {:suspend, @state}) ==
+      assert(GameServer.handle_call(:prev, self(), {:suspend, @state}) ==
        {:reply, :ok, {:suspend, @prev}})
 
-      assert(GameServer.handle_call(:prev, self, {:cont, @state}) ==
+      assert(GameServer.handle_call(:prev, self(), {:cont, @state}) ==
         {:reply, :ok, {:suspend, @prev}})
     end
   end
@@ -119,8 +119,8 @@ defmodule BattleSnake.GameServerTest do
     end
 
     test "calls the on_change function" do
-      state = %{@state| on_change: ping(self)}
-      prev = %{@prev| on_change: ping(self)}
+      state = %{@state| on_change: ping(self())}
+      prev = %{@prev| on_change: ping(self())}
 
       GameServer.step_back(state)
 
