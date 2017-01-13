@@ -6,9 +6,9 @@ defmodule Mix.Tasks.BattleSnake.Createdb do
   @shortdoc "creates the mnesia database"
   def run(_) do
     :stopped = :mnesia.stop
-    :ok = :mnesia.delete_schema([node])
-    :ok = :mnesia.create_schema([node])
+    :ok = :mnesia.delete_schema([node()])
+    :ok = :mnesia.create_schema([node()])
     :ok = :mnesia.start()
-    {:atomic, :ok} = :mnesia.create_table GameForm, GameForm.table
+    {:atomic, :ok} = :mnesia.create_table(GameForm, GameForm.table)
   end
 end

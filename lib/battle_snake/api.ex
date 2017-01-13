@@ -18,7 +18,7 @@ defmodule BattleSnake.Api do
       width: game.width,
     }
 
-    response = post! url, payload, headers
+    response = post!(url, payload, headers())
 
     Poison.decode!(response.body, as: %Snake{url: form.url})
   end
@@ -31,7 +31,7 @@ defmodule BattleSnake.Api do
 
     payload = Poison.encode!(world)
 
-    response = post! url, payload, headers
+    response = post!(url, payload, headers())
 
     Poison.decode!(response.body, as: %Move{})
   end

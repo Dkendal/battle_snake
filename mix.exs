@@ -9,7 +9,7 @@ defmodule BattleSnake.Mixfile do
      compilers: [:phoenix, :gettext] ++ Mix.compilers,
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
-     preferred_cli_env: preferred_cli_env,
+     preferred_cli_env: preferred_cli_env(),
      test_coverage: [tool: ExCoveralls],
      deps: deps()]
   end
