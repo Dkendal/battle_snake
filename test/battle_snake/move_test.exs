@@ -3,16 +3,20 @@ defmodule BattleSnake.MoveTest  do
   use Property
   alias BattleSnake.{Snake, Move}
 
+  @green_snake %Snake{name: :green}
+  @up %Move{move: "up", snake: @green_snake}
+  @left %Move{move: "left", snake: @green_snake}
+
   describe "BattleSnake.Move.all/1" do
     test "returns a default move when the request times-out" do
       move_fn = fn _snake ->
         Process.sleep 100
-        %Move{move: "left"}
+        @left
       end
 
-      snakes = [%Snake{}]
+      snakes = [@green_snake]
 
-      assert(match?([%Move{move: "up"}],
+      assert(match?([@up],
             Move.all(snakes, move_fn, 0)))
     end
 
@@ -21,9 +25,9 @@ defmodule BattleSnake.MoveTest  do
         Process.exit(self(), :kill)
       end
 
-      snakes = [%Snake{}]
+      snakes = [@green_snake]
 
-      assert(match?([%Move{move: "up"}],
+      assert(match?([@up],
             Move.all(snakes, move_fn, 0)))
     end
 
@@ -32,9 +36,9 @@ defmodule BattleSnake.MoveTest  do
         %Move{move: "left"}
       end
 
-      snakes = [%Snake{}]
+      snakes = [@green_snake]
 
-      assert(match?([%Move{move: "left"}],
+      assert(match?([@left],
             Move.all(snakes, move_fn)))
     end
   end
