@@ -16,6 +16,17 @@ defmodule BattleSnake.MoveTest  do
             Move.all(snakes, move_fn, 0)))
     end
 
+    test "returns a default move if the task dies" do
+      move_fn = fn _snake ->
+        Process.exit(self(), :kill)
+      end
+
+      snakes = [%Snake{}]
+
+      assert(match?([%Move{move: "up"}],
+            Move.all(snakes, move_fn, 0)))
+    end
+
     test "returns a move for each snake" do
       move_fn = fn _snake ->
         %Move{move: "left"}
