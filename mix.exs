@@ -64,7 +64,7 @@ defmodule BattleSnake.Mixfile do
     [
       {:cowboy, "~> 1.0"},
       {:ecto, "~> 2.0.2"},
-      {:excoveralls, "~> 0.5", only: :test},
+      {:excoveralls, "~> 0.6", only: :test},
       {:exrm, "~> 1.0.0"},
       {:exvcr, "~> 0.8", only: :test},
       {:gettext, "~> 0.11"},
