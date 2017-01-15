@@ -8,7 +8,7 @@
   "erlware_commons": {:hex, :erlware_commons, "0.21.0", "a04433071ad7d112edefc75ac77719dd3e6753e697ac09428fc83d7564b80b15", [:rebar3], [{:cf, "0.2.1", [hex: :cf, optional: false]}]},
   "exactor": {:hex, :exactor, "2.2.3", "a6972f43bb6160afeb73e1d8ab45ba604cd0ac8b5244c557093f6e92ce582786", [:mix], []},
   "excheck": {:hex, :excheck, "0.4.1", "b3e8826eb6c629ce113539974e674096dd09e7412e7190f01b021b8cac6f8f65", [:mix], []},
-  "excoveralls": {:hex, :excoveralls, "0.5.5", "d97b6fc7aa59c5f04f2fa7ec40fc0b7555ceea2a5f7e7c442aad98ddd7f79002", [:mix], [{:exjsx, "~> 3.0", [hex: :exjsx, optional: false]}, {:hackney, ">= 0.12.0", [hex: :hackney, optional: false]}]},
+  "excoveralls": {:hex, :excoveralls, "0.6.1", "9e946b6db84dba592f47632157ecd135a46384b98a430fd16007dc910c70348b", [:mix], [{:exjsx, "~> 3.0", [hex: :exjsx, optional: false]}, {:hackney, ">= 0.12.0", [hex: :hackney, optional: false]}]},
   "exjsx": {:hex, :exjsx, "3.2.1", "1bc5bf1e4fd249104178f0885030bcd75a4526f4d2a1e976f4b428d347614f0f", [:mix], [{:jsx, "~> 2.8.0", [hex: :jsx, optional: false]}]},
   "exrm": {:hex, :exrm, "1.0.8", "5aa8990cdfe300282828b02cefdc339e235f7916388ce99f9a1f926a9271a45d", [:mix], [{:relx, "~> 3.5", [hex: :relx, optional: false]}]},
   "exvcr": {:hex, :exvcr, "0.8.5", "95d8f28de82d27f057f855048a5a661f00bf46204f594db662057522ecf3acb1", [:mix], [{:exactor, "~> 2.2", [hex: :exactor, optional: false]}, {:exjsx, "~> 3.2", [hex: :exjsx, optional: false]}, {:httpoison, "~> 0.8", [hex: :httpoison, optional: true]}, {:httpotion, "~> 3.0", [hex: :httpotion, optional: true]}, {:ibrowse, "~> 4.2.2", [hex: :ibrowse, optional: true]}, {:meck, "~> 0.8.3", [hex: :meck, optional: false]}]},
