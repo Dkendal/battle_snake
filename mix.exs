@@ -66,7 +66,7 @@ defmodule BattleSnake.Mixfile do
       {:ecto, "~> 2.0.2"},
       {:excoveralls, "~> 0.5", only: :test},
       {:exrm, "~> 1.0.0"},
-      {:exvcr, "0.7.0", only: :test},
+      {:exvcr, "~> 0.8", only: :test},
       {:gettext, "~> 0.11"},
       {:httpoison, "~> 0.11"},
       {:phoenix, "~> 1.2"},
