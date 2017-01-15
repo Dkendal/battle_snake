@@ -114,7 +114,15 @@ defmodule BattleSnake.GameChannel do
   @doc "Contact all clients and update the world state with their move."
   @spec make_move(World.t) :: World.t
   def make_move world do
-    request_fun = & @api.move(&1, world)
+    request_fun = fn snake ->
+      try do
+        @api.move(snake, world)
+      rescue
+        HTTPoison.Error ->
+          nil
+      end
+    end
+
     transform_result = & {&1.snake.name, &1.move}
 
     moves = world.snakes
