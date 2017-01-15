@@ -1,5 +1,15 @@
 defmodule BattleSnake.Snake do
+  alias __MODULE__
   alias BattleSnake.{Point}
+
+  @type t :: %Snake{
+    color: String.t,
+    coords: [Point.t],
+    head_url: String.t,
+    name: String.t,
+    taunt: String.t,
+    url: String.t,
+  }
 
   defstruct [
     color: "",
@@ -77,6 +87,10 @@ defmodule BattleSnake.Snake do
     end) |> Enum.reject(& &1 == nil)
   end
 
+  @doc """
+  Update the snake by moving the snake's cooridinates by the vector "move".
+  """
+  @spec move(t, Point.t) :: t
   def move(snake, move) do
     body = body snake
     head = head snake
