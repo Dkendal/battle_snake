@@ -150,7 +150,7 @@ defmodule BattleSnake.GameServer do
 
   defp delay(state) do
     opts = state.opts
-    Dict.fetch!(opts, :delay)
+    Keyword.fetch!(opts, :delay)
   end
 
   defp tick(state) do
@@ -161,7 +161,7 @@ defmodule BattleSnake.GameServer do
   defp done?(state) do
     opts = state.opts
     world = state.world
-    fun = Dict.fetch!(opts, :objective)
+    fun = Keyword.fetch!(opts, :objective)
     fun.(world)
   end
 end

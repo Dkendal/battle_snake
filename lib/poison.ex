@@ -16,7 +16,7 @@ defimpl Poison.Encoder, for: BattleSnake.World do
 
     map = world
     |> Map.take(attrs)
-    |> Dict.merge(map)
+    |> Map.merge(map)
 
     Poison.encode!(map, opts)
   end
@@ -84,7 +84,7 @@ defimpl Poison.Encoder, for: BattleSnake.Snake do
 
     map = snake
     |> Map.take(attrs)
-    |> Dict.merge(map)
+    |> Map.merge(map)
 
     Poison.encode!(map, opts)
   end
