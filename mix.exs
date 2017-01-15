@@ -19,25 +19,12 @@ defmodule BattleSnake.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [mod: {BattleSnake, []},
-     applications: applications(Mix.env)]
+     extra_applications: extra_applications(Mix.env)]
   end
 
-  def applications(:dev) do
-    [:reprise | applications(:all)]
-  end
-
-  def applications(_all) do
-    [
-      :cowboy,
-      :gettext,
-      :httpoison,
-      :logger,
-      :mnesia,
-      :phoenix,
-      :phoenix_ecto,
-      :phoenix_html,
-      :phoenix_pubsub,
-    ]
+  def extra_applications(_all) do
+    [:logger,
+     :mnesia]
   end
 
   # Specifies which paths to compile per environment.
