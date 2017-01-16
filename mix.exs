@@ -50,19 +50,20 @@ defmodule BattleSnake.Mixfile do
   defp deps do
     [
       {:cowboy, "~> 1.0"},
-      {:ecto, "~> 2.0.2"},
+      {:ecto, "~> 2.0"},
       {:excoveralls, "~> 0.6", only: :test},
       {:exrm, "~> 1.0.0"},
       {:exvcr, "~> 0.8", only: :test},
       {:gettext, "~> 0.11"},
       {:httpoison, "~> 0.11"},
       {:phoenix, "~> 1.2"},
-      {:phoenix_ecto, "~> 3.0.0"},
+      {:phoenix_ecto, "~> 3.0"},
       {:phoenix_html, "~> 2.6"},
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:phoenix_pubsub, "~> 1.0"},
-      {:reprise, "~> 0.5.0", only: :dev},
+      {:poison, "~> 2.0"},
       {:proper, github: "manopapad/proper", only: :test},
+      {:reprise, "~> 0.5.0", only: :dev},
     ]
   end
 end
