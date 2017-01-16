@@ -7,46 +7,68 @@ defmodule BattleSnake.Api do
     Move,
     World}
 
-  @callback start() :: {:ok, [atom]} | {:error, any}
-
-  @shortdoc "POST /start"
-  @doc """
-  Load the Snake struct based on the configuration form data for both the world
-  and snake.
-  """
   @callback load(%SnakeForm{}, %GameForm{}) :: %Snake{}
-  def load(form, game, request \\ &HTTP.post/4) do
-    url = form.url <> "/start"
+  @callback move(%Snake{}, %World{}) :: %Move{}
 
-    payload = Poison.encode! %{
+  @doc """
+  Load the Snake struct based on the configuration_form data for both the world
+  and snake.
+
+  POST /start
+  """
+  def load(snake_form, game, request \\ &HTTP.post/4) do
+    url = snake_form.url <> "/start"
+
+    snake = %Snake{url: snake_form.url}
+    payload = encode_load(game)
+
+    with {:ok, response} <- request.(url, payload, headers(), options()),
+      do: decode_load(response, snake)
+  end
+
+  @doc """
+  Get the move for a single snake.
+
+  POST /move
+  """
+  def move(snake, world, request \\ &HTTP.post/4) do
+    url = snake.url <> "/move"
+
+    payload = encode_move(world)
+
+    with {:ok, response} <- request.(url, payload, headers(), options()),
+      do: decode_move(response)
+  end
+
+  defp options do
+    []
+  end
+
+  defp headers() do
+    []
+  end
+
+  @spec decode_move(HTTPoison.Response.t, Move.t) :: Move.t
+  defp decode_move(response, move \\ %Move{}) do
+    Poison.decode!(response.body, as: move)
+  end
+
+  @spec encode_move(World.t) :: String.t
+  defp encode_move(world) do
+    Poison.encode!(world)
+  end
+
+  @spec decode_load(HTTPoison.Response.t, Snake.t) :: Snake.t
+  defp decode_load(response, snake) do
+    Poison.decode!(response.body, as: snake)
+  end
+
+  @spec encode_load(Game.t) :: String.t
+  defp encode_load(game) do
+    Poison.encode! %{
       game_id: game.id,
       height: game.height,
       width: game.width,
     }
-
-    {:ok, response} = request.(url, payload, headers(), options())
-
-    Poison.decode!(response.body, as: %Snake{url: form.url})
-  end
-
-  @shortdoc "POST /move"
-  @doc "Get the move for a single snake."
-  @callback move(%Snake{}, %World{}) :: %Move{}
-  def move(snake, world, request \\ &HTTP.post/4) do
-    url = snake.url <> "/move"
-
-    payload = Poison.encode!(world)
-
-    {:ok, response} = request.(url, payload, headers(), options())
-
-    Poison.decode!(response.body, as: %Move{})
-  end
-
-  def options do
-    []
-  end
-
-  def headers() do
-    []
   end
 end
