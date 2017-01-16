@@ -12,7 +12,10 @@ class RubySnake < Sinatra::Base
   end
 
   post "/start" do
-    {}.to_json
+    {
+      name: "ruby-test-snake",
+      color: "#123123"
+    }.to_json
   end
 
   post "/move" do
