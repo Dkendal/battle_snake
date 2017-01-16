@@ -1,50 +1,57 @@
 defmodule BattleSnake.ApiTest do
-  alias BattleSnake.{World, Move}
-  alias BattleSnake.GameForm
-  alias BattleSnake.Api
+  alias BattleSnake.{Snake, Board, Point, Move}
 
   use ExUnit.Case, async: true
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
 
-  setup do
-    snake_form = %BattleSnake.Snake{url: "localhost:4000"}
+  @snake_form %BattleSnake.SnakeForm{
+    url: "http://example.snake"
+  }
 
-    snake = %BattleSnake.Snake{
-      url: "localhost:4000",
-      color: "#6699ff",
-      head_url: "",
-      name: "Snek",
-      taunt: "gotta go fast",
-    }
+  @game_form %BattleSnake.GameForm{
+  }
 
-    game = %GameForm{id: "sup", width: 20, height: 20}
+  @snake %BattleSnake.Snake{
+    url: "http://example.snake",
+    coords: [%Point{x: 0, y: 0}]
+  }
 
-    world = %World{
-      width: 10,
-      height: 10,
-      snakes: [
-        %{snake| coords: [[0,0]]}
-      ]
-    }
+  @world %BattleSnake.World{
+    snakes: [@snake]
+  }
 
-    %{
-      game: game,
-      snake: snake,
-      snake_form: snake_form,
-      world: world,
-    }
-  end
+  describe "BattleSnake.Api.load/3" do
+    test "on success produces a snake" do
+      body = %{
+        name: "example-snake",
+        color: "#123123"
+      }
 
-  test "#load", %{game: game, snake: snake, snake_form: snake_form} do
-    use_cassette "snake start" do
-      assert Api.load(snake_form, game) == snake
+      mock = fn (:post, "http://example.snake/start", _, _, _) ->
+        {:ok, %HTTPoison.Response{body: Poison.encode!(body)}}
+      end
+
+      snake = BattleSnake.Api.load(@snake_form, @game_form, mock)
+
+      assert snake == %Snake{
+        name: "example-snake",
+        color: "#123123",
+        url: "http://example.snake",
+      }
     end
   end
 
-  test "#move", %{world: world, snake: snake} do
-    use_cassette "snake move" do
-      actual = Api.move(snake, world)
-      assert actual == %Move{move: "down", taunt: "down"}
+  describe "BattleSnake.Api.move/3" do
+    test "on success responds with the move" do
+      mock = fn(:post, "http://example.snake/move", _, _, _) ->
+        {:ok, %HTTPoison.Response{body: ~S({"move":"up"})}}
+      end
+
+      move = BattleSnake.Api.move(@snake, @world, mock)
+
+      assert move == %Move{
+        move: "up"
+      }
     end
   end
 end
