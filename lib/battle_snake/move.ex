@@ -2,7 +2,12 @@ defmodule BattleSnake.Move do
   alias __MODULE__
   alias BattleSnake.{World, Snake}
 
-  defstruct [:move, :taunt, :snake]
+  defstruct [
+    :move,
+    :taunt,
+    :snake,
+    response_state: :init,
+  ]
 
   @type direction :: String.t
 
@@ -31,16 +36,16 @@ defmodule BattleSnake.Move do
     fn (snake) ->
       {:ok, sup_pid} = Task.Supervisor.start_link()
 
-      task = Task.Supervisor.async_nolink(
-        sup_pid,
-        fn -> request_fun.(snake, world) end)
+      work_fn = fn -> request_fun.(snake, world) end
+
+      task = Task.Supervisor.async_nolink(sup_pid, work_fn)
 
       move =
         case Task.yield(task, timeout) || Task.shutdown(task) do
           {:ok, move} ->
-            move
+            response_ok(move)
           nil ->
-            default_move
+            response_timeout(default_move)
         end
 
       # identify what snake this move belongs to.
@@ -58,5 +63,15 @@ defmodule BattleSnake.Move do
     %Move{
       move: "up"
     }
+  end
+
+  @spec response_timeout(Move.t) :: Move.t
+  def response_timeout(move) do
+    put_in move.response_state, :timeout
+  end
+
+  @spec response_ok(Move.t) :: Move.t
+  def response_ok(move) do
+    put_in move.response_state, :ok
   end
 end
