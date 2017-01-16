@@ -30,7 +30,7 @@ defmodule BattleSnake.GameForm do
 
   def load_snake_form_fn() do
     fn form, game ->
-      snake = @api.load(form, game)
+      {:ok, snake} = @api.load(form, game)
       snake = reset_snake(game.world, snake)
       snake = %{snake| url: form.url}
       update_in(game.world.snakes, &[snake|&1])

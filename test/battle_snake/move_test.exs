@@ -13,12 +13,12 @@ defmodule BattleSnake.MoveTest  do
   @left %Move{move: "left", snake: @green_snake}
 
   def up_fn(%Snake{}, %World{}) do
-    %Move{move: "left"}
+    {:ok, %Move{move: "left"}}
   end
 
   def sleep_fn(%Snake{}, %World{}) do
     Process.sleep 100
-    @left
+    {:ok, @left}
   end
 
   describe "BattleSnake.Move.all/1" do
