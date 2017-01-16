@@ -27,7 +27,7 @@ defmodule BattleSnake.ApiTest do
         color: "#123123"
       }
 
-      mock = fn (:post, "http://example.snake/start", _, _, _) ->
+      mock = fn ("http://example.snake/start", _, _, _) ->
         {:ok, %HTTPoison.Response{body: Poison.encode!(body)}}
       end
 
@@ -42,8 +42,9 @@ defmodule BattleSnake.ApiTest do
   end
 
   describe "BattleSnake.Api.move/3" do
+    # {:error, %HTTPoison.Error{id: nil, reason: :econnrefused}}
     test "on success responds with the move" do
-      mock = fn(:post, "http://example.snake/move", _, _, _) ->
+      mock = fn("http://example.snake/move", _, _, _) ->
         {:ok, %HTTPoison.Response{body: ~S({"move":"up"})}}
       end
 
