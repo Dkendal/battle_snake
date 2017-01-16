@@ -36,11 +36,12 @@ defmodule BattleSnake.ApiTest do
 
       snake = BattleSnake.Api.load(@snake_form, @game_form, mock)
 
-      assert snake == %Snake{
-        name: "example-snake",
-        color: "#123123",
-        url: "http://example.snake",
-      }
+      assert snake == {:ok,
+                       %Snake{
+                         name: "example-snake",
+                         color: "#123123",
+                         url: "http://example.snake",
+                       }}
     end
 
     test "on error returns the error" do
@@ -61,9 +62,7 @@ defmodule BattleSnake.ApiTest do
 
       move = BattleSnake.Api.move(@snake, @world, mock)
 
-      assert move == %Move{
-        move: "up"
-      }
+      assert move == {:ok, %Move{move: "up"}}
     end
 
     test "on error returns the error" do

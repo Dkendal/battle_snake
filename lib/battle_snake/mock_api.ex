@@ -7,10 +7,10 @@ defmodule BattleSnake.MockApi do
   }
 
   def load(_form, _game) do
-    %BattleSnake.Snake{}
+    {:ok, %BattleSnake.Snake{}}
   end
 
   def start, do: {:ok, [:fake]}
 
-  def move(_, _), do: @move
+  def move(_, _), do: {:ok, @move}
 end

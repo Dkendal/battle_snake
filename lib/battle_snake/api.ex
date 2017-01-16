@@ -48,9 +48,9 @@ defmodule BattleSnake.Api do
     []
   end
 
-  @spec decode_move(HTTPoison.Response.t, Move.t) :: Move.t
+  @spec decode_move(HTTPoison.Response.t, Move.t) :: {:ok, Move.t} | {:error, any}
   defp decode_move(response, move \\ %Move{}) do
-    Poison.decode!(response.body, as: move)
+    Poison.decode(response.body, as: move)
   end
 
   @spec encode_move(World.t) :: String.t
@@ -58,9 +58,9 @@ defmodule BattleSnake.Api do
     Poison.encode!(world)
   end
 
-  @spec decode_load(HTTPoison.Response.t, Snake.t) :: Snake.t
+  @spec decode_load(HTTPoison.Response.t, Snake.t) :: {:ok, Snake.t} | {:error, any}
   defp decode_load(response, snake) do
-    Poison.decode!(response.body, as: snake)
+    Poison.decode(response.body, as: snake)
   end
 
   @spec encode_load(Game.t) :: String.t
