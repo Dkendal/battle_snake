@@ -1,9 +1,11 @@
 defmodule BattleSnake.Mixfile do
   use Mix.Project
 
+  @version String.strip(File.read!("VERSION"))
+
   def project do
     [app: :battle_snake,
-     version: "1.0.0",
+     version: @version,
      elixir: "~> 1.4",
      elixirc_paths: elixirc_paths(Mix.env),
      compilers: [:phoenix, :gettext] ++ Mix.compilers,
