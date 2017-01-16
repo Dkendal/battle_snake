@@ -36,7 +36,12 @@ defmodule BattleSnake.Move do
     fn (snake) ->
       {:ok, sup_pid} = Task.Supervisor.start_link()
 
-      work_fn = fn -> request_fun.(snake, world) end
+      work_fn = fn ->
+        case request_fun.(snake, world) do
+          {:ok, move} ->
+            move
+        end
+      end
 
       task = Task.Supervisor.async_nolink(sup_pid, work_fn)
 
