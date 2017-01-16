@@ -21,7 +21,18 @@ defmodule BattleSnake.MoveTest  do
     {:ok, @left}
   end
 
+  def error_fn(%Snake{}, %World{}) do
+    {:error, "msg"}
+  end
+
   describe "BattleSnake.Move.all/1" do
+    test "returns a default move when the request encounters an error" do
+      expected = put_in @up.response_state, {:error, "msg"}
+
+      assert(match?([^expected],
+            Move.all(@world, &error_fn/2)))
+    end
+
     test "returns a default move when the request times-out" do
       expected = put_in @up.response_state, :timeout
 
