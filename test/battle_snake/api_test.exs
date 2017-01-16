@@ -73,7 +73,7 @@ defmodule BattleSnake.ApiTest do
       end
 
       assert({:error, %HTTPoison.Error{}} ==
-        BattleSnake.Api.move(@snake, @game, mock))
+        BattleSnake.Api.move(@snake, @world, mock))
     end
   end
 end
