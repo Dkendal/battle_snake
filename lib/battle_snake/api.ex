@@ -7,9 +7,12 @@ defmodule BattleSnake.Api do
 
   @callback start() :: {:ok, [atom]} | {:error, any}
 
+  @doc """
+  Load the Snake struct based on the configuration form data for both the world
+  and snake.
+  """
   @callback load(%SnakeForm{}, %GameForm{}) :: %Snake{}
-
-  def load(form, game) do
+  def load(form, game, request \\ &request/5) do
     url = form.url <> "/start"
 
     payload = Poison.encode! %{
@@ -18,22 +21,25 @@ defmodule BattleSnake.Api do
       width: game.width,
     }
 
-    response = post!(url, payload, headers())
+    {:ok, response} = request.(:post, url, payload, headers(), options())
 
     Poison.decode!(response.body, as: %Snake{url: form.url})
   end
 
-  @callback move(%Snake{}, %World{}) :: %Move{}
-
   @doc "Get the move for a single snake."
-  def move(snake, world) do
+  @callback move(%Snake{}, %World{}) :: %Move{}
+  def move(snake, world, request \\ &request/5) do
     url = snake.url <> "/move"
 
     payload = Poison.encode!(world)
 
-    response = post!(url, payload, headers())
+    {:ok, response} = request.(:post, url, payload, headers(), options())
 
     Poison.decode!(response.body, as: %Move{})
+  end
+
+  def options do
+    []
   end
 
   def headers() do
