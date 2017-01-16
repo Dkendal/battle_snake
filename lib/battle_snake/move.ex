@@ -1,6 +1,6 @@
 defmodule BattleSnake.Move do
   alias __MODULE__
-  alias BattleSnake.Snake
+  alias BattleSnake.{World, Snake}
 
   defstruct [:move, :taunt, :snake]
 
@@ -23,15 +23,17 @@ defmodule BattleSnake.Move do
   other results.
   """
   @shortdoc "collect all moves for living snakes"
-  @spec all(list(Snake.t), (Snake.t -> Move.t)) :: list(Snake.t)
-  def all(snakes, request_fun, timeout \\ 200) do
+  @spec all(World.t, ((Snake.t, World.t) -> Move.t)) :: [Snake.t]
+  def all(world, request_fun, timeout \\ 200) do
+    snakes = world.snakes
+
     do_task =
     fn (snake) ->
       {:ok, sup_pid} = Task.Supervisor.start_link()
 
       task = Task.Supervisor.async_nolink(
         sup_pid,
-        fn -> request_fun.(snake) end)
+        fn -> request_fun.(snake, world) end)
 
       move =
         case Task.yield(task, timeout) || Task.shutdown(task) do
