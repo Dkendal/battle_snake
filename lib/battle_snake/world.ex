@@ -46,20 +46,6 @@ defmodule BattleSnake.World do
     end
   end
 
-  def tick(world), do: tick(world, world)
-
-  def tick(%{"snakes" => []}, _) do
-    :ok
-  end
-
-  def tick(world, moves) do
-    world
-    |> apply_moves(moves)
-    |> clean_up_dead
-    |> grow_snakes
-    |> remove_eaten_food
-  end
-
   def stock_food(world) do
     f = fn (_i, world) ->
       add_food = & [rand_unoccupied_space(world) | &1]
@@ -148,7 +134,6 @@ defmodule BattleSnake.World do
     end
   end
 
-
   def grew(world, snake) do
     head = hd snake.coords
 
@@ -156,17 +141,6 @@ defmodule BattleSnake.World do
       1
     else
       0
-    end
-  end
-
-  def apply_moves world, moves do
-    update_in world.snakes, fn snakes ->
-      for snake <- snakes do
-        name = snake.name
-        direction = get_in moves, [name]
-        move = convert(direction)
-        Snake.move(snake, move)
-      end
     end
   end
 
