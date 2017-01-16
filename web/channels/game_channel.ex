@@ -123,15 +123,10 @@ defmodule BattleSnake.GameChannel do
       end
     end
 
-    transform_result = & {&1.snake.name, &1.move}
-
     moves = world.snakes
     |> BattleSnake.Move.all(request_fun)
-    |> Enum.into(%{}, transform_result)
 
-    world = put_in world.moves, moves
-
-    World.apply_moves(world, moves)
+    BattleSnake.WorldMovement.apply(world, moves)
   end
 
   defp draw(socket) do
