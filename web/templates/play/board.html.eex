@@ -32,16 +32,7 @@
     <% end %>
 
     <div>
-      <%= for snake <- @world.snakes do %>
-        <dl>
-          <dd>url</dd>
-          <%= content_tag :dt, snake.url %>
-          <dd>length</dd>
-          <%= content_tag :dt, Snake.len(snake) %>
-          <dd>move</dd>
-          <%= content_tag :dt, @world.moves[snake.name] %>
-        </dl>
-      <% end %>
+        <%= content_tag :pre, inspect(@world, pretty: true, width: 80) %>
     </div>
   </div>
 </div>
