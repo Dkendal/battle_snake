@@ -24,7 +24,7 @@ defmodule BattleSnake.Move do
   """
   @shortdoc "collect all moves for living snakes"
   @spec all(list(Snake.t), (Snake.t -> Move.t)) :: list(Snake.t)
-  def all(snakes, request_fun, timeout \\ 5000) do
+  def all(snakes, request_fun, timeout \\ 200) do
     do_task =
     fn (snake) ->
       {:ok, sup_pid} = Task.Supervisor.start_link()
@@ -45,8 +45,10 @@ defmodule BattleSnake.Move do
       put_in(move.snake, snake)
     end
 
+    # The async stream shouldn't fail to respond.
+    # we're timing idividual tasks above.
     snakes
-    |> Task.async_stream(do_task)
+    |> Task.async_stream(do_task, timeout: :infinity)
     |> Enum.into([], fn {:ok, value} -> value end)
   end
 
