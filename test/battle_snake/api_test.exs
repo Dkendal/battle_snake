@@ -1,5 +1,5 @@
 defmodule BattleSnake.ApiTest do
-  alias BattleSnake.{Snake, Board, Point, Move}
+  alias BattleSnake.{Snake, Point, Move}
 
   use ExUnit.Case, async: true
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
