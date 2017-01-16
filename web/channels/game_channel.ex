@@ -81,8 +81,6 @@ defmodule BattleSnake.GameChannel do
   end
 
   def new_game_state(socket) do
-    {:ok, _} = @api.start
-
     "game:" <> id = socket.topic
 
     game = GameForm.get(id)
