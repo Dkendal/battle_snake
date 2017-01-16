@@ -37,20 +37,21 @@ defmodule BattleSnake.Move do
       {:ok, sup_pid} = Task.Supervisor.start_link()
 
       work_fn = fn ->
-        case request_fun.(snake, world) do
-          {:ok, move} ->
-            move
-        end
+        request_fun.(snake, world)
       end
 
       task = Task.Supervisor.async_nolink(sup_pid, work_fn)
 
       move =
         case Task.yield(task, timeout) || Task.shutdown(task) do
-          {:ok, move} ->
+          {:ok, {:error, error}} ->
+            response_error(default_move(), error)
+
+          {:ok, {:ok, move}} ->
             response_ok(move)
+
           nil ->
-            response_timeout(default_move)
+            response_timeout(default_move())
         end
 
       # identify what snake this move belongs to.
@@ -78,5 +79,10 @@ defmodule BattleSnake.Move do
   @spec response_ok(Move.t) :: Move.t
   def response_ok(move) do
     put_in move.response_state, :ok
+  end
+
+  @spec response_error(Move.t, Exception.t) :: Move.t
+  def response_error(move, error) do
+    put_in move.response_state, {:error, error}
   end
 end
