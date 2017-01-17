@@ -79,6 +79,11 @@ defmodule BattleSnake.World do
     Enum.random open_spaces
   end
 
+  @doc "increase world.turn by 1"
+  def inc_turn(world) do
+    update_in(world.turn, &(&1+1))
+  end
+
   def step(world) do
     world
     |> clean_up_dead
