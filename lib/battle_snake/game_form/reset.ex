@@ -25,11 +25,25 @@ defmodule BattleSnake.GameForm.Reset do
       })
   end
 
+  @spec setup_world(GameForm.t) :: GameForm.t
+  def setup_world(game_form) do
+    update_in(game_form.world, &World.stock_food/1)
+  end
+
   @spec reset_game_form(GameForm.t) :: GameForm.t
   def reset_game_form(game_form) do
-    game_form = init_world(game_form)
-    game_form = Enum.reduce(game_form.snakes, game_form, &load_snake/2)
-    update_in(game_form.world, &World.stock_food/1)
+    game_form
+    |> init_world()
+    |> load_snakes()
+    |> setup_world()
+  end
+
+  @doc """
+  Load all snakes from game_form.snakes into game_form.world
+  """
+  @spec load_snakes(GameForm.t) :: GameForm.t
+  def load_snakes(game_form) do
+    Enum.reduce(game_form.snakes, game_form, &load_snake/2)
   end
 
   @doc """
