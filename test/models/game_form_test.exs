@@ -1,4 +1,4 @@
-defmodule BattleSnake.GameTest do
+defmodule BattleSnake.GameFormTest do
   use ExUnit.Case, async: true
   import Ecto.Changeset
 
