@@ -6,7 +6,7 @@ defmodule BattleSnake.Move do
     :move,
     :taunt,
     :snake,
-    response_state: :init,
+    __meta__: %Move.Meta{}
   ]
 
   @type direction :: String.t
@@ -73,16 +73,20 @@ defmodule BattleSnake.Move do
 
   @spec response_timeout(Move.t) :: Move.t
   def response_timeout(move) do
-    put_in move.response_state, :timeout
+    put_in move.__meta__.response_state, :timeout
   end
 
   @spec response_ok(Move.t) :: Move.t
   def response_ok(move) do
-    put_in move.response_state, :ok
+    put_in move.__meta__.response_state, :ok
   end
 
   @spec response_error(Move.t, Exception.t) :: Move.t
   def response_error(move, error) do
-    put_in move.response_state, {:error, error}
+    put_in move.__meta__.response_state, {:error, error}
+  end
+
+  def response(move, response) do
+    put_in move.__meta__.response, response
   end
 end

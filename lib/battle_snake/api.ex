@@ -50,6 +50,7 @@ defmodule BattleSnake.Api do
 
   @spec decode_move(HTTPoison.Response.t, Move.t) :: {:ok, Move.t} | {:error, any}
   defp decode_move(response, move \\ %Move{}) do
+    move = Move.response(move, response)
     Poison.decode(response.body, as: move)
   end
 
