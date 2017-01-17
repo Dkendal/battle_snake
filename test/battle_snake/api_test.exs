@@ -65,6 +65,17 @@ defmodule BattleSnake.ApiTest do
       assert move == {:ok, %Move{move: "up"}}
     end
 
+    test "on parsing error returns the error" do
+      body = "{"
+
+      mock = fn (@move_url, _, _, _) ->
+        {:ok, %HTTPoison.Response{body: body}}
+      end
+
+      assert({:error, :invalid} ==
+        BattleSnake.Api.move(@snake, @world, mock))
+    end
+
     test "on error returns the error" do
       mock = fn (@move_url, _, _, _) ->
         {:error, %HTTPoison.Error{}}
