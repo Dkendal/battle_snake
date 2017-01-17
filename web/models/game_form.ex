@@ -17,45 +17,6 @@ defmodule BattleSnake.GameForm do
     field :max_food, :integer, default: 1
   end
 
-  def reset_snake(%World{} = world, %Snake{} = snake) do
-    coords = new_coords(world)
-    %{snake| coords: coords}
-  end
-
-  def new_coords(%World{} = world) do
-    world
-    |> World.rand_unoccupied_space()
-    |> List.duplicate(3)
-  end
-
-  def load_snake_form_fn() do
-    fn form, game ->
-      {:ok, snake} = @api.load(form, game)
-      snake = reset_snake(game.world, snake)
-      snake = %{snake| url: form.url}
-      update_in(game.world.snakes, &[snake|&1])
-    end
-  end
-
-  def reset_world(game) do
-    world = %World{
-      height: game.height,
-      max_food: game.max_food,
-      snakes: [],
-      width: game.width,
-    }
-
-    game = put_in game.world, world
-
-    snakes = game.snakes
-
-    game = Enum.reduce(snakes, game, load_snake_form_fn())
-
-    world = World.stock_food(game.world)
-
-    put_in game.world, world
-  end
-
   def save(game) do
     write = fn ->
       :mnesia.write(record(game))
