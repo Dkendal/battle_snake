@@ -27,21 +27,21 @@ defmodule BattleSnake.MoveTest  do
 
   describe "BattleSnake.Move.all/1" do
     test "returns a default move when the request encounters an error" do
-      expected = put_in @up.response_state, {:error, "msg"}
+      expected = put_in @up.__meta__.response_state, {:error, "msg"}
 
       assert(match?([^expected],
             Move.all(@world, &error_fn/2)))
     end
 
     test "returns a default move when the request times-out" do
-      expected = put_in @up.response_state, :timeout
+      expected = put_in @up.__meta__.response_state, :timeout
 
       assert(match?([^expected],
             Move.all(@world, &sleep_fn/2, 0)))
     end
 
     test "returns a move for each snake" do
-      expected = put_in @left.response_state, :ok
+      expected = put_in @left.__meta__.response_state, :ok
 
       assert(match?([^expected],
             Move.all(@world, &up_fn/2)))
