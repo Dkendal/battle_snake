@@ -56,13 +56,19 @@ defmodule BattleSnake.ApiTest do
 
   describe "BattleSnake.Api.move/3" do
     test "on success responds with the move" do
+      response = %HTTPoison.Response{body: ~S({"move":"up"})}
+
       mock = fn(@move_url, _, _, _) ->
-        {:ok, %HTTPoison.Response{body: ~S({"move":"up"})}}
+        {:ok, response}
       end
 
       move = BattleSnake.Api.move(@snake, @world, mock)
 
-      assert move == {:ok, %Move{move: "up"}}
+      assert move == {
+        :ok,
+        %Move{
+          move: "up",
+          __meta__: %Move.Meta{response: response}}}
     end
 
     test "on parsing error returns the error" do
