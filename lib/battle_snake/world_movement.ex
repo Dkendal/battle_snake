@@ -1,5 +1,8 @@
 defmodule BattleSnake.WorldMovement do
   alias BattleSnake.{World, Move, Point, Snake}
+
+  @api Application.get_env(:battle_snake, :snake_api)
+
   @moduledoc """
   Applies movement updates to the world.
   """
@@ -20,5 +23,12 @@ defmodule BattleSnake.WorldMovement do
     end)
 
     put_in(world.moves, moves)
+  end
+
+  @doc "Contact all clients and update the world state with their move."
+  @spec next(World.t) :: World.t
+  def next(world) do
+    moves = BattleSnake.Move.all(world, &@api.move/2)
+    BattleSnake.WorldMovement.apply(world, moves)
   end
 end

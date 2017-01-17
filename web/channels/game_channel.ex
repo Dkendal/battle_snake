@@ -1,8 +1,5 @@
 defmodule BattleSnake.GameChannel do
-  @api Application.get_env(:battle_snake, :snake_api)
-
   alias BattleSnake.{World, GameServer}
-  alias BattleSnake.{GameForm}
 
   use BattleSnake.Web, :channel
 
@@ -82,26 +79,7 @@ defmodule BattleSnake.GameChannel do
 
   def new_game_state(socket) do
     "game:" <> id = socket.topic
-
-    game = GameForm.get(id)
-
-    game = GameForm.reset_world game
-
-    world = game.world
-
-    opts = [
-      delay: game.delay,
-      objective: &BattleSnake.WinConditions.single_player/1
-    ]
-
-    on_change = draw(socket)
-
-    %GameServer.State{
-      world: world,
-      reducer: reducer(),
-      opts: opts,
-      on_change: on_change,
-    }
+    BattleSnake.GameServerConfig.setup(id, on_change(socket))
   end
 
   # game name
@@ -109,14 +87,7 @@ defmodule BattleSnake.GameChannel do
     {:global, socket.topic}
   end
 
-  @doc "Contact all clients and update the world state with their move."
-  @spec make_move(World.t) :: World.t
-  def make_move(world) do
-    moves = BattleSnake.Move.all(world, &@api.move/2)
-    BattleSnake.WorldMovement.apply(world, moves)
-  end
-
-  defp draw(socket) do
+  defp on_change(socket) do
     fn (%{world: world}) ->
       html = Phoenix.View.render_to_string(
         BattleSnake.PlayView,
@@ -126,18 +97,6 @@ defmodule BattleSnake.GameChannel do
       broadcast socket, "tick", %{html: html}
     end
   end
-
-  def reducer do
-    fn world ->
-      world = update_in(world.turn, &(&1+1))
-
-      world
-      |> make_move
-      |> World.step
-      |> World.stock_food
-    end
-  end
-
 
   # Add authorization logic here as required.
   defp authorized?(_payload) do
