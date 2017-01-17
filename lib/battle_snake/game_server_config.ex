@@ -17,7 +17,7 @@ defmodule BattleSnake.GameServerConfig do
   def reset(id) do
     id
     |> GameForm.get()
-    |> GameForm.reset_world()
+    |> GameForm.Reset.reset_game_form()
   end
 
   @doc """
