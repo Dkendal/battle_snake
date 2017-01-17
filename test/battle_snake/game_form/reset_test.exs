@@ -17,9 +17,13 @@ defmodule BattleSnake.GameForm.ResetTest do
     url: "http://example.com"
   }
 
-  @game_form_with_snakes put_in(@game_form.snakes, [@snake_form])
+  @snake %BattleSnake.Snake{}
 
   @initialized_game_form put_in(@game_form.world, @world)
+
+  @game_form_with_snakes put_in(@initialized_game_form.snakes, [@snake_form])
+
+  @world_with_snakes put_in(@world.snakes, [@snake])
 
   describe "BattleSnake.GameForm.Reset.init_world/1" do
     @init_world BattleSnake.GameForm.Reset.init_world(@game_form)
@@ -45,20 +49,33 @@ defmodule BattleSnake.GameForm.ResetTest do
     end
   end
 
-  describe "BattleSnake.GameForm.Reset.load_snake/2" do
-    @load_snake BattleSnake.GameForm.Reset.load_snake(@snake_form, @initialized_game_form)
-    @loaded_snake @load_snake.world.snakes |> hd
+  describe "BattleSnake.GameForm.Reset.load_snakes/2" do
+    @load_snakes BattleSnake.GameForm.Reset.load_snakes(@game_form_with_snakes)
+    @loaded_snake @load_snakes.world.snakes |> hd()
 
-    test "adds a snake to game_form.world.snakes" do
-      assert(match?([%BattleSnake.Snake{}], @load_snake.world.snakes))
+    @unhealthy_snakes_game BattleSnake.GameForm.Reset.load_snakes(
+      @game_form_with_snakes,
+      fn(_snake_form, _game_form) -> {:error, :test} end)
+
+    @unhealthy_snake @unhealthy_snakes_game.world.snakes |> hd()
+
+    test "adds all snakes from the snake-forms in game_form.snakes" do
+      BattleSnake.GameForm.Reset.load_snakes(@game_form_with_snakes)
+      assert(@load_snakes.world.snakes |> length() == 1)
     end
 
-    test "loaded snake has the same url as snake_form" do
-      assert(@loaded_snake.url == "http://example.com")
+    test "marks loaded snakes as healthy" do
+      assert(match? %BattleSnake.Snake{}, @loaded_snake)
+      assert(@loaded_snake.health == :ok)
     end
 
-    test "loaded snake has some position on the board" do
-      assert(@loaded_snake.coords |> length() > 0)
+    test "adds snakes that failed to load" do
+      assert(@unhealthy_snakes_game.snakes |> length() == 1)
+    end
+
+    test "snakes that failed to load are marked as unhealthy" do
+      assert(match? %BattleSnake.Snake{}, @unhealthy_snake)
+      assert(@unhealthy_snake.health == {:error, :test})
     end
   end
 
@@ -71,6 +88,25 @@ defmodule BattleSnake.GameForm.ResetTest do
 
     test "adds food to the world based on the config" do
       assert(@reset_game_form.world.food |> length() == 1)
+    end
+  end
+
+  describe "BattleSnake.GameForm.Reset.position_snakes/1" do
+    @position_snakes BattleSnake.GameForm.Reset.position_snakes(@world_with_snakes)
+
+    test "returns a world" do
+      assert(match?(%BattleSnake.World{}, @position_snakes))
+    end
+
+    test "still contains the same number of snakes" do
+      assert(@position_snakes.snakes |> length() == 1)
+    end
+
+    test "gives each snake initial starting coordinates" do
+      for snake <- @position_snakes.snakes do
+        assert([p, p, p] = snake.coords)
+        assert(%BattleSnake.Point{} = p)
+      end
     end
   end
 end

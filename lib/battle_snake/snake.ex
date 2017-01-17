@@ -11,6 +11,8 @@ defmodule BattleSnake.Snake do
     url: String.t,
   }
 
+  @unloaded {:error, :unloaded}
+
   defstruct [
     color: "",
     coords: [],
@@ -18,6 +20,7 @@ defmodule BattleSnake.Snake do
     name: "",
     taunt: "",
     url: "",
+    health: @unloaded,
   ]
 
   def dead?(%{coords: [%{y: y, x: x} |_]}, %{width: w, height: h})

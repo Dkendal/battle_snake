@@ -16,11 +16,11 @@ defmodule BattleSnake.Api do
 
   POST /start
   """
-  def load(snake_form, game, request \\ &HTTP.post/4) do
+  def load(snake_form, game_form, request \\ &HTTP.post/4) do
     url = snake_form.url <> "/start"
 
     snake = %Snake{url: snake_form.url}
-    payload = encode_load(game)
+    payload = encode_load(game_form)
 
     with {:ok, response} <- request.(url, payload, headers(), options()),
       do: decode_load(response, snake)
@@ -64,12 +64,12 @@ defmodule BattleSnake.Api do
     Poison.decode(response.body, as: snake)
   end
 
-  @spec encode_load(Game.t) :: String.t
-  defp encode_load(game) do
+  @spec encode_load(GameForm.t) :: String.t
+  defp encode_load(game_form) do
     Poison.encode! %{
-      game_id: game.id,
-      height: game.height,
-      width: game.width,
+      game_id: game_form.id,
+      height: game_form.height,
+      width: game_form.width,
     }
   end
 end
