@@ -30,18 +30,24 @@ defmodule BattleSnake.ApiTest do
         color: "#123123"
       }
 
+      http_response = %HTTPoison.Response{body: Poison.encode!(body)}
+
       mock = fn (@start_url, _, _, _) ->
-        {:ok, %HTTPoison.Response{body: Poison.encode!(body)}}
+        {:ok, http_response}
       end
 
-      snake = BattleSnake.Api.load(@snake_form, @game_form, mock)
+      response = BattleSnake.Api.load(@snake_form, @game_form, mock)
 
-      assert snake == {:ok,
-                       %Snake{
-                         name: "example-snake",
-                         color: "#123123",
-                         url: "http://example.snake",
-                       }}
+      assert(match? %BattleSnake.Api.Response{}, response)
+
+      assert({:ok, http_response} == response.raw_response)
+
+      assert(response.parsed_response == {
+        :ok,
+        %Snake{
+          name: "example-snake",
+          color: "#123123",
+          url: "http://example.snake"}})
     end
 
     test "on error returns the error" do
@@ -49,8 +55,13 @@ defmodule BattleSnake.ApiTest do
         {:error, %HTTPoison.Error{}}
       end
 
-      assert({:error, %HTTPoison.Error{}} ==
-        BattleSnake.Api.load(@snake_form, @game_form, mock))
+      response =  BattleSnake.Api.load(@snake_form, @game_form, mock)
+
+      assert(match? %BattleSnake.Api.Response{}, response)
+
+      assert({:error, %HTTPoison.Error{}} == response.raw_response)
+
+      assert(response.parsed_response == {:error, :no_response})
     end
   end
 
