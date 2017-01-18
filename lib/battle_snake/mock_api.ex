@@ -1,4 +1,6 @@
 defmodule BattleSnake.MockApi do
+  alias BattleSnake.Api.Response
+
   @behaviour BattleSnake.Api
 
   @move %BattleSnake.Move{
@@ -7,7 +9,14 @@ defmodule BattleSnake.MockApi do
   }
 
   def load(_form, _game) do
-    {:ok, %BattleSnake.Snake{}}
+    %Response{
+      raw_response: {
+        :ok,
+        %HTTPoison.Response{body: "mocked response"}},
+      parsed_response: {
+        :ok,
+        %BattleSnake.Snake{}}
+    }
   end
 
   def start, do: {:ok, [:fake]}
