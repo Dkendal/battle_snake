@@ -7,39 +7,43 @@ defmodule BattleSnake.WorldMovementTest do
     Move,
     Point}
 
-  setup do
-    green_snake = %Snake{
-      name: :green,
-      coords: [
-        %Point{x: 0, y: 0}
-      ]
-    }
-
-    moves = [
-      %Move{
-        move: "up",
-        snake: green_snake
-      }
+  @green_snake %Snake{
+    name: "green-snake",
+    coords: [
+      %Point{x: 0, y: 0}
     ]
+  }
 
-    world = %World{
-      snakes: [
-        green_snake
-      ]
+  @moves [
+    %Move{
+      move: "up",
+      snake: @green_snake
     }
+  ]
 
-    {:ok,
-     moves: moves,
-     world: world}
-  end
+  @world %World{
+    snakes: [
+      @green_snake
+    ]
+  }
 
   describe "WorldMovement.apply/2" do
-    test "updates snake coordinates", %{world: world, moves: moves} do
-      new_world = WorldMovement.apply(world, moves)
+    @apply WorldMovement.apply(@world, @moves)
 
-      assert(new_world.snakes == [
+    test "returns a world struct" do
+      assert %World{} = @apply
+    end
+
+    test "sets world.moves" do
+      assert @apply.moves == %{
+        "green-snake" => %Move{move: "up"}
+      }
+    end
+
+    test "updates snake coordinates" do
+      assert(@apply.snakes == [
         %Snake{
-          name: :green,
+          name: "green-snake",
           coords: [%Point{x: 0, y: -1}]}])
     end
   end
