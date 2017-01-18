@@ -1,5 +1,10 @@
 defmodule BattleSnake.WorldTest do
-  alias BattleSnake.{World, Point, Snake}
+  alias BattleSnake.{
+    Board,
+    Point,
+    Snake,
+    World,
+  }
   use ExUnit.Case, async: true
   use Property
 
@@ -80,6 +85,62 @@ defmodule BattleSnake.WorldTest do
       world = World.clean_up_dead(world)
       assert world.snakes == []
       assert world.dead_snakes == [snake]
+    end
+  end
+
+  describe "Poison.Encoder.encode(%BattleSnake.World{}, [])" do
+    test "formats as JSON" do
+      head = %{
+        "state" => "head",
+        "snake" => "bar",
+      }
+
+      body = %{
+        "state" => "body",
+        "snake" => "bar",
+      }
+
+      #   0 1
+      # 0   h
+      # 1 f b
+      world = %World{
+        turn: 0,
+        food: [
+          %Point{x: 0, y: 1},
+        ],
+        snakes: [
+          %Snake{
+            coords: [
+              %Point{x: 1, y: 0},
+              %Point{x: 1, y: 1},
+            ],
+            name: "bar",
+            url: "example.com",
+          }
+        ],
+        height: 2,
+        width: 2,
+      }
+
+      actual = PoisonTesting.cast! world
+
+      expected = %{
+        "board" => [
+        [Board.empty, Board.food],
+        [head, body],
+      ],
+        "food" => [[0,1]],
+        "snakes" => [
+          %{
+            "name" => "bar",
+            "coords" => [[1,0],[1,1]],
+            "url" => "example.com",
+          }
+        ],
+        "turn" => 0,
+      }
+
+      assert expected == actual
     end
   end
 end
