@@ -3,11 +3,6 @@ defmodule BattleSnake.MockApi do
 
   @behaviour BattleSnake.Api
 
-  @move %BattleSnake.Move{
-    taunt: "test",
-    move: "up",
-  }
-
   def load(_form, _game) do
     %Response{
       raw_response: {
@@ -15,11 +10,18 @@ defmodule BattleSnake.MockApi do
         %HTTPoison.Response{body: "mocked response"}},
       parsed_response: {
         :ok,
-        %BattleSnake.Snake{}}
-    }
+        %BattleSnake.Snake{}}}
   end
 
   def start, do: {:ok, [:fake]}
 
-  def move(_, _), do: {:ok, @move}
+  def move(_, _) do
+    %Response{
+      raw_response: {
+        :ok,
+        %HTTPoison.Response{body: "mocked response"}},
+      parsed_response: {
+        :ok,
+        %BattleSnake.Move{move: "up"}}}
+  end
 end

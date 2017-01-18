@@ -27,6 +27,14 @@ defmodule BattleSnake.WorldMovementTest do
     ]
   }
 
+  describe "WorldMovement.next/1" do
+    @next WorldMovement.next(@world)
+
+    test "returns a world struct" do
+      assert match? %World{}, @next
+    end
+  end
+
   describe "WorldMovement.apply/2" do
     @apply WorldMovement.apply(@world, @moves)
 
