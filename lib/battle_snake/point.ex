@@ -20,3 +20,9 @@ defmodule BattleSnake.Point do
     }
   end
 end
+
+defimpl Poison.Encoder, for: BattleSnake.Point do
+  def encode(%{x: x, y: y}, opts) do
+    Poison.encode!([x, y], opts)
+  end
+end
