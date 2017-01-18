@@ -1,15 +1,19 @@
 defmodule BattleSnake.World do
-  alias BattleSnake.{Snake, Point}
+  alias BattleSnake.{
+    Move,
+    Point,
+    Snake,
+    Point}
 
   @type t :: %__MODULE__{
-    food: [any],
-    snakes: [any],
+    food: [Point.t],
+    snakes: [Snake.t],
     dead_snakes: [any],
     max_food: pos_integer,
     height: pos_integer,
     width: pos_integer,
     turn: pos_integer,
-    moves: any,
+    moves: %{String.t => Move.t},
   }
 
   defstruct [
