@@ -55,7 +55,9 @@ defmodule BattleSnake.GameForm.ResetTest do
 
     @unhealthy_snakes_game BattleSnake.GameForm.Reset.load_snakes(
       @game_form_with_snakes,
-      fn(_snake_form, _game_form) -> {:error, :test} end)
+      fn(_snake_form, _game_form) ->
+        %BattleSnake.Api.Response{parsed_response: {:error, :test}}
+      end)
 
     @unhealthy_snake @unhealthy_snakes_game.world.snakes |> hd()
 

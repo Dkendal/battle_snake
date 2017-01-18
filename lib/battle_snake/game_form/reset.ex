@@ -3,6 +3,7 @@ defmodule BattleSnake.GameForm.Reset do
     GameForm,
     Snake,
     World,
+    Api,
   }
 
   @type load_fun :: ((SnakeForm.t, GameForm.t) -> Snake.t)
@@ -93,7 +94,8 @@ defmodule BattleSnake.GameForm.Reset do
   """
   @spec health_check(SnakeForm.t, GameForm.t, load_fun) :: SnakeForm.t
   def health_check(snake_form, game_form, load \\ load_fun()) do
-    with({:ok, snake} <- load.(snake_form, game_form)) do
+    response = load.(snake_form, game_form)
+    with({:ok, snake} <- Api.Response.val(response)) do
       Snake.Health.ok(snake)
     else
       {:error, reason} ->
