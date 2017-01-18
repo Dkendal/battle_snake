@@ -1,6 +1,10 @@
 defmodule BattleSnake.MoveTest  do
   use ExUnit.Case, async: true
-  alias BattleSnake.{Snake, Move, World}
+  alias BattleSnake.{
+    Snake,
+    Move,
+    World,
+    Api.Response}
 
   @green_snake %Snake{name: :green}
 
@@ -8,43 +12,47 @@ defmodule BattleSnake.MoveTest  do
     snakes: [@green_snake]
   }
 
-  @up %Move{move: "up", snake: @green_snake}
-
-  @left %Move{move: "left", snake: @green_snake}
+  @left %Move{move: "left"}
 
   def up_fn(%Snake{}, %World{}) do
-    {:ok, %Move{move: "left"}}
+    %Response{
+      parsed_response: {
+        :ok,
+        @left}}
   end
 
-  def sleep_fn(%Snake{}, %World{}) do
+  def sleep_fun(%Snake{}, %World{}) do
     Process.sleep 100
-    {:ok, @left}
+    %Response{
+      parsed_response: {
+        :ok,
+        @left}}
   end
 
-  def error_fn(%Snake{}, %World{}) do
-    {:error, "msg"}
+  def error_fun(%Snake{}, %World{}) do
+    %Response{}
   end
 
   describe "BattleSnake.Move.all/1" do
     test "returns a default move when the request encounters an error" do
-      expected = put_in @up.__meta__.response_state, {:error, "msg"}
-
-      assert(match?([^expected],
-            Move.all(@world, &error_fn/2)))
+      moves = Move.all(@world, &error_fun/2)
+      assert [%Move{} = move] = moves
+      assert move.move == "up"
+      assert {:ok, %Response{}} = move.__meta__.response
     end
 
     test "returns a default move when the request times-out" do
-      expected = put_in @up.__meta__.response_state, :timeout
-
-      assert(match?([^expected],
-            Move.all(@world, &sleep_fn/2, 0)))
+      moves = Move.all(@world, &sleep_fun/2, 0)
+      assert [%Move{} = move] = moves
+      assert move.move == "up"
+      assert {:error, :timeout} = move.__meta__.response
     end
 
     test "returns a move for each snake" do
-      expected = put_in @left.__meta__.response_state, :ok
-
-      assert(match?([^expected],
-            Move.all(@world, &up_fn/2)))
+      moves = Move.all(@world)
+      assert [%Move{} = move] = moves
+      assert move.move == "up"
+      assert {:ok, %Response{}} = move.__meta__.response
     end
   end
 end
