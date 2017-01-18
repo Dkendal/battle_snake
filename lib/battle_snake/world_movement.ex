@@ -1,5 +1,8 @@
 defmodule BattleSnake.WorldMovement do
-  alias BattleSnake.{World, Move, Point, Snake}
+  alias BattleSnake.{
+    World,
+    Move,
+    Snake}
 
   @api Application.get_env(:battle_snake, :snake_api)
 
@@ -12,17 +15,21 @@ defmodule BattleSnake.WorldMovement do
   """
   @spec apply(World.t, [Move.t]) :: World.t
   def apply(world, moves) do
-    grouped_moves = Enum.group_by(moves, & &1.snake.name)
+    moves = Enum.reduce(moves, %{}, fn(move, acc) ->
+      # no need to keep this reference to the snake.
+      new_move = put_in(move.snake, nil)
+      Map.put(acc, move.snake.name, new_move)
+    end)
 
-    world = update_in(world.snakes, fn snakes ->
+    world = put_in(world.moves, moves)
+
+    update_in(world.snakes, fn snakes ->
       for snake <- snakes do
-        [move] = grouped_moves[snake.name]
+        move = moves[snake.name]
         point = World.convert(move.move)
         Snake.move(snake, point)
       end
     end)
-
-    put_in(world.moves, moves)
   end
 
   @doc "Contact all clients and update the world state with their move."
