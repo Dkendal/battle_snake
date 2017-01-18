@@ -102,3 +102,22 @@ defmodule BattleSnake.Snake do
     put_in(snake.coords, body)
   end
 end
+
+defimpl Poison.Encoder, for: BattleSnake.Snake do
+  def encode(snake, opts) do
+    attrs = [
+      :url,
+      :name,
+      :coords
+    ]
+
+    map = %{
+    }
+
+    map = snake
+    |> Map.take(attrs)
+    |> Map.merge(map)
+
+    Poison.encode!(map, opts)
+  end
+end

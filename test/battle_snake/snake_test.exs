@@ -140,4 +140,24 @@ defmodule BattleSnake.SnakeTest do
       })
     end
   end
+
+  describe "Poison.Encoder.encode(BattleSnake.Snake, [])" do
+    test "formats as JSON" do
+      snake = %Snake{
+        coords: [%Point{x: 0, y: 1}],
+        name: "snake",
+        url: "example.com"
+      }
+
+      expected = %{
+        "name" => "snake",
+        "coords" => [[0, 1]],
+        "url" => "example.com",
+      }
+
+      actual = PoisonTesting.cast!(snake)
+
+      assert expected == actual
+    end
+  end
 end
