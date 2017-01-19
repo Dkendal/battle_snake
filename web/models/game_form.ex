@@ -60,3 +60,12 @@ defmodule BattleSnake.GameForm do
 
   def set_id(changeset, _id), do: changeset
 end
+
+defimpl Poison.Encoder, for: BattleSnake.GameForm do
+  def encode(game_form, opts) do
+    %{game_id: game_form.id,
+      height: game_form.height,
+      width: game_form.width}
+    |> Poison.encode!(opts)
+  end
+end
