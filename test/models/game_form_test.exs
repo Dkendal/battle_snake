@@ -59,4 +59,20 @@ defmodule BattleSnake.GameTest do
       assert get_field(GameForm.set_id(game), :id) == 1
     end
   end
+
+  describe "Poison.Encoder.encode(%BattleSnake.GameForm{}, [])" do
+    @game_form %GameForm{id: 1,
+                         height: 2,
+                         width: 3}
+
+    @json %{"game_id" => 1,
+            "height" => 2,
+            "width" => 3}
+
+    @expected PoisonTesting.cast! @game_form
+
+    test "returns formatted JSON" do
+      assert @expected == @json
+    end
+  end
 end
