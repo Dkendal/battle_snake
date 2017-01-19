@@ -22,10 +22,9 @@ defmodule BattleSnake.Api do
     url = snake_form.url <> "/start"
 
     snake = %Snake{url: snake_form.url}
-    payload = encode_load(game_form)
 
     url
-    |> request.(payload, headers(), options())
+    |> request.(game_form, headers(), options())
     |> Response.new(as: snake)
   end
 
@@ -38,10 +37,8 @@ defmodule BattleSnake.Api do
   def move(snake, world, request \\ &HTTP.post/4) do
     url = snake.url <> "/move"
 
-    payload = encode_move(world)
-
     url
-    |> request.(payload, headers(), options())
+    |> request.(world, headers(), options())
     |> Response.new(as: %Move{})
   end
 
@@ -51,19 +48,5 @@ defmodule BattleSnake.Api do
 
   defp headers() do
     []
-  end
-
-  @spec encode_move(World.t) :: String.t
-  defp encode_move(world) do
-    Poison.encode!(world)
-  end
-
-  @spec encode_load(GameForm.t) :: String.t
-  defp encode_load(game_form) do
-    Poison.encode! %{
-      game_id: game_form.id,
-      height: game_form.height,
-      width: game_form.width,
-    }
   end
 end
