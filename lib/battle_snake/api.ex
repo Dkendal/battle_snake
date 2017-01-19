@@ -19,13 +19,10 @@ defmodule BattleSnake.Api do
   """
   @spec load(%SnakeForm{}, %GameForm{}) :: Response.t
   def load(snake_form, game_form, request \\ &HTTP.post/4) do
-    url = snake_form.url <> "/start"
-
-    snake = %Snake{url: snake_form.url}
-
-    url
-    |> request.(game_form, headers(), options())
-    |> Response.new(as: snake)
+    response(snake_form, "/start", request,
+      data: game_form,
+      as: %Snake{
+        url: snake_form.url})
   end
 
   @doc """
@@ -35,11 +32,17 @@ defmodule BattleSnake.Api do
   """
   @spec move(%Snake{}, %World{}) :: Response.t
   def move(snake, world, request \\ &HTTP.post/4) do
-    url = snake.url <> "/move"
+    response(snake, "/move", request,
+      data: world,
+      as: %Move{})
+  end
 
-    url
-    |> request.(world, headers(), options())
-    |> Response.new(as: %Move{})
+  defp response(%{url: url}, path, request, opts) do
+    data = Keyword.fetch!(opts, :data)
+    struct = Keyword.fetch!(opts, :as)
+    (url <> path)
+    |> request.(data, headers(), options())
+    |> Response.new(as: struct)
   end
 
   defp options do
