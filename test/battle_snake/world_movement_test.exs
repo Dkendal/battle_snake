@@ -14,12 +14,14 @@ defmodule BattleSnake.WorldMovementTest do
     ]
   }
 
-  @moves [
-    %Move{
-      move: "up",
-      snake: @green_snake
-    }
-  ]
+  @snake_key Snake.Access.key(@green_snake)
+
+  @up %Move{
+    move: "up",
+    snake_key: @snake_key
+  }
+
+  @moves [@up]
 
   @world %World{
     snakes: [
@@ -43,9 +45,7 @@ defmodule BattleSnake.WorldMovementTest do
     end
 
     test "sets world.moves" do
-      assert @apply.moves == %{
-        "green-snake" => %Move{move: "up"}
-      }
+      assert %{@snake_key => @up} == @apply.moves
     end
 
     test "updates snake coordinates" do
