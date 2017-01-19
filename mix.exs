@@ -52,6 +52,7 @@ defmodule BattleSnake.Mixfile do
   defp deps do
     [
       {:cowboy, "~> 1.0"},
+      {:dbg, github: "fishcakez/dbg"},
       {:ecto, "~> 2.0"},
       {:excoveralls, "~> 0.6", only: :test},
       {:exrm, "~> 1.0.0"},
