@@ -20,6 +20,13 @@ defmodule BattleSnake.GameServer do
     def identity(x), do: x
   end
 
+  @type state :: %State{
+    world: BattleSnake.World.t,
+    reducer: (state -> state),
+    on_change: (state -> state),
+    opts: [any],
+    hist: [state]
+  }
   # Client
 
   def start_link(%State{} = state, opts \\ []) do
