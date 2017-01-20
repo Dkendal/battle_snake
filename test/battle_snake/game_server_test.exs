@@ -127,4 +127,11 @@ defmodule BattleSnake.GameServerTest do
       assert_receive {:ping, ^prev}
     end
   end
+
+  describe "BattleSnake.GameServer.get_state/1" do
+    test "returns the state of the game server" do
+      {:ok, pid} = GameServer.start_link(@state)
+      assert {:suspend, @state} == GameServer.get_state(pid)
+    end
+  end
 end
