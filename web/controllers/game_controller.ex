@@ -15,35 +15,33 @@ defmodule BattleSnake.GameController do
   end
 
   def create(conn, %{"game_form" => params}) do
-    game = %GameForm{}
+    game_form = %GameForm{}
     |> GameForm.changeset(params)
     |> Ecto.Changeset.apply_changes
     |> GameForm.save
 
-    redirect(conn, to: game_path(conn, :edit, game))
+    redirect(conn, to: game_path(conn, :edit, game_form))
   end
 
   def show(conn, %{"id" => id}) do
-    game = GameForm.get(id)
-
-    render(conn, "show.html", game: game)
+    {:ok, game_form} = GameForm.get(id)
+    render(conn, "show.html", game: game_form)
   end
 
   def edit(conn, %{"id" => id}) do
-    game = GameForm.get(id)
-
-    changeset = GameForm.changeset game
-
-    render(conn, "edit.html", game: game, changeset: changeset)
+    {:ok, game_form} = GameForm.get(id)
+    changeset = GameForm.changeset game_form
+    render(conn, "edit.html", game: game_form, changeset: changeset)
   end
 
   def update(conn, %{"id" => id, "game_form" => params}) do
-    game = GameForm.get(id)
+    {:ok, game_form} = GameForm.get(id)
+    game_form
     |> GameForm.changeset(params)
     |> Ecto.Changeset.apply_changes
     |> GameForm.save
 
-    redirect(conn, to: game_path(conn, :edit, game))
+    redirect(conn, to: game_path(conn, :edit, game_form))
   end
 
   def delete(_conn, %{"id" => _id}) do

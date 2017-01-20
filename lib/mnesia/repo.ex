@@ -59,7 +59,7 @@ defmodule Mnesia.Repo do
         end
 
         with {:atomic, [record]} <- :mnesia.transaction(read) do
-          load(record)
+          {:ok, load(record)}
         else
           {:atomic, []} ->
             {:error, %Mnesia.RecordNotFoundError{id: id, table: __MODULE__}}
