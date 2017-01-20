@@ -15,8 +15,8 @@ defmodule BattleSnake.GameServerConfig do
   How to start the game given an id.
   """
   def reset(id) do
-    id
-    |> GameForm.get()
+    {:ok, game_form} = GameForm.get(id)
+    game_form
     |> GameForm.Reset.reset_game_form()
   end
 

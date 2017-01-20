@@ -4,7 +4,7 @@ defmodule BattleSnake.PlayController do
   use BattleSnake.Web, :controller
 
   def show(conn, %{"id" => id}) do
-    game = GameForm.get(id)
-    render(conn, "show.html", game: game)
+    {:ok, game_form} = GameForm.get(id)
+    render(conn, "show.html", game: game_form)
   end
 end
