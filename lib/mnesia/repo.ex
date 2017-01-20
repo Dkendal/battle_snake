@@ -1,3 +1,10 @@
+defmodule Mnesia.RecordNotFoundError do
+  defexception [:table, :id]
+
+  def message(%{table: table, id: id}),
+    do: "Couldn't find #{inspect table} with id=#{id}"
+end
+
 defmodule Mnesia.Repo do
   @moduledoc """
   Thin wrapper between Ecto and Mnesia, allows Ecto.Changeset's to be used in
@@ -51,9 +58,12 @@ defmodule Mnesia.Repo do
           :mnesia.read(__MODULE__, id)
         end
 
-        {:atomic, [record]} = :mnesia.transaction(read)
-
-        load(record)
+        with {:atomic, [record]} <- :mnesia.transaction(read) do
+          load(record)
+        else
+          {:atomic, []} ->
+            {:error, %Mnesia.RecordNotFoundError{id: id, table: __MODULE__}}
+        end
       end
 
       @spec create_table() :: {:atomic, :ok} | {:aborted, any}
