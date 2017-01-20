@@ -12,8 +12,8 @@ defmodule Mnesia.Repo do
 
       def fields, do: __schema__(:fields)
 
-      def record(game) do
-        get = &Map.get(game, &1)
+      def record(struct) do
+        get = &Map.get(struct, &1)
         attrs = Enum.map(fields(), get)
         List.to_tuple [__MODULE__ |attrs]
       end
@@ -33,17 +33,36 @@ defmodule Mnesia.Repo do
       end
 
       def last do
-        load :mnesia.last(__MODULE__)
+        load(:mnesia.last(__MODULE__))
+      end
+
+      def save(struct) do
+        write = fn ->
+          :mnesia.write(record(struct))
+        end
+
+        {:atomic, :ok} = :mnesia.transaction(write)
+
+        struct
       end
 
       def get(id) do
         read = fn ->
-          :mnesia.read __MODULE__, id
+          :mnesia.read(__MODULE__, id)
         end
 
-        {:atomic, [record]} = :mnesia.transaction read
+        {:atomic, [record]} = :mnesia.transaction(read)
 
         load(record)
+      end
+
+      @spec create_table() :: {:atomic, :ok} | {:aborted, any}
+      def create_table do
+        :mnesia.create_table(__MODULE__, table())
+      end
+
+      def delete_table do
+        :mnesia.delete_table(__MODULE__)
       end
     end
   end
