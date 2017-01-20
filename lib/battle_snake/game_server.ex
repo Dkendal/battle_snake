@@ -49,6 +49,10 @@ defmodule BattleSnake.GameServer do
     GenServer.call(pid, :prev)
   end
 
+  def get_state(pid) do
+    GenServer.call(pid, :get_state)
+  end
+
   # Server (callbacks)
 
   # Calls
@@ -89,6 +93,10 @@ defmodule BattleSnake.GameServer do
     state = state
     |> step_back()
     {:reply, :ok, {:suspend, state}}
+  end
+
+  def handle_call(:get_state, _from, state) do
+    {:reply, state, state}
   end
 
   def handle_call(request, from, state) do
