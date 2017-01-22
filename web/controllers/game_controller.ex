@@ -4,8 +4,19 @@ defmodule BattleSnake.GameController do
   alias BattleSnake.GameForm
 
   def index(conn, _params) do
-    games = GameForm.all
-    render(conn, "index.html", games: games)
+    games = GameForm.all  # => nil
+
+    game_servers = for game <- games do
+      status = with [{pid, _}] <- BattleSnake.GameServer.Registry.lookup(game.id) do
+        {pid, BattleSnake.GameServer.get_status(pid)}
+      else
+        [] -> :dead
+      end
+      {game, status}
+    end
+
+
+    render(conn, "index.html", games: games, game_servers: game_servers)
   end
 
   def new(conn, _params) do
