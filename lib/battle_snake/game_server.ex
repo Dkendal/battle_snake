@@ -1,6 +1,7 @@
 defmodule BattleSnake.GameServer do
   alias __MODULE__.State
   use GenServer
+  import State
 
   @max_history 20
 
@@ -150,13 +151,5 @@ defmodule BattleSnake.GameServer do
 
   defp tick(state) do
     Process.send_after(self(), :tick, delay(state))
-  end
-
-  # check if the game is over
-  defp done?(state) do
-    opts = state.opts
-    world = state.world
-    fun = Keyword.fetch!(opts, :objective)
-    fun.(world)
   end
 end
