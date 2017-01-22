@@ -13,6 +13,7 @@ defmodule BattleSnake.GameServer.State do
     :world,
     reducer: &State.identity/1,
     on_change: &State.identity/1,
+    on_done: &State.identity/1,
     opts: [],
     hist: []
   ]
@@ -29,6 +30,11 @@ defmodule BattleSnake.GameServer.State do
     world = state.world
     fun = Keyword.fetch!(opts, :objective)
     fun.(world)
+  end
+
+  @spec on_done(t) :: t
+  def on_done(state) do
+    state.on_done.(state)
   end
 
   def identity(x), do: x

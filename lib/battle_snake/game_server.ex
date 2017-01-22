@@ -96,7 +96,7 @@ defmodule BattleSnake.GameServer do
     state = step(state)
 
     if done?(state) do
-      # state = set_winners(state)
+      state = on_done(state)
       {:noreply, {:halted, state}}
     else
       tick(state)
