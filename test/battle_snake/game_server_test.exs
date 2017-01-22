@@ -128,10 +128,10 @@ defmodule BattleSnake.GameServerTest do
     end
   end
 
-  describe "BattleSnake.GameServer.get_state/1" do
+  describe "BattleSnake.GameServer.get_status/1" do
     test "returns the state of the game server" do
       {:ok, pid} = GameServer.start_link(@state)
-      assert :suspend == GameServer.get_state(pid)
+      assert :suspend == GameServer.get_status(pid)
     end
   end
 end
