@@ -9,6 +9,7 @@ defmodule BattleSnake.GameServer.Registry do
   end
 
   @spec create(name, GameServer.state) :: GenServer.on_start
+  def create(value, state \\ %GameServer.State{})
   def create(value, %GameServer.State{} = state) do
     GameServer.Supervisor.start_game_server([state, [name: via(value)]])
   end

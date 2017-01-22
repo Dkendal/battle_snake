@@ -14,8 +14,8 @@ defmodule BattleSnake.GameServerConfig do
   @doc """
   How to start the game given an id.
   """
-  def reset(id) do
-    {:ok, game_form} = GameForm.get(id)
+  def reset(game_form) do
+    # {:ok, game_form} = GameForm.get(id)
     game_form
     |> GameForm.Reset.reset_game_form()
   end
@@ -31,8 +31,8 @@ defmodule BattleSnake.GameServerConfig do
     |> World.stock_food()
   end
 
-  def setup(id, on_change) do
-    game = reset(id)
+  def setup(game_form, on_change) do
+    game = reset(game_form)
     world = game.world
 
     opts = [
