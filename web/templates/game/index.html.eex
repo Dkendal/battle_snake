@@ -3,7 +3,8 @@
 <table class="table">
   <thead>
     <tr>
-
+      <th></th>
+      <th></th>
       <th></th>
     </tr>
   </thead>
@@ -12,6 +13,10 @@
     <tr>
       <td>
         <%= game.id %>
+      </td>
+
+      <td>
+        <%= inspect BattleSnake.GameServer.Registry.lookup to_string game.id %>
       </td>
 
       <td class="text-right">
