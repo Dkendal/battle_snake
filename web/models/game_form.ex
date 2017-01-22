@@ -17,16 +17,6 @@ defmodule BattleSnake.GameForm do
     field :max_food, :integer, default: 1
   end
 
-  def save(game) do
-    write = fn ->
-      :mnesia.write(record(game))
-    end
-
-    {:atomic, :ok} = :mnesia.transaction write
-
-    game
-  end
-
   def changeset(game, params \\ %{}) do
     game
     |> cast(params, @permitted)
