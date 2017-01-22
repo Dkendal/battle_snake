@@ -4,6 +4,7 @@ defmodule BattleSnake.Rules do
 
   @spec last_standing(State.t) :: State.t
   def last_standing(state) do
+    put_in(state.winners, do_last_standing(state))
   end
 
   def do_last_standing(%State{} = state) do
