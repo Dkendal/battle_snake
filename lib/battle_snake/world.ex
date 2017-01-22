@@ -21,11 +21,16 @@ defmodule BattleSnake.World do
     snakes: [],
     dead_snakes: [],
     max_food: 2,
-    height: 0,
-    width: 0,
+    height: 10,
+    width: 10,
     turn: 0,
-    moves: %{}
+    moves: %{},
+    deaths: [],
   ]
+
+  defmodule DeathEvent do
+    defstruct [:turn, :snake]
+  end
 
   def up,     do: %Point{x: 0,  y: -1}
   def down,   do: %Point{x: 0,  y: 1}
@@ -112,11 +117,17 @@ defmodule BattleSnake.World do
     world = put_in(world.snakes, acc.live)
     world = update_in(world.dead_snakes, & &1 ++ acc.dead)
 
-    snakes = Snake.resolve_head_to_head(acc.live)
-    dead = acc.live -- snakes
-    world = update_in(world.dead_snakes, & &1 ++ dead)
+    living_snakes = Snake.resolve_head_to_head(acc.live)
+    head_to_head_dead = acc.live -- living_snakes
 
-    put_in(world.snakes, snakes)
+    world = update_in(world.dead_snakes, & &1 ++ head_to_head_dead)
+
+    world = update_in(world.deaths, fn deaths ->
+      dead = acc.dead ++ head_to_head_dead
+      for snake <- dead, do: %DeathEvent{turn: world.turn, snake: snake}
+    end)
+
+    put_in(world.snakes, living_snakes)
   end
 
   def grow_snakes world do
