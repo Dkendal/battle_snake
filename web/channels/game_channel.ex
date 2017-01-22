@@ -56,7 +56,7 @@ defmodule BattleSnake.GameChannel do
   def handle_info(:after_join,
     %{assigns: %{game_server_pid: game_server_pid}}
     = socket) do
-    state = GameServer.get_state(game_server_pid)
+    state = GameServer.get_status(game_server_pid)
     push(socket, "state_change", %{data: state})
     {:noreply, socket}
   end
