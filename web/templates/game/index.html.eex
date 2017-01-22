@@ -9,14 +9,14 @@
     </tr>
   </thead>
   <tbody>
-<%= for game <- @games do %>
+<%= for {game, game_server} <- @game_servers do %>
     <tr>
       <td>
         <%= game.id %>
       </td>
 
       <td>
-        <%= inspect BattleSnake.GameServer.Registry.lookup to_string game.id %>
+        <%= inspect game_server %>
       </td>
 
       <td class="text-right">
