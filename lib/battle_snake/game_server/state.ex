@@ -23,5 +23,13 @@ defmodule BattleSnake.GameServer.State do
     t
   end
 
+  @spec done?(t) :: boolean
+  def done?(state) do
+    opts = state.opts
+    world = state.world
+    fun = Keyword.fetch!(opts, :objective)
+    fun.(world)
+  end
+
   def identity(x), do: x
 end
