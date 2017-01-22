@@ -15,7 +15,8 @@ defmodule BattleSnake.GameServer.State do
     on_change: &State.identity/1,
     on_done: &State.identity/1,
     opts: [],
-    hist: []
+    hist: [],
+    winners: []
   ]
 
   @spec change(t) :: t
