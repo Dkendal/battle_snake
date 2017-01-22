@@ -1,32 +1,11 @@
 defmodule BattleSnake.GameServer do
+  alias __MODULE__.State
   use GenServer
 
   @max_history 20
 
-  defmodule State do
-    defstruct [
-      :world,
-      reducer: &State.identity/1,
-      on_change: &State.identity/1,
-      opts: [],
-      hist: []
-    ]
+  @type state :: State.t
 
-    def change(t) do
-      t.on_change.(t)
-      t
-    end
-
-    def identity(x), do: x
-  end
-
-  @type state :: %State{
-    world: BattleSnake.World.t,
-    reducer: (state -> state),
-    on_change: (state -> state),
-    opts: [any],
-    hist: [state]
-  }
   # Client
 
   def start_link(%State{} = state, opts \\ []) do
@@ -116,6 +95,7 @@ defmodule BattleSnake.GameServer do
     state = step(state)
 
     if done?(state) do
+      # state = set_winners(state)
       {:noreply, {:halted, state}}
     else
       tick(state)
