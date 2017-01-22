@@ -6,6 +6,7 @@ defmodule BattleSnake.WorldTest do
   }
   use ExUnit.Case, async: true
   use Property
+  use BattleSnake.Point
 
   setup context do
     world = %World{
@@ -84,6 +85,20 @@ defmodule BattleSnake.WorldTest do
       world = World.clean_up_dead(world)
       assert world.snakes == []
       assert world.dead_snakes == [snake]
+    end
+
+    @dead_snake %Snake{name: "dead"}
+    @snake %Snake{name: "live", coords: [p(-1, 0)]}
+    @world %World{turn: 10,
+                  snakes: [@snake],
+                  dead_snakes: [@dead_snake]}
+    test "adds dead snakes to a list of deaths with the turn they died on" do
+      world = World.clean_up_dead(@world)
+      assert world.dead_snakes == [@dead_snake, @snake]
+      assert world.snakes == []
+
+      assert world.deaths == [
+        %World.DeathEvent{turn: 10, snake: @snake}]
     end
   end
 
