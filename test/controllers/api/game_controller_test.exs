@@ -34,9 +34,11 @@ defmodule BattleSnake.Api.GameControllerTest do
     test "lists all games", %{conn: conn} do
       conn = get conn, api_game_path(conn, :index)
       assert [%{"id" => 1,
-                "status" => "suspend"},
+                "status" => "suspend",
+                "winners" => _},
               %{"id" => 2,
-                "status" => "dead"}] =
+                "status" => "dead",
+                "winners" => _}] =
         json_response(conn, 200)
     end
   end
