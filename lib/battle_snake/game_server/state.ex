@@ -6,7 +6,8 @@ defmodule BattleSnake.GameServer.State do
     reducer: (t -> t),
     on_change: (t-> t),
     opts: [any],
-    hist: [t]
+    hist: [t],
+    game_form: BattleSnake.GameForm.t
   }
 
   defstruct [
@@ -16,7 +17,8 @@ defmodule BattleSnake.GameServer.State do
     on_done: &State.identity/1,
     opts: [],
     hist: [],
-    winners: []
+    winners: [],
+    game_form: {:error, :init},
   ]
 
   @spec change(t) :: t
