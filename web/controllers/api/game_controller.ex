@@ -28,6 +28,7 @@ defmodule BattleSnake.Api.GameController do
         end
 
       %Game{id: game_form.id,
+            winners: game_form.winners,
             status: status}
     end
   end
