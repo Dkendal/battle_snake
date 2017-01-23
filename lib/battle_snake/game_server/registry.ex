@@ -19,6 +19,16 @@ defmodule BattleSnake.GameServer.Registry do
     Registry.lookup(@name, value)
   end
 
+  @spec lookup(name) :: {:ok, pid} | :error
+  def find(value) do
+    with [{pid, _}] <- Registry.lookup(@name, value) do
+      {:ok, pid}
+    else
+      [] ->
+        :error
+    end
+  end
+
   @doc """
   Return {:ok, pid} for the already registered game server, or start a new
   instance and register it.
