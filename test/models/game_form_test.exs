@@ -13,6 +13,7 @@ defmodule BattleSnake.GameTest do
         :height,
         :delay,
         :max_food,
+        :winners,
       ]]
     end
   end
@@ -27,8 +28,9 @@ defmodule BattleSnake.GameTest do
         height: 40,
         delay: 300,
         max_food: 1,
+        winners: []
       }
-      assert GameForm.record(game) == {GameForm, 1, [], %{}, 20, 40, 300, 1}
+      assert GameForm.record(game) == {GameForm, 1, [], %{}, 20, 40, 300, 1, []}
     end
   end
 
