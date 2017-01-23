@@ -45,6 +45,7 @@ defmodule BattleSnake.GameServerConfig do
       reducer: &reducer/1,
       opts: opts,
       on_change: on_change,
+      on_done: &BattleSnake.Rules.last_standing/1,
     }
   end
 end
