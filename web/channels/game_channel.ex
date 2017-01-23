@@ -12,8 +12,8 @@ defmodule BattleSnake.GameChannel do
 
       channel_pid = self()
 
-      callback = fn s ->
-        send channel_pid, {:render, s.world}
+      callback = fn state ->
+        send channel_pid, {:render, state}
       end
 
       with({:ok, game_form} <- load_game_form(game_id),
@@ -65,11 +65,12 @@ defmodule BattleSnake.GameChannel do
     {:noreply, socket}
   end
 
-  def handle_info({:render, world}, socket) do
+  def handle_info({:render, state}, socket) do
     html = Phoenix.View.render_to_string(
       BattleSnake.PlayView,
       "board.html",
-      world: world)
+      state: state,
+      world: state.world)
 
     broadcast socket, "tick", %{html: html}
 
