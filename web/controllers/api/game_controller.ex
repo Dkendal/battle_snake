@@ -8,7 +8,7 @@ defmodule BattleSnake.Api.GameController do
 
   defmodule Game do
     @derive [Poison.Encoder]
-    defstruct [:id, :status]
+    defstruct [:id, :status, :winners]
   end
 
   def index(conn, __params) do
