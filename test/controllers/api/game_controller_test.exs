@@ -51,4 +51,26 @@ defmodule BattleSnake.Api.GameControllerTest do
         json_response(conn, 200)
     end
   end
+
+  describe "POST create" do
+    test "creates a new GameForm", %{conn: conn} do
+      params = %{"game_form" => %{"delay" => "1",
+                                  "height" => "2",
+                                  "max_food" => "3",
+                                  "width" => "4",
+                                  "snakes" => [%{url: "example.com"}]}}
+
+      post conn, api_game_path(conn, :create), params
+
+      assert 1 == Enum.count GameForm.all
+
+      assert [%GameForm{
+                 delay: 1,
+                 height: 2,
+                 max_food: 3,
+                 width: 4,
+                 snakes: [%SnakeForm{url: "example.com"}]}] =
+        GameForm.all
+    end
+  end
 end
