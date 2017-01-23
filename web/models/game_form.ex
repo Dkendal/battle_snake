@@ -15,6 +15,7 @@ defmodule BattleSnake.GameForm do
     field :height, :integer, default: 20
     field :delay, :integer, default: 300
     field :max_food, :integer, default: 1
+    field :winners, {:array, :string}, default: []
   end
 
   def changeset(game, params \\ %{}) do
