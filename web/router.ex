@@ -21,8 +21,9 @@ defmodule BattleSnake.Router do
     resources "/play", PlayController, only: [:show]
   end
 
-  scope "/api", BattleSnake do
+  scope "/api", BattleSnake.Api, as: :api do
     pipe_through :api
-    resources "/games", Api.GameController
+
+    resources "/games", GameController
   end
 end
