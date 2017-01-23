@@ -184,13 +184,7 @@ defmodule BattleSnake.GameChannelTest do
 
   def teardown c do
     on_exit fn ->
-      flush()
-      :ok = Supervisor.terminate_child(
-        BattleSnake.Supervisor,
-        GameServer.Supervisor)
-      {:ok, _} = Supervisor.restart_child(
-        BattleSnake.Supervisor,
-        GameServer.Supervisor)
+      BattleSnake.GameServerTesting.teardown
     end
     c
   end
