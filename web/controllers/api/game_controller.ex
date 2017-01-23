@@ -7,8 +7,8 @@ defmodule BattleSnake.Api.GameController do
   use BattleSnake.Web, :controller
 
   defmodule Game do
+    @derive [Poison.Encoder]
     defstruct [:id, :status]
-    @derive Poison.Encoder
   end
 
   def index(conn, __params) do
