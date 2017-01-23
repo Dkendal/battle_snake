@@ -15,7 +15,6 @@ defmodule BattleSnake.GameServerConfig do
   How to start the game given an id.
   """
   def reset(game_form) do
-    # {:ok, game_form} = GameForm.get(id)
     game_form
     |> GameForm.Reset.reset_game_form()
   end
@@ -40,13 +39,19 @@ defmodule BattleSnake.GameServerConfig do
       objective: &BattleSnake.WinConditions.single_player/1
     ]
 
+    on_done = fn state ->
+      [&BattleSnake.Rules.last_standing/1,
+       &BattleSnake.GameServer.Persistance.save_winner/1]
+      |> Enum.reduce(state, fn fun, s -> fun.(s) end)
+    end
+
     %GameServer.State{
       game_form: game_form,
       world: world,
       reducer: &reducer/1,
       opts: opts,
       on_change: on_change,
-      on_done: &BattleSnake.Rules.last_standing/1,
+      on_done: on_done,
     }
   end
 end
