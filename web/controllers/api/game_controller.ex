@@ -11,9 +11,18 @@ defmodule BattleSnake.Api.GameController do
     defstruct [:id, :status, :winners, :snakes]
   end
 
-  def index(conn, __params) do
+  def index(conn, _params) do
     games = load_games()
     render(conn, "index.json", games: games)
+  end
+
+  def create(conn, %{"game_form" => game_form}) do
+    game_form = %GameForm{}
+    |> GameForm.changeset(game_form)
+    |> Ecto.Changeset.apply_changes
+    |> GameForm.save
+
+    render(conn, "show.json", game_form: game_form)
   end
 
   defp load_games do
