@@ -41,6 +41,7 @@ defmodule BattleSnake.GameServerConfig do
     ]
 
     %GameServer.State{
+      game_form: game_form,
       world: world,
       reducer: &reducer/1,
       opts: opts,
