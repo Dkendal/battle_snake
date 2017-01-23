@@ -5,11 +5,15 @@ defmodule BattleSnake.Api.GameControllerTest do
 
   describe "GET index" do
     setup do
+      # TODO repo should get cleaned up after each test.
+      MnesiaTesting.teardown
+
       running_game = %GameForm{}
       |> GameForm.changeset(%{})
       |> Ecto.Changeset.put_change(:id, 1)
       |> Ecto.Changeset.apply_changes
       |> GameForm.save
+
 
       dead_game = %GameForm{}
       |> GameForm.changeset(%{})
@@ -17,8 +21,11 @@ defmodule BattleSnake.Api.GameControllerTest do
       |> Ecto.Changeset.apply_changes
       |> GameForm.save
 
+      GameServer.Registry.create 1
+
       on_exit fn ->
-        :mnesia.clear_table GameForm
+        BattleSnake.GameServerTesting.teardown
+        MnesiaTesting.teardown
       end
 
       :ok
@@ -27,7 +34,7 @@ defmodule BattleSnake.Api.GameControllerTest do
     test "lists all games", %{conn: conn} do
       conn = get conn, api_game_path(conn, :index)
       assert [%{"id" => 1,
-                "status" => "dead"},
+                "status" => "suspend"},
               %{"id" => 2,
                 "status" => "dead"}] =
         json_response(conn, 200)
