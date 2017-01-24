@@ -5,17 +5,17 @@ defmodule BattleSnake.WinConditions do
   def game_mode(game_mode) do
     case game_mode do
       BattleSnake.GameForm.singleplayer() ->
-        &single_player/1
+        &singleplayer/1
       BattleSnake.GameForm.multiplayer() ->
-        &death_match/1
+        &multiplayer/1
     end
   end
 
-  def single_player(world) do
+  def singleplayer(world) do
     length(world.snakes) <= 0
   end
 
-  def death_match(world) do
+  def multiplayer(world) do
     length(world.snakes) <= 1
   end
 end
