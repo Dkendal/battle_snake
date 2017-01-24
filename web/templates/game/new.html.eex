@@ -17,6 +17,16 @@
 </div>
 
 <div>
+  <%= label f, :max_food %>
+  <%= number_input f, :max_food %>
+</div>
+
+<div>
+  <%= label f, :game_mode %>
+  <%= select f, :game_mode, BattleSnake.GameForm.game_modes() %>
+</div>
+
+<div>
   <%= submit "Create game" %>
 </div>
 

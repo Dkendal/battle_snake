@@ -35,9 +35,12 @@ defmodule BattleSnake.GameServerConfig do
     game = reset(game_form)
     world = game.world
 
+    objective_fun =
+      BattleSnake.WinConditions.game_mode(game_form.game_mode)
+
     opts = [
       delay: game.delay,
-      objective: &BattleSnake.WinConditions.single_player/1
+      objective: objective_fun
     ]
 
     on_done = fn state ->
