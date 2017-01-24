@@ -14,6 +14,7 @@ defmodule BattleSnake.GameChannel do
 
       callback = fn state ->
         send channel_pid, {:render, state}
+        state
       end
 
       with({:ok, game_form} <- load_game_form(game_id),
