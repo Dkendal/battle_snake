@@ -11,6 +11,10 @@ defmodule BattleSnake.GameForm do
   @multiplayer "multiplayer"
   @game_modes [@singleplayer, @multiplayer]
 
+  defmacro game_modes, do: @game_modes
+  defmacro multiplayer, do: @multiplayer
+  defmacro singleplayer, do: @singleplayer
+
   schema "game" do
     embeds_many :snakes, SnakeForm
     embeds_one :world, World
@@ -55,8 +59,6 @@ defmodule BattleSnake.GameForm do
   end
 
   def set_id(changeset, _id), do: changeset
-
-  def game_modes, do: @game_modes
 end
 
 defimpl Poison.Encoder, for: BattleSnake.GameForm do
