@@ -133,9 +133,10 @@ defmodule BattleSnake.GameChannelTest do
     setup [:create_game_form, :join_topic]
 
     test "steps through a single move", %{socket: socket} do
+      flush()
       push socket, "next"
       assert_broadcast "tick", _
-      assert {:suspend, %{world: %{turn: 1}}} = :sys.get_state(socket.assigns.game_server_pid)
+      refute_broadcast "tick", _, 10
     end
   end
 

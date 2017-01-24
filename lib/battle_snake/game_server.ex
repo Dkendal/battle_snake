@@ -1,7 +1,6 @@
 defmodule BattleSnake.GameServer do
   alias __MODULE__.State
   use GenServer
-  import State
 
   @max_history 20
 
@@ -10,6 +9,7 @@ defmodule BattleSnake.GameServer do
   # Client
 
   def start_link(%State{} = state, opts \\ []) do
+    state = State.on_start(state)
     GenServer.start_link(__MODULE__, {:suspend, state}, opts)
   end
 
@@ -95,8 +95,8 @@ defmodule BattleSnake.GameServer do
   def handle_info(:tick, {:cont, state}) do
     state = step(state)
 
-    if done?(state) do
-      state = on_done(state)
+    if State.done?(state) do
+      state = State.on_done(state)
       {:noreply, {:halted, state}}
     else
       tick(state)
@@ -112,11 +112,34 @@ defmodule BattleSnake.GameServer do
     {:noreply, {:halted, state}}
   end
 
+  def get_state(pid), do: GenServer.call(pid, :get_state)
+  def handle_info(:get_state, {_, state} = s) do
+    {:reply, state, s}
+  end
+
+  def on_start(pid), do: GenServer.call(pid, :on_start)
+  def handle_call(:on_start, {status, state}) do
+    state = State.on_start(state)
+    {:reply, :ok, {status, state}}
+  end
+
+  def on_done(pid), do: GenServer.call(pid, :on_done)
+  def handle_call(:on_done, {status, state}) do
+    state = State.on_done(state)
+    {:reply, :ok, {status, state}}
+  end
+
+  def on_change(pid), do: GenServer.call(pid, :on_change)
+  def handle_call(:on_change, {status, state}) do
+    state = State.on_change(state)
+    {:reply, :ok, {status, state}}
+  end
+
   def step(state) do
     state
     |> save_history()
     |> apply_reducer()
-    |> State.change()
+    |> State.on_change()
   end
 
   def step_back(%{hist: []} = s), do: s
