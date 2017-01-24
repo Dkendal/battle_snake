@@ -10,9 +10,6 @@ defmodule Mix.Tasks.BattleSnake.Createdb do
     :ok = :mnesia.create_schema([node()])
     :ok = :mnesia.start()
 
-    {:atomic, :ok} = :mnesia.create_table(
-      GameForm,
-      [{:disc_copies, [node()]} |
-       GameForm.table])
+    {:atomic, :ok} = GameForm.create_table(disc_copies: [node()])
   end
 end
