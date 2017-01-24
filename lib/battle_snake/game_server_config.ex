@@ -45,7 +45,8 @@ defmodule BattleSnake.GameServerConfig do
 
     on_done = fn state ->
       [&BattleSnake.Rules.last_standing/1,
-       &BattleSnake.GameServer.Persistance.save_winner/1]
+       &BattleSnake.GameServer.Persistance.save_winner/1,
+       on_change]
       |> Enum.reduce(state, fn fun, s -> fun.(s) end)
     end
 
@@ -55,6 +56,7 @@ defmodule BattleSnake.GameServerConfig do
       reducer: &reducer/1,
       opts: opts,
       on_change: on_change,
+      on_start: on_change,
       on_done: on_done,
     }
   end
