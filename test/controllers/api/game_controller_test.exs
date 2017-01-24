@@ -58,6 +58,7 @@ defmodule BattleSnake.Api.GameControllerTest do
                                   "height" => "2",
                                   "max_food" => "3",
                                   "width" => "4",
+                                  "game_mode" => "singleplayer",
                                   "snakes" => [%{url: "example.com"}]}}
 
       post conn, api_game_path(conn, :create), params
@@ -69,6 +70,7 @@ defmodule BattleSnake.Api.GameControllerTest do
                  height: 2,
                  max_food: 3,
                  width: 4,
+                 game_mode: "singleplayer",
                  snakes: [%SnakeForm{url: "example.com"}]}] =
         GameForm.all
     end
