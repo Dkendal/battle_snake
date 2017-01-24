@@ -6,9 +6,30 @@ defmodule BattleSnake.Api.GameServerControllerTest do
 
   use BattleSnake.ConnCase, async: false
 
+  setup do
+    MnesiaTesting.teardown
+
+    snake = %SnakeForm{url: "localhost"}
+
+    %GameForm{}
+    |> GameForm.changeset(%{})
+    |> Ecto.Changeset.put_change(:id, 1)
+    |> Ecto.Changeset.put_embed(:snakes, [snake])
+    |> GameForm.save
+
+    on_exit fn ->
+      BattleSnake.GameServerTesting.teardown
+      MnesiaTesting.teardown
+    end
+
+    :ok
+  end
+
   describe "POST create" do
     test "creates a new GameForm", %{conn: conn} do
-      post conn, api_game_server_path(conn, :create), %{"id" => "1"}
+      conn = post(conn, api_game_server_path(conn, :create), %{"id" => "1"})
+
+      json_response(conn, 200)
     end
   end
 end
