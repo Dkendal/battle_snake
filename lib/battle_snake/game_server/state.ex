@@ -15,6 +15,7 @@ defmodule BattleSnake.GameServer.State do
     reducer: &State.identity/1,
     on_change: &State.identity/1,
     on_done: &State.identity/1,
+    on_start: &State.identity/1,
     opts: [],
     hist: [],
     winners: [],
@@ -38,6 +39,16 @@ defmodule BattleSnake.GameServer.State do
   @spec on_done(t) :: t
   def on_done(state) do
     state.on_done.(state)
+  end
+
+  @spec on_start(t) :: t
+  def on_start(state) do
+    state.on_start.(state)
+  end
+
+  @spec on_change(t) :: t
+  def on_change(t) do
+    t.on_change.(t)
   end
 
   def identity(x), do: x
