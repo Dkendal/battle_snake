@@ -26,5 +26,6 @@ defmodule BattleSnake.Router do
 
     resources "/games", GameController
     resources "/game_forms", GameFormController
+    resources "/game_servers", GameServerController
   end
 end
