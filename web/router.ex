@@ -25,5 +25,6 @@ defmodule BattleSnake.Router do
     pipe_through :api
 
     resources "/games", GameController
+    resources "/game_forms", GameFormController
   end
 end
