@@ -67,6 +67,7 @@ defmodule BattleSnake.Mixfile do
       {:poison, "~> 2.0"},
       {:proper, github: "manopapad/proper", only: :test},
       {:reprise, "~> 0.5.0", only: :dev},
+      {:apex, "~> 0.7"},
     ]
   end
 end
