@@ -66,9 +66,9 @@ defmodule Mnesia.Repo do
         end
       end
 
-      @spec create_table() :: {:atomic, :ok} | {:aborted, any}
-      def create_table do
-        :mnesia.create_table(__MODULE__, table())
+      @spec create_table(Keyword.t) :: {:atomic, :ok} | {:aborted, any}
+      def create_table(opts \\ []) do
+        :mnesia.create_table(__MODULE__, opts ++ table())
       end
 
       def delete_table do
