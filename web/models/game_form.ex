@@ -10,6 +10,11 @@ defmodule BattleSnake.GameForm do
   @singleplayer "singleplayer"
   @multiplayer "multiplayer"
   @game_modes [@singleplayer, @multiplayer]
+  @required [:delay,
+             :game_mode,
+             :height,
+             :max_food,
+             :width]
 
   defmacro game_modes, do: @game_modes
   defmacro multiplayer, do: @multiplayer
@@ -32,6 +37,7 @@ defmodule BattleSnake.GameForm do
     |> cast_embed(:world)
     |> cast_embed(:snakes)
     |> validate_inclusion(:game_mode, @game_modes)
+    |> validate_required(@required)
     |> set_id()
     |> remove_empty_snakes()
   end
