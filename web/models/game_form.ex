@@ -6,7 +6,10 @@ defmodule BattleSnake.GameForm do
 
   use BattleSnake.Web, :model
 
-  @permitted [:height, :width, :delay, :max_food]
+  @permitted [:height, :width, :delay, :max_food, :game_mode]
+  @singleplayer "singleplayer"
+  @multiplayer "multiplayer"
+  @game_modes [@singleplayer, @multiplayer]
 
   schema "game" do
     embeds_many :snakes, SnakeForm
@@ -16,6 +19,7 @@ defmodule BattleSnake.GameForm do
     field :delay, :integer, default: 300
     field :max_food, :integer, default: 1
     field :winners, {:array, :string}, default: []
+    field :game_mode, :string, default: @multiplayer
   end
 
   def changeset(game, params \\ %{}) do
@@ -23,6 +27,7 @@ defmodule BattleSnake.GameForm do
     |> cast(params, @permitted)
     |> cast_embed(:world)
     |> cast_embed(:snakes)
+    |> validate_inclusion(:game_mode, @game_modes)
     |> set_id()
     |> remove_empty_snakes()
   end
@@ -50,6 +55,8 @@ defmodule BattleSnake.GameForm do
   end
 
   def set_id(changeset, _id), do: changeset
+
+  def game_modes, do: @game_modes
 end
 
 defimpl Poison.Encoder, for: BattleSnake.GameForm do
