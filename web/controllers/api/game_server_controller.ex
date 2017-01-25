@@ -15,7 +15,7 @@ defmodule BattleSnake.Api.GameServerController do
       json conn, :ok
     rescue
       e ->
-        json conn, %{error: e.message}
+        json conn, %{error: Exception.message(e)}
     end
   end
 
