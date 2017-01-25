@@ -22,7 +22,7 @@ defmodule BattleSnake.Api.GameFormController do
     |> Ecto.Changeset.apply_changes
     |> GameForm.save
 
-    render(conn, "show.json", game_form: game_form)
+    json(conn, game_form)
   end
 
   defp load_games do
