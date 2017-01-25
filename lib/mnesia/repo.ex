@@ -11,6 +11,8 @@ defmodule Mnesia.Repo do
   conjunction with ETS.
   """
 
+  @callback fields() :: [atom]
+
   @doc """
   Precompilation callback. save/1 needs to be appended to module defintion
   because __struct__ must be defined first.
@@ -38,63 +40,71 @@ defmodule Mnesia.Repo do
   defmacro __using__(_) do
     quote do
       @before_compile unquote __MODULE__
-      @table_name __MODULE__
+      @behaviour unquote __MODULE__
 
       use Ecto.Schema
 
-      def table, do: [attributes: fields()]
+      defmacro table_name() do
+        __MODULE__
+      end
 
-      def fields, do: __schema__(:fields)
+      def table, do: [attributes: fields()]
 
       def record(struct) do
         get = &Map.get(struct, &1)
         attrs = Enum.map(fields(), get)
-        List.to_tuple [@table_name |attrs]
+        List.to_tuple [table_name() |attrs]
       end
 
       def load(record) do
-        [@table_name |attrs] = Tuple.to_list(record)
+        [table_name() |attrs] = Tuple.to_list(record)
         attrs = Enum.zip(fields(), attrs)
-        struct(@table_name, attrs)
+        struct(table_name(), attrs)
+      end
+
+      def fields do
+        __schema__(:fields)
       end
 
       def all do
         fn ->
-          :qlc.e(:mnesia.table @table_name)
+          :qlc.e(:mnesia.table table_name())
         end
         |> :mnesia.async_dirty()
         |> Enum.map(&load/1)
       end
 
       def last do
-        load(:mnesia.last(@table_name))
+        load(:mnesia.last(table_name()))
       end
 
       def get(id) do
         read = fn ->
-          :mnesia.read(@table_name, id)
+          :mnesia.read(table_name(), id)
         end
 
         with {:atomic, [record]} <- :mnesia.transaction(read) do
           {:ok, load(record)}
         else
           {:atomic, []} ->
-            {:error, %Mnesia.RecordNotFoundError{id: id, table: @table_name}}
+            {:error, %Mnesia.RecordNotFoundError{id: id, table: table_name()}}
         end
       end
 
       @spec create_table(Keyword.t) :: {:atomic, :ok} | {:aborted, any}
       def create_table(opts \\ []) do
-        :mnesia.create_table(@table_name, opts ++ table())
+        :mnesia.create_table(table_name(), opts ++ table())
       end
 
       def delete_table do
-        :mnesia.delete_table(@table_name)
+        :mnesia.delete_table(table_name())
       end
 
       def delete_all do
-        :mnesia.clear_table(@table_name)
+        :mnesia.clear_table(table_name())
       end
+
+      defoverridable [fields: 0, table_name: 0]
     end
   end
 end
