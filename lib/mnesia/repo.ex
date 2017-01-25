@@ -91,6 +91,10 @@ defmodule Mnesia.Repo do
       def delete_table do
         :mnesia.delete_table(@table_name)
       end
+
+      def delete_all do
+        :mnesia.clear_table(@table_name)
+      end
     end
   end
 end
