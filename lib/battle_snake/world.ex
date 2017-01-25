@@ -14,6 +14,7 @@ defmodule BattleSnake.World do
     width: pos_integer,
     turn: pos_integer,
     moves: %{String.t => Move.t},
+    game_id: pos_integer,
   }
 
   defstruct [
@@ -26,6 +27,7 @@ defmodule BattleSnake.World do
     turn: 0,
     moves: %{},
     deaths: [],
+    game_id: 0,
   ]
 
   defmodule DeathEvent do
@@ -197,6 +199,7 @@ defimpl Poison.Encoder, for: BattleSnake.World do
       :food,
       :turn,
       :snakes,
+      :game_id,
     ]
 
     board = board(world)

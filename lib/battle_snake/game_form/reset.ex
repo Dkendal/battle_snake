@@ -26,7 +26,8 @@ defmodule BattleSnake.GameForm.Reset do
         height: game_form.height,
         max_food: game_form.max_food,
         snakes: [],
-        width: game_form.width
+        width: game_form.width,
+        game_id: game_form.id
       })
   end
 
