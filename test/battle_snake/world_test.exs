@@ -13,6 +13,7 @@ defmodule BattleSnake.WorldTest do
       max_food: 4,
       height: 10,
       width: 10,
+      game_id: 0,
     }
     Map.put context, :world, world
   end
@@ -121,7 +122,8 @@ defmodule BattleSnake.WorldTest do
             p(1, 1)
           ]
         }
-      ]
+      ],
+      game_id: 0
     }
 
     @json %{
@@ -148,7 +150,8 @@ defmodule BattleSnake.WorldTest do
             [1,1]
           ]
         }
-      ]
+      ],
+      "game_id" => 0
     }
 
     @expected PoisonTesting.cast! @world
