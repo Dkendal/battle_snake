@@ -13,36 +13,12 @@ defmodule Mnesia.Repo do
 
   @callback fields() :: [atom]
 
-  @doc """
-  Precompilation callback. save/1 needs to be appended to module defintion
-  because __struct__ must be defined first.
-  """
-  defmacro __before_compile__(_env) do
-    quote do
-      def save(%Ecto.Changeset{} = changeset) do
-        changeset
-        |> Ecto.Changeset.apply_changes()
-        |> save()
-      end
-
-      def save(%__MODULE__{} = struct) do
-        write = fn ->
-          :mnesia.write(record(struct))
-        end
-
-        {:atomic, :ok} = :mnesia.transaction(write)
-
-        struct
-      end
-    end
-  end
-
   defmacro __using__(_) do
     quote do
-      @before_compile unquote __MODULE__
-      @behaviour unquote __MODULE__
-
       use Ecto.Schema
+
+      @behaviour unquote(__MODULE__)
+      @primary_key {:id, :id, autogenerate: true}
 
       defmacro table_name() do
         __MODULE__
@@ -102,6 +78,49 @@ defmodule Mnesia.Repo do
 
       def delete_all do
         :mnesia.clear_table(table_name())
+      end
+
+      defp primary_key_field() do
+        {field, _, _} = @primary_key
+        field
+      end
+
+      defp primary_key_opts() do
+        {_, _, opts} = @primary_key
+        opts
+      end
+
+      defp get_primary_key(struct) do
+        Map.fetch!(struct, primary_key_field())
+      end
+
+      def save(%Ecto.Changeset{} = changeset) do
+        changeset
+        |> Ecto.Changeset.apply_changes()
+        |> save()
+      end
+
+      def generate_primary_key(%{__struct__: __MODULE__} = struct) do
+        Map.put(struct, primary_key_field(), make_ref())
+      end
+
+      defp should_generate_primary_key(%{__struct__: __MODULE__} = struct) do
+        get_primary_key(struct) == nil and
+        {:ok, true} == Keyword.fetch(primary_key_opts(), :autogenerate)
+      end
+
+      def save(%{__struct__: __MODULE__} = struct) do
+        struct = if should_generate_primary_key(struct),
+          do: generate_primary_key(struct),
+          else: struct
+
+        write = fn ->
+          :mnesia.write(record(struct))
+        end
+
+        {:atomic, :ok} = :mnesia.transaction(write)
+
+        struct
       end
 
       defoverridable [fields: 0, table_name: 0]
