@@ -2,23 +2,27 @@ require "json"
 
 class RubySnake < Sinatra::Base
   def initialize(*)
-    @@i ||= 0
+    @@moves = Hash.new(0)
     super
   end
 
-  def move
-    @@i = (@@i + 1) % 4
-    %w(up left down right)[@@i]
+  def move(id)
+    @@moves[id] = (@@moves[id] + 1) % 4
+    %w(up left down right)[@@moves[id]]
   end
 
-  post "/start" do
+  post "/*/start" do
     {
-      name: "ruby-test-snake",
+      name: id(params),
       color: "#123123"
     }.to_json
   end
 
-  post "/move" do
-    {move: move()}.to_json
+  post "/*/move" do
+    {move: move(id(params))}.to_json
+  end
+
+  def id(params)
+    params['splat']
   end
 end
