@@ -1,4 +1,6 @@
 defmodule BattleSnake.World do
+  use Mnesia.Repo
+
   alias BattleSnake.{
     Move,
     Point,
@@ -6,6 +8,7 @@ defmodule BattleSnake.World do
     Point}
 
   @type t :: %__MODULE__{
+    id: reference,
     food: [Point.t],
     snakes: [Snake.t],
     dead_snakes: [any],
@@ -18,6 +21,7 @@ defmodule BattleSnake.World do
   }
 
   defstruct [
+    :id,
     food: [],
     snakes: [],
     dead_snakes: [],
@@ -38,6 +42,18 @@ defmodule BattleSnake.World do
   def down,   do: %Point{x: 0,  y: 1}
   def right,  do: %Point{x: 1,  y: 0}
   def left,   do: %Point{x: -1, y: 0}
+
+  def fields do
+    [:id,
+     :food,
+     :snakes,
+     :dead_snakes,
+     :max_food,
+     :height,
+     :width,
+     :turn,
+     :deaths]
+  end
 
   def moves do
     [
