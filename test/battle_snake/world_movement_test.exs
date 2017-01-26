@@ -8,17 +8,16 @@ defmodule BattleSnake.WorldMovementTest do
     Point}
 
   @green_snake %Snake{
+    id: 1,
     name: "green-snake",
     coords: [
       %Point{x: 0, y: 0}
     ]
   }
 
-  @snake_key Snake.Access.key(@green_snake)
-
   @up %Move{
     move: "up",
-    snake_key: @snake_key
+    snake_id: 1
   }
 
   @moves [@up]
@@ -45,12 +44,13 @@ defmodule BattleSnake.WorldMovementTest do
     end
 
     test "sets world.moves" do
-      assert %{@snake_key => @up} == @apply.moves
+      assert %{1 => @up} == @apply.moves
     end
 
     test "updates snake coordinates" do
       assert(@apply.snakes == [
         %Snake{
+          id: 1,
           name: "green-snake",
           coords: [%Point{x: 0, y: -1}]}])
     end

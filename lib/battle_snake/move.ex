@@ -5,7 +5,7 @@ defmodule BattleSnake.Move do
   defstruct [
     :move,
     :taunt,
-    snake_key: {:error, :init},
+    :snake_id,
     __meta__: %Move.Meta{}
   ]
 
@@ -13,7 +13,7 @@ defmodule BattleSnake.Move do
   @type t :: %__MODULE__{
     move: direction,
     taunt: String.t,
-    snake_key: Snake.Access.key
+    snake_id: reference
   }
 
   @api Application.get_env(:battle_snake, :snake_api)
@@ -58,7 +58,7 @@ defmodule BattleSnake.Move do
         end
 
       # identify what snake this move belongs to.
-      put_in(move.snake_key, Snake.Access.key(snake))
+      put_in(move.snake_id, snake.id)
     end
 
     # The async stream shouldn't fail to respond.

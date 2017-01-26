@@ -3,6 +3,7 @@ defmodule BattleSnake.Snake do
   alias BattleSnake.{Point}
 
   @type t :: %Snake{
+    id: reference,
     color: String.t,
     coords: [Point.t],
     head_url: String.t,
@@ -14,6 +15,7 @@ defmodule BattleSnake.Snake do
   @unloaded {:error, :unloaded}
 
   defstruct [
+    :id,
     color: "",
     coords: [],
     head_url: "",
