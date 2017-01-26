@@ -13,6 +13,46 @@ defmodule Mnesia.Repo do
 
   @callback fields() :: [atom]
 
+  def save(%Ecto.Changeset{} = changeset) do
+    changeset
+    |> Ecto.Changeset.apply_changes()
+    |> save()
+  end
+
+  def save(struct) do
+    module = struct.__struct__
+
+    struct = if module.should_generate_primary_key?(struct),
+      do: module.generate_primary_key(struct),
+      else: struct
+
+    {created_at, updated_at} = module.timestamps()
+
+    struct = if Map.has_key?(struct, created_at) do
+      Map.update(struct, created_at, nil, &keep_timestamp/1)
+    else
+      struct
+    end
+
+    struct = if Map.has_key?(struct, updated_at) do
+      Map.update(struct, updated_at, nil, &put_timestamp/1)
+    else
+      struct
+    end
+
+    write = fn ->
+      :mnesia.write(module.record(struct))
+    end
+
+    {:atomic, :ok} = :mnesia.transaction(write)
+
+    struct
+  end
+
+  defp keep_timestamp(nil), do: System.monotonic_time()
+  defp keep_timestamp(time), do: time
+  defp put_timestamp(_), do: System.monotonic_time()
+
   defmacro __using__(_) do
     quote do
       use Ecto.Schema
@@ -23,6 +63,10 @@ defmodule Mnesia.Repo do
 
       def table_name() do
         __MODULE__
+      end
+
+      def timestamps() do
+        @timestamps
       end
 
       def table, do: [attributes: fields()]
@@ -99,47 +143,13 @@ defmodule Mnesia.Repo do
         Map.fetch!(struct, primary_key_field())
       end
 
-      def save(%Ecto.Changeset{} = changeset) do
-        changeset
-        |> Ecto.Changeset.apply_changes()
-        |> save()
-      end
-
       def generate_primary_key(%{__struct__: __MODULE__} = struct) do
         Map.put(struct, primary_key_field(), Ecto.UUID.generate())
       end
 
-      defp should_generate_primary_key(%{__struct__: __MODULE__} = struct) do
+      def should_generate_primary_key?(%{__struct__: __MODULE__} = struct) do
         get_primary_key(struct) == nil and
         {:ok, true} == Keyword.fetch(primary_key_opts(), :autogenerate)
-      end
-
-      def save(%{__struct__: __MODULE__} = struct) do
-        struct = if should_generate_primary_key(struct),
-          do: generate_primary_key(struct),
-          else: struct
-
-        {created_at, updated_at} = @timestamps
-
-        struct = if Map.has_key?(struct, created_at) do
-          Map.update(struct, created_at, nil, &keep_timestamp/1)
-        else
-          struct
-        end
-
-        struct = if Map.has_key?(struct, updated_at) do
-          Map.update(struct, updated_at, nil, &put_timestamp/1)
-        else
-          struct
-        end
-
-        write = fn ->
-          :mnesia.write(record(struct))
-        end
-
-        {:atomic, :ok} = :mnesia.transaction(write)
-
-        struct
       end
 
       defp keep_timestamp(nil), do: System.monotonic_time()

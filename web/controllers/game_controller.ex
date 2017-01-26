@@ -29,7 +29,7 @@ defmodule BattleSnake.GameController do
     game_form = %GameForm{}
     |> GameForm.changeset(params)
     |> Ecto.Changeset.apply_changes
-    |> GameForm.save
+    |> Mnesia.Repo.save
 
     redirect(conn, to: game_path(conn, :edit, game_form))
   end
@@ -50,7 +50,7 @@ defmodule BattleSnake.GameController do
     game_form
     |> GameForm.changeset(params)
     |> Ecto.Changeset.apply_changes
-    |> GameForm.save
+    |> Mnesia.Repo.save
 
     redirect(conn, to: game_path(conn, :edit, game_form))
   end

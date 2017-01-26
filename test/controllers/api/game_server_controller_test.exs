@@ -15,7 +15,7 @@ defmodule BattleSnake.Api.GameServerControllerTest do
     |> GameForm.changeset(%{})
     |> Ecto.Changeset.put_change(:id, "1")
     |> Ecto.Changeset.put_embed(:snakes, [snake])
-    |> GameForm.save
+    |> Mnesia.Repo.save
 
     on_exit fn ->
       BattleSnake.GameServerTesting.teardown

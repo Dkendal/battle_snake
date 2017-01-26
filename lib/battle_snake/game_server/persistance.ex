@@ -17,7 +17,7 @@ defmodule BattleSnake.GameServer.Persistance do
       |> GameForm.changeset()
       |> Ecto.Changeset.put_change(:winners, winners)
       |> Ecto.Changeset.apply_changes
-      |> GameForm.save
+      |> Mnesia.Repo.save
     end
   end
 

@@ -19,14 +19,14 @@ defmodule BattleSnake.Api.GameControllerTest do
       |> Ecto.Changeset.put_change(:id, 1)
       |> Ecto.Changeset.put_embed(:snakes, [snake])
       |> Ecto.Changeset.apply_changes
-      |> GameForm.save
+      |> Mnesia.Repo.save
 
       %GameForm{}
       |> GameForm.changeset(%{})
       |> Ecto.Changeset.put_change(:id, 2)
       |> Ecto.Changeset.put_embed(:snakes, [snake])
       |> Ecto.Changeset.apply_changes
-      |> GameForm.save
+      |> Mnesia.Repo.save
 
       GameServer.Registry.create 1
 

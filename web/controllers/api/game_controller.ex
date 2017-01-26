@@ -20,7 +20,7 @@ defmodule BattleSnake.Api.GameController do
     game_form = %GameForm{}
     |> GameForm.changeset(game_form)
     |> Ecto.Changeset.apply_changes
-    |> GameForm.save
+    |> Mnesia.Repo.save
 
     render(conn, "show.json", game_form: game_form)
   end

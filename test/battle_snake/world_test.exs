@@ -19,8 +19,8 @@ defmodule BattleSnake.WorldTest do
   end
 
   test "saving the world" do
-    assert World.save(%World{}).id != nil
-    assert World.save(%World{}).created_at != nil
+    assert Mnesia.Repo.save(%World{}).id != nil
+    assert Mnesia.Repo.save(%World{}).created_at != nil
   end
 
   describe "#rand_unoccupied_space" do
