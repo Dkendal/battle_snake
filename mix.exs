@@ -13,6 +13,7 @@ defmodule BattleSnake.Mixfile do
      start_permanent: Mix.env == :prod,
      preferred_cli_env: preferred_cli_env(),
      test_coverage: [tool: ExCoveralls],
+     erlc_options: erlc_options(Mix.env),
      deps: deps()]
   end
 
@@ -22,6 +23,10 @@ defmodule BattleSnake.Mixfile do
   def application do
     [mod: {BattleSnake, []},
      extra_applications: extra_applications(Mix.env)]
+  end
+
+  def erlc_options(_all) do
+    [:debug_info]
   end
 
   def extra_applications(_all) do
