@@ -20,7 +20,7 @@ defmodule Mnesia.Repo do
       @behaviour unquote(__MODULE__)
       @primary_key {:id, :id, autogenerate: true}
 
-      defmacro table_name() do
+      def table_name() do
         __MODULE__
       end
 
@@ -33,7 +33,7 @@ defmodule Mnesia.Repo do
       end
 
       def load(record) do
-        [table_name() |attrs] = Tuple.to_list(record)
+        [_table_name |attrs] = Tuple.to_list(record)
         attrs = Enum.zip(fields(), attrs)
         struct(table_name(), attrs)
       end
