@@ -4,7 +4,7 @@ defmodule Mnesia.RepoTest.DummyStruct do
 
   def fields, do: [:id, :x, :y]
 
-  defmacro table_name do
+  def table_name do
     "mnesia_repo_test_dummy_struct"
   end
 end
