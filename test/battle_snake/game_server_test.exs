@@ -2,7 +2,7 @@ defmodule BattleSnake.GameServerTest do
   alias BattleSnake.GameServer
   alias BattleSnake.GameServer.State
 
-  use ExUnit.Case, async: true
+  use BattleSnake.Case, async: true
 
   @opts [delay: 0]
   @state %State{world: 10, hist: [9, 8, 7], opts: @opts}

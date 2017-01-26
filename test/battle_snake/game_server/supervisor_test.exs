@@ -1,5 +1,5 @@
 defmodule BattleSnake.GameServer.SupervisorTest do
-  use ExUnit.Case, async: false
+  use BattleSnake.Case, async: false
 
   @sup_name BattleSnake.GameServer.Supervisor
 

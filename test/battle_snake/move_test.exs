@@ -1,5 +1,5 @@
 defmodule BattleSnake.MoveTest  do
-  use ExUnit.Case, async: true
+  use BattleSnake.Case, async: true
   alias BattleSnake.{
     Snake,
     Move,

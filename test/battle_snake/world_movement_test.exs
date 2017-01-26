@@ -1,5 +1,5 @@
 defmodule BattleSnake.WorldMovementTest do
-  use ExUnit.Case, async: true
+  use BattleSnake.Case, async: true
   alias BattleSnake.{
     World,
     WorldMovement,

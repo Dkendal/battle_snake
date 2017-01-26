@@ -1,6 +1,6 @@
 defmodule BattleSnake.GameTest do
   alias BattleSnake.GameForm
-  use ExUnit.Case, async: true
+  use BattleSnake.Case, async: true
   import Ecto.Changeset
 
   describe "#table" do

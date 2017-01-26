@@ -1,7 +1,7 @@
 defmodule BattleSnake.ApiTest do
   alias BattleSnake.{Snake, Point, Move, Api}
 
-  use ExUnit.Case, async: true
+  use BattleSnake.Case, async: true
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
 
   @http_error %HTTPoison.Error{}

@@ -4,7 +4,7 @@ defmodule BattleSnake.WorldTest do
     Snake,
     World,
   }
-  use ExUnit.Case, async: true
+  use BattleSnake.Case, async: true
   use Property
   use BattleSnake.Point
 

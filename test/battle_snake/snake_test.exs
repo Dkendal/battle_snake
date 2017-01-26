@@ -1,7 +1,7 @@
 defmodule BattleSnake.SnakeTest do
   alias BattleSnake.{World, Snake, Point}
 
-  use ExUnit.Case, async: true
+  use BattleSnake.Case, async: true
   use Property
 
   @world %World{width: 10, height: 10}

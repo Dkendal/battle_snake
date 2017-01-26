@@ -1,6 +1,6 @@
 defmodule BattleSnake.GameServer.RegistryTest do
   alias BattleSnake.GameServer
-  use ExUnit.Case, async: false
+  use BattleSnake.Case, async: false
 
   @state %GameServer.State{}
   @game_server_name "test-game-server"

@@ -5,7 +5,7 @@ defmodule BattleSnake.GameServer.PersistanceTest do
     GameServer.State,
   }
 
-  use ExUnit.Case, async: false
+  use BattleSnake.Case, async: false
 
   setup do
     on_exit fn ->

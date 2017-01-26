@@ -1,5 +1,5 @@
 defmodule BattleSnake.GameForm.ResetTest do
-  use ExUnit.Case, async: true
+  use BattleSnake.Case, async: true
 
   @game_form %BattleSnake.GameForm{
     delay: 100,

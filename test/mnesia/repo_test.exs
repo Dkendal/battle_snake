@@ -21,7 +21,7 @@ end
 defmodule Mnesia.RepoTest do
   alias __MODULE__.DummyModel
   alias __MODULE__.DummyStruct
-  use ExUnit.Case, async: false
+  use BattleSnake.Case, async: false
 
   @described_module DummyModel
   @model struct(@described_module, id: 0, x: 1, y: 2)
