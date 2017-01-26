@@ -25,7 +25,7 @@ defmodule BattleSnake.Api.GameFormControllerTest do
       |> Ecto.Changeset.put_change(:id, 1)
       |> Ecto.Changeset.put_embed(:snakes, [@snake])
       |> Ecto.Changeset.apply_changes
-      |> GameForm.save
+      |> Mnesia.Repo.save
       :ok
     end
 

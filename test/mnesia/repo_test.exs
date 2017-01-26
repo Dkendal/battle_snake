@@ -69,12 +69,12 @@ defmodule Mnesia.RepoTest do
     setup [:create_table, :delete_table]
 
     test "writes the record to mnesia" do
-      assert @model == @described_module.save(@model)
+      assert @model == Mnesia.Repo.save(@model)
       assert 1 == :mnesia.table_info(@described_module, :size)
     end
 
     test "adds an id if the @primary_key is nil" do
-      id = @described_module.save(%{@model| id: nil}).id
+      id = Mnesia.Repo.save(%{@model| id: nil}).id
       assert id != nil
     end
   end
@@ -102,7 +102,7 @@ defmodule Mnesia.RepoTest do
   end
 
   def create_dummy(context \\ %{}) do
-    dummy = @described_module.save(@model)
+    dummy = Mnesia.Repo.save(@model)
     Map.put(context, :dummy, dummy)
   end
 

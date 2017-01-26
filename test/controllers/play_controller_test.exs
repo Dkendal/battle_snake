@@ -6,7 +6,7 @@ defmodule BattleSnake.PlayControllerTest do
     test "it is OK", %{conn: conn} do
       game = %GameForm{id: "sup"}
 
-      GameForm.save game
+      Mnesia.Repo.save game
 
       conn = get conn, play_path(conn, :show, game)
 

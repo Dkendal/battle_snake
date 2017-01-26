@@ -176,7 +176,7 @@ defmodule BattleSnake.GameChannelTest do
     game_form = @game_form
     |> GameForm.changeset
     |> Ecto.Changeset.apply_changes
-    |> GameForm.save
+    |> Mnesia.Repo.save
 
     context
     |> Map.put(:game_form, game_form)

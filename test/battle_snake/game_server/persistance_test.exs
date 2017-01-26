@@ -19,7 +19,7 @@ defmodule BattleSnake.GameServer.PersistanceTest do
       game_form = %GameForm{}
       |> GameForm.changeset
       |> Ecto.Changeset.apply_changes
-      |> GameForm.save
+      |> Mnesia.Repo.save
       {:ok, state: %State{game_form: game_form, winners: ["winner"]}}
     end
 

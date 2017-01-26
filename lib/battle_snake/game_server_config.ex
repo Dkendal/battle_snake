@@ -32,7 +32,7 @@ defmodule BattleSnake.GameServerConfig do
   end
 
   def save_history(state) do
-    # BattleSnake.World.save state.world
+    Mnesia.Repo.save state.world
     state
   end
 
