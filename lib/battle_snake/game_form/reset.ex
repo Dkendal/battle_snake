@@ -73,6 +73,7 @@ defmodule BattleSnake.GameForm.Reset do
     task = fn(snake_form) ->
       snake_form
       |> health_check(game_form, load)
+      |> set_id()
       |> set_url(snake_form)
     end
 
@@ -119,5 +120,9 @@ defmodule BattleSnake.GameForm.Reset do
   @spec set_url(Snake.t, SnakeForm.t) :: Snake.t
   defp set_url(snake, snake_form) do
     put_in(snake.url, snake_form.url)
+  end
+
+  def set_id(snake) do
+    put_in(snake.id, Ecto.UUID.generate())
   end
 end

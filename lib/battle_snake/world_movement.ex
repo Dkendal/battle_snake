@@ -16,7 +16,7 @@ defmodule BattleSnake.WorldMovement do
   @spec apply(World.t, [Move.t]) :: World.t
   def apply(world, moves) do
     moves = Enum.reduce(moves, %{}, fn(move, acc) ->
-      key = move.snake_key
+      key = move.snake_id
       Map.put(acc, key, move)
     end)
 
@@ -24,8 +24,7 @@ defmodule BattleSnake.WorldMovement do
 
     update_in(world.snakes, fn snakes ->
       for snake <- snakes do
-        key = Snake.Access.key(snake)
-        move = moves[key]
+        move = moves[snake.id]
         point = World.convert(move.move)
         Snake.move(snake, point)
       end
