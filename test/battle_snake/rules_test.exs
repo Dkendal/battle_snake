@@ -1,5 +1,5 @@
 defmodule BattleSnake.RulesTest do
-  use ExUnit.Case, async: true
+  use BattleSnake.Case, async: true
 
   @living_snake_a %BattleSnake.Snake{name: "living a"}
   @living_snake_b %BattleSnake.Snake{name: "living b"}
