@@ -22,12 +22,6 @@ defmodule BattleSnake.GameServer.State do
     game_form: {:error, :init},
   ]
 
-  @spec change(t) :: t
-  def change(t) do
-    t.on_change.(t)
-    t
-  end
-
   @spec done?(t) :: boolean
   def done?(state) do
     opts = state.opts
