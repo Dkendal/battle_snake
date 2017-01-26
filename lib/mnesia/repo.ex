@@ -76,6 +76,10 @@ defmodule Mnesia.Repo do
         :mnesia.delete_table(table_name())
       end
 
+      def change_table_copy_type(node, type) do
+        :mnesia.change_table_copy_type(table_name(), node, type)
+      end
+
       def delete_all do
         :mnesia.clear_table(table_name())
       end
