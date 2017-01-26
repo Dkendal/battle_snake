@@ -18,6 +18,11 @@ defmodule BattleSnake.WorldTest do
     Map.put context, :world, world
   end
 
+  test "saving the world" do
+    assert World.save(%World{}).id != nil
+    assert World.save(%World{}).created_at != nil
+  end
+
   describe "#rand_unoccupied_space" do
     property "in the bounds of the board, on an unoccupied space" do
       forall world(), fn w ->

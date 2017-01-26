@@ -19,6 +19,7 @@ defmodule Mnesia.Repo do
 
       @behaviour unquote(__MODULE__)
       @primary_key {:id, :id, autogenerate: true}
+      @timestamps {:created_at, :updated_at}
 
       def table_name() do
         __MODULE__
@@ -118,6 +119,20 @@ defmodule Mnesia.Repo do
           do: generate_primary_key(struct),
           else: struct
 
+        {created_at, updated_at} = @timestamps
+
+        struct = if Map.has_key?(struct, created_at) do
+          Map.update(struct, created_at, nil, &keep_timestamp/1)
+        else
+          struct
+        end
+
+        struct = if Map.has_key?(struct, updated_at) do
+          Map.update(struct, updated_at, nil, &put_timestamp/1)
+        else
+          struct
+        end
+
         write = fn ->
           :mnesia.write(record(struct))
         end
@@ -126,6 +141,11 @@ defmodule Mnesia.Repo do
 
         struct
       end
+
+      defp keep_timestamp(nil), do: System.monotonic_time()
+      defp keep_timestamp(time), do: time
+
+      defp put_timestamp(_), do: System.monotonic_time()
 
       defoverridable [fields: 0, table_name: 0]
     end

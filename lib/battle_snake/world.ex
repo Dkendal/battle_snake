@@ -7,8 +7,13 @@ defmodule BattleSnake.World do
     Snake,
     Point}
 
+  defmodule DeathEvent do
+    defstruct [:turn, :snake]
+  end
+
   @type t :: %__MODULE__{
     id: reference,
+
     food: [Point.t],
     snakes: [Snake.t],
     dead_snakes: [any],
@@ -22,6 +27,7 @@ defmodule BattleSnake.World do
 
   defstruct [
     :id,
+    :created_at,
     food: [],
     snakes: [],
     dead_snakes: [],
@@ -34,26 +40,23 @@ defmodule BattleSnake.World do
     game_id: 0,
   ]
 
-  defmodule DeathEvent do
-    defstruct [:turn, :snake]
-  end
+  def fields,
+    do: [:id,
+         :created_at,
+         :food,
+         :snakes,
+         :dead_snakes,
+         :max_food,
+         :height,
+         :width,
+         :turn,
+         :deaths]
+
 
   def up,     do: %Point{x: 0,  y: -1}
   def down,   do: %Point{x: 0,  y: 1}
   def right,  do: %Point{x: 1,  y: 0}
   def left,   do: %Point{x: -1, y: 0}
-
-  def fields do
-    [:id,
-     :food,
-     :snakes,
-     :dead_snakes,
-     :max_food,
-     :height,
-     :width,
-     :turn,
-     :deaths]
-  end
 
   def moves do
     [
