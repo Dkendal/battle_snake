@@ -75,7 +75,7 @@ defmodule Mnesia.RepoTest do
 
     test "adds an id if the @primary_key is nil" do
       id = @described_module.save(%{@model| id: nil}).id
-      assert is_reference id
+      assert id != nil
     end
   end
 

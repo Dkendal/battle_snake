@@ -105,7 +105,7 @@ defmodule Mnesia.Repo do
       end
 
       def generate_primary_key(%{__struct__: __MODULE__} = struct) do
-        Map.put(struct, primary_key_field(), make_ref())
+        Map.put(struct, primary_key_field(), Ecto.UUID.generate())
       end
 
       defp should_generate_primary_key(%{__struct__: __MODULE__} = struct) do
