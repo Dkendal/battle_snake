@@ -13,7 +13,7 @@ class RubySnake < Sinatra::Base
 
   post "/*/start" do
     {
-      name: id(params),
+      name: name(params),
       color: "#123123"
     }.to_json
   end
@@ -24,5 +24,9 @@ class RubySnake < Sinatra::Base
 
   def id(params)
     params['splat']
+  end
+
+  def name(params)
+    id(params).join("-")
   end
 end
