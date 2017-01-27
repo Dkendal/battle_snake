@@ -1,4 +1,4 @@
-# Battle Snake Server [![Build Status](https://travis-ci.org/Dkendal/battle_snake_server.svg?branch=master)](https://travis-ci.org/Dkendal/battle_snake_server) [![Coverage Status](https://coveralls.io/repos/github/Dkendal/battle_snake_server/badge.svg?branch=master)](https://coveralls.io/github/Dkendal/battle_snake_server?branch=master)
+# Battle Snake Server [![Build Status](https://travis-ci.org/Dkendal/battle_snake.svg?branch=master)](https://travis-ci.org/Dkendal/battle_snake) [![Coverage Status](https://coveralls.io/repos/github/Dkendal/battle_snake/badge.svg?branch=master)](https://coveralls.io/github/Dkendal/battle_snake?branch=master)
 
 ![it's just a prank bro](http://imgur.com/Ytvm290.jpg)
 
