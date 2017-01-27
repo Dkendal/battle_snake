@@ -10,7 +10,7 @@ defmodule BattleSnake.GameServer do
 
   def start_link(%State{} = state, opts \\ []) do
     state = State.on_start(state)
-    GenServer.start_link(__MODULE__, {:suspend, state}, opts)
+    GenServer.start_link(__MODULE__, state, opts)
   end
 
   def get_state(pid) do
@@ -90,18 +90,18 @@ defmodule BattleSnake.GameServer do
 
   # Begin Server Callbacks
 
-  def handle_call(:get_status, _from, {status, _} = state) do
-    {:reply, status, state}
+  def handle_call(:get_status, _from, state) do
+    {:reply, state.status, state}
   end
 
-  def handle_call(:next, _from, {status, state}) do
-    case status do
+  def handle_call(:next, _from, state) do
+    case state.status do
       :halted ->
-        {:reply, :ok, {:halted, state}}
+        {:reply, :ok, put_in(state.status, :halted)}
 
       _ ->
         state = step(state)
-        {:reply, :ok, {:suspend, state}}
+        {:reply, :ok, put_in(state.status, :suspend)}
     end
   end
 
@@ -121,34 +121,34 @@ defmodule BattleSnake.GameServer do
   end
 
   def handle_call(:pause, _from, state) do
-    case state do
-      {:cont, state} ->
-        {:reply, :ok, {:suspend, state}}
+    case state.status do
+      :cont ->
+        {:reply, :ok, put_in(state.status, :suspend)}
 
-      state ->
+      _status ->
         {:reply, :ok, state}
     end
   end
 
   def handle_call(:prev, _from, state) do
-    case state do
-      {:halted, state} ->
-        {:reply, :ok, {:halted, state}}
+    case state.status do
+      :halted ->
+        {:reply, :ok, put_in(state.status, :halted)}
 
-      {_, state} ->
+      _ ->
         state = state
         |> step_back()
-        {:reply, :ok, {:suspend, state}}
+        {:reply, :ok, put_in(state.status, :suspend)}
     end
   end
 
   def handle_call(:resume, _from, state) do
-    case state do
-      {:suspend, state} ->
+    case state.status do
+      :suspend ->
         tick(state)
-        {:reply, :ok, {:cont, state}}
+        {:reply, :ok, put_in(state.status, :cont)}
 
-      state ->
+      _status ->
         {:reply, :ok, state}
     end
   end
@@ -162,27 +162,27 @@ defmodule BattleSnake.GameServer do
     super(request, state)
   end
 
-  def handle_info(:get_state, {_, state} = s) do
-    {:reply, state, s}
+  def handle_info(:get_state, state) do
+    {:reply, state, state.status}
   end
 
   def handle_info(:tick, state) do
-    case state do
-      {:cont, state} ->
+    case state.status do
+      :cont ->
         state = step(state)
         if State.done?(state) do
           state = State.on_done(state)
-          {:noreply, {:halted, state}}
+          {:noreply, put_in(state.status, :halted)}
         else
           tick(state)
-          {:noreply, {:cont, state}}
+          {:noreply, put_in(state.status, :cont)}
         end
 
-      {:halted, state} ->
-        {:noreply, {:halted, state}}
+      :halted ->
+        {:noreply, put_in(state.status, :halted)}
 
-      {:suspend, state} ->
-        {:noreply, {:suspend, state}}
+      :suspend ->
+        {:noreply, put_in(state.status, :suspend)}
     end
   end
 

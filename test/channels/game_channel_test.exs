@@ -51,7 +51,7 @@ defmodule BattleSnake.GameChannelTest do
     test "the created game server starts suspended" do
       %{socket: socket} = create_game_form() |> join_topic()
       game_server_pid = socket.assigns.game_server_pid
-      assert {:suspend, %GameServer.State{}} = :sys.get_state(game_server_pid)
+      assert %GameServer.State{status: :suspend} = :sys.get_state(game_server_pid)
     end
 
     test "joining a game that doesn't exist returns an error" do
