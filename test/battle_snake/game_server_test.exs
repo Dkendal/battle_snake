@@ -7,7 +7,6 @@ defmodule BattleSnake.GameServerTest do
   @opts [delay: 0]
   @state %State{world: 10, hist: [9, 8, 7], opts: @opts}
   @prev %State{world: 9, hist: [8, 7], opts: @opts}
-  @empty_state %State{world: 1, hist: []}
   @suspend_state put_in(@state.status, :suspend)
   @cont_state put_in(@state.status, :cont)
   @halt_state put_in(@state.status, :halted)
@@ -118,25 +117,6 @@ defmodule BattleSnake.GameServerTest do
 
       assert(GameServer.handle_call(:prev, self(), @cont_state) ==
         reply)
-    end
-  end
-
-  describe "GameServer.step_back/1" do
-    test "does nothing when the history is empty" do
-      assert GameServer.step_back(@empty_state) == @empty_state
-    end
-
-    test "rewinds the state to the last move" do
-      assert GameServer.step_back(@state) == @prev
-    end
-
-    test "calls the on_change function" do
-      state = %{@state| on_change: ping(self())}
-      prev = %{@prev| on_change: ping(self())}
-
-      GameServer.step_back(state)
-
-      assert_receive {:ping, ^prev}
     end
   end
 

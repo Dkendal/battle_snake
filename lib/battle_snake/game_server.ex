@@ -2,8 +2,6 @@ defmodule BattleSnake.GameServer do
   alias __MODULE__.State
   use GenServer
 
-  @max_history 20
-
   @type state :: State.t
 
   # Begin Client Api
@@ -46,44 +44,8 @@ defmodule BattleSnake.GameServer do
     GenServer.call(pid, :resume)
   end
 
-  def step(state) do
-    state
-    |> save_history()
-    |> apply_reducer()
-    |> State.on_change()
-  end
-
-  def step_back(%{hist: []} = s), do: s
-
-  def step_back(state) do
-    state
-    |> prev_turn
-    |> State.on_change()
-  end
-
-  defp apply_reducer(%{world: w, reducer: f} = state) do
-    %{state| world: f.(w)}
-  end
-
-  defp delay(state) do
-    opts = state.opts
-    Keyword.fetch!(opts, :delay)
-  end
-
-  defp prev_turn(state) do
-    [h|t] = state.hist
-    state = put_in state.world, h
-    put_in(state.hist, t)
-  end
-
-  defp save_history(%{world: h} = state) do
-    update_in state.hist, fn t ->
-      [h |Enum.take(t, @max_history)]
-    end
-  end
-
   defp tick(state) do
-    Process.send_after(self(), :tick, delay(state))
+    Process.send_after(self(), :tick, State.delay(state))
   end
 
   # End Client Api
@@ -100,7 +62,7 @@ defmodule BattleSnake.GameServer do
         {:reply, :ok, put_in(state.status, :halted)}
 
       _ ->
-        state = step(state)
+        state = State.step(state)
         {:reply, :ok, put_in(state.status, :suspend)}
     end
   end
@@ -137,7 +99,7 @@ defmodule BattleSnake.GameServer do
 
       _status ->
         state = state
-        |> step_back()
+        |> State.step_back()
         {:reply, :ok, put_in(state.status, :suspend)}
     end
   end
@@ -169,7 +131,7 @@ defmodule BattleSnake.GameServer do
   def handle_info(:tick, state) do
     case state.status do
       :cont ->
-        state = step(state)
+        state = State.step(state)
         if State.done?(state) do
           state = State.on_done(state)
           {:noreply, put_in(state.status, :halted)}
