@@ -23,7 +23,9 @@
   * `cd battle_snake_server`
   * `npm install`
   * `mix do deps.get, compile, battle_snake.createdb`
-  * Start the Phoenix endpoint with `PORT=4000 iex -S mix phoenix.server`
+  * Start the Phoenix endpoint with `PORT=4000 iex -sname battle_snake_dev -S mix phoenix.server`
+
+  I would reccomend naming the node that you run your dev server, as running `mix test` will clobber the default Mnesia database.
 
 ## Perquisites
   * Erlang OTP 19
