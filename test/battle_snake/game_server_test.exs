@@ -14,7 +14,7 @@ defmodule BattleSnake.GameServerTest do
 
   def ping(pid), do: &send(pid, {:ping, &1})
 
-  describe ".handle_info :tick" do
+  describe "GameServer.handle_info(:tick, _)" do
     setup do
       reducer = & &1 + 1
       halt = fn _ -> true end
@@ -45,7 +45,7 @@ defmodule BattleSnake.GameServerTest do
     end
   end
 
-  describe ".handle_call :resume" do
+  describe "GameServer.handle_call(:resume, _, _)" do
     test "returns ok and sets the state to :cont" do
       assert(GameServer.handle_call(:resume, self(), @suspend_state) ==
         {:reply, :ok, @cont_state})
@@ -65,7 +65,7 @@ defmodule BattleSnake.GameServerTest do
     end
   end
 
-  describe ".handle_call :pause" do
+  describe "GameServer.handle_call(:pause, _, _)" do
     test "suspend's running games" do
       assert(GameServer.handle_call(:pause, self(), @cont_state) ==
        {:reply, :ok, @suspend_state})
@@ -80,7 +80,7 @@ defmodule BattleSnake.GameServerTest do
     end
   end
 
-  describe ".handle_call :next" do
+  describe "GameServer.handle_call(:next, _, _)" do
     test "executes the reducer once if the game is not ended" do
       state = %State{world: 1, reducer: &(&1+1)}
 
@@ -104,7 +104,7 @@ defmodule BattleSnake.GameServerTest do
     end
   end
 
-  describe ".handle_call :prev" do
+  describe "GameServer.handle_call(:prev, _, _)" do
     test "does nothing when the server is stopped" do
       assert(GameServer.handle_call(:prev, self(), @halt_state) ==
         {:reply, :ok, @halt_state})
@@ -121,7 +121,7 @@ defmodule BattleSnake.GameServerTest do
     end
   end
 
-  describe ".step_back" do
+  describe "GameServer.step_back/1" do
     test "does nothing when the history is empty" do
       assert GameServer.step_back(@empty_state) == @empty_state
     end
