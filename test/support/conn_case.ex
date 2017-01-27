@@ -28,6 +28,10 @@ defmodule BattleSnake.ConnCase do
   end
 
   setup(_tags) do
+    on_exit fn ->
+      MnesiaTesting.teardown()
+    end
+
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
 end

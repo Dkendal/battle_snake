@@ -10,12 +10,11 @@ defmodule BattleSnake.GameServer.SupervisorTest do
       {:ok, game_server} = start_game_server([%BattleSnake.GameServer.State{}])
       assert is_pid game_server
       assert %{active: 1, workers: 1} = Supervisor.count_children(@sup_name)
-      GenServer.stop(game_server, :normal)
     end
 
     test "does not restart processes that have died" do
       {:ok, game_server} = start_game_server([%BattleSnake.GameServer.State{}])
-      Process.exit(game_server, :shutdown)
+      GenServer.stop(game_server, :normal)
       ref = Process.monitor(game_server)
       assert_receive {:DOWN, ^ref, _, _, _}
       assert %{active: 0} = Supervisor.count_children(@sup_name)
