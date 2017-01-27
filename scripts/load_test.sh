@@ -1,10 +1,12 @@
 #!/bin/bash
-export SNAKE_URL="localhost:4000"
+set -e
+
+SNAKE_URL="localhost:4000"
 SNAKES_PER_GAME=5
 ROOT=$(realpath $(dirname $(realpath $0))/..)
 CREATE_REQUEST="ruby $ROOT/scripts/create_request.rb"
-export RUBY_VERSION="ruby 2.3"
-export CHRUBY=/usr/local/share/chruby/chruby.sh
+RUBY_VERSION="ruby 2.3"
+CHRUBY=/usr/local/share/chruby/chruby.sh
 
 . $CHRUBY
 chruby $RUBY_VERSION
