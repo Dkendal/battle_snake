@@ -12,14 +12,15 @@ defmodule BattleSnake.GameServer.State do
 
   defstruct [
     :world,
-    reducer: &State.identity/1,
+    game_form: {:error, :init},
+    hist: [],
     on_change: &State.identity/1,
     on_done: &State.identity/1,
     on_start: &State.identity/1,
     opts: [],
-    hist: [],
+    reducer: &State.identity/1,
+    status: :suspend,
     winners: [],
-    game_form: {:error, :init},
   ]
 
   @spec done?(t) :: boolean
