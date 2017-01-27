@@ -27,6 +27,10 @@ defmodule BattleSnake.ChannelCase do
   end
 
   setup(_tags) do
+    on_exit fn ->
+      MnesiaTesting.teardown()
+    end
+
     :ok
   end
 end

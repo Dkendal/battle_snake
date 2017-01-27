@@ -169,6 +169,16 @@ defmodule BattleSnake.GameChannelTest do
     {:ok, _, socket} = socket("user_id", %{})
     |> subscribe_and_join(GameChannel, "game:#{game_id}")
 
+    on_exit fn ->
+      # Because Channels spawn game servers we and the game servers aren't linked to the
+      # channel we need to wait for the channel and game server to die.
+      # If the test channel dies before the game server we're gonna have a bad time.
+      channel_ref = Process.monitor(socket.channel_pid)
+      game_server_ref = Process.monitor(socket.assigns.game_server_pid)
+      assert_receive {:DOWN, ^channel_ref, _, _, _}
+      assert_receive {:DOWN, ^game_server_ref, _, _, _}
+    end
+
     Map.put(context, :socket, socket)
   end
 
