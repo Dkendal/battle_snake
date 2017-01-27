@@ -28,4 +28,21 @@ defmodule BattleSnake.GameServer.StateTest do
       assert_receive {:ping, ^prev}
     end
   end
+
+  for status <- State.statuses() do
+    method = "#{status}!"
+    test "State.#{method}/1" do
+      assert State.unquote(:"#{method}")(@state).status ==
+        unquote(status)
+    end
+
+    method = "#{status}?"
+    test "State.#{method}/1" do
+      state = put_in @state.status, unquote(status)
+      assert State.unquote(:"#{method}")(state) == true
+
+      state = put_in @state.status, :__fake_state__
+      assert State.unquote(:"#{method}")(state) == false
+    end
+  end
 end

@@ -2,6 +2,7 @@ defmodule BattleSnake.GameServer.State do
   alias __MODULE__
 
   @max_history 20
+  @statuses [:cont, :replay, :halt, :suspend]
 
   @type t :: %State{
     world: BattleSnake.World.t,
@@ -57,15 +58,7 @@ defmodule BattleSnake.GameServer.State do
     |> on_change()
   end
 
-  defp apply_reducer(%{world: w, reducer: f} = state) do
-    %{state| world: f.(w)}
-  end
-
-  defp save_history(%{world: h} = state) do
-    update_in state.hist, fn t ->
-      [h |Enum.take(t, @max_history)]
-    end
-  end
+  def statuses, do: @statuses
 
   def step_back(%{hist: []} = s), do: s
 
@@ -80,9 +73,33 @@ defmodule BattleSnake.GameServer.State do
     Keyword.fetch!(opts, :delay)
   end
 
+  for status <- @statuses do
+    method_name = :"#{status}!"
+    @spec unquote(method_name)(t) :: t
+    def unquote(method_name)(state) do
+      put_in(state.status, unquote(status))
+    end
+
+    method_name = :"#{status}?"
+    @spec unquote(method_name)(t) :: t
+    def unquote(method_name)(state) do
+      state.status == unquote(status)
+    end
+  end
+
   defp prev_turn(state) do
     [h|t] = state.hist
     state = put_in state.world, h
     put_in(state.hist, t)
+  end
+
+  defp apply_reducer(%{world: w, reducer: f} = state) do
+    %{state| world: f.(w)}
+  end
+
+  defp save_history(%{world: h} = state) do
+    update_in state.hist, fn t ->
+      [h |Enum.take(t, @max_history)]
+    end
   end
 end
