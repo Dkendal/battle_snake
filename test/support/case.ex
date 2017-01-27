@@ -21,6 +21,11 @@ defmodule BattleSnake.Case do
   end
 
   setup(_tags) do
+    on_exit fn ->
+      BattleSnake.GameServerTesting.teardown()
+      MnesiaTesting.teardown()
+    end
+
     :ok
   end
 end
