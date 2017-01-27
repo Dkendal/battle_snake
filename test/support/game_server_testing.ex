@@ -3,6 +3,7 @@ defmodule BattleSnake.GameServerTesting do
     :ok = Supervisor.terminate_child(
       BattleSnake.Supervisor,
       BattleSnake.GameServer.Supervisor)
+
     {:ok, _} = Supervisor.restart_child(
       BattleSnake.Supervisor,
       BattleSnake.GameServer.Supervisor)
