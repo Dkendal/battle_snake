@@ -135,7 +135,7 @@ defmodule BattleSnake.GameServer do
       :halted ->
         {:reply, :ok, put_in(state.status, :halted)}
 
-      _ ->
+      _status ->
         state = state
         |> step_back()
         {:reply, :ok, put_in(state.status, :suspend)}
