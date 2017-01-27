@@ -3,6 +3,7 @@ defmodule BattleSnake.GameServer do
   use GenServer
 
   @type state :: State.t
+  @type server :: GenServer.server
 
   # Begin Client Api
 
@@ -43,6 +44,12 @@ defmodule BattleSnake.GameServer do
 
   def resume(pid) do
     GenServer.call(pid, :resume)
+  end
+
+  @doc "Replay the current game."
+  @spec replay(server) :: term
+  def replay(pid) do
+    GenServer.call(pid, :replay)
   end
 
   defp tick(state) do
@@ -114,6 +121,11 @@ defmodule BattleSnake.GameServer do
       _status ->
         {:reply, :ok, state}
     end
+  end
+
+  def handle_call(:replay, _from, state) do
+    state = put_in(state.status, :replay)
+    {:reply, :ok, state}
   end
 
   def handle_call(request, from, state) do

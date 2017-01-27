@@ -120,6 +120,19 @@ defmodule BattleSnake.GameServerTest do
     end
   end
 
+  describe "GameServer.handle_call(:replay, _, _)" do
+    setup do
+      reply = GameServer.handle_call(:replay, self(), @state)
+      {:ok,
+       reply: reply}
+    end
+
+    test "changes state to :replay", %{reply: reply} do
+      assert {:reply, :ok, state} = reply
+      assert state.status == :replay
+    end
+  end
+
   describe "BattleSnake.GameServer.get_status/1" do
     test "returns the state of the game server" do
       {:ok, pid} = GameServer.start_link(@state)
