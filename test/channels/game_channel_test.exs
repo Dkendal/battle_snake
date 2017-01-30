@@ -140,6 +140,15 @@ defmodule BattleSnake.GameChannelTest do
     end
   end
 
+  describe "PUSH replay" do
+    setup [:create_game_form, :join_topic]
+
+    test "responds with OK", %{socket: socket} do
+      ref = push socket, "replay"
+      assert_reply ref, :ok
+    end
+  end
+
   describe "BattleSnake.GameChannel.load_game_server_pid/1" do
     test "assigns an existing game server" do
       %{game_id: game_id, game_form: game_form} = create_game_form()

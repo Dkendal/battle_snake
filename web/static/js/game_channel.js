@@ -27,6 +27,10 @@ function init(gameId) {
     channel.push("prev", {})
   }
 
+  function replay(e) {
+    channel.push("replay", {})
+  }
+
   function handleTick({html}) {
     gameBoard.html(html);
   }
@@ -35,6 +39,9 @@ function init(gameId) {
     switch (event.key) {
       case "r":
         startGame(event);
+        break;
+      case "R":
+        replay(event);
         break;
       case " ":
         pauseGame(event);
