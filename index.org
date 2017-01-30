@@ -121,7 +121,36 @@
     choosing a move for you.
 
 *  Game rules
-**  Turns
+** Objective
+   
+   BattleSnake is an adaptation of the classic video game "Snake", where the player
+   maneuvers a snake around the play field to collect food pellets, which makes
+   the snake grow longer. The main objective is to collect as much food as
+   as possible, while avoiding hitting obstacles, such as walls and most
+   importantly - your own snake.
+   In BattleSnake, each round X number of snakes is pitted against each other,
+   and the goal is to be the last snake left alive at the end of the round.
+
+** You lose if your snake... 
+   - runs into another snake's body.
+   - runs into its own body.
+   - runs into the walls of the play field. 
+   - collides head-to-head with a longer snake (both die if they are of the same size).
+   - starves.
+
+** Starvation rules
+   - Your snake starts out with 100 life and counts down by 1 each turn.
+   - When your snake's life total reaches 0, it dies of starvation.
+
+** Avoiding starvation
+   - Food pellets spawn randomly around the play field.
+   - Each food pellet increases your snake's length by 1 and resets its life to 100.
+
+** Sportsmanship
+   - No DDoSing your opponents.
+   - No manual control of your snake.
+
+** Turns
    Pellentesque dapibus suscipit ligula. Donec posuere augue in quam. Etiam vel
    tortor sodales tellus ultricies commodo. Suspendisse potenti. Aenean in sem ac
    leo mollis blandit. Donec neque quam, dignissim in, mollis nec, sagittis eu,
