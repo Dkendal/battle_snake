@@ -153,17 +153,20 @@ defmodule BattleSnake.GameServer do
         state = State.step(state)
         if State.done?(state) do
           state = State.on_done(state)
-          {:noreply, put_in(state.status, :halted)}
+          {:noreply, halted!(state)}
         else
           tick(state)
-          {:noreply, put_in(state.status, :cont)}
+          {:noreply, cont!(state)}
         end
 
+      :replay ->
+        {:noreply, State.step(state)}
+
       :halted ->
-        {:noreply, put_in(state.status, :halted)}
+        {:noreply, state}
 
       :suspend ->
-        {:noreply, put_in(state.status, :suspend)}
+        {:noreply, state}
     end
   end
 

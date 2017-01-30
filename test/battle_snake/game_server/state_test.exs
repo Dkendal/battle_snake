@@ -49,6 +49,22 @@ defmodule BattleSnake.GameServer.StateTest do
     end
   end
 
+  describe "State.step(%{status: :replay})" do
+    test "steps forwards to the next turn" do
+      hist = for t <- (0..3),
+        do: build(:world, game_form_id: 1, turn: t)
+
+      state = State.replay!(build(:state, game_form_id: 1, hist: hist))
+
+      state = State.step(state)
+
+      [h | hist] = hist
+
+      assert state.world == h
+      assert state.hist == hist
+    end
+  end
+
   for status <- State.statuses() do
     method = "#{status}!"
     test "State.#{method}/1" do

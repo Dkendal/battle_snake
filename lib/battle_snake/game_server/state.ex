@@ -1,12 +1,34 @@
 defmodule BattleSnake.GameServer.State do
   alias __MODULE__
+
   alias BattleSnake.{
-    GameForm,
     World,
   }
 
   @max_history 20
   @statuses [:cont, :replay, :halted, :suspend]
+
+  for status <- @statuses do
+    method_name = :"#{status}!"
+    @spec unquote(method_name)(t) :: t
+    def unquote(method_name)(state) do
+      put_in(state.status, unquote(status))
+    end
+
+    method_name = :"#{status}?"
+    @spec unquote(method_name)(t) :: t
+    def unquote(method_name)(state) do
+      state.status == unquote(status)
+    end
+
+    method_name = :"is_#{status}"
+    defmacrop unquote(method_name)(state) do
+      status = unquote(status)
+      quote do
+        %__MODULE__{status: unquote(status)} = unquote(state)
+      end
+    end
+  end
 
   @type t :: %State{
     world: World.t,
@@ -56,6 +78,13 @@ defmodule BattleSnake.GameServer.State do
 
   def identity(x), do: x
 
+  def step(is_replay(state)) do
+    [h | t] = state.hist
+    state = put_in(state.world, h)
+    state = put_in(state.hist, t)
+    on_change(state)
+  end
+
   def step(state) do
     state
     |> save_history()
@@ -88,20 +117,6 @@ defmodule BattleSnake.GameServer.State do
   def delay(state) do
     opts = state.opts
     Keyword.fetch!(opts, :delay)
-  end
-
-  for status <- @statuses do
-    method_name = :"#{status}!"
-    @spec unquote(method_name)(t) :: t
-    def unquote(method_name)(state) do
-      put_in(state.status, unquote(status))
-    end
-
-    method_name = :"#{status}?"
-    @spec unquote(method_name)(t) :: t
-    def unquote(method_name)(state) do
-      state.status == unquote(status)
-    end
   end
 
   defp prev_turn(state) do
