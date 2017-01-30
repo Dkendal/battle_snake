@@ -17,6 +17,7 @@ defmodule BattleSnake.Case do
 
   using do
     quote do
+      import BattleSnake.Factory
     end
   end
 

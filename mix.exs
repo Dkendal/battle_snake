@@ -56,9 +56,11 @@ defmodule BattleSnake.Mixfile do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:apex, "~> 0.7"},
       {:cowboy, "~> 1.0"},
       {:dbg, github: "fishcakez/dbg"},
       {:ecto, "~> 2.0"},
+      {:ex_machina, "~> 1.0", only: :test},
       {:excoveralls, "~> 0.6", only: :test},
       {:exrm, "~> 1.0.0"},
       {:exvcr, "~> 0.8", only: :test},
@@ -72,7 +74,6 @@ defmodule BattleSnake.Mixfile do
       {:poison, "~> 2.0"},
       {:proper, github: "manopapad/proper", only: :test},
       {:reprise, "~> 0.5.0", only: :dev},
-      {:apex, "~> 0.7"},
     ]
   end
 end
