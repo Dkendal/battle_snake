@@ -1,0 +1,151 @@
+#+OPTIONS: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline author:nil
+#+OPTIONS: broken-links:nil c:nil creator:nil d:(not "LOGBOOK") date:nil e:t
+#+OPTIONS: email:nil f:t inline:t num:t p:nil pri:nil prop:nil stat:t tags:t
+#+OPTIONS: tasks:nil tex:t timestamp:nil title:nil toc:2 todo:nil |:t
+#+TITLE: BattleSnake 2017 API
+#+LANGUAGE: en
+#+SELECT_TAGS: export
+#+EXCLUDE_TAGS: noexport
+#+OPTIONS: gid:nil html-link-use-abs-url:nil html-postamble:auto
+#+OPTIONS: html-preamble:t html-scripts:t html-style:t tex:t toc-tag:nil
+#+OPTIONS: toc-todo:nil whn:t
+#+HTML_CONTAINER: div
+#+HTML_LINK_HOME:
+#+HTML_LINK_UP:
+#+HTML_MATHJAX:
+#+HTML_HEAD: <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+#+HTML_HEAD: <link  href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+#+HTML_HEAD: <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
+#+CREATOR: <a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.5.1 (<a href="http://orgmode.org">Org-mode</a> 9.0.3)
+#+LATEX_HEADER:
+
+* Introduction
+  # some comments about how the game is structured.
+  Nullam eu ante vel est convallis dignissim. Fusce suscipit, wisi nec facilisis
+  facilisis, est dui fermentum leo, quis tempor ligula erat quis odio. Nunc porta
+  vulputate tellus. Nunc rutrum turpis sed pede. Sed bibendum. Aliquam posuere.
+  Nunc aliquet, augue nec adipiscing interdum, lacus tellus malesuada massa, quis
+  varius mi purus non odio. Pellentesque condimentum, magna ut suscipit hendrerit,
+  ipsum augue ornare nulla, non luctus diam neque sit amet urna. Curabitur
+  vulputate vestibulum lorem. Fusce sagittis, libero non molestie mollis, magna
+  orci ultrices dolor, at vulputate neque nulla lacinia eros. Sed id ligula quis
+  est convallis tempor. Curabitur lacinia pulvinar nibh. Nam a sapien.
+
+* Callbacks
+** Game Start:
+   # some information on the api call
+   Nullam eu ante vel est convallis dignissim. Fusce suscipit, wisi nec
+   facilisis facilisis, est dui fermentum leo, quis tempor ligula erat quis
+   odio. Nunc porta vulputate tellus. Nunc rutrum turpis sed pede. Sed bibendum.
+   Aliquam posuere. Nunc aliquet, augue nec adipiscing interdum, lacus tellus
+   malesuada massa, quis varius mi purus non odio. Pellentesque condimentum,
+   magna ut suscipit hendrerit, ipsum augue ornare nulla, non luctus diam neque
+   sit amet urna. Curabitur vulputate vestibulum lorem. Fusce sagittis, libero
+   non molestie mollis, magna orci ultrices dolor, at vulputate neque nulla
+   lacinia eros. Sed id ligula quis est convallis tempor. Curabitur lacinia
+   pulvinar nibh. Nam a sapien.
+*** URL:
+    #+BEGIN_SRC
+    /start
+    #+END_SRC
+*** Method:
+    #+BEGIN_SRC
+    POST
+    #+END_SRC
+*** Headers:
+    #+BEGIN_SRC
+    Content-Type: application/json
+    #+END_SRC
+*** Example Request:
+    #+BEGIN_SRC json
+    {}
+    #+END_SRC
+*** Example Response:
+    - Code: 200
+    - Content:
+    #+BEGIN_SRC json
+    {}
+    #+END_SRC
+*** Sample call:
+    #+BEGIN_SRC sh
+    curl localhost:3000 -X POST -H "Content-Type: application/json" --data "{}"
+    #+END_SRC
+    #+BEGIN_SRC json
+    {}
+    #+END_SRC
+*** Notes:
+    Requests timeout after 200ms, failing to respond will do something.
+** Get Snake Move
+   # some information on the api call
+   Nullam eu ante vel est convallis dignissim. Fusce suscipit, wisi nec
+   facilisis facilisis, est dui fermentum leo, quis tempor ligula erat quis
+   odio. Nunc porta vulputate tellus. Nunc rutrum turpis sed pede. Sed bibendum.
+   Aliquam posuere. Nunc aliquet, augue nec adipiscing interdum, lacus tellus
+   malesuada massa, quis varius mi purus non odio. Pellentesque condimentum,
+   magna ut suscipit hendrerit, ipsum augue ornare nulla, non luctus diam neque
+   sit amet urna. Curabitur vulputate vestibulum lorem. Fusce sagittis, libero
+   non molestie mollis, magna orci ultrices dolor, at vulputate neque nulla
+   lacinia eros. Sed id ligula quis est convallis tempor. Curabitur lacinia
+   pulvinar nibh. Nam a sapien.
+*** URL:
+    #+BEGIN_SRC
+    /start
+    #+END_SRC
+*** Method:
+    #+BEGIN_SRC
+    POST
+    #+END_SRC
+*** Headers:
+    #+BEGIN_SRC
+    Content-Type: application/json
+    #+END_SRC
+*** Example Request:
+     #+BEGIN_SRC json
+     {}
+     #+END_SRC
+*** Example Response:
+    - Code: 200
+    - Content:
+    #+BEGIN_SRC json
+    {}
+    #+END_SRC
+*** Sample call:
+    #+BEGIN_SRC sh
+    curl localhost:3000 -X POST -H "Content-Type: application/json" --data "{}"
+    #+END_SRC
+    #+BEGIN_SRC json
+    {}
+    #+END_SRC
+*** Notes:
+    Requests timeout after 200ms, failing to respond will result in the server
+    choosing a move for you.
+
+*  Game rules
+**  Turns
+   Pellentesque dapibus suscipit ligula. Donec posuere augue in quam. Etiam vel
+   tortor sodales tellus ultricies commodo. Suspendisse potenti. Aenean in sem ac
+   leo mollis blandit. Donec neque quam, dignissim in, mollis nec, sagittis eu,
+   wisi. Phasellus lacus. Etiam laoreet quam sed arcu. Phasellus at dui in ligula
+   mollis ultricies. Integer placerat tristique nisl. Praesent augue. Fusce
+   commodo. Vestibulum convallis, lorem a tempus semper, dui dui euismod elit,
+   vitae placerat urna tortor vitae lacus. Nullam libero mauris, consequat quis,
+   varius et, dictum id, arcu. Mauris mollis tincidunt felis. Aliquam feugiat
+   tellus ut neque. Nulla facilisis, risus a rhoncus fermentum, tellus tellus
+   lacinia purus, et dictum nunc justo sit amet elit.
+
+** Growing longer
+   Pellentesque dapibus suscipit ligula. Donec posuere augue in quam. Etiam vel
+   tortor sodales tellus ultricies commodo. Suspendisse potenti. Aenean in sem ac
+   leo mollis blandit. Donec neque quam, dignissim in, mollis nec, sagittis eu,
+   wisi. Phasellus lacus. Etiam laoreet quam sed arcu. Phasellus at dui in ligula
+   mollis ultricies. Integer placerat tristique nisl. Praesent augue. Fusce
+   commodo. Vestibulum convallis, lorem a tempus semper, dui dui euismod elit,
+   vitae placerat urna tortor vitae lacus. Nullam libero mauris, consequat quis,
+   varius et, dictum id, arcu. Mauris mollis tincidunt felis. Aliquam feugiat
+   tellus ut neque. Nulla facilisis, risus a rhoncus fermentum, tellus tellus
+   lacinia purus, et dictum nunc justo sit amet elit.
+
+**  Death
+*** Walls
+*** Collision
+*** Starvation
