@@ -1,13 +1,17 @@
 defmodule BattleSnake.GameServer.State do
   alias __MODULE__
+  alias BattleSnake.{
+    GameForm,
+    World,
+  }
 
   @max_history 20
   @statuses [:cont, :replay, :halt, :suspend]
 
   @type t :: %State{
-    world: BattleSnake.World.t,
+    world: World.t,
     reducer: (t -> t),
-  on_change: (t-> t),
+    on_change: (t-> t),
     opts: [any],
     hist: [t],
     game_form: BattleSnake.GameForm.t
@@ -15,6 +19,7 @@ defmodule BattleSnake.GameServer.State do
 
   defstruct [
     :world,
+    :game_form_id,
     game_form: {:error, :init},
     hist: [],
     on_change: &State.identity/1,
@@ -56,6 +61,18 @@ defmodule BattleSnake.GameServer.State do
     |> save_history()
     |> apply_reducer()
     |> on_change()
+  end
+
+  @doc "Loads the game history for a game matching this id"
+  @spec load_history(t) :: t
+  def load_history(state) do
+    # TODO use qlc or something more efficient rather than sorting results here.
+    hist =
+      World.table_name()
+      |> :mnesia.dirty_index_read(state.game_form_id, :game_form_id)
+      |> Enum.map(&World.load/1)
+      |> Enum.sort_by((& Map.get &1, :turn))
+    put_in(state.hist, hist)
   end
 
   def statuses, do: @statuses

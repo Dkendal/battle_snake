@@ -27,6 +27,7 @@ defmodule BattleSnake.World do
 
   defstruct [
     :id,
+    :game_form_id,
     :created_at,
     food: [],
     snakes: [],
@@ -46,6 +47,7 @@ defmodule BattleSnake.World do
          :food,
          :snakes,
          :dead_snakes,
+         :game_form_id,
          :max_food,
          :height,
          :width,
