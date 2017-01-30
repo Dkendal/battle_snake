@@ -60,7 +60,7 @@ defmodule BattleSnake.GameForm do
   end
 
   def set_id(changeset, nil) do
-    id = to_string DateTime.to_unix(DateTime.utc_now)
+    id = Ecto.UUID.generate()
     put_change(changeset, :id, id)
   end
 
