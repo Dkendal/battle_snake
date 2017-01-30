@@ -10,6 +10,7 @@ defmodule BattleSnake.GameServerTest do
   @suspend_state put_in(@state.status, :suspend)
   @cont_state put_in(@state.status, :cont)
   @halt_state put_in(@state.status, :halted)
+  @replay_state put_in(@state.status, :replay)
 
   def ping(pid), do: &send(pid, {:ping, &1})
 
@@ -130,6 +131,11 @@ defmodule BattleSnake.GameServerTest do
     test "changes state to :replay", %{reply: reply} do
       assert {:reply, :ok, state} = reply
       assert state.status == :replay
+    end
+
+    test "sends a :tick message to itself" do
+      GameServer.handle_call(:replay, self(), @replay_state)
+      assert_receive :tick
     end
   end
 

@@ -2,8 +2,14 @@ defmodule BattleSnake.GameServer do
   alias __MODULE__.State
   use GenServer
 
+  import State
+
   @type state :: State.t
   @type server :: GenServer.server
+
+  @moduledoc """
+  The GameServer is a GenServer that handles running a single BattleSnake match.
+  """
 
   # Begin Client Api
 
@@ -124,8 +130,8 @@ defmodule BattleSnake.GameServer do
   end
 
   def handle_call(:replay, _from, state) do
-    state = put_in(state.status, :replay)
-    {:reply, :ok, state}
+    tick(state)
+    {:reply, :ok, replay!(state)}
   end
 
   def handle_call(request, from, state) do
