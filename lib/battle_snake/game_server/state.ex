@@ -6,7 +6,7 @@ defmodule BattleSnake.GameServer.State do
   }
 
   @max_history 20
-  @statuses [:cont, :replay, :halt, :suspend]
+  @statuses [:cont, :replay, :halted, :suspend]
 
   @type t :: %State{
     world: World.t,
