@@ -1,5 +1,6 @@
 {:atomic, :ok} = BattleSnake.GameForm.create_table(ram_copies: [node()])
 {:atomic, :ok} = BattleSnake.World.create_table(ram_copies: [node()])
+{:atomic, :ok} = :mnesia.add_table_index(BattleSnake.World.table_name(), :game_form_id)
 
 {:ok, _} = Application.ensure_all_started(:ex_machina)
 
