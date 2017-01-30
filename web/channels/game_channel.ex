@@ -29,6 +29,10 @@ defmodule BattleSnake.GameChannel do
     end
   end
 
+  def handle_in("replay", _, socket) do
+    {:reply, :ok, socket}
+  end
+
   def handle_in("start", _, socket) do
     game_server_pid = socket.assigns.game_server_pid
     :ok = GameServer.resume(game_server_pid)
