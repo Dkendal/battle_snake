@@ -1,5 +1,7 @@
 {:atomic, :ok} = BattleSnake.GameForm.create_table(ram_copies: [node()])
 {:atomic, :ok} = BattleSnake.World.create_table(ram_copies: [node()])
 
+{:ok, _} = Application.ensure_all_started(:ex_machina)
+
 ExUnit.start
 ExUnit.plural_rule("property", "properties")
