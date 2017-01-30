@@ -49,6 +49,14 @@ defmodule Mnesia.Repo do
     struct
   end
 
+  def all(module) when is_atom(module) do
+    fn ->
+      :qlc.e(:mnesia.table module.table_name)
+    end
+    |> :mnesia.async_dirty()
+    |> Enum.map(&module.load/1)
+  end
+
   defp keep_timestamp(nil), do: System.monotonic_time()
   defp keep_timestamp(time), do: time
   defp put_timestamp(_), do: System.monotonic_time()
@@ -87,12 +95,8 @@ defmodule Mnesia.Repo do
         __schema__(:fields)
       end
 
-      def all do
-        fn ->
-          :qlc.e(:mnesia.table table_name())
-        end
-        |> :mnesia.async_dirty()
-        |> Enum.map(&load/1)
+      def all() do
+        Mnesia.Repo.all(__MODULE__)
       end
 
       def last do
