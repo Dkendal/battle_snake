@@ -1,5 +1,10 @@
 defmodule BattleSnake.GameChannel do
-  alias BattleSnake.{World, GameServer, GameForm}
+  alias BattleSnake.{
+    World,
+    GameServer,
+    GameForm,
+    GameServer.State.Event
+  }
 
   use BattleSnake.Web, :channel
 
@@ -9,13 +14,9 @@ defmodule BattleSnake.GameChannel do
   def join("game:" <> game_id, payload, socket) do
     if authorized?(payload) do
       socket = assign(socket, :game_id, game_id)
+      GameServer.PubSub.subscribe(game_id)
 
-      channel_pid = self()
-
-      callback = fn state ->
-        send channel_pid, {:render, state}
-        state
-      end
+      callback = & &1
 
       with({:ok, game_form} <- load_game_form(game_id),
            {:ok, game_server_pid} <- load_game_server_pid(game_form, callback),
@@ -68,6 +69,24 @@ defmodule BattleSnake.GameChannel do
   end
 
   def handle_info(:after_join, socket) do
+    {:noreply, socket}
+  end
+
+  @doc """
+  Handle notifications from the GameSever. This is used to render the state of
+  the game as an svg and broadcast it to all channel subscribers.
+  """
+  def handle_info(%Event{name: name, data: state}, socket) do
+    case name do
+      _ ->
+        html =
+          Phoenix.View.render_to_string(
+            BattleSnake.PlayView,
+            "board.html",
+            state: state,
+            world: state.world)
+        broadcast(socket, "tick", %{html: html})
+    end
     {:noreply, socket}
   end
 
