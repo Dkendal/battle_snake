@@ -130,6 +130,7 @@ defmodule BattleSnake.GameServer do
   end
 
   def handle_call(:replay, _from, state) do
+    state = load_history(state)
     tick(state)
     {:reply, :ok, replay!(state)}
   end
@@ -160,7 +161,9 @@ defmodule BattleSnake.GameServer do
         end
 
       :replay ->
-        {:noreply, State.step(state)}
+        state= State.step(state)
+        tick(state)
+        {:noreply, state}
 
       :halted ->
         {:noreply, state}

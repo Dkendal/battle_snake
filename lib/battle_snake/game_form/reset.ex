@@ -23,6 +23,7 @@ defmodule BattleSnake.GameForm.Reset do
   def init_world(game_form) do
     put_in(game_form.world,
       %World{
+        game_form_id: game_form.id,
         height: game_form.height,
         max_food: game_form.max_food,
         snakes: [],

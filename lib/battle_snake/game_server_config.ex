@@ -48,6 +48,7 @@ defmodule BattleSnake.GameServerConfig do
       objective: objective_fun
     ]
 
+    # TODO: clear history on start
     on_start = reduce_f([
       render_fun,
     ])
@@ -64,6 +65,7 @@ defmodule BattleSnake.GameServerConfig do
     ])
 
     %GameServer.State{
+      game_form_id: game_form.id,
       game_form: game_form,
       world: world,
       reducer: &reducer/1,
