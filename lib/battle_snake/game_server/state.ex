@@ -35,7 +35,7 @@ defmodule BattleSnake.GameServer.State do
     reducer: (t -> t),
     on_change: (t-> t),
     opts: [any],
-    hist: [t],
+    hist: [World.t],
     game_form: BattleSnake.GameForm.t
   }
 
