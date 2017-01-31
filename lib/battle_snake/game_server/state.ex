@@ -30,6 +30,7 @@ defmodule BattleSnake.GameServer.State do
     end
   end
 
+  # TODO remove opts attr with actual attributes.
   @type t :: %State{
     world: World.t,
     reducer: (t -> t),
