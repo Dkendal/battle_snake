@@ -39,19 +39,22 @@ defmodule BattleSnake.GameServer.State do
     game_form: BattleSnake.GameForm.t
   }
 
-  defstruct [
+  @events [
+    :on_change,
+    :on_done,
+    :on_start,
+    :reducer,
+  ]
+
+  defstruct([
     :world,
     :game_form_id,
     game_form: {:error, :init},
     hist: [],
-    on_change: &State.identity/1,
-    on_done: &State.identity/1,
-    on_start: &State.identity/1,
     opts: [],
-    reducer: &State.identity/1,
     status: :suspend,
     winners: [],
-  ]
+  ] ++ for(event <- @events, do: {event, &State.identity/1}))
 
   @spec done?(t) :: boolean
   def done?(state) do
@@ -61,19 +64,20 @@ defmodule BattleSnake.GameServer.State do
     fun.(world)
   end
 
-  @spec on_done(t) :: t
-  def on_done(state) do
-    state.on_done.(state)
-  end
+  for event <- @events do
+    method_name = event
+    @doc "Execute the #{method_name} event-handler function"
+    @spec unquote(method_name)(t) :: t
+    def unquote(method_name)(state) do
+      state.unquote(method_name).(state)
+    end
 
-  @spec on_start(t) :: t
-  def on_start(state) do
-    state.on_start.(state)
-  end
-
-  @spec on_change(t) :: t
-  def on_change(t) do
-    t.on_change.(t)
+    method_name = :"put_#{event}"
+    @doc "Put a new #{method_name} event-handler function into state"
+    @spec unquote(method_name)(t, (t -> t)) :: t
+    def unquote(method_name)(state, handler) do
+      put_in(state.unquote(method_name), handler)
+    end
   end
 
   def identity(x), do: x
