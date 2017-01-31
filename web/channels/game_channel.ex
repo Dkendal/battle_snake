@@ -8,6 +8,8 @@ defmodule BattleSnake.GameChannel do
 
   use BattleSnake.Web, :channel
 
+  import Phoenix.View, only: [render_to_string: 3]
+
   @spec join(binary, %{}, Phoenix.Socket.t) ::
   {:ok, Phoenix.Socket.t} |
   {:error, any}
@@ -79,12 +81,7 @@ defmodule BattleSnake.GameChannel do
   def handle_info(%Event{name: name, data: state}, socket) do
     case name do
       _ ->
-        html =
-          Phoenix.View.render_to_string(
-            BattleSnake.PlayView,
-            "board.html",
-            state: state,
-            world: state.world)
+        html = render_board(state)
         broadcast(socket, "tick", %{html: html})
     end
     {:noreply, socket}
@@ -120,4 +117,7 @@ defmodule BattleSnake.GameChannel do
   defp authorized?(_payload) do
     true
   end
+
+  defp render_board(state),
+    do: render_to_string(BattleSnake.PlayView, "board.html", state: state)
 end
