@@ -3,7 +3,10 @@ defmodule BattleSnake.GameServer.State do
 
   alias BattleSnake.{
     World,
+    GameServer,
   }
+
+  defmodule Event, do: defstruct([:name, :data])
 
   @max_history 20
   @statuses [:cont, :replay, :halted, :suspend]
@@ -46,7 +49,6 @@ defmodule BattleSnake.GameServer.State do
     :on_change,
     :on_done,
     :on_start,
-    :on_render,
     :reducer,
   ]
 
@@ -96,8 +98,10 @@ defmodule BattleSnake.GameServer.State do
       [h|t] ->
         state = put_in(state.world, h)
         state = put_in(state.hist, t)
-        on_change(state)
+        state
+        |> on_change()
     end
+    |> broadcast(:tick)
   end
 
   def step(state) do
@@ -105,6 +109,7 @@ defmodule BattleSnake.GameServer.State do
     |> save_history()
     |> apply_reducer()
     |> on_change()
+    |> broadcast(:tick)
   end
 
   @doc "Loads the game history for a game matching this id"
@@ -148,5 +153,16 @@ defmodule BattleSnake.GameServer.State do
     update_in state.hist, fn t ->
       [h |Enum.take(t, @max_history)]
     end
+  end
+
+  defp broadcast(state, event) do
+    topic = topic(state)
+    event = %Event{name: event, data: state}
+    GameServer.PubSub.broadcast(topic, event)
+    state
+  end
+
+  defp topic(state) do
+    state.game_form_id
   end
 end
