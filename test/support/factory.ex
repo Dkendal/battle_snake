@@ -19,4 +19,9 @@ defmodule BattleSnake.Factory do
     %BattleSnake.GameServer.State{
     }
   end
+
+  def game_form_factory do
+    %BattleSnake.GameForm{
+    }
+  end
 end
