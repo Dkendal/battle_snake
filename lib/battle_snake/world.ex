@@ -12,8 +12,7 @@ defmodule BattleSnake.World do
   end
 
   @type t :: %__MODULE__{
-    id: reference,
-
+    id: any,
     food: [Point.t],
     snakes: [Snake.t],
     dead_snakes: [any],
@@ -147,11 +146,18 @@ defmodule BattleSnake.World do
     put_in(world.snakes, living_snakes)
   end
 
-  def grow_snakes world do
+  @spec grow_snakes(t) :: t
+  def grow_snakes(world) do
     update_in world.snakes, fn snakes ->
       for snake <- snakes do
         increase = grew(world, snake)
-        Snake.grow(snake, increase)
+        if increase > 0 do
+          snake
+          |> Snake.reset_health()
+          |> Snake.grow(increase)
+        else
+          snake
+        end
       end
     end
   end
