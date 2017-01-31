@@ -2,6 +2,8 @@ defmodule BattleSnake.Snake do
   alias __MODULE__
   alias BattleSnake.{Point}
 
+  @max_health 100
+
   @type t :: %Snake{
     id: reference,
     color: String.t,
@@ -12,8 +14,6 @@ defmodule BattleSnake.Snake do
     url: String.t,
   }
 
-  @unloaded {:error, :unloaded}
-
   defstruct [
     :id,
     color: "",
@@ -22,7 +22,7 @@ defmodule BattleSnake.Snake do
     name: "",
     taunt: "",
     url: "",
-    health: @unloaded,
+    health: @max_health,
   ]
 
   def dead?(%{coords: [%{y: y, x: x} |_]}, %{width: w, height: h})
@@ -57,6 +57,12 @@ defmodule BattleSnake.Snake do
 
   def body(snake) do
     snake.coords
+  end
+
+  @doc "Set this snake's health to #{@max_health}"
+  @spec reset_health(t) :: t
+  def reset_health(snake) do
+    put_in(snake.health, @max_health)
   end
 
   def resolve_head_to_head(snakes, acc \\ [])
