@@ -71,18 +71,6 @@ defmodule BattleSnake.GameChannelTest do
     end
   end
 
-  describe "GameChannel.handle_info({:render, _}, _)" do
-    setup [:create_game_form, :join_topic]
-
-    test "broadcasts a rendered version of the game world", %{socket: socket} do
-      state = %BattleSnake.GameServer.State{
-        world: %BattleSnake.World{}}
-      assert {:noreply, _} = GameChannel.handle_info({:render, state}, socket)
-      assert_broadcast "tick", %{html: html}
-      assert html =~ "</svg>"
-    end
-  end
-
   describe "PUSH start" do
     setup [:create_game_form, :join_topic]
 
