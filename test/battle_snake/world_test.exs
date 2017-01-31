@@ -23,6 +23,32 @@ defmodule BattleSnake.WorldTest do
     assert Mnesia.Repo.save(%World{}).created_at != nil
   end
 
+  describe "World.grow_snakes/1" do
+    setup do
+      world = build(:world)
+      snake = build(:snake, health: 50)
+
+      [snake: snake, world: world] =
+        with_snake_in_world(snake: snake, world: world, length: 1)
+
+      world = with_food_on_snake(world: world, snake: snake)
+      world = World.grow_snakes(world)
+      [snake] = world.snakes
+
+      {:ok,
+        snake: snake,
+        world: world}
+    end
+
+    test "resets the health of snakes that are eating this turn", %{snake: snake} do
+      assert snake.health == 100
+    end
+
+    test "increases snake length", %{snake: snake} do
+      assert length(snake.coords) == 2
+    end
+  end
+
   describe "#rand_unoccupied_space" do
     property "in the bounds of the board, on an unoccupied space" do
       forall world(), fn w ->
