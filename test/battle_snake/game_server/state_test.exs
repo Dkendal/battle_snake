@@ -31,6 +31,7 @@ defmodule BattleSnake.GameServer.StateTest do
   end
 
   describe "State.load_history/1" do
+    # TODO: fix random failures
     test "loads a game's history from mnesia" do
       create(:world, game_form_id: 2, turn: 1)
 
