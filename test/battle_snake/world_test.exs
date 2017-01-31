@@ -26,7 +26,7 @@ defmodule BattleSnake.WorldTest do
   describe "World.grow_snakes/1" do
     setup do
       world = build(:world)
-      snake = build(:snake, health: 50)
+      snake = build(:snake, health_points: 50)
 
       [snake: snake, world: world] =
         with_snake_in_world(snake: snake, world: world, length: 1)
@@ -40,8 +40,8 @@ defmodule BattleSnake.WorldTest do
         world: world}
     end
 
-    test "resets the health of snakes that are eating this turn", %{snake: snake} do
-      assert snake.health == 100
+    test "resets the health_points of snakes that are eating this turn", %{snake: snake} do
+      assert snake.health_points == 100
     end
 
     test "increases snake length", %{snake: snake} do
