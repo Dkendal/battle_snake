@@ -153,7 +153,7 @@ defmodule BattleSnake.World do
         increase = grew(world, snake)
         if increase > 0 do
           snake
-          |> Snake.reset_health()
+          |> Snake.reset_health_points()
           |> Snake.grow(increase)
         else
           snake
