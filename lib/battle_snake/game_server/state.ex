@@ -43,6 +43,7 @@ defmodule BattleSnake.GameServer.State do
     :on_change,
     :on_done,
     :on_start,
+    :on_render,
     :reducer,
   ]
 
