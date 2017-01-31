@@ -28,6 +28,8 @@ defmodule BattleSnake.GameServer.State do
         %__MODULE__{status: unquote(status)} = unquote(state)
       end
     end
+
+    defoverridable("#{status}!": 1, "#{status}?": 1)
   end
 
   # TODO remove opts attr with actual attributes.
