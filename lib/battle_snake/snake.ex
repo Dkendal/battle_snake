@@ -29,10 +29,25 @@ defmodule BattleSnake.Snake do
     health_points: @max_health_points,
   ]
 
-  def dead?(%{coords: [%{y: y, x: x} |_]}, %{width: w, height: h})
-  when not y in 0..(w-1) or not x in 0..(h-1),
-  do: true
+  @doc """
+  Checks if the snake has collided with a wall or is outside the walls.
 
+  Only checks the head, because it's the only part that moves.
+  """
+  def dead?(
+    %{coords: [%{y: y, x: x} |_]},
+    %{width: w, height: h})
+  when not y in 0..(w-1)
+  or not x in 0..(h-1),
+    do: true
+
+  def dead?(%{health_points: hp}, _)
+  when hp <= 0,
+    do: true
+
+  @doc """
+  Checks if the snake has collided with any one snake's body.
+  """
   def dead?(snake, world) do
     head = hd snake.coords
     stream = Stream.flat_map(world.snakes, & tl(&1.coords))

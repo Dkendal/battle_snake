@@ -34,6 +34,10 @@ defmodule BattleSnake.Factory do
     [snake: snake, world: world]
   end
 
+  def with_starvation(snake) do
+    put_in(snake.health_points, 0)
+  end
+
   def state_factory do
     %BattleSnake.GameServer.State{
     }

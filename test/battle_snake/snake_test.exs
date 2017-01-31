@@ -64,6 +64,20 @@ defmodule BattleSnake.SnakeTest do
 
       assert Snake.dead?(snake, world) == false
     end
+
+    test "detects starvation" do
+      world = build(:world)
+      snake = build(:snake)
+
+      [snake: snake, world: world] =
+        with_snake_in_world(snake: snake, world: world, length: 1)
+
+      refute Snake.dead?(snake, world)
+
+      snake = snake |> with_starvation()
+
+      assert Snake.dead?(snake, world)
+    end
   end
 
   describe "#len" do
