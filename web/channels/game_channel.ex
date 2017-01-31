@@ -53,7 +53,6 @@ defmodule BattleSnake.GameChannel do
       [] ->
         state = BattleSnake.GameServerConfig.setup(game_form, callback)
         {:ok, game_server_pid} = GameServer.Registry.create(game_form.id, state)
-        Process.link(game_server_pid)
         {:ok, game_server_pid}
     end
   end
