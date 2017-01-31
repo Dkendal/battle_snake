@@ -90,12 +90,6 @@ defmodule BattleSnake.World do
     |> Enum.reduce(world, f)
   end
 
-  def replace_eaten_food world do
-    world
-    |> remove_eaten_food
-    |> stock_food
-  end
-
   # @spec rand_unoccupied_space(t) :: any
   def rand_unoccupied_space(world) do
     h = world.height - 1
