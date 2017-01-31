@@ -23,6 +23,28 @@ defmodule BattleSnake.WorldTest do
     assert Mnesia.Repo.save(%World{}).created_at != nil
   end
 
+  describe "World.dec_health_points/1" do
+    setup do
+      world = build(:world)
+      snake = build(:snake, health_points: 50)
+
+      [snake: _, world: world] =
+        with_snake_in_world(snake: snake, world: world, length: 1)
+
+      world = World.dec_health_points(world)
+
+      [snake] = world.snakes
+
+      {:ok,
+       snake: snake,
+       world: world}
+    end
+
+    test "reduces snake health points by 1", %{snake: snake} do
+      assert snake.health_points == 49
+    end
+  end
+
   describe "World.grow_snakes/1" do
     setup do
       world = build(:world)
