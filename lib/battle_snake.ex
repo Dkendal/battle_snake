@@ -11,7 +11,8 @@ defmodule BattleSnake do
       # Start the endpoint when the application starts
       supervisor(BattleSnake.Endpoint, []),
       supervisor(BattleSnake.GameServer.Supervisor, []),
-      supervisor(Registry, [:unique, BattleSnake.GameServer.Registry])
+      supervisor(Registry, [:unique, BattleSnake.GameServer.Registry]),
+      supervisor(Phoenix.PubSub.PG2, [BattleSnake.GameServer.PubSub, []]),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html
