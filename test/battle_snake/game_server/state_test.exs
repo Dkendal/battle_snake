@@ -50,12 +50,15 @@ defmodule BattleSnake.GameServer.StateTest do
   end
 
   describe "State.step(%{status: :replay})" do
+    test "halts the game if the history is empty" do
+      state = State.replay!(build(:state, hist: []))
+      new_state = State.step(state)
+      assert new_state == State.halted!(state)
+    end
+
     test "steps forwards to the next turn" do
-      hist = for t <- (0..3),
-        do: build(:world, game_form_id: 1, turn: t)
-
-      state = State.replay!(build(:state, game_form_id: 1, hist: hist))
-
+      hist = for t <- (0..3), do: build(:world, turn: t)
+      state = State.replay!(build(:state, hist: hist))
       state = State.step(state)
 
       [h | hist] = hist

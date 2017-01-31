@@ -78,11 +78,18 @@ defmodule BattleSnake.GameServer.State do
 
   def identity(x), do: x
 
+  # TODO change :hist to {forward, backward} so that that
+  # history is not lost when watching a replay
   def step(is_replay(state)) do
-    [h | t] = state.hist
-    state = put_in(state.world, h)
-    state = put_in(state.hist, t)
-    on_change(state)
+    case state.hist do
+      [] ->
+        halted!(state)
+
+      [h|t] ->
+        state = put_in(state.world, h)
+        state = put_in(state.hist, t)
+        on_change(state)
+    end
   end
 
   def step(state) do
