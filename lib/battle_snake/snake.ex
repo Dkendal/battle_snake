@@ -62,6 +62,12 @@ defmodule BattleSnake.Snake do
     end
   end
 
+  @doc "Reduce health points."
+  @spec dec_health_points(t, pos_integer) :: t
+  def dec_health_points(snake, amount \\ 1) do
+    update_in(snake.health_points, & &1 - amount)
+  end
+
   def len(snake) do
     length snake.coords
   end

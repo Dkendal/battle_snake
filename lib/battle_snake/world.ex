@@ -112,8 +112,18 @@ defmodule BattleSnake.World do
   def step(world) do
     world
     |> clean_up_dead
+    |> dec_health_points
     |> grow_snakes
     |> remove_eaten_food
+  end
+
+
+  @doc "Reduce all snakes health points by 1"
+  @spec dec_health_points(t) :: t
+  def dec_health_points(world) do
+    update_in world.snakes, fn snakes ->
+      Enum.map(snakes, &Snake.dec_health_points/1)
+    end
   end
 
   def clean_up_dead world do
