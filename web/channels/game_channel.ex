@@ -90,18 +90,6 @@ defmodule BattleSnake.GameChannel do
     {:noreply, socket}
   end
 
-  def handle_info({:render, state}, socket) do
-    html = Phoenix.View.render_to_string(
-      BattleSnake.PlayView,
-      "board.html",
-      state: state,
-      world: state.world)
-
-    broadcast socket, "tick", %{html: html}
-
-    {:noreply, socket}
-  end
-
   def handle_in("pause", _, socket) do
     :ok = socket.assigns.game_server_pid
     |> GameServer.pause()
