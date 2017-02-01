@@ -19,8 +19,8 @@ defmodule BattleSnake.GameServerTest do
       reducer = & &1 + 1
       halt = fn _ -> true end
       cont = fn _ -> false end
-      finished = %{@state| reducer: reducer, opts: [objective: halt]}
-      running = %{@state| reducer: reducer, opts: [objective: cont, delay: 0]}
+      finished = %{@state| reducer: reducer, objective: halt, opts: []}
+      running = %{@state| reducer: reducer, objective: cont, opts: [delay: 0]}
       %{finished: finished, running: running}
     end
 

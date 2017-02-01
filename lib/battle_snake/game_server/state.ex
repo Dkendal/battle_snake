@@ -40,6 +40,7 @@ defmodule BattleSnake.GameServer.State do
     world: World.t,
     reducer: (t -> t),
     on_change: (t-> t),
+    objective: (t -> boolean),
     opts: [any],
     hist: [World.t],
     game_form: BattleSnake.GameForm.t
@@ -54,6 +55,7 @@ defmodule BattleSnake.GameServer.State do
 
   defstruct([
     :world,
+    :objective,
     :game_form_id,
     game_form: {:error, :init},
     hist: [],
@@ -64,10 +66,7 @@ defmodule BattleSnake.GameServer.State do
 
   @spec done?(t) :: boolean
   def done?(state) do
-    opts = state.opts
-    world = state.world
-    fun = Keyword.fetch!(opts, :objective)
-    fun.(world)
+    state.objective.(state.world)
   end
 
   for event <- @events do
@@ -137,6 +136,10 @@ defmodule BattleSnake.GameServer.State do
   def delay(state) do
     opts = state.opts
     Keyword.fetch!(opts, :delay)
+  end
+
+  def objective(state) do
+    state.objective.(state.world)
   end
 
   defp prev_turn(state) do
