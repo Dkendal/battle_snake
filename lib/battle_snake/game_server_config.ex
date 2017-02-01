@@ -36,7 +36,7 @@ defmodule BattleSnake.GameServerConfig do
     state
   end
 
-  def setup(game_form, render_fun) do
+  def setup(game_form, _render_fun) do
     game = reset(game_form)
     world = game.world
 
@@ -50,18 +50,15 @@ defmodule BattleSnake.GameServerConfig do
 
     # TODO: clear history on start
     on_start = reduce_f([
-      render_fun,
     ])
 
     on_change = reduce_f([
       &save_history/1,
-      render_fun,
     ])
 
     on_done = reduce_f([
       &BattleSnake.Rules.last_standing/1,
       &BattleSnake.GameServer.Persistance.save_winner/1,
-      render_fun,
     ])
 
     %GameServer.State{
