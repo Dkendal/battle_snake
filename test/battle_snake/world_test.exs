@@ -58,8 +58,8 @@ defmodule BattleSnake.WorldTest do
       [snake] = world.snakes
 
       {:ok,
-        snake: snake,
-        world: world}
+       snake: snake,
+       world: world}
     end
 
     test "resets the health_points of snakes that are eating this turn", %{snake: snake} do
@@ -156,6 +156,89 @@ defmodule BattleSnake.WorldTest do
     end
   end
 
+  describe "Poison.Encoder.encode(%BattleSnake.World{}, [me: snake])" do
+    use Point
+
+    @me %Snake{
+      name: "me",
+      url: "me.example.com",
+      coords: [
+        p(1, 1),
+      ]
+    }
+
+    @other %Snake{
+      name: "other",
+      url: "example.com",
+      coords: [
+        p(0, 0),
+        p(1, 0),
+      ]
+    }
+
+    @world %World{
+      turn: 0,
+      height: 2,
+      width: 2,
+      food: [
+        p(0, 1)
+      ],
+      snakes: [
+        @me,
+        @other,
+      ],
+      game_id: 0
+    }
+
+    @json %{
+      "turn" => 0,
+      "food" => [
+        [0, 1]
+      ],
+      "you" => %{
+        "name" => "me",
+        "url" => "me.example.com",
+        "coords" => [
+          [1,1],
+        ]
+      },
+      "board" => [
+        [
+          %{"state" => "head", "snake" => "other"},
+          %{"state" => "food"},
+        ],
+        [
+          %{"state" => "body", "snake" => "other"},
+          %{"state" => "head", "snake" => "me"},
+        ]
+      ],
+      "snakes" => [
+        %{
+          "name" => "me",
+          "url" => "me.example.com",
+          "coords" => [
+            [1,1],
+          ]
+        },
+        %{
+          "name" => "other",
+          "url" => "example.com",
+          "coords" => [
+            [0,0],
+            [1,0]
+          ]
+        }
+      ],
+      "game_id" => 0
+    }
+
+    @expected Poison.decode! Poison.encode!(@world, me: @me)
+
+    test "formats as JSON" do
+      assert @expected == @json
+    end
+  end
+
   describe "Poison.Encoder.encode(%BattleSnake.World{}, [])" do
     use Point
 
@@ -168,11 +251,18 @@ defmodule BattleSnake.WorldTest do
       ],
       snakes: [
         %Snake{
-          name: "bar",
+          name: "me",
+          url: "me.example.com",
+          coords: [
+            p(1, 1),
+          ]
+        },
+        %Snake{
+          name: "other",
           url: "example.com",
           coords: [
+            p(0, 0),
             p(1, 0),
-            p(1, 1)
           ]
         }
       ],
@@ -186,21 +276,28 @@ defmodule BattleSnake.WorldTest do
       ],
       "board" => [
         [
-          %{"state" => "empty"},
-          %{"state" => "food"}
+          %{"state" => "head", "snake" => "other"},
+          %{"state" => "food"},
         ],
         [
-          %{"state" => "head", "snake" => "bar"},
-          %{"state" => "body", "snake" => "bar"}
+          %{"state" => "body", "snake" => "other"},
+          %{"state" => "head", "snake" => "me"},
         ]
       ],
       "snakes" => [
         %{
-          "name" => "bar",
+          "name" => "me",
+          "url" => "me.example.com",
+          "coords" => [
+            [1,1],
+          ]
+        },
+        %{
+          "name" => "other",
           "url" => "example.com",
           "coords" => [
-            [1,0],
-            [1,1]
+            [0,0],
+            [1,0]
           ]
         }
       ],

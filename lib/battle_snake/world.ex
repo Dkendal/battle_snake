@@ -226,6 +226,8 @@ defimpl Poison.Encoder, for: BattleSnake.World do
   alias BattleSnake.{Board, World}
 
   def encode(world, opts) do
+    me = Keyword.get(opts, :me)
+
     attrs = [
       :food,
       :turn,
@@ -242,6 +244,12 @@ defimpl Poison.Encoder, for: BattleSnake.World do
     map = world
     |> Map.take(attrs)
     |> Map.merge(map)
+
+    map = if me do
+      Map.put(map, "you", me)
+    else
+      map
+    end
 
     Poison.encode!(map, opts)
   end
