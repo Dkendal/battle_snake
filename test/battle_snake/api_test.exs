@@ -15,6 +15,7 @@ defmodule BattleSnake.ApiTest do
   @game_form %BattleSnake.GameForm{}
 
   @snake %BattleSnake.Snake{
+    name: "me",
     url: "http://example.snake",
     coords: [%Point{x: 0, y: 0}]
   }
@@ -69,7 +70,8 @@ defmodule BattleSnake.ApiTest do
     test "on success responds with the move" do
       raw_response = %HTTPoison.Response{body: ~S({"move":"up"})}
 
-      mock = fn(@move_url, _, _, _) ->
+      mock = fn(@move_url, body, _, _) ->
+        send(self(), Poison.decode(body))
         {:ok, raw_response}
       end
 
@@ -82,6 +84,8 @@ defmodule BattleSnake.ApiTest do
         parsed_response: {
           :ok,
           %Move{move: "up"}}}
+
+      assert_receive {:ok, %{"you" => %{"name" => "me"}}}
     end
 
     test "on parsing error returns the error" do
