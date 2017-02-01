@@ -4,6 +4,7 @@ defmodule BattleSnake.GameServerConfig do
     World,
     GameForm,
     WorldMovement,
+    WinConditions,
   }
 
   @moduledoc """
@@ -40,15 +41,10 @@ defmodule BattleSnake.GameServerConfig do
     game = reset(game_form)
     world = game.world
 
-    objective_fun =
-      BattleSnake.WinConditions.game_mode(game_form.game_mode)
-
     opts = [
       delay: game.delay,
-      objective: objective_fun
     ]
 
-    # TODO: clear history on start
     on_start = reduce_f([
     ])
 
@@ -61,7 +57,11 @@ defmodule BattleSnake.GameServerConfig do
       &BattleSnake.GameServer.Persistance.save_winner/1,
     ])
 
+    objective =
+      WinConditions.game_mode(game_form.game_mode)
+
     %GameServer.State{
+      objective: objective,
       game_form_id: game_form.id,
       game_form: game_form,
       world: world,
