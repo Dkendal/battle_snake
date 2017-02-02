@@ -80,6 +80,14 @@ defmodule BattleSnake.Mixfile do
   end
 
   defp dialyzer do
-    [plt_add_deps: :apps_direct]
+    [plt_add_deps: :apps_direct,
+     plt_add_apps: [
+       :mnesia,
+       :plug],
+     flags: [
+       "-Wunmatched_returns",
+       "-Werror_handling",
+       "-Wrace_conditions",
+       "-Wunderspecs"]]
   end
 end
