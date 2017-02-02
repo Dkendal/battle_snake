@@ -160,13 +160,18 @@ defmodule BattleSnake.SnakeTest do
       snake = %Snake{
         coords: [%Point{x: 0, y: 1}],
         name: "snake",
-        url: "example.com"
+        url: "example.com",
+        id: "1",
+        taunt: "",
+        health_points: 100
       }
 
       expected = %{
         "name" => "snake",
         "coords" => [[0, 1]],
-        "url" => "example.com",
+        "health_points" => 100,
+        "taunt" => "",
+        "id" => "1"
       }
 
       actual = PoisonTesting.cast!(snake)
