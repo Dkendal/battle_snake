@@ -35,11 +35,33 @@ defmodule BattleSnake.GameServer.State do
     defoverridable("#{status}!": 1, "#{status}?": 1)
   end
 
+  @typedoc """
+  Any function that takes a State, and returns a new State.
+  """
+  @type state_fun :: (t -> t)
+
+  @type state_predicate :: (t -> boolean)
+
+  @typedoc """
+  A function that, when true, indicates that the game is over.
+  """
+  @type objective_fun :: state_predicate
+
+  @typedoc """
+  A function that should be called to initialize the game state. This function
+  will be called on BattleSnake.GameServer.start_link/1 and
+  BattleSnake.GameServer.reset/1.
+  """
+  @type bootstrap_fun :: state_fun
+
   # TODO remove opts attr with actual attributes.
   @type t :: %State{
     world: World.t,
-    on_change: (t-> t),
-    objective: (t -> boolean),
+    on_change: state_fun,
+    on_done: state_fun,
+    on_start: state_fun,
+    bootstrap: bootstrap_fun,
+    objective: objective_fun,
     opts: [any],
     hist: [World.t],
     game_form: BattleSnake.GameForm.t
@@ -54,6 +76,7 @@ defmodule BattleSnake.GameServer.State do
   defstruct([
     :world,
     :objective,
+    :bootstrap,
     :game_form_id,
     game_form: {:error, :init},
     hist: [],
