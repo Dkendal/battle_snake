@@ -191,6 +191,8 @@ defmodule BattleSnake.WorldTest do
     }
 
     @json %{
+      "width" => 2,
+      "height" => 2,
       "turn" => 0,
       "food" => [
         [0, 1]
@@ -270,6 +272,8 @@ defmodule BattleSnake.WorldTest do
     }
 
     @json %{
+      "width" => 2,
+      "height" => 2,
       "turn" => 0,
       "food" => [
         [0, 1]
