@@ -14,6 +14,7 @@ defmodule BattleSnake.Mixfile do
      preferred_cli_env: preferred_cli_env(),
      test_coverage: [tool: ExCoveralls],
      erlc_options: erlc_options(Mix.env),
+     dialyzer: dialyzer(),
      deps: deps()]
   end
 
@@ -76,5 +77,9 @@ defmodule BattleSnake.Mixfile do
       {:proper, github: "manopapad/proper", only: :test},
       {:reprise, "~> 0.5.0", only: :dev},
     ]
+  end
+
+  defp dialyzer do
+    [plt_add_deps: :apps_direct]
   end
 end
