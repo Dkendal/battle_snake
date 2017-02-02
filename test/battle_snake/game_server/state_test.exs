@@ -4,9 +4,8 @@ defmodule BattleSnake.GameServer.StateTest do
 
   use BattleSnake.Case, async: false
 
-  @opts [delay: 0]
-  @state %State{world: 10, hist: [9, 8, 7], opts: @opts}
-  @prev %State{world: 9, hist: [8, 7], opts: @opts}
+  @state %State{world: 10, hist: [9, 8, 7]}
+  @prev %State{world: 9, hist: [8, 7]}
   @empty_state %State{world: 1, hist: []}
 
   def ping(pid), do: &send(pid, {:ping, &1})
