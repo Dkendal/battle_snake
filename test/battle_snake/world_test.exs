@@ -199,15 +199,7 @@ defmodule BattleSnake.WorldTest do
       "food" => [
         [0, 1]
       ],
-      "you" => %{
-        "id" => "1",
-        "taunt" => "",
-        "name" => "me",
-        "health_points" => 100,
-        "coords" => [
-          [1,1],
-        ]
-      },
+      "you" => "1",
       "board" => [
         [
           %{"state" => "head", "snake" => "other"},
@@ -242,7 +234,7 @@ defmodule BattleSnake.WorldTest do
       "game_id" => 0
     }
 
-    @expected Poison.decode! Poison.encode!(@world, me: @me)
+    @expected Poison.decode! Poison.encode!(@world, me: @me.id)
 
     test "formats as JSON" do
       assert @expected == @json

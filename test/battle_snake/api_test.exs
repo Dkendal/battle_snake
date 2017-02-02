@@ -15,6 +15,7 @@ defmodule BattleSnake.ApiTest do
   @game_form %BattleSnake.GameForm{}
 
   @snake %BattleSnake.Snake{
+    id: "1234",
     name: "me",
     url: "http://example.snake",
     coords: [%Point{x: 0, y: 0}]
@@ -85,7 +86,7 @@ defmodule BattleSnake.ApiTest do
           :ok,
           %Move{move: "up"}}}
 
-      assert_receive {:ok, %{"you" => %{"name" => "me"}}}
+      assert_receive {:ok, %{"you" => "1234"}}
     end
 
     test "on parsing error returns the error" do
