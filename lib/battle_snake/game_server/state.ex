@@ -38,7 +38,6 @@ defmodule BattleSnake.GameServer.State do
   # TODO remove opts attr with actual attributes.
   @type t :: %State{
     world: World.t,
-    reducer: (t -> t),
     on_change: (t-> t),
     objective: (t -> boolean),
     opts: [any],
@@ -50,7 +49,6 @@ defmodule BattleSnake.GameServer.State do
     :on_change,
     :on_done,
     :on_start,
-    :reducer,
   ]
 
   defstruct([
@@ -106,7 +104,7 @@ defmodule BattleSnake.GameServer.State do
   def step(state) do
     state
     |> save_history()
-    |> apply_reducer()
+    |> Map.update!(:world, &World.step/1)
     |> on_change()
     |> broadcast(:tick)
   end
@@ -146,10 +144,6 @@ defmodule BattleSnake.GameServer.State do
     [h|t] = state.hist
     state = put_in state.world, h
     put_in(state.hist, t)
-  end
-
-  defp apply_reducer(%{world: w, reducer: f} = state) do
-    %{state| world: f.(w)}
   end
 
   defp save_history(%{world: h} = state) do

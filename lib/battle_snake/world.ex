@@ -111,10 +111,13 @@ defmodule BattleSnake.World do
 
   def step(world) do
     world
+    |> BattleSnake.WorldMovement.next
+    |> inc_turn
     |> clean_up_dead
     |> dec_health_points
     |> grow_snakes
     |> remove_eaten_food
+    |> stock_food
   end
 
 

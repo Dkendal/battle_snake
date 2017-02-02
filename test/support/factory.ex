@@ -40,6 +40,7 @@ defmodule BattleSnake.Factory do
 
   def state_factory do
     %BattleSnake.GameServer.State{
+      world: build(:world)
     }
   end
 
