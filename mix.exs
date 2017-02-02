@@ -59,6 +59,7 @@ defmodule BattleSnake.Mixfile do
       {:apex, "~> 0.7"},
       {:cowboy, "~> 1.0"},
       {:dbg, github: "fishcakez/dbg"},
+      {:dialyxir, "~> 0.4", only: [:dev], runtime: false},
       {:ecto, "~> 2.0"},
       {:ex_machina, "~> 1.0", only: :test},
       {:excoveralls, "~> 0.6", only: :test},
