@@ -1,6 +1,7 @@
 defmodule BattleSnake.GameServerTest do
   alias BattleSnake.GameServer
   alias BattleSnake.GameServer.State
+  alias BattleSnake.World
 
   use BattleSnake.Case, async: true
 
@@ -14,24 +15,26 @@ defmodule BattleSnake.GameServerTest do
 
   def ping(pid), do: &send(pid, {:ping, &1})
 
-  describe "GameServer.handle_info(:tick, _)" do
-    setup do
-      reducer = & &1 + 1
-      halt = fn _ -> true end
-      cont = fn _ -> false end
-      finished = %{@state| reducer: reducer, objective: halt, opts: []}
-      running = %{@state| reducer: reducer, objective: cont, opts: [delay: 0]}
-      %{finished: finished, running: running}
-    end
+  setup do
+    state = build(:state, world: build(:world, turn: 10))
+    halt = fn _ -> true end
+    cont = fn _ -> false end
+    finished = %{state| objective: halt, opts: []}
+    running = %{state| objective: cont, opts: [delay: 0]}
+    %{finished: finished, running: running}
+  end
 
+  describe "GameServer.handle_info(:tick, _)" do
     test "stops the game if the objective is met", %{finished: state} do
       assert({:noreply, %{status: :halted}} =
        GameServer.handle_info(:tick, put_in(state.status, :cont)))
     end
 
     test "executes the reducer", %{running: state} do
-      assert({_, %{world: 11, hist: [10, 9, 8, 7]}} =
-       GameServer.handle_info(:tick, put_in(state.status, :cont)))
+      state = State.cont!(state)
+
+      assert({_, %{world: %{turn: 11}}} =
+        GameServer.handle_info(:tick, state))
     end
 
     test "sends a tick message to itself if the game isn't over", %{running: state} do
@@ -81,26 +84,40 @@ defmodule BattleSnake.GameServerTest do
   end
 
   describe "GameServer.handle_call(:next, _, _)" do
-    test "executes the reducer once if the game is not ended" do
-      state = %State{world: 1, reducer: &(&1+1)}
+    setup %{running: state} do
+      f = &GameServer.handle_call(:next, self(), &1)
 
-      reply = {:reply,
-               :ok,
-               %{state |
-                 status: :suspend,
-                 world: 2,
-                 hist: [1]}}
+      cont_state = state |> State.cont!
+      suspend_state = state |> State.suspend!
+      halted_state = state |> State.halted!
 
-      assert(GameServer.handle_call(:next, self(), put_in(state.status, :cont)) ==
-        reply)
+      cont_reply = cont_state |> f.()
+      suspend_reply = suspend_state |> f.()
+      halted_reply = halted_state |> f.()
 
-      assert(GameServer.handle_call(:next, self(), put_in(state.status, :suspend)) ==
-        reply)
+      {:ok,
+       state: 1,
+       cont_state: cont_state,
+       suspend_state: suspend_state,
+       halted_state: halted_state,
+       halted_reply: halted_reply,
+       suspend_reply: suspend_reply,
+       cont_reply: cont_reply}
     end
 
-    test "does nothing when the game is stopped" do
-      assert(GameServer.handle_call(:next, self(), @halt_state) ==
-       {:reply, :ok, @halt_state})
+    test "suspends the game when status is :cont", %{cont_reply: reply} do
+      assert {:reply, :ok, new_state} = reply
+      assert State.suspend?(new_state), "#{new_state.status}"
+    end
+
+    test "suspends the game when status is :suspend", %{suspend_reply: reply} do
+      assert {:reply, :ok, new_state} = reply
+      assert State.suspend?(new_state), "#{new_state.status}"
+    end
+
+    test "does nothing when the game is halted", %{halted_state: state, halted_reply: reply} do
+      assert {:reply, :ok, new_state} = reply
+      assert new_state.status == state.status
     end
   end
 

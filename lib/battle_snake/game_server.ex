@@ -73,11 +73,11 @@ defmodule BattleSnake.GameServer do
   def handle_call(:next, _from, state) do
     case state.status do
       :halted ->
-        {:reply, :ok, put_in(state.status, :halted)}
+        {:reply, :ok, state}
 
       _ ->
         state = State.step(state)
-        {:reply, :ok, put_in(state.status, :suspend)}
+        {:reply, :ok, State.suspend!(state)}
     end
   end
 

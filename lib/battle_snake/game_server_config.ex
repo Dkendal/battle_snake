@@ -21,17 +21,6 @@ defmodule BattleSnake.GameServerConfig do
     |> GameForm.Reset.reset_game_form()
   end
 
-  @doc """
-  What the game should do each turn.
-  """
-  def reducer(world) do
-    world
-    |> World.inc_turn()
-    |> WorldMovement.next()
-    |> World.step()
-    |> World.stock_food()
-  end
-
   def save_history(state) do
     Mnesia.Repo.save state.world
     state
@@ -65,7 +54,6 @@ defmodule BattleSnake.GameServerConfig do
       game_form_id: game_form.id,
       game_form: game_form,
       world: world,
-      reducer: &reducer/1,
       opts: opts,
       on_change: on_change,
       on_start: on_start,
