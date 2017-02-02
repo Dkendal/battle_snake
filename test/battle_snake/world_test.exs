@@ -162,6 +162,7 @@ defmodule BattleSnake.WorldTest do
     @me %Snake{
       name: "me",
       url: "me.example.com",
+      id: "1",
       coords: [
         p(1, 1),
       ]
@@ -170,6 +171,7 @@ defmodule BattleSnake.WorldTest do
     @other %Snake{
       name: "other",
       url: "example.com",
+      id: "2",
       coords: [
         p(0, 0),
         p(1, 0),
@@ -198,8 +200,10 @@ defmodule BattleSnake.WorldTest do
         [0, 1]
       ],
       "you" => %{
+        "id" => "1",
+        "taunt" => "",
         "name" => "me",
-        "url" => "me.example.com",
+        "health_points" => 100,
         "coords" => [
           [1,1],
         ]
@@ -216,15 +220,19 @@ defmodule BattleSnake.WorldTest do
       ],
       "snakes" => [
         %{
+          "id" => "1",
+          "taunt" => "",
           "name" => "me",
-          "url" => "me.example.com",
+          "health_points" => 100,
           "coords" => [
             [1,1],
           ]
         },
         %{
+          "id" => "2",
+          "taunt" => "",
+          "health_points" => 100,
           "name" => "other",
-          "url" => "example.com",
           "coords" => [
             [0,0],
             [1,0]
@@ -254,6 +262,7 @@ defmodule BattleSnake.WorldTest do
       snakes: [
         %Snake{
           name: "me",
+          id: "1",
           url: "me.example.com",
           coords: [
             p(1, 1),
@@ -261,6 +270,7 @@ defmodule BattleSnake.WorldTest do
         },
         %Snake{
           name: "other",
+          id: "2",
           url: "example.com",
           coords: [
             p(0, 0),
@@ -290,15 +300,19 @@ defmodule BattleSnake.WorldTest do
       ],
       "snakes" => [
         %{
+          "id" => "1",
+          "taunt" => "",
           "name" => "me",
-          "url" => "me.example.com",
+          "health_points" => 100,
           "coords" => [
             [1,1],
           ]
         },
         %{
+          "id" => "2",
+          "taunt" => "",
+          "health_points" => 100,
           "name" => "other",
-          "url" => "example.com",
           "coords" => [
             [0,0],
             [1,0]
@@ -307,6 +321,7 @@ defmodule BattleSnake.WorldTest do
       ],
       "game_id" => 0
     }
+
 
     @expected PoisonTesting.cast! @world
 
