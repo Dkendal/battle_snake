@@ -33,7 +33,7 @@ defmodule BattleSnake.Api do
   @spec move(%Snake{}, %World{}) :: Response.t
   def move(snake, world, request \\ &HTTP.post/4) do
     response(snake, "/move", request,
-      data: Poison.encode!(world, me: snake),
+      data: Poison.encode!(world, me: snake.id),
       as: %Move{})
   end
 
