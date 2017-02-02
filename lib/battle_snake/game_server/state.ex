@@ -54,7 +54,6 @@ defmodule BattleSnake.GameServer.State do
   """
   @type bootstrap_fun :: state_fun
 
-  # TODO remove opts attr with actual attributes.
   @type t :: %State{
     world: World.t,
     on_change: state_fun,
@@ -62,7 +61,7 @@ defmodule BattleSnake.GameServer.State do
     on_start: state_fun,
     bootstrap: bootstrap_fun,
     objective: objective_fun,
-    opts: [any],
+    delay: non_neg_integer,
     hist: [World.t],
     game_form: BattleSnake.GameForm.t
   }
@@ -79,8 +78,8 @@ defmodule BattleSnake.GameServer.State do
     :bootstrap,
     :game_form_id,
     game_form: {:error, :init},
+    delay: 0,
     hist: [],
-    opts: [],
     status: :suspend,
     winners: [],
   ] ++ for(event <- @events, do: {event, &State.identity/1}))
@@ -155,8 +154,7 @@ defmodule BattleSnake.GameServer.State do
   end
 
   def delay(state) do
-    opts = state.opts
-    Keyword.fetch!(opts, :delay)
+    state.delay
   end
 
   def objective(state) do

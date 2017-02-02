@@ -4,9 +4,8 @@ defmodule BattleSnake.GameServerTest do
 
   use BattleSnake.Case, async: true
 
-  @opts [delay: 0]
-  @state %State{world: 10, hist: [9, 8, 7], opts: @opts}
-  @prev %State{world: 9, hist: [8, 7], opts: @opts}
+  @state %State{world: 10, hist: [9, 8, 7]}
+  @prev %State{world: 9, hist: [8, 7]}
   @suspend_state put_in(@state.status, :suspend)
   @cont_state put_in(@state.status, :cont)
   @halt_state put_in(@state.status, :halted)
@@ -18,8 +17,8 @@ defmodule BattleSnake.GameServerTest do
     state = build(:state, world: build(:world, turn: 10))
     halt = fn _ -> true end
     cont = fn _ -> false end
-    finished = %{state| objective: halt, opts: []}
-    running = %{state| objective: cont, opts: [delay: 0]}
+    finished = %{state| objective: halt}
+    running = %{state| objective: cont, delay: 0}
     %{finished: finished, running: running}
   end
 

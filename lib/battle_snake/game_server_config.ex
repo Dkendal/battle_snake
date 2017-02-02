@@ -30,12 +30,7 @@ defmodule BattleSnake.GameServerConfig do
     game = reset(game_form)
     world = game.world
 
-    opts = [
-      delay: game.delay,
-    ]
-
-    on_start = reduce_f([
-    ])
+    on_start = reduce_f([])
 
     on_change = reduce_f([
       &save_history/1,
@@ -50,14 +45,14 @@ defmodule BattleSnake.GameServerConfig do
       WinConditions.game_mode(game_form.game_mode)
 
     %GameServer.State{
-      objective: objective,
-      game_form_id: game_form.id,
+      delay: game_form.delay,
       game_form: game_form,
-      world: world,
-      opts: opts,
+      game_form_id: game_form.id,
+      objective: objective,
       on_change: on_change,
-      on_start: on_start,
       on_done: on_done,
+      on_start: on_start,
+      world: world,
     }
   end
 
