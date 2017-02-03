@@ -1,8 +1,16 @@
 defmodule BattleSnake.GameForm do
   @api Application.get_env(:battle_snake, :snake_api)
 
-  alias BattleSnake.SnakeForm
-  alias BattleSnake.{World, Snake}
+  alias __MODULE__
+  alias BattleSnake.{
+    GameServer,
+    GameServer.State,
+    Rules,
+    Snake,
+    SnakeForm,
+    WinConditions,
+    World,
+  }
 
   use BattleSnake.Web, :model
 
@@ -19,6 +27,17 @@ defmodule BattleSnake.GameForm do
   defmacro game_modes, do: @game_modes
   defmacro multiplayer, do: @multiplayer
   defmacro singleplayer, do: @singleplayer
+
+  @type t :: %GameForm{
+    snakes: [SnakeForm],
+    world: World,
+    width: pos_integer,
+    height: pos_integer,
+    delay: non_neg_integer,
+    max_food: non_neg_integer,
+    winners: [Snake.t],
+    game_mode: string
+  }
 
   schema "game" do
     embeds_many :snakes, SnakeForm
@@ -65,6 +84,50 @@ defmodule BattleSnake.GameForm do
   end
 
   def set_id(changeset, _id), do: changeset
+
+  @spec reload_game_server_state(t) :: State.t
+  def reload_game_server_state(%GameForm{} = game_form) do
+    game_form
+    |> GameForm.Reset.reset_game_form
+    |> to_game_server_state
+  end
+
+  @spec to_game_server_state(t) :: State.t
+  def to_game_server_state(%GameForm{} = game_form) do
+    delay = game_form.delay
+    game_form_id = game_form.id
+    world = game_form.world
+
+    fun_apply = fn (funs, state) ->
+      Enum.reduce(funs, state, fn fun, s -> fun.(s) end)
+    end
+
+    save = fn state ->
+      Mnesia.Repo.save(state.world)
+      state
+    end
+
+    on_change = &fun_apply.([save], &1)
+
+    on_done = fn state ->
+      fun_apply.(
+        [&Rules.last_standing/1,
+         &GameServer.Persistance.save_winner/1],
+        state)
+    end
+
+    objective = WinConditions.game_mode(game_form.game_mode)
+
+    %State{
+      delay: delay,
+      game_form: game_form,
+      game_form_id: game_form_id,
+      objective: objective,
+      on_change: on_change,
+      on_done: on_done,
+      world: world,
+    }
+  end
 end
 
 defimpl Poison.Encoder, for: BattleSnake.GameForm do

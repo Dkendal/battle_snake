@@ -33,7 +33,7 @@ defmodule BattleSnake.Api.GameServerController do
   end
 
   def do_create({:ok, %GameForm{} = game_form}, id: id) do
-    state = BattleSnake.GameServerConfig.setup(game_form, on_change())
+    state = GameForm.reload_game_server_state(game_form)
     {:ok, game_server_pid} = GameServer.Registry.create(id, state)
     GameServer.resume(game_server_pid)
   end
