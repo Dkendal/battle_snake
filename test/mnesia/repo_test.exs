@@ -79,6 +79,24 @@ defmodule Mnesia.RepoTest do
     end
   end
 
+  describe "Mnesia.Repo.reload/1" do
+    setup [:create_table, :delete_table, :reload]
+
+    def reload _ do
+      record = %DummyModel{id: 1, x: "old"}
+      record = Mnesia.Repo.save(record)
+      Mnesia.Repo.save(%{record| x: "new"})
+      record = Mnesia.Repo.reload(record)
+      [record: record]
+    end
+
+    test "returns an updated version of the record", %{record: record} do
+      assert {:ok, record} = record
+      assert record.id == 1
+      assert record.x == "new"
+    end
+  end
+
   describe "Mnesia.Repo.get/1" do
     setup [:create_table, :delete_table, :create_dummy]
 

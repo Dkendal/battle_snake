@@ -49,6 +49,12 @@ defmodule Mnesia.Repo do
     struct
   end
 
+  def reload(struct) do
+    struct
+    |> struct.__struct__.get_primary_key
+    |> struct.__struct__.get
+  end
+
   def all(module) when is_atom(module) do
     fn ->
       :qlc.e(:mnesia.table module.table_name)
@@ -133,6 +139,10 @@ defmodule Mnesia.Repo do
         :mnesia.clear_table(table_name())
       end
 
+      def get_primary_key(struct) do
+        Map.fetch!(struct, primary_key_field())
+      end
+
       defp primary_key_field() do
         {field, _, _} = @primary_key
         field
@@ -141,10 +151,6 @@ defmodule Mnesia.Repo do
       defp primary_key_opts() do
         {_, _, opts} = @primary_key
         opts
-      end
-
-      defp get_primary_key(struct) do
-        Map.fetch!(struct, primary_key_field())
       end
 
       def generate_primary_key(%{__struct__: __MODULE__} = struct) do
