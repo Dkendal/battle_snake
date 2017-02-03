@@ -47,19 +47,11 @@ defmodule BattleSnake.GameServer.State do
   """
   @type objective_fun :: state_predicate
 
-  @typedoc """
-  A function that should be called to initialize the game state. This function
-  will be called on BattleSnake.GameServer.start_link/1 and
-  BattleSnake.GameServer.reset/1.
-  """
-  @type bootstrap_fun :: state_fun
-
   @type t :: %State{
     world: World.t,
     on_change: state_fun,
     on_done: state_fun,
     on_start: state_fun,
-    bootstrap: bootstrap_fun,
     objective: objective_fun,
     delay: non_neg_integer,
     hist: [World.t],
@@ -75,7 +67,6 @@ defmodule BattleSnake.GameServer.State do
   defstruct([
     :world,
     :objective,
-    :bootstrap,
     :game_form_id,
     game_form: {:error, :init},
     delay: 0,
