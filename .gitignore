@@ -26,3 +26,6 @@ Mnesia.*
 .env
 rel
 .iex.exs
+TODOs.org
+TODOs.org_archive
+docs/
