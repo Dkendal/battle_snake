@@ -16,6 +16,17 @@ defmodule BattleSnake.Factory do
     }
   end
 
+  def snake_form_factory do
+    %BattleSnake.SnakeForm{
+      url: "example.com"
+    }
+  end
+
+  def game_form_factory do
+    %BattleSnake.GameForm{
+    }
+  end
+
   def with_food_on_snake(world: world, snake: snake) do
     update_in world.food, fn rest ->
       food = hd(snake.coords)
