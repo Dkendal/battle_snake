@@ -1,28 +1,22 @@
 defmodule BattleSnake.BoardViewerChannelTest do
   use BattleSnake.ChannelCase
 
-  alias BattleSnake.BoardViewerChannel
+  alias BattleSnake.{
+    BoardViewerChannel,
+    GameServer
+  }
 
   setup do
     {:ok, _, socket} =
       socket("user_id", %{some: :assign})
-      |> subscribe_and_join(BoardViewerChannel, "board_viewer:lobby")
+      |> subscribe_and_join(BoardViewerChannel, "board_viewer:1")
 
     {:ok, socket: socket}
   end
 
-  test "ping replies with status ok", %{socket: socket} do
-    ref = push socket, "ping", %{"hello" => "there"}
-    assert_reply ref, :ok, %{"hello" => "there"}
-  end
-
-  test "shout broadcasts to board_viewer:lobby", %{socket: socket} do
-    push socket, "shout", %{"hello" => "all"}
-    assert_broadcast "shout", %{"hello" => "all"}
-  end
-
-  test "broadcasts are pushed to the client", %{socket: socket} do
-    broadcast_from! socket, "broadcast", %{"some" => "data"}
-    assert_push "broadcast", %{"some" => "data"}
+  test "relays broadcasts to clients" do
+    state = build(:state)
+    GameServer.PubSub.broadcast("1", %GameServer.State.Event{name: "test", data: state})
+    assert_broadcast "tick", %{html: _}
   end
 end
