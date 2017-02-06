@@ -12,9 +12,9 @@ defmodule BattleSnake.GameAdminChannel do
   end
 
   @command_list ~w(resume next prev)
-  def handle_in(command, _, socket) when command in @command_list do
-    cmd = String.to_existing_atom(command)
-    issue_command(socket, cmd)
+  def handle_in(command, data, socket) when command in @command_list do
+    data = %GameServer.Command{name: command, data: data}
+    issue_command(socket, data)
     {:reply, :ok, socket}
   end
 
@@ -27,9 +27,9 @@ defmodule BattleSnake.GameAdminChannel do
     socket.assigns.game_id
   end
 
-  defp issue_command(socket, name) do
+  defp issue_command(socket, data) do
     socket
     |> game_id()
-    |> GameServer.PubSub.broadcast!({:command, name})
+    |> GameServer.PubSub.broadcast!(data)
   end
 end
