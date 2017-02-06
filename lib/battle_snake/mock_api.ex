@@ -1,27 +1,21 @@
 defmodule BattleSnake.MockApi do
-  alias BattleSnake.Api.Response
-
   @behaviour BattleSnake.Api
-
-  def load(_form, _game) do
-    %Response{
-      raw_response: {
-        :ok,
-        %HTTPoison.Response{body: "mocked response"}},
-      parsed_response: {
-        :ok,
-        %BattleSnake.Snake{}}}
-  end
 
   def start, do: {:ok, [:fake]}
 
-  def move(_, _) do
-    %Response{
-      raw_response: {
-        :ok,
-        %HTTPoison.Response{body: "mocked response"}},
-      parsed_response: {
-        :ok,
-        %BattleSnake.Move{move: "up"}}}
+  def load(x, y) do
+    BattleSnake.Api.load(x, y, fn _, _, _, _ ->
+      {:ok,
+       %HTTPoison.Response{
+         body: Poison.encode!(%{name: "mock-snake"})}}
+    end)
+  end
+
+  def move(x, y) do
+    BattleSnake.Api.move(x, y, fn _, _, _, _ ->
+      {:ok,
+       %HTTPoison.Response{
+         body: Poison.encode!(%{move: "up"})}}
+    end)
   end
 end

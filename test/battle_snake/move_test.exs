@@ -12,21 +12,15 @@ defmodule BattleSnake.MoveTest  do
     snakes: [@green_snake]
   }
 
-  @left %Move{move: "left"}
+  @up %Move{move: "up"}
 
-  def up_fn(%Snake{}, %World{}) do
-    %Response{
-      parsed_response: {
-        :ok,
-        @left}}
+  def up_fun(%Snake{}, %World{}) do
+    %Response{parsed_response: {:ok, @up}}
   end
 
   def sleep_fun(%Snake{}, %World{}) do
     Process.sleep 100
-    %Response{
-      parsed_response: {
-        :ok,
-        @left}}
+    %Response{parsed_response: {:ok, @up}}
   end
 
   def error_fun(%Snake{}, %World{}) do
@@ -35,7 +29,7 @@ defmodule BattleSnake.MoveTest  do
 
   describe "BattleSnake.Move.all/1" do
     test "returns a default move when the request encounters an error" do
-      moves = Move.all(@world, &error_fun/2)
+      moves = Move.all(@world, &error_fun/2, 100)
       assert [%Move{} = move] = moves
       assert move.move == "up"
       assert {:ok, %Response{}} = move.__meta__.response
@@ -49,7 +43,7 @@ defmodule BattleSnake.MoveTest  do
     end
 
     test "returns a move for each snake" do
-      moves = Move.all(@world)
+      moves = Move.all(@world, &up_fun/2, 100)
       assert [%Move{} = move] = moves
       assert move.move == "up"
       assert {:ok, %Response{}} = move.__meta__.response

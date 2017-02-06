@@ -4,33 +4,21 @@ defmodule BattleSnake.MockApiTest do
 
   setup do
     game_form = build(:game_form)
-    snake_form = build(:snake_form)
+    snake_form = build(:snake_form, url: "example.com")
     [game_form: game_form, snake_form: snake_form]
   end
 
   describe "MockApi.load/2" do
     test "has the same response as BattleSnake.Api", c do
-      assert MockApi.load(c.snake_form, c.game_form).parsed_response ==
-        BattleSnake.Api.load(c.snake_form, c.game_form, &mock_load/4).parsed_response
+      assert {:ok, %BattleSnake.Snake{name: "mock-snake"}} =
+        MockApi.load(c.snake_form, c.game_form).parsed_response
     end
   end
 
   describe "MockApi.move/2" do
     test "has the same response as BattleSnake.Api", c do
-      assert MockApi.move(c.snake_form, c.game_form).parsed_response ==
-        BattleSnake.Api.move(c.snake_form, c.game_form, &mock_move/4).parsed_response
+      assert {:ok, %BattleSnake.Move{move: "up"}} =
+        MockApi.move(c.snake_form, c.game_form).parsed_response
     end
-  end
-
-  def mock_load(_, _, _, _) do
-    {:ok,
-     %HTTPoison.Response{
-       body: Poison.encode!(%{name: "", color: "", url: ""})}}
-  end
-
-  def mock_move(_, _, _, _) do
-    {:ok,
-     %HTTPoison.Response{
-       body: Poison.encode!(%{move: "up"})}}
   end
 end
