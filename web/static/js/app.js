@@ -17,4 +17,20 @@ import "phoenix_html"
 // Local files can be imported directly using relative
 // paths "./socket" or full ones "web/static/js/socket".
 import socket from "./socket"
-import game_channel from "./game_channel"
+import GameChannel from "./game_channel"
+import $ from "jquery";
+
+const gameId = window.gameId;
+const logError = resp => { console.error("Unable to join", resp) };
+
+{
+  const channel = socket.channel(`board_viewer:${gameId}`, {});
+
+  channel.on("tick", ({content}) => {
+    $("#board-viewer").html(content);
+  });
+
+  channel.
+    join().
+    receive("error", logError);
+}

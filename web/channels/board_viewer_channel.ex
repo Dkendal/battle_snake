@@ -14,7 +14,7 @@ defmodule BattleSnake.BoardViewerChannel do
 
   def handle_info(%GameServer.State.Event{name: name, data: state}, socket) do
     html = Phoenix.View.render_to_string(BattleSnake.PlayView, "board.html", state: state)
-    broadcast(socket, "tick", %{html: html})
+    broadcast(socket, "tick", %{content: html})
     {:noreply, socket}
   end
 
