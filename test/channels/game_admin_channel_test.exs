@@ -16,6 +16,7 @@ defmodule BattleSnake.GameAdminChannelTest do
 
   describe "push $command" do
     setup c do
+      GameServer.PubSub.subscribe("1")
       ref = push(c.socket, "resume")
       [ref: ref]
     end
@@ -25,8 +26,7 @@ defmodule BattleSnake.GameAdminChannelTest do
     end
 
     test "sends message to the pub sub", c do
-      GameServer.PubSub.subscribe("1")
-      assert_receive {:command, :resume}
+      assert_receive %GameServer.Command{name: "resume", data: %{}}
     end
   end
 end

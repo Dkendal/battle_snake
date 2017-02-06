@@ -4,6 +4,8 @@ defmodule BattleSnake.GameServer do
 
   import State
 
+  defmodule Command, do: defstruct [:name, :data]
+
   @type state :: State.t
   @type server :: GenServer.server
 
