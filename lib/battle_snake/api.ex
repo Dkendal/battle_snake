@@ -8,6 +8,9 @@ defmodule BattleSnake.Api do
     SnakeForm,
     World}
 
+  @load_whitelist ~w(color head_url name taunt)a
+  @move_whitelist ~w(move taunt)a
+
   @callback load(%SnakeForm{}, %GameForm{}) :: Response.t
   @callback move(%Snake{}, %World{}) :: Response.t
 
@@ -18,11 +21,17 @@ defmodule BattleSnake.Api do
   POST /start
   """
   @spec load(%SnakeForm{}, %GameForm{}) :: Response.t
-  def load(snake_form, game_form, request \\ &HTTP.post/4) do
-    response(snake_form, "/start", request,
-      data: game_form,
-      as: %Snake{
-        url: snake_form.url})
+  def load(%{url: url}, data, request \\ &HTTP.post/4) do
+    api_response = response(url <> "/start", request, Snake, @load_whitelist, data)
+    update_in(api_response.parsed_response, fn
+      {:ok, snake} ->
+      (
+        snake = put_in(snake.url, url)
+        {:ok, snake}
+      )
+      error ->
+        error
+    end)
   end
 
   @doc """
@@ -31,25 +40,25 @@ defmodule BattleSnake.Api do
   POST /move
   """
   @spec move(%Snake{}, %World{}) :: Response.t
-  def move(snake, world, request \\ &HTTP.post/4) do
-    response(snake, "/move", request,
-      data: Poison.encode!(world, me: snake.id),
-      as: %Move{})
+  def move(%{url: url, id: id}, world, request \\ &HTTP.post/4) do
+    data = Poison.encode!(world, me: id)
+    response(url <> "/move", request, Move, @move_whitelist, data)
   end
 
-  defp response(%{url: url}, path, request, opts) do
-    data = Keyword.fetch!(opts, :data)
-    struct = Keyword.fetch!(opts, :as)
-    (url <> path)
-    |> request.(data, headers(), options())
-    |> Response.new(as: struct)
-  end
+  defp response(url, request, type, whitelist, data) do
+    st = struct(type)
+    api_response = url
+    |> request.(data, [], [])
+    |> Response.new(as: st)
 
-  defp options do
-    []
-  end
-
-  defp headers() do
-    []
+    update_in(api_response.parsed_response, fn
+      {:ok, snake} ->
+      (
+        map = Map.take(snake, whitelist)
+        snake = struct(type, map)
+        {:ok, snake}
+      )
+      error -> error
+    end)
   end
 end
