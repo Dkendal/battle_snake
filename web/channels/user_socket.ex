@@ -4,7 +4,7 @@ defmodule BattleSnake.UserSocket do
   ## Channels
   # channel "room:*", BattleSnake.RoomChannel
   channel "game:*", BattleSnake.GameChannel
-
+  channel "board_viewer:*", BattleSnake.BoardViewerChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket
