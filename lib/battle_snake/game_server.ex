@@ -1,4 +1,5 @@
 defmodule BattleSnake.GameServer do
+  alias __MODULE__
   alias __MODULE__.State
   use GenServer
 
@@ -13,52 +14,23 @@ defmodule BattleSnake.GameServer do
   The GameServer is a GenServer that handles running a single BattleSnake match.
   """
 
-  # Begin Client Api
-
   def start_link(state, opts \\ [])
+
   def start_link(%State{} = state, opts) do
     state = State.on_start(state)
     GenServer.start_link(__MODULE__, state, opts)
   end
 
-  def get_state(pid) do
-    GenServer.call(pid, :get_state)
-  end
-
-  def get_status(pid) do
-    GenServer.call(pid, :get_status)
-  end
-
-  def next(pid) do
-    GenServer.call(pid, :next)
-  end
-
-  def on_change(pid),
-    do: GenServer.call(pid, :on_change)
-
-  def on_done(pid),
-    do: GenServer.call(pid, :on_done)
-
-  def on_start(pid),
-    do: GenServer.call(pid, :on_start)
-
-  def pause(pid) do
-    GenServer.call(pid, :pause)
-  end
-
-  def prev(pid) do
-    GenServer.call(pid, :prev)
-  end
-
-  def resume(pid) do
-    GenServer.call(pid, :resume)
-  end
-
-  @doc "Replay the current game."
-  @spec replay(server) :: term
-  def replay(pid) do
-    GenServer.call(pid, :replay)
-  end
+  defdelegate get_state(pid), to: GameServer.Client
+  defdelegate get_status(pid), to: GameServer.Client
+  defdelegate next(pid), to: GameServer.Client
+  defdelegate on_change(pid), to: GameServer.Client
+  defdelegate on_done(pid), to: GameServer.Client
+  defdelegate on_start(pi), to: GameServer.Client
+  defdelegate pause(pid), to: GameServer.Client
+  defdelegate prev(pid), to: GameServer.Client
+  defdelegate resume(pid), to: GameServer.Client
+  defdelegate replay(pid), to: GameServer.Client
 
   defp tick(state) do
     Process.send_after(self(), :tick, State.delay(state))
