@@ -9,4 +9,4 @@
 <%= link("▶", to: "#", data: [js: "game.start"]) %>
 <%= link("▶▮", to: "#", data: [js: "game.next"]) %>
 
-<div id="gameBoard"></div>
+<div id="board-viewer"></div>

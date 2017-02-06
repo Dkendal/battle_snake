@@ -17,6 +17,6 @@ defmodule BattleSnake.BoardViewerChannelTest do
   test "relays broadcasts to clients" do
     state = build(:state)
     GameServer.PubSub.broadcast("1", %GameServer.State.Event{name: "test", data: state})
-    assert_broadcast "tick", %{html: _}
+    assert_broadcast "tick", %{content: _}
   end
 end

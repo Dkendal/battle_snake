@@ -5,7 +5,6 @@ let gameId = window.gameId;
 
 function init(gameId) {
   let channel = socket.channel(`game:${gameId}`, {});
-  let gameBoard = $("#gameBoard");
 
   function pauseGame(e) {
     channel.push("pause", {})
@@ -31,9 +30,9 @@ function init(gameId) {
     channel.push("replay", {})
   }
 
-  function handleTick({html}) {
-    gameBoard.html(html);
-  }
+  // function handleTick({html}) {
+  //   gameBoard.html(html);
+  // }
 
   function keydownHandler(event) {
     switch (event.key) {
@@ -70,9 +69,6 @@ function init(gameId) {
   $(document).on("click", '[data-js="game.next"]', nextTurn);
   $(document).on("click", '[data-js="game.prev"]', prevTurn);
   $(document).on("keydown", "body", keydownHandler);
-
-  // replace the board on each tick
-  channel.on("tick", handleTick);
 
   channel.join().
     receive("ok", resp => { console.log("Joined channel", resp) }).
