@@ -24,7 +24,7 @@ const gameId = window.gameId;
 const logError = resp => { console.error("Unable to join", resp) };
 
 {
-  const channel = socket.channel(`board_viewer:${gameId}`, {});
+  const channel = socket.channel(`board_viewer:${gameId}`, {contentType: "html"});
 
   channel.on("tick", ({content}) => {
     $("#board-viewer").html(content);
