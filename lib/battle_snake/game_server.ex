@@ -15,7 +15,6 @@ defmodule BattleSnake.GameServer do
   def start_link(state, opts \\ [])
 
   def start_link(%State{} = state, opts) do
-    state = State.on_start(state)
     GenServer.start_link(__MODULE__, state, opts)
   end
 
