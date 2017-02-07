@@ -55,6 +55,30 @@ defmodule Mnesia.Repo do
     |> struct.__struct__.get
   end
 
+  def dirty_find!(tab, id) do
+    with [record] <- :mnesia.dirty_read(tab, id) do
+      Mnesia.Repo.load(record)
+    else
+      [] -> raise %Mnesia.RecordNotFoundError{id: id, table: tab}
+    end
+  end
+
+  def load(record) when is_tuple(record) do
+    [table_name |attrs] = Tuple.to_list(record)
+    attrs = Enum.zip(table_name.fields, attrs)
+    struct(table_name, attrs)
+  end
+
+  def load(l, acc \\ [])
+
+  def load([], acc) do
+    acc
+  end
+
+  def load([h|t], acc) do
+    load(t, [load(h)|acc])
+  end
+
   def all(module) when is_atom(module) do
     fn ->
       :qlc.e(:mnesia.table module.table_name)
@@ -92,9 +116,9 @@ defmodule Mnesia.Repo do
       end
 
       def load(record) do
-        [_table_name |attrs] = Tuple.to_list(record)
-        attrs = Enum.zip(fields(), attrs)
-        struct(table_name(), attrs)
+        [mod |attrs] = Tuple.to_list(record)
+        attrs = Enum.zip(mod.fields(), attrs)
+        struct(mod, attrs)
       end
 
       def fields do
@@ -115,7 +139,7 @@ defmodule Mnesia.Repo do
         end
 
         with {:atomic, [record]} <- :mnesia.transaction(read) do
-          {:ok, load(record)}
+          {:ok, Mnesia.Repo.load(record)}
         else
           {:atomic, []} ->
             {:error, %Mnesia.RecordNotFoundError{id: id, table: table_name()}}
