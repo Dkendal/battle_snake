@@ -5,6 +5,7 @@ defmodule BattleSnake.GameServer.Server do
   use GenServer
 
   def init(state) do
+    state = State.on_start(state)
     {:ok, state}
   end
 
