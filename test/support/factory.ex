@@ -54,9 +54,4 @@ defmodule BattleSnake.Factory do
       world: build(:world)
     }
   end
-
-  def game_form_factory do
-    %BattleSnake.GameForm{
-    }
-  end
 end
