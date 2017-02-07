@@ -27,6 +27,13 @@ defmodule Mnesia.RepoTest do
   @model struct(@described_module, id: 0, x: 1, y: 2)
   @record {@described_module, 0, 1, 2}
 
+  describe "Mnesia.Repo.save/1" do
+    test "sets the id" do
+      result = Mnesia.Repo.save(%DummyModel{id: nil, x: 1, y: 2})
+      assert result.id =~ ~r/(\w+-?)+/
+    end
+  end
+
   describe "Mnesia.Repo.fields/0" do
     test "returns fields defined as a module attribute" do
       assert DummyStruct.fields == [
