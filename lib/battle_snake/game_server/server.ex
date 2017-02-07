@@ -4,6 +4,10 @@ defmodule BattleSnake.GameServer.Server do
   import State
   use GenServer
 
+  def init(state) do
+    {:ok, state}
+  end
+
   def handle_call(:get_status, _from, state) do
     {:reply, state.status, state}
   end
