@@ -1,10 +1,21 @@
 defmodule BattleSnake.GameServer.Server do
+  alias BattleSnake.GameForm
   alias BattleSnake.GameServer.State
 
   import State
   use GenServer
 
-  def init(state) do
+  def init(game_form_id) when is_binary(game_form_id) do
+    struct(GameForm, [])
+    |> init
+  end
+
+  def init(%GameForm{} = game_form) do
+    struct(State, [])
+    |> init
+  end
+
+  def init(%State{} = state) do
     state = State.on_start(state)
     {:ok, state}
   end
