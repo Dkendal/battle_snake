@@ -33,4 +33,5 @@ defmodule BattleSnake.GameServer do
   defdelegate handle_call(request, from, state), to: GameServer.Server
   defdelegate handle_cast(request, state), to: GameServer.Server
   defdelegate handle_info(request, state), to: GameServer.Server
+  defdelegate init(args), to: GameServer.Server
 end
