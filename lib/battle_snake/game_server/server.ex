@@ -6,12 +6,14 @@ defmodule BattleSnake.GameServer.Server do
   use GenServer
 
   def init(game_form_id) when is_binary(game_form_id) do
-    struct(GameForm, [])
+    GameForm
+    |> Mnesia.Repo.dirty_find!(game_form_id)
     |> init
   end
 
   def init(%GameForm{} = game_form) do
-    struct(State, [])
+    game_form
+    |> GameForm.to_game_server_state
     |> init
   end
 
