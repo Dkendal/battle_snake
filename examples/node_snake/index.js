@@ -10,7 +10,7 @@ function start(game) {
 function move(data) {
   return {
     move: "up",
-    taunt: "Ssssssssssnek",
+    taunt: "Boop the snoot!",
   }
 }
 
