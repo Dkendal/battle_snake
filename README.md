@@ -5,9 +5,8 @@
 ## Quicker Start
 
   * Install [Docker](https://docs.docker.com/engine/installation/)
-  * ```docker run -d -p 4000:4000 noelbk/battle_snake_server```
+  * `docker run -d -p 4000:4000 noelbk/battle_snake_server`
   * Connect to http://localhost:4000
-
 
 ## Quick Start
   * Install OTP 19 (skip if you have OTP)
@@ -37,3 +36,10 @@
 
 ## Testing
 `mix test`
+
+## Building the docker image locally
+
+  * `docker build --rm -t battle_snake_server .`
+  * `docker run -d -p 4000:4000 battle_snake_server`
+  * Connect to http://localhost:4000
+
