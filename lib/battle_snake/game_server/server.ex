@@ -16,7 +16,7 @@ defmodule BattleSnake.GameServer.Server do
 
   def init(%GameForm{} = game_form) do
     game_form
-    |> GameForm.to_game_server_state
+    |> GameForm.reload_game_server_state
     |> init
   end
 
