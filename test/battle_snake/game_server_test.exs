@@ -25,20 +25,40 @@ defmodule BattleSnake.GameServerTest do
 
   describe "integeration tests" do
     setup do
-      [game_form: create(:game_form,
-          snakes: build_list(1, :snake_form))]
+      game_form = create(
+        :game_form,
+        delay: 0,
+        snakes: build_list(1, :snake_form))
+
+      assert {:ok, pid} = GameServer.find(game_form.id)
+      Process.link(pid)
+      GameServer.subscribe(game_form.id)
+      on_exit fn -> Process.unlink(pid) end
+
+      [game_form: game_form, pid: pid]
     end
 
     @tag :integration
     test "the game can be resume play", c do
-      assert {:ok, pid} = GameServer.find(c.game_form.id)
-      Process.link(pid)
-      GameServer.subscribe(c.game_form.id)
-      on_exit fn -> Process.unlink(pid) end
-
-      assert :ok = GameServer.resume(pid)
+      assert :ok = GameServer.resume(c.pid)
       assert_receive(%BattleSnake.GameServer.State.Event{name: event_name})
       assert event_name == :tick
+    end
+
+    @tag :regression
+    @tag :integration
+    test "does not clobber the game settings", c do
+      assert c.game_form.delay == 0
+
+      {:ok, g} = Mnesia.Repo.reload(c.game_form)
+
+      assert g.delay == 0
+
+      :ok = GameServer.resume(c.pid)
+
+      assert_receive(%BattleSnake.GameServer.State.Event{})
+
+      assert :sys.get_state(c.pid).delay == 0
     end
   end
 
