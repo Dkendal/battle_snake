@@ -5,7 +5,10 @@ body,
 main,
 #board-viewer {
     height: 100%;
+    padding: 0;
+    margin: 0;
 }
+
 #board-viewer {
     display: flex;
 }
