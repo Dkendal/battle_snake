@@ -200,16 +200,6 @@ defmodule BattleSnake.WorldTest do
         [0, 1]
       ],
       "you" => "1",
-      "board" => [
-        [
-          %{"state" => "head", "snake" => "other"},
-          %{"state" => "food"},
-        ],
-        [
-          %{"state" => "body", "snake" => "other"},
-          %{"state" => "head", "snake" => "me"},
-        ]
-      ],
       "snakes" => [
         %{
           "id" => "1",
@@ -279,16 +269,6 @@ defmodule BattleSnake.WorldTest do
       "turn" => 0,
       "food" => [
         [0, 1]
-      ],
-      "board" => [
-        [
-          %{"state" => "head", "snake" => "other"},
-          %{"state" => "food"},
-        ],
-        [
-          %{"state" => "body", "snake" => "other"},
-          %{"state" => "head", "snake" => "me"},
-        ]
       ],
       "snakes" => [
         %{
