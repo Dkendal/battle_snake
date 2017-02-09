@@ -1,167 +1,44 @@
 defmodule BattleSnake.GameServer do
+  alias __MODULE__
+  alias __MODULE__.State
   use GenServer
 
-  @max_history 20
+  defmodule Command, do: defstruct [:name, :data]
 
-  defmodule State do
-    defstruct [
-      :world,
-      reducer: &State.identity/1,
-      on_change: &State.identity/1,
-      opts: [],
-      hist: []
-    ]
+  @type state :: State.t
+  @type server :: GenServer.server
 
-    def change(t) do
-      t.on_change.(t)
-      t
-    end
+  @moduledoc """
+  The GameServer is a GenServer that handles running a single BattleSnake match.
+  """
 
-    def identity(x), do: x
+  def start_link(args, opts \\ [])
+
+  def start_link(args, opts) do
+    GenServer.start_link(__MODULE__, args, opts)
   end
 
-  # Client
+  defdelegate get_state(pid), to: GameServer.Client
+  defdelegate get_status(pid), to: GameServer.Client
+  defdelegate next(pid), to: GameServer.Client
+  defdelegate on_change(pid), to: GameServer.Client
+  defdelegate on_done(pid), to: GameServer.Client
+  defdelegate on_start(pid), to: GameServer.Client
+  defdelegate pause(pid), to: GameServer.Client
+  defdelegate prev(pid), to: GameServer.Client
+  defdelegate resume(pid), to: GameServer.Client
+  defdelegate replay(pid), to: GameServer.Client
 
-  def start_link(%State{} = state, opts \\ []) do
-    GenServer.start_link(__MODULE__, {:suspend, state}, opts)
-  end
+  defdelegate handle_call(request, from, state), to: GameServer.Server
+  defdelegate handle_cast(request, state), to: GameServer.Server
+  defdelegate handle_info(request, state), to: GameServer.Server
+  defdelegate init(args), to: GameServer.Server
 
-  def resume(pid) do
-    GenServer.call(pid, :resume)
-  end
+  def find!({:ok, pid}), do: pid
+  def find!({:error, e}), do: raise(e)
+  def find!(name), do: name |> find |> find!
 
-  def pause(pid) do
-    GenServer.call(pid, :pause)
-  end
+  defdelegate find(name), to: GameServer.Registry, as: :lookup_or_create
 
-  def next(pid) do
-    GenServer.call(pid, :next)
-  end
-
-  def prev(pid) do
-    GenServer.call(pid, :prev)
-  end
-
-  # Server (callbacks)
-
-  # Calls
-  def handle_call(:pause, _from, {:cont, state}) do
-    {:reply, :ok, {:suspend, state}}
-  end
-
-  # calling pause on an already paused or stopped game has no effect
-  def handle_call(:pause, _from, state) do
-    {:reply, :ok, state}
-  end
-
-  def handle_call(:resume, _from, {:suspend, state}) do
-    tick(state)
-    {:reply, :ok, {:cont, state}}
-  end
-
-  # calling resume on an already running game or stopped game doesn't do
-    # anything
-  def handle_call(:resume, _from, state) do
-    {:reply, :ok, state}
-  end
-
-  def handle_call(:next, _from, {:halted, state}) do
-    {:reply, :ok, {:halted, state}}
-  end
-
-  def handle_call(:next, _from, {_, state}) do
-    state = step(state)
-    {:reply, :ok, {:suspend, state}}
-  end
-
-  def handle_call(:prev, _from, {:halted, state}) do
-    {:reply, :ok, {:halted, state}}
-  end
-
-  def handle_call(:prev, _from, {_, state}) do
-    state = state
-    |> step_back()
-    {:reply, :ok, {:suspend, state}}
-  end
-
-  def handle_call(request, from, state) do
-    # Call the default implementation from GenServer
-    super(request, from, state)
-  end
-
-  # Casts
-
-  def handle_cast(request, state) do
-    super(request, state)
-  end
-
-  # Everything Else
-
-  def handle_info(:tick, {:cont, state}) do
-    state = step(state)
-
-    if done?(state) do
-      {:noreply, {:halted, state}}
-    else
-      tick(state)
-      {:noreply, {:cont, state}}
-    end
-  end
-
-  def handle_info(:tick, {:suspend, state}) do
-    {:noreply, {:suspend, state}}
-  end
-
-  def handle_info(:tick, {:halted, state}) do
-    {:noreply, {:halted, state}}
-  end
-
-  def step(state) do
-    state
-    |> save_history()
-    |> apply_reducer()
-    |> State.change()
-  end
-
-  def step_back(%{hist: []} = s), do: s
-  def step_back(state) do
-    state
-    |> prev_turn
-    |> State.change()
-  end
-
-  def prev_turn(state) do
-    [h|t] = state.hist
-    state = put_in state.world, h
-    put_in(state.hist, t)
-  end
-
-  def save_history(%{world: h} = state) do
-    update_in state.hist, fn t ->
-      [h |Enum.take(t, @max_history)]
-    end
-  end
-
-  def apply_reducer(%{world: w, reducer: f} = state) do
-    %{state| world: f.(w)}
-  end
-
-  # Private
-
-  defp delay(state) do
-    opts = state.opts
-    Keyword.fetch!(opts, :delay)
-  end
-
-  defp tick(state) do
-    Process.send_after(self(), :tick, delay(state))
-  end
-
-  # check if the game is over
-  defp done?(state) do
-    opts = state.opts
-    world = state.world
-    fun = Keyword.fetch!(opts, :objective)
-    fun.(world)
-  end
+  defdelegate subscribe(name), to: GameServer.PubSub
 end

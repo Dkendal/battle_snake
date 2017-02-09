@@ -1,15 +1,74 @@
 defmodule BattleSnake.WorldTest do
-  alias BattleSnake.{World, Point, Snake}
-  use ExUnit.Case, async: true
+  alias BattleSnake.{
+    Point,
+    Snake,
+    World,
+  }
+  use BattleSnake.Case, async: true
   use Property
+  use BattleSnake.Point
 
   setup context do
     world = %World{
       max_food: 4,
       height: 10,
       width: 10,
+      game_id: 0,
     }
     Map.put context, :world, world
+  end
+
+  test "saving the world" do
+    assert Mnesia.Repo.save(%World{}).id != nil
+    assert Mnesia.Repo.save(%World{}).created_at != nil
+  end
+
+  describe "World.dec_health_points/1" do
+    setup do
+      world = build(:world)
+      snake = build(:snake, health_points: 50)
+
+      [snake: _, world: world] =
+        with_snake_in_world(snake: snake, world: world, length: 1)
+
+      world = World.dec_health_points(world)
+
+      [snake] = world.snakes
+
+      {:ok,
+       snake: snake,
+       world: world}
+    end
+
+    test "reduces snake health points by 1", %{snake: snake} do
+      assert snake.health_points == 49
+    end
+  end
+
+  describe "World.grow_snakes/1" do
+    setup do
+      world = build(:world)
+      snake = build(:snake, health_points: 50)
+
+      [snake: snake, world: world] =
+        with_snake_in_world(snake: snake, world: world, length: 1)
+
+      world = with_food_on_snake(world: world, snake: snake)
+      world = World.grow_snakes(world)
+      [snake] = world.snakes
+
+      {:ok,
+       snake: snake,
+       world: world}
+    end
+
+    test "resets the health_points of snakes that are eating this turn", %{snake: snake} do
+      assert snake.health_points == 100
+    end
+
+    test "increases snake length", %{snake: snake} do
+      assert length(snake.coords) == 2
+    end
   end
 
   describe "#rand_unoccupied_space" do
@@ -80,6 +139,166 @@ defmodule BattleSnake.WorldTest do
       world = World.clean_up_dead(world)
       assert world.snakes == []
       assert world.dead_snakes == [snake]
+    end
+
+    @dead_snake %Snake{name: "dead"}
+    @snake %Snake{name: "live", coords: [p(-1, 0)]}
+    @world %World{turn: 10,
+                  snakes: [@snake],
+                  dead_snakes: [@dead_snake]}
+    test "adds dead snakes to a list of deaths with the turn they died on" do
+      world = World.clean_up_dead(@world)
+      assert world.dead_snakes == [@dead_snake, @snake]
+      assert world.snakes == []
+
+      assert world.deaths == [
+        %World.DeathEvent{turn: 10, snake: @snake}]
+    end
+  end
+
+  describe "Poison.Encoder.encode(%BattleSnake.World{}, [me: snake])" do
+    use Point
+
+    @me %Snake{
+      name: "me",
+      url: "me.example.com",
+      id: "1",
+      coords: [
+        p(1, 1),
+      ]
+    }
+
+    @other %Snake{
+      name: "other",
+      url: "example.com",
+      id: "2",
+      coords: [
+        p(0, 0),
+        p(1, 0),
+      ]
+    }
+
+    @world %World{
+      turn: 0,
+      height: 2,
+      width: 2,
+      food: [
+        p(0, 1)
+      ],
+      snakes: [
+        @me,
+        @other,
+      ],
+      game_id: 0
+    }
+
+    @json %{
+      "width" => 2,
+      "height" => 2,
+      "turn" => 0,
+      "food" => [
+        [0, 1]
+      ],
+      "you" => "1",
+      "snakes" => [
+        %{
+          "id" => "1",
+          "taunt" => "",
+          "name" => "me",
+          "health_points" => 100,
+          "coords" => [
+            [1,1],
+          ]
+        },
+        %{
+          "id" => "2",
+          "taunt" => "",
+          "health_points" => 100,
+          "name" => "other",
+          "coords" => [
+            [0,0],
+            [1,0]
+          ]
+        }
+      ],
+      "game_id" => 0
+    }
+
+    @expected Poison.decode! Poison.encode!(@world, me: @me.id)
+
+    test "formats as JSON" do
+      assert @expected == @json
+    end
+  end
+
+  describe "Poison.Encoder.encode(%BattleSnake.World{}, [])" do
+    use Point
+
+    @world %World{
+      turn: 0,
+      height: 2,
+      width: 2,
+      food: [
+        p(0, 1)
+      ],
+      snakes: [
+        %Snake{
+          name: "me",
+          id: "1",
+          url: "me.example.com",
+          coords: [
+            p(1, 1),
+          ]
+        },
+        %Snake{
+          name: "other",
+          id: "2",
+          url: "example.com",
+          coords: [
+            p(0, 0),
+            p(1, 0),
+          ]
+        }
+      ],
+      game_id: 0
+    }
+
+    @json %{
+      "width" => 2,
+      "height" => 2,
+      "turn" => 0,
+      "food" => [
+        [0, 1]
+      ],
+      "snakes" => [
+        %{
+          "id" => "1",
+          "taunt" => "",
+          "name" => "me",
+          "health_points" => 100,
+          "coords" => [
+            [1,1],
+          ]
+        },
+        %{
+          "id" => "2",
+          "taunt" => "",
+          "health_points" => 100,
+          "name" => "other",
+          "coords" => [
+            [0,0],
+            [1,0]
+          ]
+        }
+      ],
+      "game_id" => 0
+    }
+
+
+    @expected PoisonTesting.cast! @world
+
+    test "formats as JSON" do
+      assert @expected == @json
     end
   end
 end

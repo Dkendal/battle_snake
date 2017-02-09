@@ -1,29 +1,54 @@
 defmodule BattleSnake.Snake do
+  @derive {Poison.Encoder, only: [:coords, :id, :taunt, :health_points, :name]}
   alias __MODULE__
   alias BattleSnake.{Point}
 
+  @max_health_points 100
+
+  @type health :: :ok | {:error, any}
+
   @type t :: %Snake{
+    id: reference,
     color: String.t,
     coords: [Point.t],
     head_url: String.t,
     name: String.t,
     taunt: String.t,
     url: String.t,
+    health: health,
   }
 
   defstruct [
+    :id,
     color: "",
     coords: [],
     head_url: "",
     name: "",
     taunt: "",
     url: "",
+    health: {:error, :init},
+    health_points: @max_health_points,
   ]
 
-  def dead?(%{coords: [%{y: y, x: x} |_]}, %{width: w, height: h})
-  when not y in 0..(w-1) or not x in 0..(h-1),
-  do: true
+  @doc """
+  Checks if the snake has collided with a wall or is outside the walls.
 
+  Only checks the head, because it's the only part that moves.
+  """
+  def dead?(
+    %{coords: [%{y: y, x: x} |_]},
+    %{width: w, height: h})
+  when not y in 0..(w-1)
+  or not x in 0..(h-1),
+    do: true
+
+  def dead?(%{health_points: hp}, _)
+  when hp <= 0,
+    do: true
+
+  @doc """
+  Checks if the snake has collided with any one snake's body.
+  """
   def dead?(snake, world) do
     head = hd snake.coords
     stream = Stream.flat_map(world.snakes, & tl(&1.coords))
@@ -36,6 +61,12 @@ defmodule BattleSnake.Snake do
       new_segments = List.duplicate(last, size)
       coords ++ new_segments
     end
+  end
+
+  @doc "Reduce health points."
+  @spec dec_health_points(t, pos_integer) :: t
+  def dec_health_points(snake, amount \\ 1) do
+    update_in(snake.health_points, & &1 - amount)
   end
 
   def len(snake) do
@@ -52,6 +83,12 @@ defmodule BattleSnake.Snake do
 
   def body(snake) do
     snake.coords
+  end
+
+  @doc "Set this snake's health_points to #{@max_health_points}"
+  @spec reset_health_points(t) :: t
+  def reset_health_points(snake) do
+    put_in(snake.health_points, @max_health_points)
   end
 
   def resolve_head_to_head(snakes, acc \\ [])

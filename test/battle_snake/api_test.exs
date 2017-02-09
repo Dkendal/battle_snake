@@ -1,9 +1,10 @@
 defmodule BattleSnake.ApiTest do
-  alias BattleSnake.{Snake, Point, Move}
+  alias BattleSnake.{Snake, Point, Move, Api}
 
-  use ExUnit.Case, async: true
+  use BattleSnake.Case, async: true
   use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
 
+  @http_error %HTTPoison.Error{}
   @move_url "http://example.snake/move"
   @start_url "http://example.snake/start"
 
@@ -11,10 +12,11 @@ defmodule BattleSnake.ApiTest do
     url: "http://example.snake"
   }
 
-  @game_form %BattleSnake.GameForm{
-  }
+  @game_form %BattleSnake.GameForm{}
 
   @snake %BattleSnake.Snake{
+    id: "1234",
+    name: "me",
     url: "http://example.snake",
     coords: [%Point{x: 0, y: 0}]
   }
@@ -23,66 +25,104 @@ defmodule BattleSnake.ApiTest do
     snakes: [@snake]
   }
 
-  describe "BattleSnake.Api.load/3" do
+  describe "Api.load/3" do
     test "on success produces a snake" do
       body = %{
         name: "example-snake",
         color: "#123123"
       }
 
+      http_response = %HTTPoison.Response{body: Poison.encode!(body)}
+
       mock = fn (@start_url, _, _, _) ->
-        {:ok, %HTTPoison.Response{body: Poison.encode!(body)}}
+        {:ok, http_response}
       end
 
-      snake = BattleSnake.Api.load(@snake_form, @game_form, mock)
+      response = Api.load(@snake_form, @game_form, mock)
 
-      assert snake == {:ok,
-                       %Snake{
-                         name: "example-snake",
-                         color: "#123123",
-                         url: "http://example.snake",
-                       }}
+      assert(match? %Api.Response{}, response)
+
+      assert({:ok, http_response} == response.raw_response)
+
+      assert(response.parsed_response == {
+        :ok,
+        %Snake{
+          name: "example-snake",
+          color: "#123123",
+          url: "http://example.snake"}})
     end
 
     test "on error returns the error" do
       mock = fn (@start_url, _, _, _) ->
-        {:error, %HTTPoison.Error{}}
+        {:error, @http_error}
       end
 
-      assert({:error, %HTTPoison.Error{}} ==
-        BattleSnake.Api.load(@snake_form, @game_form, mock))
+      response =  Api.load(@snake_form, @game_form, mock)
+
+      assert(match? %Api.Response{}, response)
+
+      assert({:error, @http_error} == response.raw_response)
+
+      assert(response.parsed_response == {:error, :no_response})
     end
   end
 
-  describe "BattleSnake.Api.move/3" do
+  describe "Api.move/3" do
     test "on success responds with the move" do
-      mock = fn(@move_url, _, _, _) ->
-        {:ok, %HTTPoison.Response{body: ~S({"move":"up"})}}
+      raw_response = %HTTPoison.Response{body: ~S({"move":"up"})}
+
+      mock = fn(@move_url, body, _, _) ->
+        send(self(), Poison.decode(body))
+        {:ok, raw_response}
       end
 
-      move = BattleSnake.Api.move(@snake, @world, mock)
+      move = Api.move(@snake, @world, mock)
 
-      assert move == {:ok, %Move{move: "up"}}
+      assert move == %Api.Response{
+        raw_response: {
+          :ok,
+          raw_response},
+        parsed_response: {
+          :ok,
+          %Move{move: "up"}}}
+
+      assert_receive {:ok, %{"you" => "1234"}}
     end
 
     test "on parsing error returns the error" do
-      body = "{"
+      body = "<html></html>"
+
+      raw_response = %HTTPoison.Response{body: body}
 
       mock = fn (@move_url, _, _, _) ->
-        {:ok, %HTTPoison.Response{body: body}}
+        {:ok, raw_response}
       end
 
-      assert({:error, :invalid} ==
-        BattleSnake.Api.move(@snake, @world, mock))
+      move = Api.move(@snake, @world, mock)
+
+      assert move == %Api.Response{
+        raw_response: {
+          :ok,
+          raw_response},
+        parsed_response: {
+          :error,
+          {:invalid, "<"}}}
     end
 
     test "on error returns the error" do
       mock = fn (@move_url, _, _, _) ->
-        {:error, %HTTPoison.Error{}}
+        {:error, @http_error}
       end
 
-      assert({:error, %HTTPoison.Error{}} ==
-        BattleSnake.Api.move(@snake, @world, mock))
+      move = Api.move(@snake, @world, mock)
+
+      assert move == %Api.Response{
+        raw_response: {
+          :error,
+          @http_error},
+        parsed_response: {
+          :error,
+          :no_response}}
     end
   end
 end

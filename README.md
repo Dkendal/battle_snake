@@ -1,4 +1,4 @@
-# Battle Snake Server [![Build Status](https://travis-ci.org/Dkendal/battle_snake.svg?branch=master)](https://travis-ci.org/Dkendal/battle_snake) [![Coverage Status](https://coveralls.io/repos/github/Dkendal/battle_snake/badge.svg?branch=master)](https://coveralls.io/github/Dkendal/battle_snake?branch=master)
+# Battle Snake Server [![Build Status](https://travis-ci.org/Dkendal/battle_snake.svg?branch=v2.0.0)](https://travis-ci.org/Dkendal/battle_snake) [![Coverage Status](https://coveralls.io/repos/github/Dkendal/battle_snake/badge.svg?branch=v2.0.0)](https://coveralls.io/github/Dkendal/battle_snake?branch=v2.0.0)
 
 ![it's just a prank bro](http://imgur.com/Ytvm290.jpg)
 
@@ -19,11 +19,13 @@
     * get [kiex](https://github.com/taylor/kie://github.com/taylor/kiex)
     * `kiex install 1.4`
     * `kiex use 1.4`
-  * `git clone git@github.com:Dkendal/battle_snake_server.git`
-  * `cd battle_snake_server`
+  * `git clone git@github.com:Dkendal/battle_snake.git`
+  * `cd battle_snake`
   * `npm install`
   * `mix do deps.get, compile, battle_snake.createdb`
-  * Start the Phoenix endpoint with `PORT=4000 iex -S mix phoenix.server`
+  * Start the Phoenix endpoint with `PORT=4000 iex -sname battle_snake_dev -S mix phoenix.server`
+
+  I would reccomend naming the node that you run your dev server, as running `mix test` will clobber the default Mnesia database.
 
 ## Perquisites
   * Erlang OTP 19

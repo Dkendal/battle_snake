@@ -1,14 +1,18 @@
 defmodule BattleSnake.Api do
   alias BattleSnake.{
-    HTTP,
-    SnakeForm,
+    Api.Response,
     GameForm,
-    Snake,
+    HTTP,
     Move,
+    Snake,
+    SnakeForm,
     World}
 
-  @callback load(%SnakeForm{}, %GameForm{}) :: %Snake{}
-  @callback move(%Snake{}, %World{}) :: %Move{}
+  @load_whitelist ~w(color head_url name taunt)a
+  @move_whitelist ~w(move taunt)a
+
+  @callback load(%SnakeForm{}, %GameForm{}) :: Response.t
+  @callback move(%Snake{}, %World{}) :: Response.t
 
   @doc """
   Load the Snake struct based on the configuration_form data for both the world
@@ -16,14 +20,18 @@ defmodule BattleSnake.Api do
 
   POST /start
   """
-  def load(snake_form, game, request \\ &HTTP.post/4) do
-    url = snake_form.url <> "/start"
-
-    snake = %Snake{url: snake_form.url}
-    payload = encode_load(game)
-
-    with {:ok, response} <- request.(url, payload, headers(), options()),
-      do: decode_load(response, snake)
+  @spec load(%SnakeForm{}, %GameForm{}) :: Response.t
+  def load(%{url: url}, data, request \\ &HTTP.post/4) do
+    api_response = response(url <> "/start", request, Snake, @load_whitelist, data)
+    update_in(api_response.parsed_response, fn
+      {:ok, snake} ->
+      (
+        snake = put_in(snake.url, url)
+        {:ok, snake}
+      )
+      error ->
+        error
+    end)
   end
 
   @doc """
@@ -31,44 +39,26 @@ defmodule BattleSnake.Api do
 
   POST /move
   """
-  def move(snake, world, request \\ &HTTP.post/4) do
-    url = snake.url <> "/move"
-
-    payload = encode_move(world)
-
-    with {:ok, response} <- request.(url, payload, headers(), options()),
-      do: decode_move(response)
+  @spec move(%Snake{}, %World{}) :: Response.t
+  def move(%{url: url, id: id}, world, request \\ &HTTP.post/4) do
+    data = Poison.encode!(world, me: id)
+    response(url <> "/move", request, Move, @move_whitelist, data)
   end
 
-  defp options do
-    []
-  end
+  defp response(url, request, type, whitelist, data) do
+    st = struct(type)
+    api_response = url
+    |> request.(data, [], [])
+    |> Response.new(as: st)
 
-  defp headers() do
-    []
-  end
-
-  @spec decode_move(HTTPoison.Response.t, Move.t) :: {:ok, Move.t} | {:error, any}
-  defp decode_move(response, move \\ %Move{}) do
-    Poison.decode(response.body, as: move)
-  end
-
-  @spec encode_move(World.t) :: String.t
-  defp encode_move(world) do
-    Poison.encode!(world)
-  end
-
-  @spec decode_load(HTTPoison.Response.t, Snake.t) :: {:ok, Snake.t} | {:error, any}
-  defp decode_load(response, snake) do
-    Poison.decode(response.body, as: snake)
-  end
-
-  @spec encode_load(Game.t) :: String.t
-  defp encode_load(game) do
-    Poison.encode! %{
-      game_id: game.id,
-      height: game.height,
-      width: game.width,
-    }
+    update_in(api_response.parsed_response, fn
+      {:ok, snake} ->
+      (
+        map = Map.take(snake, whitelist)
+        snake = struct(type, map)
+        {:ok, snake}
+      )
+      error -> error
+    end)
   end
 end

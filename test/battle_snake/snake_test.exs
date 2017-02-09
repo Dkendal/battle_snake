@@ -1,7 +1,7 @@
 defmodule BattleSnake.SnakeTest do
   alias BattleSnake.{World, Snake, Point}
 
-  use ExUnit.Case, async: true
+  use BattleSnake.Case, async: true
   use Property
 
   @world %World{width: 10, height: 10}
@@ -63,6 +63,20 @@ defmodule BattleSnake.SnakeTest do
       world = %{world | snakes: [snake]}
 
       assert Snake.dead?(snake, world) == false
+    end
+
+    test "detects starvation" do
+      world = build(:world)
+      snake = build(:snake)
+
+      [snake: snake, world: world] =
+        with_snake_in_world(snake: snake, world: world, length: 1)
+
+      refute Snake.dead?(snake, world)
+
+      snake = snake |> with_starvation()
+
+      assert Snake.dead?(snake, world)
     end
   end
 
@@ -138,6 +152,31 @@ defmodule BattleSnake.SnakeTest do
           %Point{y: 5, x: 5},
         ]
       })
+    end
+  end
+
+  describe "Poison.Encoder.encode(BattleSnake.Snake, [])" do
+    test "formats as JSON" do
+      snake = %Snake{
+        coords: [%Point{x: 0, y: 1}],
+        name: "snake",
+        url: "example.com",
+        id: "1",
+        taunt: "",
+        health_points: 100
+      }
+
+      expected = %{
+        "name" => "snake",
+        "coords" => [[0, 1]],
+        "health_points" => 100,
+        "taunt" => "",
+        "id" => "1"
+      }
+
+      actual = PoisonTesting.cast!(snake)
+
+      assert expected == actual
     end
   end
 end

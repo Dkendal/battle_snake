@@ -1,4 +1,6 @@
 defmodule BattleSnake.SnakeForm do
+  @derive {Poison.Encoder, only: [:url]}
+
   use BattleSnake.Web, :model
 
   @type t :: %__MODULE__{

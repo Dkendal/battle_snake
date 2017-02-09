@@ -1,16 +1,21 @@
 defmodule BattleSnake.MockApi do
   @behaviour BattleSnake.Api
 
-  @move %BattleSnake.Move{
-    taunt: "test",
-    move: "up",
-  }
-
-  def load(_form, _game) do
-    {:ok, %BattleSnake.Snake{}}
-  end
-
   def start, do: {:ok, [:fake]}
 
-  def move(_, _), do: {:ok, @move}
+  def load(x, y) do
+    BattleSnake.Api.load(x, y, fn _, _, _, _ ->
+      {:ok,
+       %HTTPoison.Response{
+         body: Poison.encode!(%{name: "mock-snake"})}}
+    end)
+  end
+
+  def move(x, y) do
+    BattleSnake.Api.move(x, y, fn _, _, _, _ ->
+      {:ok,
+       %HTTPoison.Response{
+         body: Poison.encode!(%{move: "up"})}}
+    end)
+  end
 end

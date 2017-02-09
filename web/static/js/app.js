@@ -17,4 +17,36 @@ import "phoenix_html"
 // Local files can be imported directly using relative
 // paths "./socket" or full ones "web/static/js/socket".
 import socket from "./socket"
-import game_channel from "./game_channel"
+import $ from "jquery";
+import Mousetrap from "mousetrap";
+
+const gameId = window.BattleSnake.gameId;
+const logError = resp => { console.error("Unable to join", resp) };
+const boardViewerChannel = socket.channel(`board_viewer:${gameId}`, {contentType: "html"});
+const gameAdminChannel = socket.channel(`game_admin:${gameId}`);
+
+boardViewerChannel.on("tick", ({content}) => {
+  $("#board-viewer").html(content);
+});
+
+boardViewerChannel.
+  join().
+  receive("error", logError);
+
+gameAdminChannel.
+  join().
+  receive("error", logError);
+
+const cmd = (request) => {
+  console.log(request);
+  gameAdminChannel.
+    push(request).
+    receive("error", e => console.error(`push "${request}" failed`, e));
+};
+
+Mousetrap.bind(["q"], () => cmd("stop"));
+Mousetrap.bind(["h", "left"], () => cmd("prev"));
+Mousetrap.bind(["j", "up"], () => cmd("resume"));
+Mousetrap.bind(["k", "down"], () => cmd("pause"));
+Mousetrap.bind(["l", "right"], () => cmd("next"));
+Mousetrap.bind("R", () => cmd("replay"));
