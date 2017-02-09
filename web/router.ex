@@ -21,8 +21,11 @@ defmodule BattleSnake.Router do
     resources "/play", PlayController, only: [:show]
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", BattleSnake do
-  #   pipe_through :api
-  # end
+  scope "/api", BattleSnake.Api, as: :api do
+    pipe_through :api
+
+    resources "/games", GameController
+    resources "/game_forms", GameFormController
+    resources "/game_servers", GameServerController
+  end
 end

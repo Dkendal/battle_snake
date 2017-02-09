@@ -1,5 +1,5 @@
 defmodule BattleSnake.WorldMovementTest do
-  use ExUnit.Case, async: true
+  use BattleSnake.Case, async: true
   alias BattleSnake.{
     World,
     WorldMovement,
@@ -7,39 +7,51 @@ defmodule BattleSnake.WorldMovementTest do
     Move,
     Point}
 
-  setup do
-    green_snake = %Snake{
-      name: :green,
-      coords: [
-        %Point{x: 0, y: 0}
-      ]
-    }
-
-    moves = [
-      %Move{
-        move: "up",
-        snake: green_snake
-      }
+  @green_snake %Snake{
+    id: 1,
+    name: "green-snake",
+    coords: [
+      %Point{x: 0, y: 0}
     ]
+  }
 
-    world = %World{
-      snakes: [
-        green_snake
-      ]
-    }
+  @up %Move{
+    move: "up",
+    snake_id: 1
+  }
 
-    {:ok,
-     moves: moves,
-     world: world}
+  @moves [@up]
+
+  @world %World{
+    snakes: [
+      @green_snake
+    ]
+  }
+
+  describe "WorldMovement.next/1" do
+    @next WorldMovement.next(@world)
+
+    test "returns a world struct" do
+      assert match? %World{}, @next
+    end
   end
 
   describe "WorldMovement.apply/2" do
-    test "updates snake coordinates", %{world: world, moves: moves} do
-      new_world = WorldMovement.apply(world, moves)
+    @apply WorldMovement.apply(@world, @moves)
 
-      assert(new_world.snakes == [
+    test "returns a world struct" do
+      assert %World{} = @apply
+    end
+
+    test "sets world.moves" do
+      assert %{1 => @up} == @apply.moves
+    end
+
+    test "updates snake coordinates" do
+      assert(@apply.snakes == [
         %Snake{
-          name: :green,
+          id: 1,
+          name: "green-snake",
           coords: [%Point{x: 0, y: -1}]}])
     end
   end

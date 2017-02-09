@@ -1,27 +1,58 @@
 defmodule BattleSnake.World do
-  alias BattleSnake.{Snake, Point}
+  use Mnesia.Repo
+
+  alias BattleSnake.{
+    Move,
+    Point,
+    Snake,
+    Point}
+
+  defmodule DeathEvent do
+    defstruct [:turn, :snake]
+  end
 
   @type t :: %__MODULE__{
-    food: [any],
-    snakes: [any],
+    id: any,
+    food: [Point.t],
+    snakes: [Snake.t],
     dead_snakes: [any],
     max_food: pos_integer,
     height: pos_integer,
     width: pos_integer,
     turn: pos_integer,
-    moves: any,
+    moves: %{String.t => Move.t},
+    game_id: pos_integer,
   }
 
   defstruct [
+    :id,
+    :game_form_id,
+    :created_at,
     food: [],
     snakes: [],
     dead_snakes: [],
     max_food: 2,
-    height: 0,
-    width: 0,
+    height: 10,
+    width: 10,
     turn: 0,
-    moves: %{}
+    moves: %{},
+    deaths: [],
+    game_id: 0,
   ]
+
+  def fields,
+    do: [:id,
+         :created_at,
+         :food,
+         :snakes,
+         :dead_snakes,
+         :game_form_id,
+         :max_food,
+         :height,
+         :width,
+         :turn,
+         :deaths]
+
 
   def up,     do: %Point{x: 0,  y: -1}
   def down,   do: %Point{x: 0,  y: 1}
@@ -58,12 +89,6 @@ defmodule BattleSnake.World do
     |> Enum.reduce(world, f)
   end
 
-  def replace_eaten_food world do
-    world
-    |> remove_eaten_food
-    |> stock_food
-  end
-
   # @spec rand_unoccupied_space(t) :: any
   def rand_unoccupied_space(world) do
     h = world.height - 1
@@ -79,11 +104,29 @@ defmodule BattleSnake.World do
     Enum.random open_spaces
   end
 
+  @doc "increase world.turn by 1"
+  def inc_turn(world) do
+    update_in(world.turn, &(&1+1))
+  end
+
   def step(world) do
     world
+    |> BattleSnake.WorldMovement.next
+    |> inc_turn
     |> clean_up_dead
+    |> dec_health_points
     |> grow_snakes
     |> remove_eaten_food
+    |> stock_food
+  end
+
+
+  @doc "Reduce all snakes health points by 1"
+  @spec dec_health_points(t) :: t
+  def dec_health_points(world) do
+    update_in world.snakes, fn snakes ->
+      Enum.map(snakes, &Snake.dec_health_points/1)
+    end
   end
 
   def clean_up_dead world do
@@ -103,18 +146,31 @@ defmodule BattleSnake.World do
     world = put_in(world.snakes, acc.live)
     world = update_in(world.dead_snakes, & &1 ++ acc.dead)
 
-    snakes = Snake.resolve_head_to_head(acc.live)
-    dead = acc.live -- snakes
-    world = update_in(world.dead_snakes, & &1 ++ dead)
+    living_snakes = Snake.resolve_head_to_head(acc.live)
+    head_to_head_dead = acc.live -- living_snakes
 
-    put_in(world.snakes, snakes)
+    world = update_in(world.dead_snakes, & &1 ++ head_to_head_dead)
+
+    world = update_in(world.deaths, fn deaths ->
+      dead = acc.dead ++ head_to_head_dead
+      for snake <- dead, do: %DeathEvent{turn: world.turn, snake: snake}
+    end)
+
+    put_in(world.snakes, living_snakes)
   end
 
-  def grow_snakes world do
+  @spec grow_snakes(t) :: t
+  def grow_snakes(world) do
     update_in world.snakes, fn snakes ->
       for snake <- snakes do
         increase = grew(world, snake)
-        Snake.grow(snake, increase)
+        if increase > 0 do
+          snake
+          |> Snake.reset_health_points()
+          |> Snake.grow(increase)
+        else
+          snake
+        end
       end
     end
   end
@@ -166,5 +222,30 @@ defmodule BattleSnake.World do
   defp times(n) do
     Stream.iterate(0, &(&1+1))
     |> Stream.take(n)
+  end
+end
+
+defimpl Poison.Encoder, for: BattleSnake.World do
+  def encode(world, opts) do
+    me = Keyword.get(opts, :me)
+
+    attrs = [
+      :food,
+      :turn,
+      :snakes,
+      :width,
+      :height,
+      :game_id,
+    ]
+
+    map = Map.take(world, attrs)
+
+    map = if me do
+      Map.put(map, "you", me)
+    else
+      map
+    end
+
+    Poison.encode!(map, opts)
   end
 end

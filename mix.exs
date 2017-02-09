@@ -13,6 +13,8 @@ defmodule BattleSnake.Mixfile do
      start_permanent: Mix.env == :prod,
      preferred_cli_env: preferred_cli_env(),
      test_coverage: [tool: ExCoveralls],
+     erlc_options: erlc_options(Mix.env),
+     dialyzer: dialyzer(),
      deps: deps()]
   end
 
@@ -22,6 +24,10 @@ defmodule BattleSnake.Mixfile do
   def application do
     [mod: {BattleSnake, []},
      extra_applications: extra_applications(Mix.env)]
+  end
+
+  def erlc_options(_all) do
+    [:debug_info]
   end
 
   def extra_applications(_all) do
@@ -51,8 +57,12 @@ defmodule BattleSnake.Mixfile do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:apex, "~> 0.7"},
       {:cowboy, "~> 1.0"},
+      {:dbg, github: "fishcakez/dbg"},
+      {:dialyxir, "~> 0.4", only: [:dev], runtime: false},
       {:ecto, "~> 2.0"},
+      {:ex_machina, "~> 1.0", only: :test},
       {:excoveralls, "~> 0.6", only: :test},
       {:exrm, "~> 1.0.0"},
       {:exvcr, "~> 0.8", only: :test},
@@ -67,5 +77,17 @@ defmodule BattleSnake.Mixfile do
       {:proper, github: "manopapad/proper", only: :test},
       {:reprise, "~> 0.5.0", only: :dev},
     ]
+  end
+
+  defp dialyzer do
+    [plt_add_deps: :apps_direct,
+     plt_add_apps: [
+       :mnesia,
+       :plug],
+     flags: [
+       "-Wunmatched_returns",
+       "-Werror_handling",
+       "-Wrace_conditions",
+       "-Wunderspecs"]]
   end
 end

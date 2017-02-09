@@ -1,21 +1,24 @@
 defmodule BattleSnake.Move do
   alias __MODULE__
-  alias BattleSnake.{World, Snake}
+  alias BattleSnake.{World, Snake, Api.Response}
 
   defstruct [
     :move,
     :taunt,
-    :snake,
-    response_state: :init,
+    :snake_id,
+    __meta__: %Move.Meta{}
   ]
 
   @type direction :: String.t
-
   @type t :: %__MODULE__{
     move: direction,
-    snake: Snake.t,
     taunt: String.t,
+    snake_id: reference
   }
+
+  @api Application.get_env(:battle_snake, :snake_api)
+
+  defmacrop default_move(), do: quote do: %Move{move: "up"}
 
   @doc """
   Collects all moves for all living snakes for world.
@@ -27,9 +30,9 @@ defmodule BattleSnake.Move do
   reported back to the supervising task which is then aggregated with the
   other results.
   """
-  @shortdoc "collect all moves for living snakes"
-  @spec all(World.t, ((Snake.t, World.t) -> Move.t)) :: [Snake.t]
-  def all(world, request_fun, timeout \\ 200) do
+
+  @spec all(World.t, ((Snake.t, World.t) -> Response.t)) :: [Snake.t]
+  def all(world, request_fun \\ &@api.move/2, timeout \\ 200) do
     snakes = world.snakes
 
     do_task =
@@ -44,18 +47,18 @@ defmodule BattleSnake.Move do
 
       move =
         case Task.yield(task, timeout) || Task.shutdown(task) do
-          {:ok, {:error, error}} ->
-            response_error(default_move(), error)
-
-          {:ok, {:ok, move}} ->
-            response_ok(move)
-
+          {:ok, %Response{parsed_response: {:ok, move}} = response} ->
+            put_in move.__meta__.response, {:ok, response}
+          {:ok, %Response{parsed_response: {:error, _}} = response} ->
+            move = default_move()
+            put_in move.__meta__.response, {:ok, response}
           nil ->
-            response_timeout(default_move())
+            move = default_move()
+            put_in move.__meta__.response, {:error, :timeout}
         end
 
       # identify what snake this move belongs to.
-      put_in(move.snake, snake)
+      put_in(move.snake_id, snake.id)
     end
 
     # The async stream shouldn't fail to respond.
@@ -65,24 +68,22 @@ defmodule BattleSnake.Move do
     |> Enum.into([], fn {:ok, value} -> value end)
   end
 
-  defp default_move do
-    %Move{
-      move: "up"
-    }
-  end
-
   @spec response_timeout(Move.t) :: Move.t
   def response_timeout(move) do
-    put_in move.response_state, :timeout
+    put_in move.__meta__.response_state, :timeout
   end
 
   @spec response_ok(Move.t) :: Move.t
   def response_ok(move) do
-    put_in move.response_state, :ok
+    put_in move.__meta__.response_state, :ok
   end
 
   @spec response_error(Move.t, Exception.t) :: Move.t
   def response_error(move, error) do
-    put_in move.response_state, {:error, error}
+    put_in move.__meta__.response_state, {:error, error}
+  end
+
+  def response(move, response) do
+    put_in move.__meta__.response, response
   end
 end

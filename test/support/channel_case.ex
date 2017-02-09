@@ -19,6 +19,7 @@ defmodule BattleSnake.ChannelCase do
     quote do
       # Import conveniences for testing with channels
       use Phoenix.ChannelTest
+      import BattleSnake.Factory
 
 
       # The default endpoint for testing
@@ -27,6 +28,10 @@ defmodule BattleSnake.ChannelCase do
   end
 
   setup(_tags) do
+    on_exit fn ->
+      MnesiaTesting.teardown()
+    end
+
     :ok
   end
 end
