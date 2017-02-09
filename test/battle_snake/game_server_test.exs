@@ -34,9 +34,11 @@ defmodule BattleSnake.GameServerTest do
       assert {:ok, pid} = GameServer.find(c.game_form.id)
       Process.link(pid)
       GameServer.subscribe(c.game_form.id)
+      on_exit fn -> Process.unlink(pid) end
+
       assert :ok = GameServer.resume(pid)
-      assert_receive({:tick})
-      Process.unlink(pid)
+      assert_receive(%BattleSnake.GameServer.State.Event{name: event_name})
+      assert event_name == :tick
     end
   end
 
