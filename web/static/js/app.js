@@ -17,7 +17,6 @@ import "phoenix_html"
 // Local files can be imported directly using relative
 // paths "./socket" or full ones "web/static/js/socket".
 import socket from "./socket"
-import GameChannel from "./game_channel"
 import $ from "jquery";
 
 const gameId = window.gameId;

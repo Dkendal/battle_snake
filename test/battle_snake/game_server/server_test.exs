@@ -1,7 +1,6 @@
 defmodule BattleSnake.GameServer.ServerTest do
   alias BattleSnake.GameServer.Server
   alias BattleSnake.GameServer.State
-  alias BattleSnake.GameForm
   use BattleSnake.Case, async: true
 
   def create_game_form(_) do
@@ -15,6 +14,10 @@ defmodule BattleSnake.GameServer.ServerTest do
       assert {:ok, state} = Server.init(c.game_form.id)
       assert state.game_form_id == c.game_form.id
       assert state.game_form.id == c.game_form.id
+    end
+
+    test "stops when the game form does not exist" do
+      assert {:stop, %Mnesia.RecordNotFoundError{}} = Server.init("fake")
     end
   end
 

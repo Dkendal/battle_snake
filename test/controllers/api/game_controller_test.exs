@@ -9,46 +9,29 @@ defmodule BattleSnake.Api.GameControllerTest do
 
   describe "GET index" do
     setup do
-      # TODO repo should get cleaned up after each test.
-      MnesiaTesting.teardown
-
-      snake = %SnakeForm{url: "example.com"}
-
-      %GameForm{}
-      |> GameForm.changeset(%{})
-      |> Ecto.Changeset.put_change(:id, 1)
-      |> Ecto.Changeset.put_embed(:snakes, [snake])
-      |> Ecto.Changeset.apply_changes
-      |> Mnesia.Repo.save
-
-      %GameForm{}
-      |> GameForm.changeset(%{})
-      |> Ecto.Changeset.put_change(:id, 2)
-      |> Ecto.Changeset.put_embed(:snakes, [snake])
-      |> Ecto.Changeset.apply_changes
-      |> Mnesia.Repo.save
-
-      GameServer.Registry.create 1
-
-      on_exit fn ->
-        BattleSnake.GameServerTesting.teardown
-        MnesiaTesting.teardown
-      end
-
+      snakes = build_list(2, :snake, url: sequence("example.com:"))
+      game_form = create(:game_form, snakes: snakes)
+      GameServer.Registry.create(game_form, game_form.id)
       :ok
     end
 
     test "lists all games", %{conn: conn} do
       conn = get conn, api_game_path(conn, :index)
-      assert [%{"id" => 1,
-                "snakes" => [%{"url" => "example.com"}],
-                "status" => "suspend",
-                "winners" => []},
-              %{"id" => 2,
-                "snakes" => [%{"url" => "example.com"}],
-                "status" => "dead",
-                "winners" => []}] =
-        json_response(conn, 200)
+      assert(
+        [%{"id" => _,
+           "status" => "suspend",
+           "winners" => [],
+           "snakes" => [
+             %{"coords" => [],
+               "health_points" => 100,
+               "id" => _,
+               "name" => "",
+               "taunt" => ""},
+             %{"coords" => [],
+               "health_points" => 100,
+               "id" => _,
+               "name" => "",
+               "taunt" => ""}]}] = json_response(conn, 200))
     end
   end
 

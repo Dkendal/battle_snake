@@ -11,6 +11,8 @@ defmodule BattleSnake.Factory do
   use BattleSnake.MnesiaStrategy
   use BattleSnake.Point
 
+  defdelegate sequence(name), to: ExMachina
+
   def world_factory do
     %BattleSnake.World{
     }

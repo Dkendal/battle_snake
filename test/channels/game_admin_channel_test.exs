@@ -1,32 +1,73 @@
 defmodule BattleSnake.GameAdminChannelTest do
   use BattleSnake.ChannelCase
 
+  alias Phoenix.Socket
   alias BattleSnake.GameAdminChannel
-  alias BattleSnake.GameServer
 
-  setup do
-    game_id = "1"
+  defmodule G do
+    use GenServer
 
-    {:ok, _, socket} =
-      socket("user_id", %{some: :assign})
-      |> subscribe_and_join(GameAdminChannel, "game_admin:" <> game_id)
+    def handle_call(message, caller) do
+      send caller, {{:handle_call, self()}, message}
+      {:noreply, caller}
+    end
 
-    {:ok, socket: socket}
+    def handle_cast(message, caller) do
+      send caller, {{:handle_cast, self()}, message}
+      {:noreply, caller}
+    end
   end
 
-  describe "push $command" do
-    setup c do
-      GameServer.PubSub.subscribe("1")
-      ref = push(c.socket, "resume")
-      [ref: ref]
+  describe "GameAdminChannel.join/3" do
+    setup [:create_game_form]
+
+    test "connects to the channel", c do
+      {:ok, _, %Socket{}} = join_topic c.game_form.id
+    end
+  end
+
+  describe "GameAdminChannel.join/3" do
+    setup [:create_game_form, :join_topic]
+
+    test "assigns the game id", c do
+      assert %{game_id: _} = c.socket.assigns
     end
 
-    test "responds with ok", c do
-      assert_reply c.ref, :ok
+    test "assigns the game server pid", c do
+      assert %{game_server_pid: pid} = c.socket.assigns
+      assert is_pid(pid), "expected pid, game_server(game_id)got: #{inspect pid}"
+    end
+  end
+
+  describe "GameAdminChannel.handle_in(request, state)" do
+    setup do
+      {:ok, pid} = GenServer.start_link G, self()
+      assigns = %{game_server_pid: pid}
+      socket = socket("user_id", assigns)
+      reply = GameAdminChannel.handle_in("resume", self(), socket)
+      [reply: reply,
+       socket: socket]
     end
 
-    test "sends message to the pub sub", c do
-      assert_receive %GameServer.Command{name: "resume", data: %{}}
+    test "pushes the command to the gen server", c do
+      assert {:noreply, c.socket} == c.reply
+      pid = c.socket.assigns.game_server_pid
+      assert_receive {{:handle_cast, ^pid}, :resume}
     end
+  end
+
+  def create_game_form(c) when is_map(c) do
+    Map.put(c, :game_form, create(:game_form))
+  end
+
+  def join_topic(c) when is_map(c) do
+    {:ok, _, socket} = join_topic(c.game_form.id)
+    Map.put(c, :socket, socket)
+  end
+
+  def join_topic(id) when is_binary(id) do
+    "user_id"
+    |> socket(%{})
+    |> subscribe_and_join(GameAdminChannel, "game_admin:" <> id)
   end
 end

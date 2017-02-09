@@ -18,6 +18,13 @@ defmodule BattleSnake.Case do
   using do
     quote do
       import BattleSnake.Factory
+
+      def named_mock_game_server(id) do
+        {:ok, pid} = Agent.start_link(
+          fn -> 0 end,
+          BattleSnake.GameServer.Registry.options(id))
+        pid
+      end
     end
   end
 

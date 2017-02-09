@@ -2,40 +2,32 @@ defmodule BattleSnake.GameServer.RegistryTest do
   alias BattleSnake.GameServer
   use BattleSnake.Case, async: false
 
-  @state %GameServer.State{}
-  @game_server_name "test-game-server"
+  @id "test-game-server"
 
-  describe "BattleSnake.GameServer.Registry.create/2" do
+  describe "Registry.create/{1,2}" do
     test "registers the process" do
-      assert {:ok, game_server} = GameServer.Registry.create(@game_server_name, @state)
-      assert [{game_server, nil}] == Registry.lookup(GameServer.Registry, @game_server_name)
+      assert {:ok, game_server} = GameServer.Registry.create(build(:state), @id)
+      assert [{game_server, nil}] == Registry.lookup(GameServer.Registry, @id)
     end
   end
 
-  describe "BattleSnake.GameServer.Registry.lookup/1" do
-    setup [:start_game_server]
-
-    test "fetches the process by the name it was registered under", %{game_server: game_server} do
-      assert [{game_server, nil}] == GameServer.Registry.lookup(@game_server_name)
+  describe "Registry.lookup/1" do
+    test "fetches the process by the name it was registered under" do
+      pid = named_mock_game_server(@id)
+      assert [{^pid, nil}] = GameServer.Registry.lookup(@id)
     end
   end
 
-  describe "BattleSnake.GameServer.Registry.lookup_or_create/2" do
+  describe "Registry.lookup_or_create/2" do
     test "starts the process if it isn't already registered" do
       assert {:ok, _game_server} =
-        GameServer.Registry.lookup_or_create(@game_server_name, @state)
+        GameServer.Registry.lookup_or_create(build(:state), @id)
     end
 
     test "returns the registered process if it already exists" do
-      %{game_server: game_server} = start_game_server()
-
-      assert {:ok, ^game_server} =
-        GameServer.Registry.lookup_or_create(@game_server_name, @state)
+      pid = named_mock_game_server(@id)
+      assert {:ok, ^pid} =
+        GameServer.Registry.lookup_or_create(@id)
     end
-  end
-
-  def start_game_server(context \\ %{}) do
-    {:ok, game_server} = GameServer.Registry.create(@game_server_name, @state)
-    Map.put(context, :game_server, game_server)
   end
 end

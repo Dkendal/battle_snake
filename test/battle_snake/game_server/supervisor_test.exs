@@ -16,7 +16,7 @@ defmodule BattleSnake.GameServer.SupervisorTest do
     end
 
     test "starts a game server process" do
-      {:ok, game_server} = start_game_server([%GameServer.State{}])
+      {:ok, game_server} = start_game_server([build(:state)])
       assert is_pid game_server
       assert %{active: 1, workers: 1} = Supervisor.count_children(@sup_name)
     end

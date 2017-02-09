@@ -21,6 +21,7 @@ defmodule BattleSnake.ConnCase do
       use Phoenix.ConnTest
 
       import BattleSnake.Router.Helpers
+      import BattleSnake.Factory
 
       # The default endpoint for testing
       @endpoint BattleSnake.Endpoint

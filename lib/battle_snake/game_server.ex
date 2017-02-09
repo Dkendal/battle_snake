@@ -12,6 +12,8 @@ defmodule BattleSnake.GameServer do
   The GameServer is a GenServer that handles running a single BattleSnake match.
   """
 
+  def start_link(args, opts \\ [])
+
   def start_link(args, opts) do
     GenServer.start_link(__MODULE__, args, opts)
   end
