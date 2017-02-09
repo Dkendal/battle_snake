@@ -27,7 +27,7 @@ defmodule BattleSnake.GameAdminChannel do
 
   def handle_in(request, from, socket) when is_atom(request) do
     pid = game_server(socket)
-    GenServer.cast(pid, request)
+    GenServer.call(pid, request)
     {:noreply, socket}
   end
 

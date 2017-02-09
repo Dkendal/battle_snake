@@ -7,9 +7,9 @@ defmodule BattleSnake.GameAdminChannelTest do
   defmodule G do
     use GenServer
 
-    def handle_call(message, caller) do
+    def handle_call(message, _, caller) do
       send caller, {{:handle_call, self()}, message}
-      {:noreply, caller}
+      {:reply, :ok, caller}
     end
 
     def handle_cast(message, caller) do
@@ -41,7 +41,7 @@ defmodule BattleSnake.GameAdminChannelTest do
 
   describe "GameAdminChannel.handle_in(request, state)" do
     setup do
-      {:ok, pid} = GenServer.start_link G, self()
+      {:ok, pid} = GenServer.start_link G, self(), name: :"fake-game-server"
       assigns = %{game_server_pid: pid}
       socket = socket("user_id", assigns)
       reply = GameAdminChannel.handle_in("resume", self(), socket)
@@ -52,7 +52,7 @@ defmodule BattleSnake.GameAdminChannelTest do
     test "pushes the command to the gen server", c do
       assert {:noreply, c.socket} == c.reply
       pid = c.socket.assigns.game_server_pid
-      assert_receive {{:handle_cast, ^pid}, :resume}
+      assert_receive {{:handle_call, ^pid}, :resume}
     end
   end
 
