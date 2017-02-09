@@ -26,6 +26,7 @@ defmodule BattleSnake.Factory do
 
   def game_form_factory do
     %BattleSnake.GameForm{
+      delay: 0,
     }
   end
 

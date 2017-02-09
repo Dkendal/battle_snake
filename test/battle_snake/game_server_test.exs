@@ -22,6 +22,24 @@ defmodule BattleSnake.GameServerTest do
     %{finished: finished, running: running}
   end
 
+
+  describe "integeration tests" do
+    setup do
+      [game_form: create(:game_form,
+          snakes: build_list(1, :snake_form))]
+    end
+
+    @tag :integration
+    test "the game can be resume play", c do
+      assert {:ok, pid} = GameServer.find(c.game_form.id)
+      Process.link(pid)
+      GameServer.subscribe(c.game_form.id)
+      assert :ok = GameServer.resume(pid)
+      assert_receive({:tick})
+      Process.unlink(pid)
+    end
+  end
+
   describe "GameServer.handle_info(:tick, _)" do
     test "stops the game if the objective is met", %{finished: state} do
       assert({:noreply, %{status: :halted}} =
