@@ -3,10 +3,6 @@ defmodule Mnesia.RepoTest.DummyStruct do
   defstruct [:id, :x, :y]
 
   def fields, do: [:id, :x, :y]
-
-  def table_name do
-    "mnesia_repo_test_dummy_struct"
-  end
 end
 
 defmodule Mnesia.RepoTest.DummyModel do
@@ -30,7 +26,7 @@ defmodule Mnesia.RepoTest do
   describe "Mnesia.Repo.save/1" do
     test "sets the id" do
       result = Mnesia.Repo.save(%DummyModel{id: nil, x: 1, y: 2})
-      assert result.id =~ ~r/(\w+-?)+/
+      assert result.id =~ ~r/(\w+-?)/
     end
   end
 

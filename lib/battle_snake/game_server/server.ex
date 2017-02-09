@@ -5,9 +5,12 @@ defmodule BattleSnake.GameServer.Server do
   import State
   use GenServer
 
+  def init({:ok, value}), do: init(value)
+  def init({:error, reason}), do: {:stop, reason}
+
   def init(game_form_id) when is_binary(game_form_id) do
     GameForm
-    |> Mnesia.Repo.dirty_find!(game_form_id)
+    |> Mnesia.Repo.dirty_find(game_form_id)
     |> init
   end
 

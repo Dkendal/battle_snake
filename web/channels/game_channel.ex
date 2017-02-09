@@ -16,17 +16,13 @@ defmodule BattleSnake.GameChannel do
   def join("game:" <> game_id, payload, socket) do
     if authorized?(payload) do
       socket = assign(socket, :game_id, game_id)
-      GameServer.PubSub.subscribe(game_id)
 
-      callback = & &1
+      with :ok <- GameServer.PubSub.subscribe(game_id),
+           {:ok, pid} <- GameServer.Registry.lookup_or_create(game_id) do
+        socket = assign(socket, :game_server_pid, pid)
+        {:ok, socket}
+      end
 
-      with({:ok, game_form} <- load_game_form(game_id),
-           {:ok, game_server_pid} <- load_game_server_pid(game_form, callback),
-           send(self(), :after_join),
-        do: {:ok,
-             socket
-             |> assign(:game_server_pid, game_server_pid)
-             |> assign(:game_form, game_form)})
     else
       {:error, %{reason: "unauthorized"}}
     end

@@ -2,11 +2,10 @@
   window.gameId = "<%= @game.id %>"
 </script>
 
-
-<%= link("■", to: "#", data: [js: "game.stop"]) %>
-<%= link("▮◀", to: "#", data: [js: "game.prev"]) %>
-<%= link("▮▮", to: "#", data: [js: "game.pause"]) %>
-<%= link("▶", to: "#", data: [js: "game.start"]) %>
-<%= link("▶▮", to: "#", data: [js: "game.next"]) %>
+<%= for request <- BattleSnake.GameAdminChannel.available_requests do %>
+  <span>
+    <a href="#" data-js="<%= request %>"><%= request %></a>
+  </span>
+<% end %>
 
 <div id="board-viewer"></div>

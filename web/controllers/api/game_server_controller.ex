@@ -7,42 +7,15 @@ defmodule BattleSnake.Api.GameServerController do
   use BattleSnake.Web, :controller
 
   def create(conn, %{"id" => id}) do
-    try do
-      id
-      |> GameServer.Registry.lookup()
-      |> do_create(id: id)
-
-      json conn, :ok
-    rescue
-      e ->
-        json conn, %{error: Exception.message(e)}
-    end
+    response = GameServer.Registry.lookup_or_create(id)
+    |> do_create
+    json(conn, response)
   end
 
-  def do_create([], id: id) do
-    GameForm.get(id)
-    |> do_create(id: id)
+  defp do_create({:ok, pid}) do
+    GameServer.resume(pid)
+    :ok
   end
 
-  def do_create([{pid, _}], _) when is_pid(pid) do
-    raise "game server already started"
-  end
-
-  def do_create({:error, e}, _) do
-    raise e
-  end
-
-  def do_create({:ok, %GameForm{} = game_form}, id: id) do
-    state = GameForm.reload_game_server_state(game_form)
-    {:ok, game_server_pid} = GameServer.Registry.create(id, state)
-    GameServer.resume(game_server_pid)
-  end
-
-  defp on_change() do
-    fn state ->
-      require Logger
-      Logger.debug "tick | pid: #{inspect self()} | turn: #{state.world.turn}"
-      state
-    end
-  end
+  defp do_create({:error, e}), do: %{error: Exception.message(e)}
 end

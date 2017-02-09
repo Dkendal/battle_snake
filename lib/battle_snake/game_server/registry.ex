@@ -1,27 +1,42 @@
 defmodule BattleSnake.GameServer.Registry do
   alias BattleSnake.GameServer
+  alias BattleSnake.GameServer.State
+  alias BattleSnake.GameForm
   @name __MODULE__
 
   @type name :: binary | atom
+  @type initializer :: name | State.t | GameForm.t
+
   @spec via(name) :: GenServer.name
-  def via(value) do
-    {:via, Registry, {@name, value}}
+  def via(id), do: {:via, Registry, {@name, id}}
+
+  @spec options(name) :: GenServer.options
+  def options(id), do: [name: via(id)]
+
+  @spec create(name) :: {:ok, pid} | :error
+  def create(id) when is_binary(id) do
+    create(id, id)
   end
 
-  @spec create(name, GameServer.state) :: GenServer.on_start
-  def create(value, state \\ %GameServer.State{})
-  def create(value, %GameServer.State{} = state) do
-    GameServer.Supervisor.start_game_server([state, [name: via(value)]])
+  @spec create(initializer, name) :: {:ok, pid} | :error
+  def create(state, id) when is_binary(id) do
+    GameServer.Supervisor.start_game_server([state, options(id)])
+  end
+
+  def create(_state, id) do
+    raise """
+    Expected id to a be a binary. id: #{inspect id}
+    """
   end
 
   @spec lookup(name) :: [{pid, Registry.value}]
-  def lookup(value) do
-    Registry.lookup(@name, value)
+  def lookup(id) do
+    Registry.lookup(@name, id)
   end
 
   @spec lookup(name) :: {:ok, pid} | :error
-  def find(value) do
-    with [{pid, _}] <- Registry.lookup(@name, value) do
+  def find(id) do
+    with [{pid, _}] <- Registry.lookup(@name, id) do
       {:ok, pid}
     else
       [] ->
@@ -29,17 +44,16 @@ defmodule BattleSnake.GameServer.Registry do
     end
   end
 
-  @doc """
-  Return {:ok, pid} for the already registered game server, or start a new
-  instance and register it.
-  """
-  @spec create(name, GameServer.state) :: GenServer.on_start
-  def lookup_or_create(value, state) do
-    case lookup(value) do
-      [{pid, _}] ->
-        {:ok , pid}
-      [] ->
-        create(value, state)
+  @spec lookup_or_create(name) :: {:ok, pid} | :error
+  def lookup_or_create(id) when is_binary(id) do
+    lookup_or_create(id, id)
+  end
+
+  @spec lookup_or_create(initializer, name) :: {:ok, pid} | :error
+  def lookup_or_create(state, id) when is_binary(id) do
+    case lookup(id) do
+      [{pid, _}] -> {:ok , pid}
+      [] -> create(state, id)
     end
   end
 end

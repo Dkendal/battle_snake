@@ -56,10 +56,20 @@ defmodule Mnesia.Repo do
   end
 
   def dirty_find!(tab, id) do
+    case dirty_find(tab, id) do
+      {:ok, r} -> r
+      {:error, e} -> raise e
+    end
+  end
+
+  def dirty_find(tab, id) do
     with [record] <- :mnesia.dirty_read(tab, id) do
-      Mnesia.Repo.load(record)
+      {:ok,
+       Mnesia.Repo.load(record)}
     else
-      [] -> raise %Mnesia.RecordNotFoundError{id: id, table: tab}
+      [] ->
+        {:error,
+         %Mnesia.RecordNotFoundError{id: id, table: tab}}
     end
   end
 
