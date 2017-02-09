@@ -25,15 +25,15 @@ defmodule BattleSnake.GameServerTest do
 
   describe "integeration tests" do
     setup do
-      game_form = create(
-        :game_form,
-        delay: 0,
-        snakes: build_list(1, :snake_form))
+      game_form = create(:game_form, delay: 0, snakes: build_list(1, :snake_form))
 
-      assert {:ok, pid} = GameServer.find(game_form.id)
-      Process.link(pid)
+      {:atomic, pid} =
+        :mnesia.transaction(fn ->
+          {:ok, pid} = GameServer.find(game_form.id)
+          pid
+        end)
+
       GameServer.subscribe(game_form.id)
-      on_exit fn -> Process.unlink(pid) end
 
       [game_form: game_form, pid: pid]
     end
