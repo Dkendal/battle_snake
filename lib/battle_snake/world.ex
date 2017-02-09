@@ -226,8 +226,6 @@ defmodule BattleSnake.World do
 end
 
 defimpl Poison.Encoder, for: BattleSnake.World do
-  alias BattleSnake.{Board, World}
-
   def encode(world, opts) do
     me = Keyword.get(opts, :me)
 
@@ -240,15 +238,7 @@ defimpl Poison.Encoder, for: BattleSnake.World do
       :game_id,
     ]
 
-    board = board(world)
-
-    map = %{
-      board: board
-    }
-
-    map = world
-    |> Map.take(attrs)
-    |> Map.merge(map)
+    map = Map.take(world, attrs)
 
     map = if me do
       Map.put(map, "you", me)
@@ -257,48 +247,5 @@ defimpl Poison.Encoder, for: BattleSnake.World do
     end
 
     Poison.encode!(map, opts)
-  end
-
-  def board(world) do
-    add = fn board, p, value ->
-      Map.put board, p, value
-    end
-
-    board = %{}
-
-    f = fn p, board ->
-      add.(board, p, Board.food)
-    end
-
-    board = Enum.reduce world.food, board, f
-
-    board = Enum.reduce world.snakes, board, fn snake, board ->
-      [head |body] = snake.coords
-
-      board = Enum.reduce body, board, fn p, board ->
-        value = %{
-        "state" => "body",
-          "snake" => snake.name,
-        }
-
-        Map.put board, p, value
-      end
-
-      value = %{
-        "state" => "head",
-        "snake" => snake.name,
-      }
-
-      Map.put board, head, value
-    end
-
-    World.map world, fn p ->
-      case board[p] do
-        nil ->
-          Board.empty
-        value ->
-          value
-      end
-    end
   end
 end
