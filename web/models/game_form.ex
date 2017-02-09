@@ -68,7 +68,8 @@ defmodule BattleSnake.GameForm do
 
   def reject_deleted_snakes(changeset) do
     delete = fn changeset ->
-      get_field(changeset, :delete) || get_field(changeset, :url) == ""
+      get_field(changeset, :delete) == "" ||
+        get_field(changeset, :url) in ["", nil]
     end
 
     Enum.reject(changeset, delete)
