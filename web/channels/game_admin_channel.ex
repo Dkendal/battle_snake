@@ -45,6 +45,6 @@ defmodule BattleSnake.GameAdminChannel do
   end
 
   defp game_server(game_id) when is_binary(game_id) do
-    Registry.lookup_or_create(game_id)
+    GameServer.find(game_id)
   end
 end
