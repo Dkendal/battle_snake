@@ -33,4 +33,12 @@ defmodule BattleSnake.GameServer do
   defdelegate handle_cast(request, state), to: GameServer.Server
   defdelegate handle_info(request, state), to: GameServer.Server
   defdelegate init(args), to: GameServer.Server
+
+  def find!({:ok, pid}), do: pid
+  def find!({:error, e}), do: raise(e)
+  def find!(name), do: name |> find |> find!
+
+  defdelegate find(name), to: GameServer.Registry, as: :lookup_or_create
+
+  defdelegate subscribe(name), to: GameServer.PubSub
 end
