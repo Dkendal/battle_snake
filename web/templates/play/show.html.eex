@@ -1,11 +1,1 @@
-<script>
-  window.gameId = "<%= @game.id %>"
-</script>
-
-<%= for request <- BattleSnake.GameAdminChannel.available_requests do %>
-  <span>
-    <a href="#" data-js="<%= request %>"><%= request %></a>
-  </span>
-<% end %>
-
 <div id="board-viewer"></div>

@@ -20,6 +20,9 @@
     </main>
 
     <!-- /container -->
+    <script>
+     window.BattleSnake = <%= raw battle_snake_js_object(assigns) %>;
+    </script>
     <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
   </body>
 </html>
