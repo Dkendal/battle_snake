@@ -160,11 +160,6 @@ defmodule BattleSnake.GameServerTest do
   end
 
   describe "GameServer.handle_call(:prev, _, _)" do
-    test "does nothing when the server is stopped" do
-      assert(GameServer.handle_call(:prev, self(), @halt_state) ==
-        {:reply, :ok, @halt_state})
-    end
-
     test "rewinds to the last move and pauses" do
       reply = {:reply, :ok, put_in(@prev.status, :suspend)}
 

@@ -1,6 +1,7 @@
 defmodule BattleSnake.GameServer.Server do
   alias BattleSnake.GameForm
   alias BattleSnake.GameServer.State
+  alias BattleSnake.GameServer.PubSub
 
   import State
   use GenServer
@@ -21,8 +22,11 @@ defmodule BattleSnake.GameServer.Server do
   end
 
   def init(%State{} = state) do
-    state = State.on_start(state)
+    state
+    |> State.on_start
+
     {:ok, state}
+    |> do_reply
   end
 
   def handle_call(:get_status, _from, state) do
@@ -38,31 +42,18 @@ defmodule BattleSnake.GameServer.Server do
         state = State.step(state)
         {:reply, :ok, State.suspend!(state)}
     end
-  end
-
-  def handle_call(:on_change, _from, {status, state}) do
-    state = State.on_change(state)
-    {:reply, :ok, {status, state}}
-  end
-
-  def handle_call(:on_done, _from, {status, state}) do
-    state = State.on_done(state)
-    {:reply, :ok, {status, state}}
-  end
-
-  def handle_call(:on_start, _from, {status, state}) do
-    state = State.on_start(state)
-    {:reply, :ok, {status, state}}
+    |> do_reply
   end
 
   def handle_call(:pause, _from, state) do
     case state.status do
       :cont ->
-        {:reply, :ok, put_in(state.status, :suspend)}
+        {:reply, :ok, suspend!(state)}
 
       _status ->
         {:reply, :ok, state}
     end
+    |> do_reply
   end
 
   def handle_call(:prev, _from, state) do
@@ -70,25 +61,28 @@ defmodule BattleSnake.GameServer.Server do
       _status ->
         state = state
         |> State.step_back()
-        {:reply, :ok, put_in(state.status, :suspend)}
+        {:reply, :ok, suspend!(state)}
     end
+    |> do_reply
   end
 
   def handle_call(:resume, _from, state) do
     case state.status do
       :suspend ->
         tick(state)
-        {:reply, :ok, put_in(state.status, :cont)}
+        {:reply, :ok, cont!(state)}
 
       _status ->
         {:reply, :ok, state}
     end
+    |> do_reply
   end
 
   def handle_call(:replay, _from, state) do
     state = load_history(state)
     tick(state)
     {:reply, :ok, replay!(state)}
+    |> do_reply
   end
 
   def handle_call(request, from, state) do
@@ -127,6 +121,7 @@ defmodule BattleSnake.GameServer.Server do
       :suspend ->
         {:noreply, state}
     end
+    |> do_reply
   end
 
   def handle_info(request, state) do
@@ -135,5 +130,22 @@ defmodule BattleSnake.GameServer.Server do
 
   defp tick(state) do
     Process.send_after(self(), :tick, State.delay(state))
+  end
+
+  def do_reply({_, state} = reply) do
+    broadcast(state)
+    reply
+  end
+
+  def do_reply({_, _, state} = reply) do
+    broadcast(state)
+    reply
+  end
+
+  def broadcast(state) do
+    topic = state.game_form_id
+    event = %State.Event{name: :tick, data: state}
+    PubSub.broadcast(topic, event)
+    state
   end
 end

@@ -5,7 +5,7 @@ defmodule BattleSnake.GameAdminChannel do
   alias BattleSnake.GameServer.Registry
   use BattleSnake.Web, :channel
 
-  @requests ~w(resume next prev)
+  @requests ~w(resume next prev replay pause)
 
   def join("game_admin:" <> game_id, payload, socket) do
     if authorized?(payload) do
@@ -20,15 +20,35 @@ defmodule BattleSnake.GameAdminChannel do
 
   def available_requests, do: @requests
 
+  def handle_in("stop", from, socket) do
+    {:ok, pid}= GameServer.find(game_id(socket))
+    ref = Process.monitor(pid)
+    GenServer.stop(pid)
+
+    receive do
+      {:DOWN, ^ref, _, _, _} ->
+        {:ok, pid}= GameServer.find(game_id(socket))
+    end
+
+    {:noreply, socket}
+  end
+
   def handle_in(request, from, socket) when request in @requests do
     request = String.to_existing_atom(request)
     handle_in(request, from, socket)
   end
 
   def handle_in(request, from, socket) when is_atom(request) do
-    pid = game_server(socket)
+    pid = GameServer.find!(game_id(socket))
     GenServer.call(pid, request)
     {:noreply, socket}
+  end
+
+  def handle_in(request, _from, socket) do
+    {:reply,
+     {:error,
+      %{error: "\"#{request}\" is not a valid request. Valid requests: #{inspect @requests}"}},
+     socket}
   end
 
   # Add authorization logic here as required.
