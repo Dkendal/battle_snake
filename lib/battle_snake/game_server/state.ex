@@ -111,7 +111,6 @@ defmodule BattleSnake.GameServer.State do
         state
         |> on_change()
     end
-    |> broadcast(:tick)
   end
 
   def step(state) do
@@ -119,7 +118,6 @@ defmodule BattleSnake.GameServer.State do
     |> save_history()
     |> Map.update!(:world, &World.step/1)
     |> on_change()
-    |> broadcast(:tick)
   end
 
   @doc "Loads the game history for a game matching this id"
@@ -164,14 +162,14 @@ defmodule BattleSnake.GameServer.State do
     end
   end
 
-  defp broadcast(state, event) do
-    topic = topic(state)
-    event = %Event{name: event, data: state}
-    GameServer.PubSub.broadcast(topic, event)
-    state
-  end
+  # defp broadcast(state, event) do
+  #   topic = topic(state)
+  #   event = %Event{name: event, data: state}
+  #   GameServer.PubSub.broadcast(topic, event)
+  #   state
+  # end
 
-  defp topic(state) do
-    state.game_form_id
-  end
+  # defp topic(state) do
+  #   state.game_form_id
+  # end
 end

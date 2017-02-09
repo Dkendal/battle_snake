@@ -67,14 +67,6 @@ defmodule BattleSnake.GameServer.StateTest do
       assert state.world == h
       assert state.hist == hist
     end
-
-    test "notifies subscribers" do
-      id = "1234-5678"
-      state = build(:state, game_form_id: id)
-      GameServer.PubSub.subscribe(id)
-      State.step(state)
-      assert_receive %State.Event{name: :tick, data: %State{}}
-    end
   end
 
   for status <- State.statuses() do
