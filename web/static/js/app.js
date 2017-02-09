@@ -19,7 +19,8 @@ import "phoenix_html"
 import socket from "./socket"
 import $ from "jquery";
 
-const gameId = window.gameId;
+const gameId = window.BattleSnake.gameId;
+
 const logError = resp => { console.error("Unable to join", resp) };
 
 {
