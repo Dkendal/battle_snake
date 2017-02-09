@@ -67,9 +67,6 @@ defmodule BattleSnake.GameServer.Server do
 
   def handle_call(:prev, _from, state) do
     case state.status do
-      :halted ->
-        {:reply, :ok, put_in(state.status, :halted)}
-
       _status ->
         state = state
         |> State.step_back()
