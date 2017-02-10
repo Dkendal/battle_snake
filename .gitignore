@@ -23,6 +23,9 @@ erl_crash.dump
 # variables.
 /config/prod.secret.exs
 Mnesia.*
+*.LOG
+*.DCD
+*.DCL
 .env
 rel
 .iex.exs
