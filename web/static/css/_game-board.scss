@@ -13,6 +13,13 @@
         stroke-width: $game-board-stroke-width;
         fill: transparent;
     }
+
+    &-divider {
+        stroke: $game-board-divider-stroke;
+        stroke-width: $game-board-divider-stroke-width;
+        stroke-dasharray: $game-board-divider-stroke-length (1 - $game-board-divider-stroke-length);
+        stroke-dashoffset: ($game-board-divider-stroke-length / 2)
+    }
 }
 
 .obj-food {
