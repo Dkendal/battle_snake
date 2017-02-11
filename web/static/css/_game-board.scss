@@ -1,0 +1,16 @@
+@import 'variables';
+
+.game-board {
+    flex: 1;
+}
+
+.game-board-container {
+    display: flex;
+    height: 100%;
+}
+
+.game-board-table-top {
+    stroke: $game-board-stroke-color;
+    stroke-width: $game-board-stroke-width;
+    fill: transparent;
+}
