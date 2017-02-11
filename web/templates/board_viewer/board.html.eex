@@ -1,29 +1,34 @@
 <% world = @state.world %>
 <% width = world.width %>
 <% height = world.height %>
-<%= content_tag :svg, style: "flex: 1;", viewBox: "0 0 #{width} #{height}" do %>
-  <%= content_tag :rect, "", y: 0, x: 0, width: width, height: height, fill: "lightgrey" %>
+
+<%= content_tag(:svg,
+    viewBox: "0 0 #{width} #{height}",
+    class: "game-board") do %>
+
+  <%= content_tag(:rect, "",
+      y: 0,
+      x: 0,
+      width: width,
+      height: height,
+      class: "game-board-table-top") %>
 
   <%= for snake <- world.snakes, {point, index} <- Enum.with_index(snake.coords, 1) do %>
-    <%=
-    content_tag :rect, "",
+    <%= content_tag :rect, "",
     y: point.y,
     x: point.x,
     width: 1,
     height: 1,
     fill: snake.color,
-    fill_opacity: 1 - index / length(snake.coords) + 0.3
-    %>
+    fill_opacity: 1 - index / length(snake.coords) + 0.3 %>
   <% end %>
 
   <%= for food <- world.food do %>
-    <%=
-    content_tag :rect, "",
-    y: food.y,
-    x: food.x,
-    width: 1,
-    height: 1,
-    fill: :green
-    %>
+    <%= content_tag(:rect, "",
+        y: food.y,
+        x: food.x,
+        width: 1,
+        height: 1,
+        fill: :green) %>
   <% end %>
 <% end %>
