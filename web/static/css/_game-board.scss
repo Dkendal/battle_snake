@@ -2,15 +2,23 @@
 
 .game-board {
     flex: 1;
+
+    &-container {
+        display: flex;
+        height: 100%;
+    }
+
+    &-table-top {
+        stroke: $game-board-stroke-color;
+        stroke-width: $game-board-stroke-width;
+        fill: transparent;
+    }
 }
 
-.game-board-container {
-    display: flex;
-    height: 100%;
+.obj-food {
+    fill: $obj-food-bg-color;
 }
 
-.game-board-table-top {
-    stroke: $game-board-stroke-color;
-    stroke-width: $game-board-stroke-width;
-    fill: transparent;
+.obj-snake {
+    stroke-width: $obj-snake-stroke-width;
 }
