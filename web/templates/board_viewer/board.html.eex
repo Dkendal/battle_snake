@@ -6,6 +6,24 @@
     viewBox: "0 0 #{width} #{height}",
     class: "game-board") do %>
 
+  <%= for y <- (0..height) do %>
+    <%= content_tag(:line, "",
+        y1: y,
+        y2: y,
+        x1: 0,
+        x2: height,
+        class: "game-board-divider") %>
+  <% end %>
+
+  <%= for x <- (0..width) do %>
+    <%= content_tag(:line, "",
+        x1: x,
+        x2: x,
+        y1: 0,
+        y2: height,
+        class: "game-board-divider") %>
+  <% end %>
+
   <%= content_tag(:rect, "",
       y: 0,
       x: 0,
