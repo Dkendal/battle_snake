@@ -12,16 +12,28 @@ defmodule BattleSnake.BoardViewerChannel do
   def join("board_viewer:" <> game_id, payload, socket) do
     if authorized?(payload) do
       GameServer.PubSub.subscribe(game_id)
+      send(self(), :after_join)
       socket = set_content_type(socket, payload)
+      socket = assign(socket, :game_id, game_id)
       {:ok, socket}
     else
       {:error, %{reason: "unauthorized"}}
     end
   end
 
-  def handle_info(%GameServer.State.Event{name: name, data: state}, socket) do
+  def handle_info(%GameServer.State.Event{name: _name, data: state}, socket) do
     content = render_content(socket.assigns.content_type, state)
     broadcast(socket, "tick", %{content: content})
+    {:noreply, socket}
+  end
+
+  def handle_info(:after_join, socket) do
+    state = socket.assigns.game_id
+    |> GameServer.find!
+    |> GameServer.get_game_state
+
+    content = render_content(socket.assigns.content_type, state)
+    push(socket, "tick", %{content: content})
     {:noreply, socket}
   end
 
