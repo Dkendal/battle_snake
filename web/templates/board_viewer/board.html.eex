@@ -1,6 +1,7 @@
 <% world = @state.world %>
 <% width = world.width %>
 <% height = world.height %>
+<% snakes = world.snakes %>
 
 <%= content_tag(:svg,
     viewBox: "0 0 #{width} #{height}",
@@ -39,3 +40,35 @@
     <%= raw food_obj(x) %>
   <% end %>
 <% end %>
+
+<div class="scoreboard">
+  <%= for snake <- snakes do %>
+    <div class="scoreboard-snake">
+      <div class="scoreboard-snake-name">
+        <%= snake.name %>
+      </div>
+      <div>
+        <%= snake.taunt %>
+      </div>
+
+      <svg class="scoreboard-snake-healthpoints" preserveAspectRatio="none" viewBox="0 0 100 100">
+        <%= content_tag(:rect,
+            "",
+            fill: snake.color,
+            x: 0,
+            y: 0,
+            height: 100,
+            width: 100,
+            class: "scoreboard-snake-healthpoints-shadow") %>
+
+        <%= content_tag(:rect,
+            "",
+            fill: snake.color,
+            x: 0,
+            y: 0,
+            height: 100,
+            width: snake.health_points) %>
+      </svg>
+    </div>
+  <% end %>
+</div>

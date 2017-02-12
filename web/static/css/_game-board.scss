@@ -29,3 +29,14 @@
 .obj-snake {
     stroke-width: $obj-snake-stroke-width;
 }
+
+.scoreboard-snake {
+    &-healthpoints {
+        height: 1.3em;
+        width: 100%;
+    }
+
+    &-healthpoints-shadow {
+        opacity: 0.2;
+    }
+}
