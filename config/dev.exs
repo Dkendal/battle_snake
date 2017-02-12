@@ -27,6 +27,10 @@ config :battle_snake, BattleSnake.Endpoint,
     ]
   ]
 
+config(:mnesia,
+  dir: './databases/dev',
+  debug: true)
+
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"
 

@@ -51,6 +51,11 @@ exports.config = {
 
   // Configure your plugins
   plugins: {
+    sass: {
+      mode: 'native',
+      allowCache: true,
+      sourceMapEmbeded: true
+    },
     babel: {
       presets: ['es2015', 'es2016'],
       // Do not use ES6 compiler in vendor code
