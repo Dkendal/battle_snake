@@ -8,6 +8,10 @@ defmodule BattleSnake.GameServer.Client do
     GenServer.call(pid, :get_state)
   end
 
+  def get_game_state(pid) do
+    GenServer.call(pid, :get_game_state)
+  end
+
   def get_status(pid) do
     GenServer.call(pid, :get_status)
   end

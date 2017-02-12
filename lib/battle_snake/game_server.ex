@@ -18,6 +18,7 @@ defmodule BattleSnake.GameServer do
     GenServer.start_link(__MODULE__, args, opts)
   end
 
+  defdelegate get_game_state(pid), to: GameServer.Client
   defdelegate get_state(pid), to: GameServer.Client
   defdelegate get_status(pid), to: GameServer.Client
   defdelegate next(pid), to: GameServer.Client
