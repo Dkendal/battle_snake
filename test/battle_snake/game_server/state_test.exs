@@ -1,5 +1,4 @@
 defmodule BattleSnake.GameServer.StateTest do
-  alias BattleSnake.GameServer
   alias BattleSnake.GameServer.State
 
   use BattleSnake.Case, async: false
