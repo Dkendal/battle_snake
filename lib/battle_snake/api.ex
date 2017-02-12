@@ -8,6 +8,8 @@ defmodule BattleSnake.Api do
     SnakeForm,
     World}
 
+  require Logger
+
   @load_whitelist ~w(color head_url name taunt)a
   @move_whitelist ~w(move taunt)a
 
@@ -22,7 +24,8 @@ defmodule BattleSnake.Api do
   """
   @spec load(%SnakeForm{}, %GameForm{}) :: Response.t
   def load(%{url: url}, data, request \\ &HTTP.post/4) do
-    api_response = response(url <> "/start", request, Snake, @load_whitelist, data)
+    request_url = url <> "/start"
+    api_response = response(request_url, request, Snake, @load_whitelist, data)
     update_in(api_response.parsed_response, fn
       {:ok, snake} ->
       (
@@ -30,7 +33,10 @@ defmodule BattleSnake.Api do
         {:ok, snake}
       )
       error ->
+      (
+        log_error(request_url, error, api_response)
         error
+      )
     end)
   end
 
@@ -58,7 +64,25 @@ defmodule BattleSnake.Api do
         snake = struct(type, map)
         {:ok, snake}
       )
-      error -> error
+      error ->
+      (
+        log_error(url, error, api_response)
+        error
+      )
     end)
+  end
+
+  defp log_error(url, error, api_response) do
+    http_response = inspect(api_response.raw_response, color: false, pretty: true)
+    ("""
+    Could not process API response for #{url}:
+
+    Poison JSON Parsing Error:
+    #{inspect error}
+
+    HTTPoison HTTP Response:
+    #{http_response}
+    """)
+    |> Logger.debug
   end
 end
