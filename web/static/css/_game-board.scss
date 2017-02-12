@@ -1,0 +1,31 @@
+@import 'variables';
+
+.game-board {
+    flex: 1;
+
+    &-container {
+        display: flex;
+        height: 100%;
+    }
+
+    &-table-top {
+        stroke: $game-board-stroke-color;
+        stroke-width: $game-board-stroke-width;
+        fill: transparent;
+    }
+
+    &-divider {
+        stroke: $game-board-divider-stroke;
+        stroke-width: $game-board-divider-stroke-width;
+        stroke-dasharray: $game-board-divider-stroke-length (1 - $game-board-divider-stroke-length);
+        stroke-dashoffset: ($game-board-divider-stroke-length / 2)
+    }
+}
+
+.obj-food {
+    fill: $obj-food-bg-color;
+}
+
+.obj-snake {
+    stroke-width: $obj-snake-stroke-width;
+}
