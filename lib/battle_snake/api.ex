@@ -34,17 +34,7 @@ defmodule BattleSnake.Api do
       )
       error ->
       (
-        http_response = inspect(api_response.raw_response, color: false, pretty: true)
-        ("""
-        Could not process API response for #{request_url}:
-
-        Poison JSON Parsing Error:
-        #{inspect error}
-
-        HTTPoison HTTP Response:
-        #{http_response}
-        """)
-        |> Logger.debug
+        log_error(request_url, error, api_response)
         error
       )
     end)
@@ -74,7 +64,25 @@ defmodule BattleSnake.Api do
         snake = struct(type, map)
         {:ok, snake}
       )
-      error -> error
+      error ->
+      (
+        log_error(url, error, api_response)
+        error
+      )
     end)
+  end
+
+  defp log_error(url, error, api_response) do
+    http_response = inspect(api_response.raw_response, color: false, pretty: true)
+    ("""
+    Could not process API response for #{url}:
+
+    Poison JSON Parsing Error:
+    #{inspect error}
+
+    HTTPoison HTTP Response:
+    #{http_response}
+    """)
+    |> Logger.debug
   end
 end
