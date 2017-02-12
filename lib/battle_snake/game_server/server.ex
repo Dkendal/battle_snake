@@ -29,6 +29,10 @@ defmodule BattleSnake.GameServer.Server do
     |> do_reply
   end
 
+  def handle_call(:get_game_state, _from, state) do
+    {:reply, state, state}
+  end
+
   def handle_call(:get_status, _from, state) do
     {:reply, state.status, state}
   end
@@ -142,10 +146,13 @@ defmodule BattleSnake.GameServer.Server do
     reply
   end
 
+  def tick_event(state) do
+    %State.Event{name: :tick, data: state}
+  end
+
   def broadcast(state) do
     topic = state.game_form_id
-    event = %State.Event{name: :tick, data: state}
-    PubSub.broadcast(topic, event)
+    PubSub.broadcast(topic, tick_event(state))
     state
   end
 end

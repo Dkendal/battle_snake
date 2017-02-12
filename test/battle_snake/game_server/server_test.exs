@@ -36,4 +36,10 @@ defmodule BattleSnake.GameServer.ServerTest do
       assert {:ok, %State{}} == Server.init(%State{})
     end
   end
+
+  describe "Server.handle_call(:get_game_state, _, _)" do
+    test "returns the state" do
+      assert Server.handle_call(:get_game_state, self(), 1) == {:reply, 1, 1}
+    end
+  end
 end
