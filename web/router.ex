@@ -19,6 +19,7 @@ defmodule BattleSnake.Router do
     resources "/", GameController
 
     resources "/play", PlayController, only: [:show]
+    resources "/skin", SkinController, only: [:show]
   end
 
   scope "/api", BattleSnake.Api, as: :api do
