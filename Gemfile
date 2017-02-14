@@ -4,3 +4,4 @@ source "https://rubygems.org"
 
 gem "bourbon", "~> 4.0"
 gem "bitters"
+gem "neat"
