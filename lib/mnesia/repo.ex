@@ -66,9 +66,9 @@ defmodule Mnesia.Repo do
   end
 
   def load(record) when is_tuple(record) do
-    [table_name |attrs] = Tuple.to_list(record)
-    attrs = Enum.zip(table_name.fields, attrs)
-    struct(table_name, attrs)
+    [mod |attrs] = Tuple.to_list(record)
+    attrs = Enum.zip(mod.fields, attrs)
+    struct(mod, attrs)
   end
 
   def load(l, acc \\ [])
@@ -110,7 +110,8 @@ defmodule Mnesia.Repo do
       def record(struct) do
         get = &Map.get(struct, &1)
         attrs = Enum.map(fields(), get)
-        List.to_tuple [table_name() |attrs]
+        mod = struct.__struct__
+        List.to_tuple [mod |attrs]
       end
 
       def fields do
@@ -119,20 +120,20 @@ defmodule Mnesia.Repo do
 
       def get(id) do
         read = fn ->
-          :mnesia.read(table_name(), id)
+          :mnesia.read(__MODULE__, id)
         end
 
         with {:atomic, [record]} <- :mnesia.transaction(read) do
           {:ok, Mnesia.Repo.load(record)}
         else
           {:atomic, []} ->
-            {:error, %Mnesia.RecordNotFoundError{id: id, table: table_name()}}
+            {:error, %Mnesia.RecordNotFoundError{id: id, table: __MODULE__}}
         end
       end
 
       @spec create_table(Keyword.t) :: {:atomic, :ok} | {:aborted, any}
       def create_table(opts \\ []) do
-        :mnesia.create_table(table_name(), opts ++ table())
+        :mnesia.create_table(__MODULE__, opts ++ table())
       end
 
       defoverridable [fields: 0]
