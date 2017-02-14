@@ -1,4 +1,6 @@
 defmodule BattleSnake.Api do
+  alias Ecto.Changeset
+
   alias BattleSnake.{
     Api.Response,
     GameForm,
@@ -10,8 +12,8 @@ defmodule BattleSnake.Api do
 
   require Logger
 
-  @load_whitelist ~w(color head_url name taunt)a
-  @move_whitelist ~w(move taunt)a
+  # @load_whitelist ~w(color head_url name taunt)a
+  # @move_whitelist ~w(move taunt)a
 
   @callback load(%SnakeForm{}, %GameForm{}) :: Response.t
   @callback move(%Snake{}, %World{}) :: Response.t
@@ -25,11 +27,12 @@ defmodule BattleSnake.Api do
   @spec load(%SnakeForm{}, %GameForm{}) :: Response.t
   def load(%{url: url}, data, request \\ &HTTP.post/4) do
     request_url = url <> "/start"
-    api_response = response(request_url, request, Snake, @load_whitelist, data)
+    api_response = response(request_url, request, data)
+
     update_in(api_response.parsed_response, fn
       {:ok, snake} ->
       (
-        snake = put_in(snake.url, url)
+        snake = put_in(snake["url"], url)
         {:ok, snake}
       )
       error ->
@@ -38,7 +41,47 @@ defmodule BattleSnake.Api do
         error
       )
     end)
+    |> do_load
+    |> do_log
   end
+
+  def do_log(response) do
+    with {:error, e} <- response.raw_response,
+      do: Logger.debug("[#{response.url}] #{inspect(e)}")
+
+    with {:error, e} <- response.parsed_response,
+      do: Logger.debug("[#{response.url}] #{inspect(e)}")
+
+    response
+  end
+
+  def do_load(response) do
+    update_in response.parsed_response, fn
+      {:ok, map} ->
+        cast_load(map)
+      response ->
+        response
+    end
+  end
+
+  def cast_load(map) do
+    data = %Snake{}
+    types = %{color: :string,
+              head_url: :string,
+              name: :string,
+              taunt: :string, url: :string}
+
+    changeset = {data, types}
+    |> Changeset.cast(map, Map.keys(types))
+    |> Changeset.validate_required([:name])
+
+    if changeset.valid? do
+      {:ok, Changeset.apply_changes(changeset)}
+    else
+      {:error, changeset}
+    end
+  end
+
 
   @doc """
   Get the move for a single snake.
@@ -48,21 +91,48 @@ defmodule BattleSnake.Api do
   @spec move(%Snake{}, %World{}) :: Response.t
   def move(%{url: url, id: id}, world, request \\ &HTTP.post/4) do
     data = Poison.encode!(world, me: id)
-    response(url <> "/move", request, Move, @move_whitelist, data)
+    (url <> "/move")
+    |> response(request, data)
+    |> do_move
+    |> do_log
   end
 
-  defp response(url, request, type, whitelist, data) do
-    st = struct(type)
+  def do_move(response) do
+    update_in response.parsed_response, fn
+      {:ok, map} ->
+        cast_move(map)
+      response ->
+        response
+    end
+  end
+
+  def cast_move(map) do
+    data = %Move{}
+    types = %{move: :string, taunt: :string}
+
+    changeset = {data, types}
+    |> Changeset.cast(map, Map.keys(types))
+    |> Changeset.validate_required([:move])
+    |> Changeset.validate_inclusion(:move, ~w(up down left right))
+
+    if changeset.valid? do
+      {:ok, Changeset.apply_changes(changeset)}
+    else
+      {:error, changeset}
+    end
+  end
+
+  defp response(url, request, data) do
     api_response = url
     |> request.(data, [], [])
-    |> Response.new(as: st)
+    |> Response.new(as: %{})
+
+    api_response = put_in(api_response.url, url)
 
     update_in(api_response.parsed_response, fn
-      {:ok, snake} ->
+      {:ok, map} ->
       (
-        map = Map.take(snake, whitelist)
-        snake = struct(type, map)
-        {:ok, snake}
+        {:ok, map}
       )
       error ->
       (
