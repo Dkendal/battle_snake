@@ -157,10 +157,6 @@ defmodule Mnesia.Repo do
         :mnesia.create_table(table_name(), opts ++ table())
       end
 
-      def change_table_copy_type(node, type) do
-        :mnesia.change_table_copy_type(table_name(), node, type)
-      end
-
       def get_primary_key(struct) do
         Map.fetch!(struct, primary_key_field())
       end
