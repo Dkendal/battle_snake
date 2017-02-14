@@ -28,6 +28,7 @@ defmodule BattleSnake.Api do
   def load(%{url: url}, data, request \\ &HTTP.post/4) do
     request_url = url <> "/start"
     api_response = response(request_url, request, data)
+
     update_in(api_response.parsed_response, fn
       {:ok, snake} ->
       (
@@ -41,14 +42,23 @@ defmodule BattleSnake.Api do
       )
     end)
     |> do_load
+    |> do_log
+  end
+
+  def do_log(response) do
+    with {:error, e} <- response.raw_response,
+      do: Logger.debug("[#{response.url}] #{inspect(e)}")
+
+    with {:error, e} <- response.parsed_response,
+      do: Logger.debug("[#{response.url}] #{inspect(e)}")
+
+    response
   end
 
   def do_load(response) do
     update_in response.parsed_response, fn
       {:ok, map} ->
-      (
-        {:ok, cast_load(map)}
-      )
+        cast_load(map)
       response ->
         response
     end
@@ -60,10 +70,16 @@ defmodule BattleSnake.Api do
               head_url: :string,
               name: :string,
               taunt: :string, url: :string}
-    {data, types}
+
+    changeset = {data, types}
     |> Changeset.cast(map, Map.keys(types))
     |> Changeset.validate_required([:name])
-    |> Changeset.apply_changes
+
+    if changeset.valid? do
+      {:ok, Changeset.apply_changes(changeset)}
+    else
+      {:error, changeset}
+    end
   end
 
 
@@ -78,14 +94,13 @@ defmodule BattleSnake.Api do
     (url <> "/move")
     |> response(request, data)
     |> do_move
+    |> do_log
   end
 
   def do_move(response) do
     update_in response.parsed_response, fn
       {:ok, map} ->
-      (
-        {:ok, cast_move(map)}
-      )
+        cast_move(map)
       response ->
         response
     end
@@ -94,17 +109,25 @@ defmodule BattleSnake.Api do
   def cast_move(map) do
     data = %Move{}
     types = %{move: :string, taunt: :string}
-    {data, types}
+
+    changeset = {data, types}
     |> Changeset.cast(map, Map.keys(types))
     |> Changeset.validate_required([:move])
     |> Changeset.validate_inclusion(:move, ~w(up down left right))
-    |> Changeset.apply_changes
+
+    if changeset.valid? do
+      {:ok, Changeset.apply_changes(changeset)}
+    else
+      {:error, changeset}
+    end
   end
 
   defp response(url, request, data) do
     api_response = url
     |> request.(data, [], [])
     |> Response.new(as: %{})
+
+    api_response = put_in(api_response.url, url)
 
     update_in(api_response.parsed_response, fn
       {:ok, map} ->

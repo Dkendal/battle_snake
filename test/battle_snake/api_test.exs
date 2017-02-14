@@ -68,6 +68,26 @@ defmodule BattleSnake.ApiTest do
   end
 
   describe "Api.move/3" do
+    test "sets an error when the move is invalid" do
+      raw_response = %HTTPoison.Response{body: ~S({"move":"north"})}
+
+      mock = fn(@move_url, body, _, _) ->
+        send(self(), Poison.decode(body))
+        {:ok, raw_response}
+      end
+
+      move = Api.move(@snake, @world, mock)
+
+      assert %Api.Response{
+        url: "http://example.snake/move",
+        raw_response: {:ok, ^raw_response},
+        parsed_response: {:error, changeset}} = move
+
+      assert changeset.errors == [move: {"is invalid", []}]
+
+      assert_receive {:ok, %{"you" => "1234"}}
+    end
+
     test "on success responds with the move" do
       raw_response = %HTTPoison.Response{body: ~S({"move":"up"})}
 
@@ -79,6 +99,7 @@ defmodule BattleSnake.ApiTest do
       move = Api.move(@snake, @world, mock)
 
       assert move == %Api.Response{
+        url: "http://example.snake/move",
         raw_response: {
           :ok,
           raw_response},
@@ -101,6 +122,7 @@ defmodule BattleSnake.ApiTest do
       move = Api.move(@snake, @world, mock)
 
       assert move == %Api.Response{
+        url: "http://example.snake/move",
         raw_response: {
           :ok,
           raw_response},
@@ -117,6 +139,7 @@ defmodule BattleSnake.ApiTest do
       move = Api.move(@snake, @world, mock)
 
       assert move == %Api.Response{
+        url: "http://example.snake/move",
         raw_response: {
           :error,
           @http_error},
