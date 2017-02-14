@@ -127,7 +127,7 @@ defmodule BattleSnake.GameServer.State do
     hist =
       World.table_name()
       |> :mnesia.dirty_index_read(state.game_form_id, :game_form_id)
-      |> Enum.map(&World.load/1)
+      |> Enum.map(&Mnesia.Repo.load/1)
       |> Enum.sort_by((& Map.get &1, :turn))
     put_in(state.hist, hist)
   end

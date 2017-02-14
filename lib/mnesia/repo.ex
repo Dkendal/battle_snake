@@ -83,10 +83,10 @@ defmodule Mnesia.Repo do
 
   def all(module) when is_atom(module) do
     fn ->
-      :qlc.e(:mnesia.table module.table_name)
+      :qlc.e(:mnesia.table module)
     end
     |> :mnesia.async_dirty()
-    |> Enum.map(&module.load/1)
+    |> Enum.map(&load/1)
   end
 
   defp keep_timestamp(nil), do: System.monotonic_time()
@@ -111,12 +111,6 @@ defmodule Mnesia.Repo do
         get = &Map.get(struct, &1)
         attrs = Enum.map(fields(), get)
         List.to_tuple [table_name() |attrs]
-      end
-
-      def load(record) do
-        [mod |attrs] = Tuple.to_list(record)
-        attrs = Enum.zip(mod.fields(), attrs)
-        struct(mod, attrs)
       end
 
       def fields do

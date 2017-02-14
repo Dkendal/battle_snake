@@ -36,24 +36,6 @@ defmodule BattleSnake.GameTest do
     end
   end
 
-  describe "#load" do
-    test "converts a record to a struct" do
-      record = {GameForm, 1, [], %{}, 20, 40, 300, 1}
-
-      game = %GameForm{
-        id: 1,
-        snakes: [],
-        world: %{},
-        width: 20,
-        height: 40,
-        delay: 300,
-        max_food: 1,
-      }
-
-      assert GameForm.load(record) == game
-    end
-  end
-
   describe "#set_id" do
     test "adds an id if the id is missing" do
       game = GameForm.changeset %GameForm{id: nil}, %{}
