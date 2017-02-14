@@ -52,10 +52,10 @@ defmodule BattleSnake.MoveTest  do
     end
   end
 
-  describe "Move.direction_to_point/1" do
+  describe "Move.to_point/1" do
     test "converts direction strings to Points" do
       assert %Point{x: 0, y: -1} ==
-        %Move{move: "up"}.move |> Move.direction_to_point
+        %Move{move: "up"} |> Move.to_point
     end
   end
 end

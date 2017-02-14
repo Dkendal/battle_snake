@@ -106,8 +106,11 @@ defmodule BattleSnake.Move do
     ]
   end
 
-  def direction_to_point(direction) do
-    case direction do
+  def to_point(%Move{move: move}),
+    do: to_point(move)
+
+  def to_point(move) when is_binary(move) do
+    case move do
       "up" -> up()
       "down" -> down()
       "left" -> left()
