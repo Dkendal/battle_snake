@@ -47,7 +47,7 @@ defmodule BattleSnake.Api.GameFormControllerTest do
 
       post conn, api_game_path(conn, :create), params
 
-      assert 1 == Enum.count GameForm.all
+      assert 1 == Enum.count Mnesia.Repo.all(GameForm)
 
       assert [%GameForm{
                  delay: 1,
@@ -56,7 +56,7 @@ defmodule BattleSnake.Api.GameFormControllerTest do
                  width: 4,
                  game_mode: "singleplayer",
                  snakes: [%SnakeForm{url: "example.com"}]}] =
-        GameForm.all
+        Mnesia.Repo.all(GameForm)
     end
   end
 end

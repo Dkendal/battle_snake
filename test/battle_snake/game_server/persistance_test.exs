@@ -30,7 +30,7 @@ defmodule BattleSnake.GameServer.PersistanceTest do
 
     test "saves the winners from the state to the game form", %{state: state} do
       GameServer.Persistance.save_winner(state)
-      assert [%GameForm{winners: ["winner"]}] = GameForm.all
+      assert [%GameForm{winners: ["winner"]}] = Mnesia.Repo.all(GameForm)
     end
   end
 end

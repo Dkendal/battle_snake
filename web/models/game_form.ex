@@ -13,6 +13,7 @@ defmodule BattleSnake.GameForm do
   }
 
   use BattleSnake.Web, :model
+  use Mnesia.Repo
 
   @permitted [:height, :width, :delay, :max_food, :game_mode]
   @singleplayer "singleplayer"
