@@ -123,10 +123,6 @@ defmodule Mnesia.Repo do
         __schema__(:fields)
       end
 
-      def all() do
-        Mnesia.Repo.all(__MODULE__)
-      end
-
       def get(id) do
         read = fn ->
           :mnesia.read(table_name(), id)

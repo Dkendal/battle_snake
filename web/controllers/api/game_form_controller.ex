@@ -26,7 +26,7 @@ defmodule BattleSnake.Api.GameFormController do
   end
 
   defp load_games do
-    for game_form <- GameForm.all do
+    for game_form <- Mnesia.Repo.all(GameForm) do
       status =
         with({:ok, pid} <- GameServer.Registry.find(game_form.id),
              status = GameServer.get_status(pid)) do
