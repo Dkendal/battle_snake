@@ -192,11 +192,6 @@ defmodule Mnesia.Repo do
         {:ok, true} == Keyword.fetch(primary_key_opts(), :autogenerate)
       end
 
-      defp keep_timestamp(nil), do: System.monotonic_time()
-      defp keep_timestamp(time), do: time
-
-      defp put_timestamp(_), do: System.monotonic_time()
-
       defoverridable [fields: 0]
     end
   end
