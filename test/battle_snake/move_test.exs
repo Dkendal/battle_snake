@@ -4,7 +4,9 @@ defmodule BattleSnake.MoveTest  do
     Snake,
     Move,
     World,
-    Api.Response}
+    Point,
+    Api.Response,
+  }
 
   @green_snake %Snake{name: :green}
 
@@ -47,6 +49,13 @@ defmodule BattleSnake.MoveTest  do
       assert [%Move{} = move] = moves
       assert move.move == "up"
       assert {:ok, %Response{}} = move.__meta__.response
+    end
+  end
+
+  describe "Move.direction_to_point/1" do
+    test "converts direction strings to Points" do
+      assert %Point{x: 0, y: -1} ==
+        %Move{move: "up"}.move |> Move.direction_to_point
     end
   end
 end

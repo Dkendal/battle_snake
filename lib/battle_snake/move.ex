@@ -1,6 +1,11 @@
 defmodule BattleSnake.Move do
   alias __MODULE__
-  alias BattleSnake.{World, Snake, Api.Response}
+  alias BattleSnake.{
+    World,
+    Point,
+    Snake,
+    Api.Response,
+  }
 
   defstruct [
     :move,
@@ -85,5 +90,28 @@ defmodule BattleSnake.Move do
 
   def response(move, response) do
     put_in move.__meta__.response, response
+  end
+
+  def up,     do: %Point{x: 0,  y: -1}
+  def down,   do: %Point{x: 0,  y: 1}
+  def right,  do: %Point{x: 1,  y: 0}
+  def left,   do: %Point{x: -1, y: 0}
+
+  def moves do
+    [
+      up(),
+      down(),
+      left(),
+      right(),
+    ]
+  end
+
+  def direction_to_point(direction) do
+    case direction do
+      "up" -> up()
+      "down" -> down()
+      "left" -> left()
+      "right" -> right()
+    end
   end
 end
