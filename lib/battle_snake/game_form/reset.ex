@@ -41,7 +41,7 @@ defmodule BattleSnake.GameForm.Reset do
 
   def erase_replay(game_form) do
     :mnesia.activity(:transaction, fn ->
-      World.table_name()
+      World
       |> :mnesia.index_read(game_form.id, :game_form_id)
       |> Enum.map(&:mnesia.delete_object/1)
     end)

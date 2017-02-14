@@ -50,7 +50,7 @@ defmodule BattleSnake.GameServerTest do
     test "does not clobber the game settings", c do
       assert c.game_form.delay == 0
 
-      {:ok, g} = Mnesia.Repo.reload(c.game_form)
+      {:ok, g} = Mnesia.Repo.dirty_read(BattleSnake.GameForm, c.game_form.id)
 
       assert g.delay == 0
 

@@ -15,6 +15,7 @@ defmodule BattleSnake.Factory do
 
   def world_factory do
     %BattleSnake.World{
+      id: Ecto.UUID.generate(),
     }
   end
 
@@ -26,6 +27,7 @@ defmodule BattleSnake.Factory do
 
   def game_form_factory do
     %BattleSnake.GameForm{
+      id: Ecto.UUID.generate(),
       delay: 0,
     }
   end

@@ -12,23 +12,25 @@ defmodule BattleSnake.GameControllerTest do
 
   describe "POST create" do
     test "does the thing", %{conn: conn} do
-      game = %{
+      game_form = %{
         "width" => "100",
         "height" => "100",
       }
 
-      :mnesia.transaction fn ->
-        conn = post conn, game_path(conn, :create), game: game
+      conn = post conn, game_path(conn, :create), game_form: game_form
 
-        {:atomic, game} = GameForm.last
 
-        assert redirected_to(conn, 302) == game_path(conn, :edit, game)
-
-        assert(%GameForm{
-          width: 100,
-          height: 100,
-        } = game)
+      id = :mnesia.activity :transaction, fn ->
+        :mnesia.last(GameForm)
       end
+
+      assert redirected_to(conn, 302) == game_path(conn, :edit, id)
+
+      [game] = :mnesia.activity :transaction, fn ->
+        Mnesia.Repo.load(:mnesia.read(GameForm, id))
+      end
+
+      assert %GameForm{width: 100, height: 100,} = game
     end
   end
 end

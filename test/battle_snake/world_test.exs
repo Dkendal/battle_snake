@@ -18,11 +18,6 @@ defmodule BattleSnake.WorldTest do
     Map.put context, :world, world
   end
 
-  test "saving the world" do
-    assert Mnesia.Repo.save(%World{}).id != nil
-    assert Mnesia.Repo.save(%World{}).created_at != nil
-  end
-
   describe "World.dec_health_points/1" do
     setup do
       world = build(:world)
