@@ -52,9 +52,9 @@ exports.config = {
   // Configure your plugins
   plugins: {
     sass: {
-      mode: 'native',
+      mode: 'ruby',
       allowCache: true,
-      sourceMapEmbeded: true
+      sourceMapEmbeded: true,
     },
     babel: {
       presets: ['es2015', 'es2016'],
