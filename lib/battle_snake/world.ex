@@ -54,29 +54,6 @@ defmodule BattleSnake.World do
          :deaths]
 
 
-  def up,     do: %Point{x: 0,  y: -1}
-  def down,   do: %Point{x: 0,  y: 1}
-  def right,  do: %Point{x: 1,  y: 0}
-  def left,   do: %Point{x: -1, y: 0}
-
-  def moves do
-    [
-      up(),
-      down(),
-      left(),
-      right(),
-    ]
-  end
-
-  def convert(direction) do
-    case direction do
-      "up" -> up()
-      "down" -> down()
-      "left" -> left()
-      "right" -> right()
-    end
-  end
-
   def stock_food(world) do
     f = fn (_i, world) ->
       add_food = & [rand_unoccupied_space(world) | &1]
