@@ -92,11 +92,16 @@ defmodule BattleSnake.Move do
     put_in move.__meta__.response, response
   end
 
-  def up,     do: %Point{x: 0,  y: -1}
-  def down,   do: %Point{x: 0,  y: 1}
-  def right,  do: %Point{x: 1,  y: 0}
-  def left,   do: %Point{x: -1, y: 0}
+  @spec up() :: Point.t
+  def up, do: %Point{x: 0, y: -1}
+  @spec down() :: Point.t
+  def down, do: %Point{x: 0, y: 1}
+  @spec right() :: Point.t
+  def right, do: %Point{x: 1, y: 0}
+  @spec left() :: Point.t
+  def left, do: %Point{x: -1, y: 0}
 
+  @spec moves() :: [Point.t]
   def moves do
     [
       up(),
@@ -106,9 +111,11 @@ defmodule BattleSnake.Move do
     ]
   end
 
+  @spec to_point(t) :: Point.t
   def to_point(%Move{move: move}),
     do: to_point(move)
 
+  @spec to_point(binary) :: Point.t
   def to_point(move) when is_binary(move) do
     case move do
       "up" -> up()
