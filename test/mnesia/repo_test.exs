@@ -3,6 +3,7 @@ defmodule Mnesia.RepoTest.DummyStruct do
   defstruct [:id, :x, :y]
 
   def fields, do: [:id, :x, :y]
+  def table_name, do: __MODULE__
 end
 
 defmodule Mnesia.RepoTest.DummyModel do
@@ -12,6 +13,8 @@ defmodule Mnesia.RepoTest.DummyModel do
     field :x, :integer, default: 0
     field :y, :integer, default: 0
   end
+
+  def table_name, do: __MODULE__
 end
 
 defmodule Mnesia.RepoTest do

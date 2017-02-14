@@ -223,6 +223,8 @@ defmodule BattleSnake.World do
     Stream.iterate(0, &(&1+1))
     |> Stream.take(n)
   end
+
+  def table_name, do: __MODULE__
 end
 
 defimpl Poison.Encoder, for: BattleSnake.World do

@@ -13,6 +13,7 @@ defmodule BattleSnake.GameForm do
   }
 
   use BattleSnake.Web, :model
+  use Mnesia.Repo
 
   @permitted [:height, :width, :delay, :max_food, :game_mode]
   @singleplayer "singleplayer"
@@ -129,6 +130,8 @@ defmodule BattleSnake.GameForm do
       world: world,
     }
   end
+
+  def table_name, do: __MODULE__
 end
 
 defimpl Poison.Encoder, for: BattleSnake.GameForm do

@@ -109,10 +109,6 @@ defmodule Mnesia.Repo do
       @primary_key {:id, :id, autogenerate: true}
       @timestamps {:created_at, :updated_at}
 
-      def table_name() do
-        __MODULE__
-      end
-
       def timestamps() do
         @timestamps
       end
@@ -201,7 +197,7 @@ defmodule Mnesia.Repo do
 
       defp put_timestamp(_), do: System.monotonic_time()
 
-      defoverridable [fields: 0, table_name: 0]
+      defoverridable [fields: 0]
     end
   end
 end
