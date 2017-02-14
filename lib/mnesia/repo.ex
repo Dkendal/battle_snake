@@ -127,10 +127,6 @@ defmodule Mnesia.Repo do
         Mnesia.Repo.all(__MODULE__)
       end
 
-      def last do
-        load(:mnesia.last(table_name()))
-      end
-
       def get(id) do
         read = fn ->
           :mnesia.read(table_name(), id)
