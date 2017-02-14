@@ -16,6 +16,7 @@ defmodule BattleSnake.Api.Response do
   """
 
   defstruct [
+    :url,
     raw_response: {:error, :init},
     parsed_response: {:error, :init}
   ]
