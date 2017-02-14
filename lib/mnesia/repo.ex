@@ -22,10 +22,6 @@ defmodule Mnesia.Repo do
   def save(struct) do
     module = struct.__struct__
 
-    struct = if module.should_generate_primary_key?(struct),
-      do: module.generate_primary_key(struct),
-      else: struct
-
     {created_at, updated_at} = module.timestamps()
 
     struct = if Map.has_key?(struct, created_at) do
@@ -49,11 +45,7 @@ defmodule Mnesia.Repo do
     struct
   end
 
-  def reload(struct) do
-    struct
-    |> struct.__struct__.get_primary_key
-    |> struct.__struct__.get
-  end
+  def dirty_read(tab, id), do: dirty_find(tab, id)
 
   def dirty_find!(tab, id) do
     case dirty_find(tab, id) do
@@ -155,29 +147,6 @@ defmodule Mnesia.Repo do
       @spec create_table(Keyword.t) :: {:atomic, :ok} | {:aborted, any}
       def create_table(opts \\ []) do
         :mnesia.create_table(table_name(), opts ++ table())
-      end
-
-      def get_primary_key(struct) do
-        Map.fetch!(struct, primary_key_field())
-      end
-
-      defp primary_key_field() do
-        {field, _, _} = @primary_key
-        field
-      end
-
-      defp primary_key_opts() do
-        {_, _, opts} = @primary_key
-        opts
-      end
-
-      def generate_primary_key(%{__struct__: __MODULE__} = struct) do
-        Map.put(struct, primary_key_field(), Ecto.UUID.generate())
-      end
-
-      def should_generate_primary_key?(%{__struct__: __MODULE__} = struct) do
-        get_primary_key(struct) == nil and
-        {:ok, true} == Keyword.fetch(primary_key_opts(), :autogenerate)
       end
 
       defoverridable [fields: 0]

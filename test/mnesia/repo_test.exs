@@ -27,10 +27,6 @@ defmodule Mnesia.RepoTest do
   @record {@described_module, 0, 1, 2}
 
   describe "Mnesia.Repo.save/1" do
-    test "sets the id" do
-      result = Mnesia.Repo.save(%DummyModel{id: nil, x: 1, y: 2})
-      assert result.id =~ ~r/(\w+-?)/
-    end
   end
 
   describe "Mnesia.Repo.fields/0" do
@@ -77,29 +73,6 @@ defmodule Mnesia.RepoTest do
     test "writes the record to mnesia" do
       assert @model == Mnesia.Repo.save(@model)
       assert 1 == :mnesia.table_info(@described_module, :size)
-    end
-
-    test "adds an id if the @primary_key is nil" do
-      id = Mnesia.Repo.save(%{@model| id: nil}).id
-      assert id != nil
-    end
-  end
-
-  describe "Mnesia.Repo.reload/1" do
-    setup [:create_table, :delete_table, :reload]
-
-    def reload _ do
-      record = %DummyModel{id: 1, x: "old"}
-      record = Mnesia.Repo.save(record)
-      Mnesia.Repo.save(%{record| x: "new"})
-      record = Mnesia.Repo.reload(record)
-      [record: record]
-    end
-
-    test "returns an updated version of the record", %{record: record} do
-      assert {:ok, record} = record
-      assert record.id == 1
-      assert record.x == "new"
     end
   end
 
