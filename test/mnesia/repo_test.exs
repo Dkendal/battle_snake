@@ -137,7 +137,7 @@ defmodule Mnesia.RepoTest do
 
   def delete_table(context \\ %{}) do
     on_exit fn ->
-      {:atomic, :ok} = @described_module.delete_table()
+      {:atomic, _} = :mnesia.delete_table(@described_module)
     end
     context
   end
