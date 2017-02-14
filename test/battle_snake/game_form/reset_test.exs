@@ -101,7 +101,7 @@ defmodule BattleSnake.GameForm.ResetTest do
       create(:world, game_form_id: 2)
       game_form = create(:game_form, id: 1)
       Reset.erase_replay(game_form)
-      assert :mnesia.table_info(BattleSnake.World.table_name(), :size) == 1
+      assert :mnesia.table_info(BattleSnake.World, :size) == 1
     end
   end
 

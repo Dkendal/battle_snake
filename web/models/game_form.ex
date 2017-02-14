@@ -130,8 +130,6 @@ defmodule BattleSnake.GameForm do
       world: world,
     }
   end
-
-  def table_name, do: __MODULE__
 end
 
 defimpl Poison.Encoder, for: BattleSnake.GameForm do
