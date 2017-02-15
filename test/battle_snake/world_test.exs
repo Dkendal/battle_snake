@@ -6,7 +6,8 @@ defmodule BattleSnake.WorldTest do
   }
   use BattleSnake.Case, async: true
   use Property
-  use BattleSnake.Point
+  use Point
+  import Point
 
   setup context do
     world = %World{
@@ -107,17 +108,33 @@ defmodule BattleSnake.WorldTest do
     end
   end
 
-  describe "#clean_up_dead" do
-    test "removes any snakes that die in head to heads", %{world: world} do
-      snake = %Snake{coords: [%Point{y: 5, x: 5}]}
-
-      world = put_in world.snakes, [snake, snake]
+  describe "World.clean_up_dead/1 head to head collision" do
+    test "kills same length snakes" do
+      big_snake = (build :snake, id: :big, coords: line(p(0,0), p(0, 1), 3))
+      small_snake = (build :snake, id: :small, coords: line(p(0,0), p(1, 0), 3))
+      world = build(:world, width: 100, height: 100, snakes: [big_snake, small_snake])
 
       world = World.clean_up_dead(world)
+
       assert world.snakes == []
-      assert world.dead_snakes == [snake, snake]
+      assert small_snake in world.dead_snakes
+      assert big_snake in world.dead_snakes
+      assert 2 == length world.dead_snakes
     end
 
+    test "kills the smaller snake" do
+      big_snake = (build :snake, id: :big, coords: line(p(0,0), p(0, 1), 10))
+      small_snake = (build :snake, id: :small, coords: line(p(0,0), p(1, 0), 3))
+      world = build(:world, width: 100, height: 100, snakes: [big_snake, small_snake])
+
+      world = World.clean_up_dead(world)
+
+      assert world.snakes == [big_snake]
+      assert world.dead_snakes == [small_snake]
+    end
+  end
+
+  describe "World.clean_up_dead/1" do
     test "removes snakes that died in body collisions", %{world: world} do
       snake = %Snake{coords: [%Point{y: 5, x: 5}, %Point{y: 5, x: 5}]}
       world = put_in world.snakes, [snake]
