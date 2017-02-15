@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Skin!</title>
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
+  </head>
+
+  <body>
+    <script>
+      window.BattleSnake = <%= raw battle_snake_js_object(assigns) %>; 
+    </script>
+    <script src="<%= static_path(@conn, "/js/skin.js") %>"></script>
+    <script>
+      console.log("Skin!");
+    </script>
+
+    <script src="<%= static_path(@conn, "/js/vendor.js") %>"></script>
+    <style>
+     body {
+         margin: 0px;
+         overflow: hidden;
+         background: #333333;
+     }
+     
+     #snake-board {
+         position: absolute;
+         top: 0px;
+         left: 0px;
+         bottom: 0px;
+         right: 310px;
+     }
+
+     #snake-info-list {
+         position: absolute; 
+         top: 10px;
+         width: 300px;
+         right: 10px;
+         bottom: 10px;
+         z-index: 99;
+     }
+
+     .snake-info {
+         position: absolute;
+         border: 5px solid blue;
+         border-radius: 15px;
+         margin-bottom: 10px;
+         padding: 5px;
+         background: white;
+         box-shadow: 6px 6px 6px rgba(0, 0, 0, .5);
+         width: 300px;
+         right: 10px;
+         top: 10px;
+     }
+
+     #snake-info-template {
+         display: none;
+     }
+     
+     .snake-info-right {
+         margin-left: 10px;
+         width: 85%;
+     }
+     
+     .snake-info-health-border {
+         height: 10px;
+         background-color: white;
+         border: 1px solid black;
+         left: 0px;
+         right: 0px;
+     }
+
+     .snake-info-health {
+         height: 10px;
+         background-color: green;
+         left: 0px;
+     }
+     
+     .snake-info-name {
+         font-weight: bold;
+     }
+
+     .snake-info-taunt {
+         overflow: hidden;
+         height: 20px;
+     }
+     
+     .snake-info-img {
+         width: 64px;
+         height: 64px;
+     }
+
+    </style>
+  </head>
+  
+  <body>
+    <div id="snake-board"></div>
+
+    <div id="snake-info-list"></div>
+    
+    <!-- snake-info-block-template -->
+    <div class="snake-info" id="snake-info-template" v-bind:style="{'border-color': color}">
+      <table width="100%" cellspacing="0" cellpadding="0">
+        <tr>
+          <td valign="top"><img class="snake-info-img" v-bind:src="img"/></td>
+          <td valign="top" width="100%">
+            <div class="snake-info-right">
+              <div class="snake-info-name">{{name}}</div>
+              <div class="snake-info-health-border"> 
+               <div class="snake-info-health" v-bind:style="{width: health + '%', 'background': color}"></div>
+              </div>
+              <div class="snake-info-turns-killed" v-bind:style="{visibility: turns ? 'visible' : 'hidden'}">
+                Turns: <span class="snake-info-turns">{{turns}}</span>
+                <span class="snake-info-killed">{{killed}}</span>
+              </div>
+              <div class="snake-info-taunt">{{taunt}}</div>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+  </body>
+</html>
+
