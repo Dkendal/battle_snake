@@ -195,6 +195,7 @@ defmodule BattleSnake.WorldTest do
         [0, 1]
       ],
       "you" => "1",
+      "dead_snakes" => [],
       "snakes" => [
         %{
           "id" => "1",
@@ -265,6 +266,7 @@ defmodule BattleSnake.WorldTest do
       "food" => [
         [0, 1]
       ],
+      "dead_snakes" => [],
       "snakes" => [
         %{
           "id" => "1",

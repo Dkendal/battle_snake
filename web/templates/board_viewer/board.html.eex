@@ -2,6 +2,7 @@
 <% width = world.width %>
 <% height = world.height %>
 <% snakes = snakes(world) %>
+<% dead_snakes = dead_snakes(world) %>
 
 <% factor = 0.8 %>
 <% center = 0.5 %>
@@ -79,6 +80,35 @@
             height: 100,
             width: snake.health_points) %>
       </svg>
+    </div>
+  <% end %>
+
+  <%= for snake <- dead_snakes do %>
+    <div class="scoreboard-dead-snake">
+      <div class="scoreboard-snake-name"><%= snake.name %></div>
+      <div class="scoreboard-healthbar">
+        <div class="scoreboard-taunt"><%= snake.taunt %></div>
+        <svg class="scoreboard-healthpoints"
+             preserveAspectRatio="none"
+             viewBox="0 0 100 100">
+          <%= content_tag(:rect,
+              "",
+              fill: snake.color,
+              x: 0,
+              y: 0,
+              height: 100,
+              width: 100,
+              class: "scoreboard-healthpoints-shadow") %>
+
+          <%= content_tag(:rect,
+              "",
+              fill: snake.color,
+              x: 0,
+              y: 0,
+              height: 100,
+              width: snake.health_points) %>
+        </svg>
+      </div>
     </div>
   <% end %>
 </div>
