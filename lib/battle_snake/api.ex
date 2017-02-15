@@ -12,9 +12,6 @@ defmodule BattleSnake.Api do
 
   require Logger
 
-  # @load_whitelist ~w(color head_url name taunt)a
-  # @move_whitelist ~w(move taunt)a
-
   @callback load(%SnakeForm{}, %GameForm{}) :: Response.t
   @callback move(%Snake{}, %World{}) :: Response.t
 
