@@ -16,10 +16,12 @@ defmodule BattleSnake.Snake do
     taunt: String.t,
     url: String.t,
     health: health,
+    cause_of_death: binary,
   }
 
   defstruct [
     :id,
+    :cause_of_death,
     color: "",
     coords: [],
     head_url: "",
