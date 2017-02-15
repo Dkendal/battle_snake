@@ -1,13 +1,15 @@
-/* This file is for your main application css. */
-
-@import "variables";
+@import "fonts";
+@import "bourbon/bourbon";
+@import "base/base";
+@import "neat/neat";
 @import "game-board";
 
 html,
 body,
 main {
+    font-family: 'Montserrat', sans-serif;
     height: 100%;
     padding: 0;
     margin: 0;
-    background-color: $bg-background-color;
+    background-color: $base-background-color;
 }
