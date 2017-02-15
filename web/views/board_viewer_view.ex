@@ -4,6 +4,10 @@ defmodule BattleSnake.BoardViewerView do
   @snake_stroke_width 0.03
   @food_r 0.25
 
+  def snakes(world) do
+    Enum.sort_by(world.snakes, &(&1.name), &<=/2)
+  end
+
   def snake_obj(point, snake, index) do
     fill_opacity = (1 - index / length(snake.coords) + 0.3)
 
