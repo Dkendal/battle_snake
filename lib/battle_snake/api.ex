@@ -27,7 +27,24 @@ defmodule BattleSnake.Api do
   @spec load(%SnakeForm{}, %GameForm{}) :: Response.t
   def load(%{url: url}, data, request \\ &HTTP.post/4) do
     request_url = url <> "/start"
-    api_response = response(request_url, request, data)
+
+    api_response = request_url
+    |> request.(data, [], [])
+    |> Response.new(as: %{})
+
+    api_response = put_in(api_response.url, url)
+
+    update_in(api_response.parsed_response, fn
+      {:ok, map} ->
+      (
+        {:ok, map}
+      )
+      error ->
+      (
+        log_error(url, error, api_response)
+        error
+      )
+    end)
 
     update_in(api_response.parsed_response, fn
       {:ok, snake} ->
@@ -91,8 +108,27 @@ defmodule BattleSnake.Api do
   @spec move(%Snake{}, %World{}) :: Response.t
   def move(%{url: url, id: id}, world, request \\ &HTTP.post/4) do
     data = Poison.encode!(world, me: id)
-    (url <> "/move")
-    |> response(request, data)
+    url = (url <> "/move")
+
+    api_response = url
+    |> request.(data, [], [])
+    |> Response.new(as: %{})
+
+    api_response = put_in(api_response.url, url)
+
+    update_in(api_response.parsed_response, fn
+      {:ok, map} ->
+      (
+        {:ok, map}
+      )
+      error ->
+      (
+        log_error(url, error, api_response)
+        error
+      )
+    end)
+
+    api_response
     |> do_move
     |> do_log
   end
@@ -120,26 +156,6 @@ defmodule BattleSnake.Api do
     else
       {:error, changeset}
     end
-  end
-
-  defp response(url, request, data) do
-    api_response = url
-    |> request.(data, [], [])
-    |> Response.new(as: %{})
-
-    api_response = put_in(api_response.url, url)
-
-    update_in(api_response.parsed_response, fn
-      {:ok, map} ->
-      (
-        {:ok, map}
-      )
-      error ->
-      (
-        log_error(url, error, api_response)
-        error
-      )
-    end)
   end
 
   defp log_error(url, error, api_response) do
