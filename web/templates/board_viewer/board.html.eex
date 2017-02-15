@@ -3,27 +3,21 @@
 <% height = world.height %>
 <% snakes = snakes(world) %>
 
+<% factor = 0.8 %>
+<% center = 0.5 %>
+<% trans = -center * (factor - 1 )%>
+
 <%= content_tag(:svg,
     viewBox: "0 0 #{width} #{height}",
     class: "game-board") do %>
 
-  <%= for y <- (0..height) do %>
-    <%= content_tag(:line, "",
-        y1: y,
-        y2: y,
-        x1: 0,
-        x2: height,
-        class: "game-board-divider") %>
-  <% end %>
+  <defs>
+    <pattern id="GameBoardPattern" x="0" y="0" width="1" height="1" patternUnits="userSpaceOnUse">
+      <%= board_tile(class: "game-board-tile") %>
+    </pattern>
+  </defs>
 
-  <%= for x <- (0..width) do %>
-    <%= content_tag(:line, "",
-        x1: x,
-        x2: x,
-        y1: 0,
-        y2: height,
-        class: "game-board-divider") %>
-  <% end %>
+  <%= content_tag :rect, "", x: 0, y: 0, width: width, height: height, fill: "url(#GameBoardPattern)" %>
 
   <%= content_tag(:rect, "",
       y: 0,
