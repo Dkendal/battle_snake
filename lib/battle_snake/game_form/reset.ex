@@ -121,9 +121,8 @@ defmodule BattleSnake.GameForm.Reset do
 
   @spec new_coords(World.t) :: World.t
   def new_coords(world) do
-    world
-    |> World.rand_unoccupied_space()
-    |> List.duplicate(@new_snake_length)
+    {:ok, point} = World.rand_unoccupied_space(world)
+    List.duplicate(point, @new_snake_length)
   end
 
   @spec set_url(Snake.t, SnakeForm.t) :: Snake.t

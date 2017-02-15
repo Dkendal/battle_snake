@@ -44,7 +44,7 @@ defmodule BattleSnake.Factory do
   end
 
   def with_snake_in_world(snake: snake, world: world, length: length) do
-    point = BattleSnake.World.rand_unoccupied_space(world)
+    {:ok, point} = BattleSnake.World.rand_unoccupied_space(world)
     snake = put_in(snake.coords, List.duplicate(point, length))
     world = update_in(world.snakes, & [snake|&1])
     [snake: snake, world: world]
