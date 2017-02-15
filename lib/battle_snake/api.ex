@@ -4,16 +4,12 @@ defmodule BattleSnake.Api do
   alias BattleSnake.{
     Api.Response,
     GameForm,
-    HTTP,
     Move,
     Snake,
     SnakeForm,
     World}
 
   require Logger
-
-  # @load_whitelist ~w(color head_url name taunt)a
-  # @move_whitelist ~w(move taunt)a
 
   @callback load(%SnakeForm{}, %GameForm{}) :: Response.t
   @callback move(%Snake{}, %World{}) :: Response.t
@@ -25,11 +21,29 @@ defmodule BattleSnake.Api do
   POST /start
   """
   @spec load(%SnakeForm{}, %GameForm{}) :: Response.t
-  def load(%{url: url}, data, request \\ &HTTP.post/4) do
+  def load(%{url: url}, data, request \\ &HTTPoison.post/4) do
     request_url = url <> "/start"
-    api_response = response(request_url, request, data)
+    data = Poison.encode!(data)
 
-    update_in(api_response.parsed_response, fn
+    response = request_url
+    |> request.(data, ["content-type": "application/json"], [])
+    |> Response.new(as: %{})
+
+    response = put_in(response.url, url)
+
+    update_in(response.parsed_response, fn
+      {:ok, map} ->
+      (
+        {:ok, map}
+      )
+      error ->
+      (
+        log_error(url, error, response)
+        error
+      )
+    end)
+
+    response = update_in(response.parsed_response, fn
       {:ok, snake} ->
       (
         snake = put_in(snake["url"], url)
@@ -37,12 +51,19 @@ defmodule BattleSnake.Api do
       )
       error ->
       (
-        log_error(request_url, error, api_response)
+        log_error(request_url, error, response)
         error
       )
     end)
-    |> do_load
-    |> do_log
+
+    response = update_in response.parsed_response, fn
+      {:ok, map} ->
+        cast_load(map)
+      response ->
+        response
+    end
+
+    do_log(response)
   end
 
   def do_log(response) do
@@ -53,15 +74,6 @@ defmodule BattleSnake.Api do
       do: Logger.debug("[#{response.url}] #{inspect(e)}")
 
     response
-  end
-
-  def do_load(response) do
-    update_in response.parsed_response, fn
-      {:ok, map} ->
-        cast_load(map)
-      response ->
-        response
-    end
   end
 
   def cast_load(map) do
@@ -89,21 +101,36 @@ defmodule BattleSnake.Api do
   POST /move
   """
   @spec move(%Snake{}, %World{}) :: Response.t
-  def move(%{url: url, id: id}, world, request \\ &HTTP.post/4) do
+  def move(%{url: url, id: id}, world, request \\ &HTTPoison.post/4) do
     data = Poison.encode!(world, me: id)
-    (url <> "/move")
-    |> response(request, data)
-    |> do_move
-    |> do_log
-  end
+    url = (url <> "/move")
 
-  def do_move(response) do
-    update_in response.parsed_response, fn
+    response = url
+    |> request.(data, ["content-type": "application/json"], [])
+    |> Response.new(as: %{})
+
+    response = put_in(response.url, url)
+
+    update_in(response.parsed_response, fn
+      {:ok, map} ->
+      (
+        {:ok, map}
+      )
+      error ->
+      (
+        log_error(url, error, response)
+        error
+      )
+    end)
+
+    response = update_in response.parsed_response, fn
       {:ok, map} ->
         cast_move(map)
       response ->
         response
     end
+
+    do_log(response)
   end
 
   def cast_move(map) do
@@ -122,28 +149,8 @@ defmodule BattleSnake.Api do
     end
   end
 
-  defp response(url, request, data) do
-    api_response = url
-    |> request.(data, [], [])
-    |> Response.new(as: %{})
-
-    api_response = put_in(api_response.url, url)
-
-    update_in(api_response.parsed_response, fn
-      {:ok, map} ->
-      (
-        {:ok, map}
-      )
-      error ->
-      (
-        log_error(url, error, api_response)
-        error
-      )
-    end)
-  end
-
-  defp log_error(url, error, api_response) do
-    http_response = inspect(api_response.raw_response, color: false, pretty: true)
+  defp log_error(url, error, response) do
+    http_response = inspect(response.raw_response, color: false, pretty: true)
     ("""
     Could not process API response for #{url}:
 

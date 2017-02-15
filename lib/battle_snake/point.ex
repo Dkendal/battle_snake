@@ -31,6 +31,11 @@ defmodule BattleSnake.Point do
       x: a.x + b.x,
     }
   end
+
+  def line(from, dir, length) do
+    Stream.iterate(from, &add(&1, dir))
+    |> Enum.take(length)
+  end
 end
 
 defimpl Poison.Encoder, for: BattleSnake.Point do
