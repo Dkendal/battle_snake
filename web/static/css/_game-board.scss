@@ -1,10 +1,12 @@
-.game-board {
+.play-show {
+    @include outer-container;
     height: 100%;
+}
 
-    &-container {
-        display: flex;
-        height: 100%;
-    }
+.game-board {
+    @include span-columns(9);
+
+    height: 100%;
 
     &-table-top {
         stroke: $game-board-stroke-color;
@@ -29,6 +31,8 @@
 }
 
 .scoreboard {
+    @include span-columns(3);
+
     &-flag {
         fill: $scoreboard-flag-color;
     }
