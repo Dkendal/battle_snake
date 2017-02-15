@@ -106,6 +106,10 @@ defmodule BattleSnake.World do
     end
   end
 
+  @doc """
+  Move any snakes from .snakes that died this turn into .dead_snakes.
+  """
+  @spec clean_up_dead(t) :: t
   def clean_up_dead world do
     snakes = world.snakes
 
