@@ -1,24 +1,20 @@
-@import 'variables';
+$mobile: new-breakpoint(max-width 480px);
+
+.play-show {
+    @include outer-container;
+}
 
 .game-board {
-    flex: 1;
-
-    &-container {
-        display: flex;
-        height: 100%;
+    height: 100%;
+    @include span-columns(9);
+    @include media($mobile) {
+        @include span-columns(12);
     }
-
+    &-tile {
+        fill: $secondary-background-color;
+    }
     &-table-top {
-        stroke: $game-board-stroke-color;
-        stroke-width: $game-board-stroke-width;
         fill: transparent;
-    }
-
-    &-divider {
-        stroke: $game-board-divider-stroke;
-        stroke-width: $game-board-divider-stroke-width;
-        stroke-dasharray: $game-board-divider-stroke-length (1 - $game-board-divider-stroke-length);
-        stroke-dashoffset: ($game-board-divider-stroke-length / 2)
     }
 }
 
@@ -28,4 +24,41 @@
 
 .obj-snake {
     stroke-width: $obj-snake-stroke-width;
+}
+
+.scoreboard {
+    @include span-columns(3);
+
+    @include media($mobile) {
+        @include span-columns(12);
+    }
+    &-game-info-wrapper {
+        position: relative;
+    }
+    &-game-info {
+        position: absolute;
+        color: $scoreboard-font-color;
+    }
+    &-flag {
+        height: 4em;
+        width: 100%;
+        fill: $scoreboard-flag-color;
+    }
+    &-healthbar {
+        position: relative;
+    }
+    &-taunt {
+        position: absolute;
+        color: $scoreboard-font-color;
+    }
+    &-snake-name {
+        color: $scoreboard-font-color;
+    }
+    &-healthpoints {
+        height: $healthbar-height;
+        width: 100%;
+    }
+    &-healthpoints-shadow {
+        opacity: $healthbar-opacity;
+    }
 }

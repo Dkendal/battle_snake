@@ -25,6 +25,7 @@ defmodule BattleSnake.WorldMovement do
     update_in(world.snakes, fn snakes ->
       for snake <- snakes do
         move = moves[snake.id]
+        snake = put_in(snake.taunt, move.taunt)
         point = Move.to_point(move)
         Snake.move(snake, point)
       end

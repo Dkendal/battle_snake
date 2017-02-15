@@ -52,6 +52,7 @@ defmodule BattleSnake.WorldMovementTest do
         %Snake{
           id: 1,
           name: "green-snake",
+          taunt: nil,
           coords: [%Point{x: 0, y: -1}]}])
     end
   end
