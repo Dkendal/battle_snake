@@ -42,6 +42,8 @@
 <% end %>
 
 <div class="scoreboard">
+  <%= img_tag "/images/bs-logo-light.svg", class: "scoreboard-logo" %>
+
   <%= for snake <- snakes do %>
     <div class="scoreboard-snake-name"><%= snake.name %></div>
     <div class="scoreboard-healthbar">
