@@ -1,7 +1,7 @@
 <% world = @state.world %>
 <% width = world.width %>
 <% height = world.height %>
-<% snakes = world.snakes %>
+<% snakes = snakes(world) %>
 
 <%= content_tag(:svg,
     viewBox: "0 0 #{width} #{height}",
