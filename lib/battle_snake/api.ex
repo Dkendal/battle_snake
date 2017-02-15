@@ -27,6 +27,7 @@ defmodule BattleSnake.Api do
   @spec load(%SnakeForm{}, %GameForm{}) :: Response.t
   def load(%{url: url}, data, request \\ &HTTP.post/4) do
     request_url = url <> "/start"
+    data = Poison.encode!(data)
 
     api_response = request_url
     |> request.(data, [], [])
@@ -61,6 +62,7 @@ defmodule BattleSnake.Api do
     |> do_load
     |> do_log
   end
+
 
   def do_log(response) do
     with {:error, e} <- response.raw_response,
