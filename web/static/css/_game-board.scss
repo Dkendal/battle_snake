@@ -5,20 +5,19 @@ $mobile: new-breakpoint(max-width 480px);
 }
 
 .game-board {
+    height: 100%;
     @include span-columns(9);
-
     @include media($mobile) {
         @include span-columns(12);
     }
-
-    height: 100%;
-
+    &-tile {
+        fill: $secondary-background-color;
+    }
     &-table-top {
         stroke: $game-board-stroke-color;
         stroke-width: $game-board-stroke-width;
         fill: transparent;
     }
-
     &-divider {
         stroke: $game-board-divider-stroke;
         stroke-width: $game-board-divider-stroke-width;
