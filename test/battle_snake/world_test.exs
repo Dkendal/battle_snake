@@ -80,6 +80,11 @@ defmodule BattleSnake.WorldTest do
           point.y in World.rows(w))
       end
     end
+
+    test "returns an error if there is no space" do
+      world = build(:world, width: 1, height: 1, food: [p(0, 0)])
+      assert {:error, :empty_error} == World.rand_unoccupied_space(world)
+    end
   end
 
   describe "World.stock_food/1" do
@@ -89,7 +94,7 @@ defmodule BattleSnake.WorldTest do
     end
 
     test "does nothing if there is no space" do
-      world = build(:world, width: 1, height: 1)
+      world = build(:world, width: 1, height: 1, food: [p(0, 0)])
       assert World.stock_food(world) == world
     end
 

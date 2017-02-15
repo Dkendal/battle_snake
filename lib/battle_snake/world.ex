@@ -57,8 +57,10 @@ defmodule BattleSnake.World do
   def stock_food(world) do
     f = fn (_i, world) ->
       update_in(world.food, fn food ->
-        {:ok, point} = rand_unoccupied_space(world)
-        [point | food]
+        case rand_unoccupied_space(world) do
+          {:ok, point} -> [point | food]
+          _ -> food
+        end
       end)
     end
 
@@ -69,9 +71,12 @@ defmodule BattleSnake.World do
   end
 
   @spec rand_unoccupied_space(t) :: {:ok, Point.t} | {:error, any}
-  def rand_unoccupied_space(world) do
-    h = world.height - 1
-    w = world.width - 1
+  def rand_unoccupied_space(%{width: w, height: h} = world)
+  when w > 0
+  and h > 0 do
+    h = max(world.height - 1, 0)
+    w = max(world.width - 1, 0)
+
     snakes = Enum.flat_map world.snakes, & &1.coords
     food = world.food
 
@@ -80,7 +85,11 @@ defmodule BattleSnake.World do
       not %Point{y: y, x: x} in food,
       do: %Point{y: y, x: x}
 
-    {:ok, Enum.random(open_spaces)}
+    if 0 == length(open_spaces) do
+      {:error, :empty_error}
+    else
+      {:ok, Enum.random(open_spaces)}
+    end
   end
 
   @doc "increase world.turn by 1"
