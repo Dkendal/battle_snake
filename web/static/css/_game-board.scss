@@ -29,6 +29,9 @@
 }
 
 .scoreboard {
+    &-flag {
+        fill: $scoreboard-flag-color;
+    }
     &-healthbar {
         position: relative;
     }
