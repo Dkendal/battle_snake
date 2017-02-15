@@ -1,10 +1,15 @@
+$mobile: new-breakpoint(max-width 480px);
+
 .play-show {
     @include outer-container;
-    height: 100%;
 }
 
 .game-board {
     @include span-columns(9);
+
+    @include media($mobile) {
+        @include span-columns(12);
+    }
 
     height: 100%;
 
@@ -32,6 +37,10 @@
 
 .scoreboard {
     @include span-columns(3);
+
+    @include media($mobile) {
+        @include span-columns(12);
+    }
 
     &-flag {
         fill: $scoreboard-flag-color;
