@@ -29,9 +29,11 @@
 }
 
 .scoreboard {
+    &-healthbar {
+        position: relative;
+    }
     &-taunt {
         position: absolute;
-        top: $healthbar-height;
         color: $scoreboard-font-color;
     }
     &-snake-name {
