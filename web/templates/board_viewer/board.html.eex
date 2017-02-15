@@ -43,15 +43,12 @@
 
 <div class="scoreboard">
   <%= for snake <- snakes do %>
-    <div class="scoreboard-snake">
-      <div class="scoreboard-snake-name">
-        <%= snake.name %>
-      </div>
-      <div>
-        <%= snake.taunt %>
-      </div>
-
-      <svg class="scoreboard-snake-healthpoints" preserveAspectRatio="none" viewBox="0 0 100 100">
+    <div class="scoreboard-snake-name"><%= snake.name %></div>
+    <div class="scoreboard-healthbar">
+      <div class="scoreboard-taunt"><%= snake.taunt %></div>
+      <svg class="scoreboard-healthpoints"
+           preserveAspectRatio="none"
+           viewBox="0 0 100 100">
         <%= content_tag(:rect,
             "",
             fill: snake.color,
@@ -59,7 +56,7 @@
             y: 0,
             height: 100,
             width: 100,
-            class: "scoreboard-snake-healthpoints-shadow") %>
+            class: "scoreboard-healthpoints-shadow") %>
 
         <%= content_tag(:rect,
             "",

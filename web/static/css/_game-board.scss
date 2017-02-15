@@ -28,13 +28,20 @@
     stroke-width: $obj-snake-stroke-width;
 }
 
-.scoreboard-snake {
+.scoreboard {
+    &-taunt {
+        position: absolute;
+        top: $healthbar-height;
+        color: $scoreboard-font-color;
+    }
+    &-snake-name {
+        color: $scoreboard-font-color;
+    }
     &-healthpoints {
-        height: 1.3em;
+        height: $healthbar-height;
         width: 100%;
     }
-
     &-healthpoints-shadow {
-        opacity: 0.2;
+        opacity: $healthbar-opacity;
     }
 }
