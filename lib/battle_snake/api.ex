@@ -25,12 +25,12 @@ defmodule BattleSnake.Api do
   POST /start
   """
   @spec load(%SnakeForm{}, %GameForm{}) :: Response.t
-  def load(%{url: url}, data, request \\ &HTTP.post/4) do
+  def load(%{url: url}, data, request \\ &HTTPoison.post/4) do
     request_url = url <> "/start"
     data = Poison.encode!(data)
 
     api_response = request_url
-    |> request.(data, [], [])
+    |> request.(data, ["content-type": "application/json"], [])
     |> Response.new(as: %{})
 
     api_response = put_in(api_response.url, url)
@@ -108,12 +108,12 @@ defmodule BattleSnake.Api do
   POST /move
   """
   @spec move(%Snake{}, %World{}) :: Response.t
-  def move(%{url: url, id: id}, world, request \\ &HTTP.post/4) do
+  def move(%{url: url, id: id}, world, request \\ &HTTPoison.post/4) do
     data = Poison.encode!(world, me: id)
     url = (url <> "/move")
 
     api_response = url
-    |> request.(data, [], [])
+    |> request.(data, ["content-type": "application/json"], [])
     |> Response.new(as: %{})
 
     api_response = put_in(api_response.url, url)
