@@ -32,6 +32,9 @@ $mobile: new-breakpoint(max-width 480px);
     @include media($mobile) {
         @include span-columns(12);
     }
+    &-dead-snake {
+        opacity: $dead-snake-opacity;
+    }
     &-game-info-wrapper {
         position: relative;
     }
