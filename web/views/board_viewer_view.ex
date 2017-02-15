@@ -27,6 +27,10 @@ defmodule BattleSnake.BoardViewerView do
     -v * (factor - 1)
   end
 
+  def dead_snakes(world) do
+    Enum.sort_by(world.dead_snakes, &(&1.name), &<=/2)
+  end
+
   def snakes(world) do
     Enum.sort_by(world.snakes, &(&1.name), &<=/2)
   end

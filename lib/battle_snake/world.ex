@@ -210,6 +210,7 @@ defimpl Poison.Encoder, for: BattleSnake.World do
       :food,
       :turn,
       :snakes,
+      :dead_snakes,
       :width,
       :height,
       :game_id,
