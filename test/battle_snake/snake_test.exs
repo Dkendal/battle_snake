@@ -1,8 +1,14 @@
 defmodule BattleSnake.SnakeTest do
-  alias BattleSnake.{World, Snake, Point}
+  alias BattleSnake.{
+    World,
+    Snake,
+    Point
+  }
 
   use BattleSnake.Case, async: true
   use Property
+  use Point
+  import Point
 
   @world %World{width: 10, height: 10}
 
@@ -24,7 +30,7 @@ defmodule BattleSnake.SnakeTest do
     end)
   end
 
-  describe "#dead?" do
+  describe "Snake.dead?" do
     test "detects body collisions" do
       world = %World{width: 10, height: 10}
       coords = [
@@ -105,22 +111,13 @@ defmodule BattleSnake.SnakeTest do
       assert Snake.resolve_head_to_head(snakes) == []
     end
 
-    test "kills the smaller snakes, and grows the victor" do
-      snakes = [
-        %Snake{coords: [%Point{y: 5, x: 5}, %Point{y: 5, x: 4},]},
-        %Snake{coords: [%Point{y: 5, x: 5}, %Point{y: 4, x: 5}, %Point{y: 3, x: 5},]},
-      ]
+    test "kills smaller snakes" do
+      small_snake = build(:snake, id: :small, coords: [p(0, 0)])
+      big_snake = build(:snake, id: :big, coords: [p(0, 0), p(1, 0)])
 
-      assert(Snake.resolve_head_to_head(snakes) == [
-        %Snake{
-          coords: [
-            %Point{y: 5, x: 5},
-            %Point{y: 4, x: 5},
-            %Point{y: 3, x: 5},
-            %Point{y: 3, x: 5}
-          ]
-        }
-      ])
+      snakes = [small_snake, big_snake]
+
+      assert(Snake.resolve_head_to_head(snakes) == [big_snake])
     end
 
     test "does nothing to nonoverlapping snakes" do
