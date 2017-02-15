@@ -44,7 +44,7 @@ defmodule BattleSnake.Api do
       )
     end)
 
-    update_in(api_response.parsed_response, fn
+    api_response = update_in(api_response.parsed_response, fn
       {:ok, snake} ->
       (
         snake = put_in(snake["url"], url)
@@ -56,8 +56,15 @@ defmodule BattleSnake.Api do
         error
       )
     end)
-    |> do_load
-    |> do_log
+
+    api_response = update_in api_response.parsed_response, fn
+      {:ok, map} ->
+        cast_load(map)
+      response ->
+        response
+    end
+
+    do_log(api_response)
   end
 
 
@@ -69,15 +76,6 @@ defmodule BattleSnake.Api do
       do: Logger.debug("[#{response.url}] #{inspect(e)}")
 
     response
-  end
-
-  def do_load(response) do
-    update_in response.parsed_response, fn
-      {:ok, map} ->
-        cast_load(map)
-      response ->
-        response
-    end
   end
 
   def cast_load(map) do
@@ -127,18 +125,14 @@ defmodule BattleSnake.Api do
       )
     end)
 
-    api_response
-    |> do_move
-    |> do_log
-  end
-
-  def do_move(response) do
-    update_in response.parsed_response, fn
+    api_response = update_in api_response.parsed_response, fn
       {:ok, map} ->
         cast_move(map)
       response ->
         response
     end
+
+    do_log(api_response)
   end
 
   def cast_move(map) do
