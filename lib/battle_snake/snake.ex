@@ -116,12 +116,8 @@ defmodule BattleSnake.Snake do
              # one or more are the same size
              # all die
              nil
-           [{_, snake} | victims] ->
-             growth = victims
-             |> Enum.map(& elem(&1, 0))
-             |> Enum.sum
-             growth = round(growth / 2)
-             grow(snake, growth)
+           [{_, snake} | _] ->
+             snake
          end
     end) |> Enum.reject(& &1 == nil)
   end
