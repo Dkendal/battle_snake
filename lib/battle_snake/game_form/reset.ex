@@ -17,8 +17,6 @@ defmodule BattleSnake.GameForm.Reset do
   Responsible for loading all snakes from the game's initial configuration.
   """
 
-  defmacrop load_fun(), do: quote do: &@api.load/2
-
   @spec init_world(GameForm.t) :: GameForm.t
   def init_world(game_form) do
     put_in(game_form.world,
@@ -80,7 +78,7 @@ defmodule BattleSnake.GameForm.Reset do
   Load all snakes from game_form.snakes into game_form.world
   """
   @spec load_snakes(GameForm.t, load_fun) :: GameForm.t
-  def load_snakes(game_form, load \\ load_fun()) do
+  def load_snakes(game_form, load \\ &@api.load/2) do
     task = fn(snake_form) ->
       snake_form
       |> health_check(game_form, load)
@@ -106,7 +104,7 @@ defmodule BattleSnake.GameForm.Reset do
   Reason for being unhealthy is kept in snake.healthy = {:error, reason}
   """
   @spec health_check(SnakeForm.t, GameForm.t, load_fun) :: SnakeForm.t
-  def health_check(snake_form, game_form, load \\ load_fun()) do
+  def health_check(snake_form, game_form, load \\ &@api.load/2) do
     response = load.(snake_form, game_form)
     with({:ok, snake} <- Api.Response.val(response)) do
       Snake.Health.ok(snake)
