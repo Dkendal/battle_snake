@@ -44,22 +44,6 @@ defmodule BattleSnake.GameServerTest do
       assert_receive(%BattleSnake.GameServer.State.Event{name: event_name})
       assert event_name == :tick
     end
-
-    @tag :regression
-    @tag :integration
-    test "does not clobber the game settings", c do
-      assert c.game_form.delay == 0
-
-      {:ok, g} = Mnesia.Repo.dirty_read(BattleSnake.GameForm, c.game_form.id)
-
-      assert g.delay == 0
-
-      :ok = GameServer.resume(c.pid)
-
-      assert_receive(%BattleSnake.GameServer.State.Event{})
-
-      assert :sys.get_state(c.pid).delay == 0
-    end
   end
 
   describe "GameServer.handle_info(:tick, _)" do
