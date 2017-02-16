@@ -1,0 +1,8 @@
+1. Install Python & pip https://www.python.org/downloads/
+2. (optional but recommended)
+	a. Install virtualenvwrapper https://virtualenvwrapper.readthedocs.io/en/latest/install.html
+	b. "mkvirtualenv snake" or (python3) "mkvirtualenv --python=`which python3` snake"
+	c. "workon snake"
+3. cd to this directory (examples/flask_snake) and "pip install -r requirements.txt"
+4. Run python snake.py (python2.7) or python3 snake.py (python 3.5)
+5. Make the Snake a bit smarter!
