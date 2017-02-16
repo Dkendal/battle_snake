@@ -1,45 +1,48 @@
-# Battle Snake Server [![Build Status](https://travis-ci.org/Dkendal/battle_snake.svg?branch=v2.0.0)](https://travis-ci.org/Dkendal/battle_snake) [![Coverage Status](https://coveralls.io/repos/github/Dkendal/battle_snake/badge.svg?branch=v2.0.0)](https://coveralls.io/github/Dkendal/battle_snake?branch=v2.0.0)
+![Battle Snake](docs/bs-logo-dark.png)
 
-![it's just a prank bro](http://imgur.com/Ytvm290.jpg)
+The 2017 Game Server
 
-## Quicker Start
+* [API documentation](https://stembolthq.github.io/battle_snake/)
+* [Event Information](https://github.com/sendwithus/battlesnake)
+* [BattleSnake.io](https://www.battlesnake.io/)
+* [Stembolt](https://stembolt.com/)
+* [Tutorial Slides](https://docs.google.com/presentation/d/1iD2xZthNFaWeNfgPr6KjR8e7O80Pua9mdQje3i8782A/edit#slide=id.g1190002876_0_196)
 
-  * Install [Docker](https://docs.docker.com/engine/installation/)
-  * `docker run -d -p 4000:4000 noelbk/battle_snake_server`
-  * Connect to http://localhost:4000
+[![Build Status](https://travis-ci.org/StemboltHQ/battle_snake.svg?branch=master)](https://travis-ci.org/StemboltHQ/battle_snake) [![Coverage Status](https://coveralls.io/repos/github/StemboltHQ/battle_snake/badge.svg?branch=master)](https://coveralls.io/github/StemboltHQ/battle_snake?branch=master) [![Docker Automated build](https://img.shields.io/docker/automated/jrottenberg/ffmpeg.svg)](https://hub.docker.com/r/stembolt/battle_snake/)
 
-## Quick Start
-  * Install OTP 19 (skip if you have OTP)
-    * get [kerl](https://github.com/kerl/kerl)
-    * `kerl build 19.2 19.2`
-    * `kerl install 19.2 /opt/erlang/installs/19.2`
-    * `. /opt/erlang/installs/19.2/activate`
-  * Install Elixir v1.4 (skip if you have Elixir)
-    * get [kiex](https://github.com/taylor/kiex)
-    * `kiex install 1.4`
-    * `kiex use 1.4`
-  * `git clone git@github.com:Dkendal/battle_snake.git`
-  * `cd battle_snake`
-  * `mix do deps.get, compile, battle_snake.createdb`
-  * `npm install`
-  * Start the Phoenix endpoint with `PORT=4000 iex --sname battle_snake_dev -S mix phoenix.server`
+![Example Game Animation](docs/game.gif)
 
-  I would reccomend naming the node that you run your dev server, as running `mix test` will clobber the default Mnesia database.
+## Running With Docker
 
-## Perquisites
-  * Erlang OTP 19
-  * Elixir 1.4
+* Install [Docker](https://docs.docker.com/engine/installation/)
+* `docker run -d -p 4000:4000 stembolt/battle_snake`
+* Connect to http://localhost:4000
 
-  I suggest managing your OTP version with
-  [kerl](https://github.com/kerl/kerl) and your elixir version with
-  [kiex](https://github.com/taylor/kie://github.com/taylor/kiex)
+## Building from source
+
+### Prerequisites
+
+* [Erlang/OTP19](https://www.erlang.org/downloads)
+* [Elixir v1.4](http://elixir-lang.org/install.html)
+* [NPM](http://blog.npmjs.org/post/85484771375/how-to-install-npm)
+* [Sass](http://sass-lang.com/install)
+
+```sh
+git clone git@github.com:StemboltHQ/battle_snake.git`
+cd battle_snake
+mix setup
+./scripts/dev-server
+```
 
 ## Testing
-`mix test`
+
+```sh
+mix setup # only required the first time
+mix test
+```
 
 ## Building the docker image locally
 
-  * `docker build --rm -t battle_snake_server .`
-  * `docker run -d -p 4000:4000 battle_snake_server`
-  * Connect to http://localhost:4000
-
+* `docker build --rm -t battle_snake_server .`
+* `docker run -d -p 4000:4000 battle_snake_server`
+* Connect to http://localhost:4000
