@@ -22,30 +22,6 @@ defmodule BattleSnake.GameServerTest do
     %{finished: finished, running: running}
   end
 
-
-  describe "integeration tests" do
-    setup do
-      game_form = create(:game_form, delay: 0, snakes: build_list(1, :snake_form))
-
-      {:atomic, pid} =
-        :mnesia.transaction(fn ->
-          {:ok, pid} = GameServer.find(game_form.id)
-          pid
-        end)
-
-      GameServer.subscribe(game_form.id)
-
-      [game_form: game_form, pid: pid]
-    end
-
-    @tag :integration
-    test "the game can be resume play", c do
-      assert :ok = GameServer.resume(c.pid)
-      assert_receive(%BattleSnake.GameServer.State.Event{name: event_name})
-      assert event_name == :tick
-    end
-  end
-
   describe "GameServer.handle_info(:tick, _)" do
     test "stops the game if the objective is met", %{finished: state} do
       assert({:noreply, %{status: :halted}} =
