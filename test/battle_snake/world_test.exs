@@ -67,10 +67,10 @@ defmodule BattleSnake.WorldTest do
     end
   end
 
-  describe "#rand_unoccupied_space" do
+  describe "World.rand_unoccupied_space/1" do
     property "in the bounds of the board, on an unoccupied space" do
       forall world(), fn w ->
-        point = World.rand_unoccupied_space(w)
+        {:ok, point} = World.rand_unoccupied_space(w)
 
         coords = Enum.flat_map w.snakes, &(&1.coords)
 
@@ -80,12 +80,22 @@ defmodule BattleSnake.WorldTest do
           point.y in World.rows(w))
       end
     end
+
+    test "returns an error if there is no space" do
+      world = build(:world, width: 1, height: 1, food: [p(0, 0)])
+      assert {:error, :empty_error} == World.rand_unoccupied_space(world)
+    end
   end
 
-  describe "#stock_food" do
+  describe "World.stock_food/1" do
     test "sets food on the board, up to a max", %{world: world} do
       world = World.stock_food(world)
       assert length(world.food) == 4
+    end
+
+    test "does nothing if there is no space" do
+      world = build(:world, width: 1, height: 1, food: [p(0, 0)])
+      assert World.stock_food(world) == world
     end
 
     test "sets no food if set to 0", %{world: world} do
