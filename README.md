@@ -10,6 +10,8 @@ The 2017 Game Server
 
 [![Build Status](https://travis-ci.org/StemboltHQ/battle_snake.svg?branch=master)](https://travis-ci.org/StemboltHQ/battle_snake) [![Coverage Status](https://coveralls.io/repos/github/StemboltHQ/battle_snake/badge.svg?branch=master)](https://coveralls.io/github/StemboltHQ/battle_snake?branch=master) [![Docker Automated build](https://img.shields.io/docker/automated/jrottenberg/ffmpeg.svg)](https://hub.docker.com/r/stembolt/battle_snake/)
 
+![Example Game Animation](docs/game.gif)
+
 ## Running With Docker
 
 * Install [Docker](https://docs.docker.com/engine/installation/)
