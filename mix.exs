@@ -15,6 +15,7 @@ defmodule BattleSnake.Mixfile do
      test_coverage: [tool: ExCoveralls],
      erlc_options: erlc_options(Mix.env),
      dialyzer: dialyzer(),
+     aliases: aliases(),
      deps: deps()]
   end
 
@@ -89,5 +90,27 @@ defmodule BattleSnake.Mixfile do
        "-Werror_handling",
        "-Wrace_conditions",
        "-Wunderspecs"]]
+  end
+
+  defp aliases do
+     [setup: [&check_prereqs/1, &npm_install/1, "deps.get", "compile", "battle_snake.schema", &test/1]]
+  end
+
+  defp npm_install(_) do
+    Mix.shell.cmd("npm install")
+  end
+
+  def test(_) do
+    Mix.shell.cmd("MIX_ENV=test mix test")
+  end
+
+  def check_prereqs(_) do
+    prereq("sass")
+    prereq("npm")
+  end
+
+  def prereq(cmd) do
+    if Mix.shell.cmd("command -v #{cmd} >/dev/null 2>&1") != 0,
+      do: Mix.raise("#{cmd} is required, but could not be found. Aborting.")
   end
 end
