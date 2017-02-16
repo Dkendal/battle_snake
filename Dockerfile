@@ -2,9 +2,10 @@ FROM elixir:1.4.1
 WORKDIR /app
 ADD . .
 RUN apt-get update
-RUN apt-get install -y npm nodejs nodejs-legacy inotify-tools
+RUN apt-get install -y npm nodejs nodejs-legacy inotify-tools ruby
 RUN mix local.hex --force
 RUN mix deps.get
+RUN gem install sass
 RUN npm cache clean -f; npm install -g n; n stable
 RUN npm install
 RUN mix local.rebar --force
