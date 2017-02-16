@@ -647,7 +647,7 @@ This callback should be used for all game logic.
 <tbody>
 <tr>
 <td class="text-left"><b>move</b></td>
-<td class="text-left"><b>required</b></td>
+<td class="text-left">&#xa0;</td>
 <td class="text-left">"up" &vert; "left" &vert; "down" &vert; "right"</td>
 </tr>
 
@@ -861,6 +861,58 @@ Point :: [x, y]
     <span class="org-rainbow-delimiters-depth-3">[</span><span class="org-highlight-numbers-number">0</span>, <span class="org-highlight-numbers-number">0</span><span class="org-rainbow-delimiters-depth-3">]</span>
   <span class="org-rainbow-delimiters-depth-2">]</span>
 <span class="org-rainbow-delimiters-depth-1">}</span>
+</pre>
+</div>
+
+
+<p>
+<code>coords</code> is a complete list of a snakes head and body segments. The first
+segment in <code>coords</code> is a snakes head.
+</p>
+
+<p>
+When a snake moves its' head segment will move in the direction specified,
+and all it's tail segments will advance to space ocupied by the previous
+segment
+</p>
+
+<p>
+Eating food extends your snake's tail, and restores your health points.
+</p>
+
+<p>
+For example:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-js"><span class="org-comment-delimiter">// </span><span class="org-comment">before eating food</span>
+<span class="org-rainbow-delimiters-depth-1">{</span>
+  <span class="org-string">"taunt"</span>: <span class="org-string">"git gud"</span>,
+  <span class="org-string">"name"</span>: <span class="org-string">"my-snake"</span>,
+  <span class="org-string">"id"</span>: <span class="org-string">"5b079dcd-0494-4afd-a08e-72c9a7c2d983"</span>,
+  <span class="org-string">"health_points"</span>: <span class="org-highlight-numbers-number">50</span>,
+  <span class="org-string">"coords"</span>: <span class="org-rainbow-delimiters-depth-2">[</span>
+    <span class="org-rainbow-delimiters-depth-3">[</span><span class="org-highlight-numbers-number">2</span>, <span class="org-highlight-numbers-number">0</span><span class="org-rainbow-delimiters-depth-3">]</span>,
+    <span class="org-rainbow-delimiters-depth-3">[</span><span class="org-highlight-numbers-number">1</span>, <span class="org-highlight-numbers-number">0</span><span class="org-rainbow-delimiters-depth-3">]</span>,
+    <span class="org-rainbow-delimiters-depth-3">[</span><span class="org-highlight-numbers-number">0</span>, <span class="org-highlight-numbers-number">0</span><span class="org-rainbow-delimiters-depth-3">]</span>
+  <span class="org-rainbow-delimiters-depth-2">]</span>
+<span class="org-rainbow-delimiters-depth-1">}</span>
+<span class="org-comment-delimiter">// </span><span class="org-comment">moves right, (1, 0), into a space that occupies food (3, 0)</span>
+<span class="org-comment-delimiter">// </span><span class="org-comment">the new state of the snake would be</span>
+<span class="org-rainbow-delimiters-depth-1">{</span>
+  <span class="org-string">"taunt"</span>: <span class="org-string">"git gud"</span>,
+  <span class="org-string">"name"</span>: <span class="org-string">"my-snake"</span>,
+  <span class="org-string">"id"</span>: <span class="org-string">"5b079dcd-0494-4afd-a08e-72c9a7c2d983"</span>,
+  <span class="org-string">"health_points"</span>: <span class="org-highlight-numbers-number">100</span>,
+  <span class="org-string">"coords"</span>: <span class="org-rainbow-delimiters-depth-2">[</span>
+    <span class="org-rainbow-delimiters-depth-3">[</span><span class="org-highlight-numbers-number">3</span>, <span class="org-highlight-numbers-number">0</span><span class="org-rainbow-delimiters-depth-3">]</span>,
+    <span class="org-rainbow-delimiters-depth-3">[</span><span class="org-highlight-numbers-number">2</span>, <span class="org-highlight-numbers-number">0</span><span class="org-rainbow-delimiters-depth-3">]</span>,
+    <span class="org-rainbow-delimiters-depth-3">[</span><span class="org-highlight-numbers-number">1</span>, <span class="org-highlight-numbers-number">0</span><span class="org-rainbow-delimiters-depth-3">]</span>,
+    <span class="org-rainbow-delimiters-depth-3">[</span><span class="org-highlight-numbers-number">1</span>, <span class="org-highlight-numbers-number">0</span><span class="org-rainbow-delimiters-depth-3">]</span>
+  <span class="org-rainbow-delimiters-depth-2">]</span>
+<span class="org-rainbow-delimiters-depth-1">}</span>
+<span class="org-comment-delimiter">// </span><span class="org-comment">the tail has been extended by 1 and the health restored to 100</span>
 </pre>
 </div>
 </div>

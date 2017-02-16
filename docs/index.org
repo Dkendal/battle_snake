@@ -300,7 +300,7 @@ All responses are expected to have a =200 OK= status code.
 ***  Response Attributes
     | Attribute |            | Type                                         |
     |-----------+------------+----------------------------------------------|
-    | *move*    | *required* | "up" \vert "left" \vert "down" \vert "right" |
+    | *move*    |            | "up" \vert "left" \vert "down" \vert "right" |
     | *taunt*   | /optional/ | string                                       |
     |-----------+------------+----------------------------------------------|
 
@@ -418,6 +418,48 @@ All responses are expected to have a =200 OK= status code.
          [0, 0]
        ]
      }
+   #+END_SRC
+
+
+   =coords= is a complete list of a snakes head and body segments. The first
+   segment in =coords= is a snakes head.
+
+   When a snake moves its' head segment will move in the direction specified,
+   and all it's tail segments will advance to space ocupied by the previous
+   segment
+
+   Eating food extends your snake's tail, and restores your health points.
+
+   For example:
+
+   #+BEGIN_SRC js
+     // before eating food
+     {
+       "taunt": "git gud",
+       "name": "my-snake",
+       "id": "5b079dcd-0494-4afd-a08e-72c9a7c2d983",
+       "health_points": 50,
+       "coords": [
+         [2, 0],
+         [1, 0],
+         [0, 0]
+       ]
+     }
+     // moves right, (1, 0), into a space that occupies food (3, 0)
+     // the new state of the snake would be
+     {
+       "taunt": "git gud",
+       "name": "my-snake",
+       "id": "5b079dcd-0494-4afd-a08e-72c9a7c2d983",
+       "health_points": 100,
+       "coords": [
+         [3, 0],
+         [2, 0],
+         [1, 0],
+         [1, 0]
+       ]
+     }
+     // the tail has been extended by 1 and the health restored to 100
    #+END_SRC
 
 * Game Rules
