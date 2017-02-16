@@ -1,1 +1,2 @@
+<%= render "_modal_keybinds.html" %>
 <div id="board-viewer" class="play-show"></div>

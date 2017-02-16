@@ -1,0 +1,43 @@
+<div class="modal">
+  <label for="modal-keybinds">
+    <a class="modal-trigger">Keyboard Shortcuts</a>
+  </label>
+  <input class="modal-state" id="modal-keybinds" type="checkbox" />
+  <div class="modal-fade-screen">
+    <div class="modal-inner">
+      <div class="modal-close" for="modal-keybinds">Close</div>
+      <div class="modal-content">
+        <table>
+          <thead>
+            <tr>
+              <td>Key</td>
+              <td>Effect</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>q</td>Keybinds
+              <td>Reset game</td>
+            </tr>
+            <tr>
+              <td>h, left</td>
+              <td>Previous turn</td>
+            </tr>
+            <tr>
+              <td>j, up</td>
+              <td>Resume game</td>
+            </tr>
+            <tr>
+              <td>k, down</td>
+              <td>Pause game</td>
+            </tr>
+            <tr>
+              <td>l, right</td>
+              <td>Next turn</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
