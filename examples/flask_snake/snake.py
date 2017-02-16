@@ -7,7 +7,7 @@ app = Flask(__name__)
 def start():
     # NOTE: 'request' contains the data which was sent to us about the Snake game
     # after every POST to our server 
-    print request.__dict__ 
+    print(request.__dict__) 
     
     snake = {
         "color": "ffffff",
@@ -18,7 +18,7 @@ def start():
 
 @app.route("/move", methods=["POST"])
 def move():
-    print request.__dict__ 
+    print(request.__dict__)
 
     moves = ["up", "down", "left", "right"]
     response = {
