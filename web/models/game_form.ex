@@ -37,7 +37,7 @@ defmodule BattleSnake.GameForm do
     delay: non_neg_integer,
     max_food: non_neg_integer,
     winners: [Snake.t],
-    game_mode: string
+    game_mode: binary,
   }
 
   schema "game" do
