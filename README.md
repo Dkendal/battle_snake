@@ -1,4 +1,4 @@
-# Battle Snake
+![Battle Snake](docs/bs-logo-dark.png)
 
 The 2017 Game Server
 
