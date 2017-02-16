@@ -54,20 +54,32 @@ defmodule BattleSnake.World do
          :deaths]
 
 
+  @doc """
+  Restock food on the board.
+  """
+  @spec stock_food(t) :: t
   def stock_food(world) do
-    f = fn (_i, world) ->
-      update_in(world.food, fn food ->
-        case rand_unoccupied_space(world) do
-          {:ok, point} -> [point | food]
-          _ -> food
-        end
-      end)
-    end
+    i = world.max_food - length(world.food)
+    i = max(i, 0)
+    do_stock_food(i, world)
+  end
 
-    n = world.max_food - length(world.food)
+  defp do_stock_food(0, world) do
+    world
+  end
 
-    times(n)
-    |> Enum.reduce(world, f)
+  defp do_stock_food(i, world) do
+    point = rand_unoccupied_space(world)
+    do_stock_food(point, i, world)
+  end
+
+  defp do_stock_food({:ok, point}, i, world) do
+    world = update_in(world.food, &([point|&1]))
+    do_stock_food(i-1, world)
+  end
+
+  defp do_stock_food({:error, _}, _, world) do
+    world
   end
 
   @spec rand_unoccupied_space(t) :: {:ok, Point.t} | {:error, any}
