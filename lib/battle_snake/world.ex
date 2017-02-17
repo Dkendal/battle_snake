@@ -1,6 +1,8 @@
 defmodule BattleSnake.World do
   use Mnesia.Repo
 
+  alias __MODULE__
+
   alias BattleSnake.{
     Move,
     Point,
@@ -111,7 +113,7 @@ defmodule BattleSnake.World do
 
   def step(world) do
     world
-    |> BattleSnake.WorldMovement.next
+    |> World.Move.next
     |> inc_turn
     |> clean_up_dead
     |> dec_health_points
