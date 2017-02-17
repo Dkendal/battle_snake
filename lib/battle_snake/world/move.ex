@@ -3,6 +3,7 @@ defmodule BattleSnake.World.Move do
   alias BattleSnake.Snake
   alias BattleSnake.Api
   alias BattleSnake.Move
+  alias BattleSnake.Point
 
   require Logger
 
@@ -13,15 +14,12 @@ defmodule BattleSnake.World.Move do
   defmodule Worker do
     @api Application.get_env(:battle_snake, :snake_api)
 
-    @spec run(BattleSnake.World.t, BattleSnake.Snake.t) :: BattleSnake.Snake.t
+    @spec run(BattleSnake.World.t, BattleSnake.Snake.t) :: BattleSnake.Point.t
     def run(%Snake{} = snake, %World{} = world) do
       response = @api.request_move(snake, world)
-
-      point = response
+      response
       |> process_response
       |> Move.to_point
-
-      Snake.move(snake, point)
     end
 
     def process_response(val, acc \\ [])
@@ -59,17 +57,22 @@ defmodule BattleSnake.World.Move do
       :run,
       [world])
       |> Stream.zip(snakes)
-      |> Stream.map(&collect_results/1)
+      |> Stream.map(&get_move_for_snake/1)
+      |> Stream.map(&move_snake/1)
       |> Enum.to_list
 
     put_in(world.snakes, snakes)
   end
 
-  defp collect_results({{:ok, %{id: id} = snake}, %{id: id}}) do
-    snake
+  defp move_snake({%Point{} = point, %Snake{} = snake}) do
+    Snake.move(snake, point)
   end
 
-  defp collect_results({{:exit, e}, snake}) do
+  defp get_move_for_snake({{:ok, point}, snake}) do
+    {point, snake}
+  end
+
+  defp get_move_for_snake({{:exit, e}, snake}) do
     Logger.debug """
     [#{snake.url}] failed to respond to /move
     #{inspect e, pretty: true}
@@ -77,7 +80,7 @@ defmodule BattleSnake.World.Move do
 
     move = Move.default_move()
     point = Move.to_point(move)
-    Snake.move(snake, point)
+    {point, snake}
   end
 end
 
