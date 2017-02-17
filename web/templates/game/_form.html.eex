@@ -1,0 +1,42 @@
+<% alias BattleSnake.SnakeForm %>
+<% snake = %SnakeForm{} %>
+
+<fieldset>
+  <div>
+    <%= label :f, :width %>
+    <%= number_input @form, :width %>
+  </div>
+
+  <div>
+    <%= label @form, :height %>
+    <%= number_input @form, :height %>
+  </div>
+
+  <div>
+    <%= label @form, :delay %>
+    <%= number_input @form, :delay %>
+  </div>
+
+  <div>
+    <%= label @form, :max_food %>
+    <%= number_input @form, :max_food %>
+  </div>
+
+  <div>
+    <%= label @form, :game_mode %>
+    <%= select @form, :game_mode, BattleSnake.GameForm.game_modes() %>
+  </div>
+</fieldset>
+
+<fieldset>
+  <h3>Snakes</h3>
+  <%= inputs_for @form, :snakes, [append: [snake]], fn g -> %>
+    <div>
+        <%= label g, :url %>
+        <%= url_input g, :url %>
+
+        <%= label g, :delete %>
+        <%= checkbox g, :delete %>
+    </div>
+  <% end %>
+</fieldset>

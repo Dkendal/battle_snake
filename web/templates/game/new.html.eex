@@ -1,38 +1,8 @@
 <h2>New game</h2>
 
 <%= form_for @changeset, game_path(@conn, :create), fn f -> %>
-<div>
-  <%= label :f, :width %>
-  <%= number_input f, :width %>
-</div>
-
-<div>
-  <%= label f, :height %>
-  <%= number_input f, :height %>
-</div>
-
-<div>
-  <%= label f, :delay %>
-  <%= number_input f, :delay %>
-</div>
-
-<div>
-  <%= label f, :max_food %>
-  <%= number_input f, :max_food %>
-</div>
-
-<div>
-  <%= label f, :game_mode %>
-  <%= select f, :game_mode, BattleSnake.GameForm.game_modes() %>
-</div>
-
-<div>
-  <%= submit "Create game" %>
-</div>
-
-
-<h3>Snakes</h3>
-
+    <%= render "_form.html", form: f %>
+    <%= submit "Create game" %>
 <% end %>
 
 <%= link "Back", to: game_path(@conn, :index) %>
