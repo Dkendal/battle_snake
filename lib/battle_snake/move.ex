@@ -23,8 +23,6 @@ defmodule BattleSnake.Move do
 
   @api Application.get_env(:battle_snake, :snake_api)
 
-  defmacrop default_move(), do: quote do: %Move{move: "up"}
-
   @doc """
   Collects all moves for all living snakes for world.
 
@@ -94,12 +92,18 @@ defmodule BattleSnake.Move do
 
   @spec up() :: Point.t
   def up, do: %Point{x: 0, y: -1}
+
   @spec down() :: Point.t
   def down, do: %Point{x: 0, y: 1}
+
   @spec right() :: Point.t
   def right, do: %Point{x: 1, y: 0}
+
   @spec left() :: Point.t
   def left, do: %Point{x: -1, y: 0}
+
+  @spec default_move() :: Point.t
+  def default_move(), do: %Move{move: "up"}
 
   @spec moves() :: [Point.t]
   def moves do
