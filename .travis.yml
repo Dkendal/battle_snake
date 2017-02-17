@@ -1,5 +1,8 @@
 language: elixir
 
+notifications:
+  email: false
+
 elixir:
   - 1.4
 
