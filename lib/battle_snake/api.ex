@@ -13,6 +13,7 @@ defmodule BattleSnake.Api do
 
   @callback load(%SnakeForm{}, %GameForm{}) :: Response.t
   @callback move(%Snake{}, %World{}) :: Response.t
+  @callback request_move(%Snake{}, %World{}) :: HTTPoison.Response.t
 
   @doc """
   Load the Snake struct based on the configuration_form data for both the world
@@ -149,6 +150,26 @@ defmodule BattleSnake.Api do
     end
   end
 
+  def request_move(url, data)
+  when is_binary(url)
+  and is_binary(data) do
+    Logger.info("POST #{url}")
+
+    {time, value} = :timer.tc(HTTPoison, :post,
+      [url, data, %{"content-type" => "application/json"}])
+
+    Logger.info("Response from POST #{url} in #{div(time, 1000)}ms")
+
+    value
+  end
+
+  def request_move(%Snake{} = snake, %World{} = world) do
+    request_move(
+      BattleSnake.URL.move_url(snake.url),
+      Poison.encode!(world, me: snake.id)
+    )
+  end
+
   defp log_error(url, error, response) do
     http_response = inspect(response.raw_response, color: false, pretty: true)
     ("""
@@ -162,4 +183,9 @@ defmodule BattleSnake.Api do
     """)
     |> Logger.debug
   end
+end
+
+defmodule BattleSnake.URL do
+  def move_url(base), do: base <> "/move"
+  def start_url(base), do: base <> "/start"
 end
