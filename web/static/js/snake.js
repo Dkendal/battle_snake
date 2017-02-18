@@ -2,8 +2,8 @@ import $ from "jquery";
 import * as THREE from "three";
 import * as TWEEN from "tween.js";
 
-
-var SNAKE_HEAD_URL = "/images/snake_head.png";
+var SNAKE_HEAD_URL = "/images/snake_head_nerdy.png";
+var SNAKE_HEAD_SCALE = 1.5;
 var FOOD_URL = "/images/food.png"
 
 function SnakeInfoDiv(div_id, data) {
@@ -105,13 +105,14 @@ function interpolateWithArcs(pts) {
         // return a function(t) that interpolates from the
         // midpoints m0 and m1 between pt0,pt1 and p1,pt2 with a
         // straight line or arc
-        var c = pt0.clone().add(pt2).multiplyScalar(0.5);
-        var m0 = pt0.clone().add(pt1).multiplyScalar(0.5);
-        var m1 = pt1.clone().add(pt2).multiplyScalar(0.5);
+        var c =  (new THREE.Vector3()).addVectors(pt0, pt2).multiplyScalar(0.5);
+        var m0 = (new THREE.Vector3()).addVectors(pt0, pt1).multiplyScalar(0.5);
+        var m1 = (new THREE.Vector3()).addVectors(pt1, pt2).multiplyScalar(0.5);
         if( c.distanceTo(pt1) < Number.EPSILON ) {
             // m0, m1, and c are colinear, interpolate a line
+            var v = new THREE.Vector3();
             return function(t) {
-                return m0.clone().lerp(m1, t);
+                return v.copy(m0).lerp(m1, t);
             }
         }
         else {
@@ -119,19 +120,20 @@ function interpolateWithArcs(pts) {
             m0.sub(c);
             m1.sub(c);
             var angle = m0.angleTo(m1);
-            var cross = m0.clone().cross(m1).normalize();
+            var cross = (new THREE.Vector3()).crossVectors(m0, m1).normalize();
             // correct angleTo's sign so applyAxisAngle(cross, angle) == m1
             if( m0.clone().applyAxisAngle(cross, angle).distanceTo(m1) > Number.EPSILON ) {
                 angle *= -1;
             }
             // assertion: m0.applyAxisAngle(cross, angle) == m1
-            var err = m0.clone().applyAxisAngle(cross, angle).distanceTo(m1);
+            var err = (new THREE.Vector3()).copy(m0).applyAxisAngle(cross, angle).distanceTo(m1);
             if( err > Number.EPSILON ) {
-                console.log("ERROR: m0=" + m0 + " can't rotate to m1=" + m1 + " angle=" + angle + " error=" + err);
+                console.error("ERROR: m0=" + m0 + " can't rotate to m1=" + m1 + " angle=" + angle + " error=" + err);
             }
             
+            var v = new THREE.Vector3();
             return function(t) {
-                return m0.clone().applyAxisAngle(cross, t*angle).add(c);
+                return v.copy(m0).applyAxisAngle(cross, t*angle).add(c);
             }
         }
     }
@@ -169,26 +171,39 @@ function interpolateWithArcs(pts) {
     }
 }
 
-// https://github.com/mrdoob/three.js/blob/master/examples/canvas_particles_sprites.html
-function particleMaterial(color, width, height) {
-    var canvas = document.createElement('canvas');
-    canvas.width = width;
-    canvas.height = height;
-    var context = canvas.getContext('2d');
-    var gradient = context.createRadialGradient(width/2, height/2, 0, width/2, height/2, width/2);
-    gradient.addColorStop(0.0, color);
-    gradient.addColorStop(0.6, color);
-    gradient.addColorStop(0.95, '#000000');
-    gradient.addColorStop(1, hex2rgba('#000000', 0));
-    context.fillStyle = gradient;
-    context.fillRect( 0, 0, canvas.width, canvas.height );
-    
-    return new THREE.SpriteMaterial({
-        map: new THREE.CanvasTexture(canvas)
-    });
+/*
+ * memoize.js
+ * by @philogb and @addyosmani
+ * with further optimizations by @mathias
+ * and @DmitryBaranovsk
+ * perf tests: http://bit.ly/q3zpG3
+ * Released under an MIT license.
+ */
+function memoize(fn) {
+    return function () {
+        var args = Array.prototype.slice.call(arguments)
+        var hash = "";
+        var i = args.length;
+        var currentArg = null;
+        while (i--) {
+            currentArg = args[i];
+            hash += (currentArg === Object(currentArg)) ?
+                JSON.stringify(currentArg) : currentArg;
+            fn.memoize || (fn.memoize = {});
+        }
+        return (hash in fn.memoize) ? fn.memoize[hash] :
+            fn.memoize[hash] = fn.apply(this, args);
+    };
 }
 
-function radialMaterial(width, height, stops) {
+var img_loader = new THREE.TextureLoader();
+var imgTexture = memoize(function(url) {
+    var tex = img_loader.load(url);
+    tex.minFilter = THREE.LinearFilter;
+    return tex;
+});
+
+var radialCanvas = memoize(function(width, height, stops) {
     var canvas = document.createElement('canvas');
     canvas.width = width;
     canvas.height = height;
@@ -199,24 +214,41 @@ function radialMaterial(width, height, stops) {
     }
     context.fillStyle = gradient;
     context.fillRect( 0, 0, canvas.width, canvas.height );
+    return canvas;
+});
+
+function radialMaterial(width, height, stops) {
     return new THREE.SpriteMaterial({
-        map: new THREE.CanvasTexture(canvas)
-        ,blending: THREE.AdditiveBlending
+        map: new THREE.CanvasTexture(radialCanvas(width, height, stops))
     });
 }
 
-function explodeMaterial(width, height) {
-    return radialMaterial(width, height, [
+function snakeBodyMaterial(color) {
+    var mat = radialMaterial(32, 32, [
+        0.0, color
+        ,0.6, color
+        ,0.95, '#000000'
+        ,1, hex2rgba('#000000', 0)
+    ]);
+    return mat;
+}
+
+function explodeMaterial() {
+    var mat = radialMaterial(16, 16, [
         0, 'rgba(255,255,0,1)',
         1, 'rgba(255,0,0,0)'
     ]);
+    mat.blending = THREE.AdditiveBlending;
+    return mat;
 }
 
 function foodMaterial() {
-    return radialMaterial(16, 16, [
+    var mat = radialMaterial(16, 16, [
         0, 'rgba(0,255,0,1)',
         1, 'rgba(0,255,0,0)'
     ]);
+    mat.blending = THREE.AdditiveBlending;
+    return mat;
 }
 
 
@@ -231,13 +263,13 @@ function SnakeRenderer(board_renderer) {
     var head_particle = null;
     
     self.render = function(snake) {
+        //console.time("SnakeRenderer.render");
         var color = snake.color || stringToColor(snake.name);
-        var body = snake.coords // .body;
+        var body = snake.coords || snake.body;
 
         // body
         if( !body_material ) {
-            // TODO - change material if color changes
-            body_material = particleMaterial(color, 32, 32);
+            body_material = snakeBodyMaterial(color);
         }
         var body_pts = [];
         for(var body_i=0; body_i<body.length; body_i++) {
@@ -246,11 +278,12 @@ function SnakeRenderer(board_renderer) {
                                                 body[body_i][1],
                                                 self.board_renderer.cell_width));
         }
+
         var body_interp = interpolateWithArcs(body_pts);
         var NSUBS = 5;
         var n = (body.length * NSUBS);
         var body_particle_i = 0;
-        for(var i=0; i<n; i++) {
+        for(var i=1; i<n; i++) {
             var particle;
             if( body_particle_i < body_particles.length ) {
                 particle = body_particles[body_particle_i];
@@ -283,28 +316,26 @@ function SnakeRenderer(board_renderer) {
         if( !head_material ) {
             // TODO - reload material if head changes
             head_material = new THREE.SpriteMaterial({
-                map: new THREE.TextureLoader().load(img)
-                ,color: color
+                map: imgTexture(img)
             });
         }
-        var HEAD_SCALE = 1.5;
-        var pt = body_particles[0].position.clone();
-        pt.z += 0.01;
         if( !head_particle ) {
             head_particle = new THREE.Sprite(head_material);
-            head_particle.scale.set(HEAD_SCALE, HEAD_SCALE, 0);
+            head_particle.scale.set(SNAKE_HEAD_SCALE, SNAKE_HEAD_SCALE, 0);
             self.board_renderer.board_node.add(head_particle);
         }
-        head_particle.position.copy(pt);
+        head_particle.position.copy(body_pts[0]);
+        head_particle.position.z += 0.01;
+        //console.timeEnd("SnakeRenderer.render");
     }
-    
+
     self.explode = function() {
         var delay = 0;
         var dur = 750;
         var mag = 5;
         
         // explode particles
-        var explode_material = explodeMaterial(16, 16);
+        var explode_material = explodeMaterial();
         new TWEEN.Tween(explode_material)
             .delay(delay)
             .to({opacity: .01}, dur)
@@ -316,9 +347,13 @@ function SnakeRenderer(board_renderer) {
                 var particle = new THREE.Sprite(explode_material);
                 particle.position.copy(body_particle.position);
                 particle.scale.x = particle.scale.y = Math.random()*4;
-                self.board_renderer.board_node.add(particle);
                 new TWEEN.Tween(particle.position)
-                    .delay(delay)
+                    .delay(dur*i/body_particles.length)
+                    .onStart((function(particle) {
+                        return function() {
+                            self.board_renderer.board_node.add(particle);
+                        }
+                    })(particle))
                     .to({x: p0.x + (Math.random() - 0.5) * mag,
                          y: p0.y + (Math.random() - 0.5) * mag,
                          z: p0.z + (Math.random()*mag/2)}, dur)
@@ -333,20 +368,13 @@ function SnakeRenderer(board_renderer) {
                     })(particle))
                     .start();
             }
-            delay += 1;
         }
 
         // head flies into camera and fades out 
         if( head_particle ) {
             var particle = head_particle;
-            new TWEEN.Tween(particle.position)
-                .delay(delay)
-                .to({x: 0,
-                     y: 0,
-                     z: 5}, dur)
-                .start();
             new TWEEN.Tween(particle.scale)
-                .delay(delay)
+                .delay(0)
                 .to({x: 20, y: 20}, dur)
                 .onComplete((function(particle) {
                     return function() {
@@ -362,12 +390,15 @@ function SnakeRenderer(board_renderer) {
         }
 
         // fade out body
-        dur = 1250 + delay;
+        delay = dur;
+        dur = 1250;
         mag = 20;
+
         new TWEEN.Tween(body_material)
             .delay(delay)
             .to({opacity: .01}, dur)
             .start();
+        
         for(var i=0; i<body_particles.length; i++) {
             var particle = body_particles[i];
             new TWEEN.Tween(particle)
@@ -399,7 +430,7 @@ function FoodRenderer(board_renderer, food_pt) {
     var self = this;
 
     var material = new THREE.SpriteMaterial({
-        map: new THREE.TextureLoader().load(FOOD_URL)
+        map: imgTexture(FOOD_URL)
     });
     var sprite = new THREE.Sprite(material);
     board_renderer.board_node.add(sprite);
@@ -444,7 +475,7 @@ function FoodRenderer(board_renderer, food_pt) {
             .delay(delay)
             .to({opacity: .01}, dur)
             .onComplete(function() {
-                explode_material.map.dispose();
+                //explode_material.map.dispose();
                 explode_material.dispose();
             })
             .start();
@@ -465,14 +496,14 @@ function FoodRenderer(board_renderer, food_pt) {
             .delay(delay)
             .to({opacity: .01}, dur)
             .onComplete(function() {
-                material.map.dispose();
+                //material.map.dispose();
                 material.dispose();
             })
             .start();
     }
 
     self.dispose = function() {
-        material.map.dispose();
+        //material.map.dispose();
     }
     
 }
@@ -492,6 +523,7 @@ function SnakeBoardRenderer(game_renderer) {
     var snake_renderers = {}; // map from id -> SnakeRenderer
     var snake_infos = {};     // map from id -> SnakeInfoDiv
     var grid_mesh = null;
+    var board_info_vue = null;
 
     // the center point of a board cell
     self.board_point = function(cell_x, cell_y, pt_z) {
@@ -501,6 +533,8 @@ function SnakeBoardRenderer(game_renderer) {
     }
 
     function layout_snake_info() {
+        //console.time("layout_snake_info");
+        
         // sort into living and dead
         var snake_info_killed = [];
         var snake_info_living = [];
@@ -553,6 +587,8 @@ function SnakeBoardRenderer(game_renderer) {
             y += height;
             div.animate({top: top, left: left, width: width}, 750);
         }
+
+        //console.timeEnd("layout_snake_info");
     }
 
     function get_snake_info(id, snake_i) {
@@ -573,9 +609,23 @@ function SnakeBoardRenderer(game_renderer) {
     }
 
     self.render = function(board) {
+        //console.time("SnakeBoardRenderer.render");
+        
         self.board = board;
         self.cell_width = self.board_size / board.width / 2 * .9;
 
+        if( !board_info_vue ) {
+            board_info_vue = new Vue({
+                el: '#scoreboard-game-info',
+                data: {
+                    game_name: '',
+                    game_turn: 0,
+                }
+            });
+        }
+        board_info_vue.$data.game_turn = board.turn;
+        board_info_vue.$data.game_name = board.game_id;
+        
         // grid
         if( !grid_mesh ) {
             var grid_material = new THREE.LineBasicMaterial({
@@ -597,7 +647,7 @@ function SnakeBoardRenderer(game_renderer) {
                 grid_geometry.vertices.push(new THREE.Vector3(x0, y0 + y*dy, 0),
                                             new THREE.Vector3(x1, y0 + y*dy, 0));
             }
-            var grid_mesh = new THREE.LineSegments(grid_geometry, grid_material);
+            grid_mesh = new THREE.LineSegments(grid_geometry, grid_material);
             self.board_node.add(grid_mesh);
 
             var grid2_material = new THREE.LineBasicMaterial({
@@ -646,12 +696,24 @@ function SnakeBoardRenderer(game_renderer) {
 
         // re-layout the snake_info blocks
         var snake_info_layout = false;
+
+        if( board.turn == 0 ) {
+            for(var id in snake_infos) {
+                var snake_info = snake_infos[id];
+                snake_info.remove();
+            }
+            snake_infos = {};
+            snake_info_layout = true;
+        }
         
         // render living snakes
         for(var snake_i=0; snake_i<board.snakes.length; snake_i++) {
             var snake = board.snakes[snake_i];
-            if( !("color" in snake) ) {
-                snake.color = stringToColor(snake.taunt || snake.id);
+            if( !snake.color ) {
+                snake.color = stringToColor(snake.id);
+            }
+            if( !snake.img ) {
+                snake.img = SNAKE_HEAD_URL;
             }
 
             var snake_renderer = snake_renderers[snake.id];
@@ -703,6 +765,8 @@ function SnakeBoardRenderer(game_renderer) {
         if( snake_info_layout ) {
             layout_snake_info();
         }
+
+        //console.timeEnd("SnakeBoardRenderer.render");
     }
 
     self.resize = function () {
@@ -759,6 +823,7 @@ function GameRenderer(board_div, info_div) {
     }
 
     function render() {
+        //console.time("render");
         TWEEN.update();
 
         if( camera_shake ) {
@@ -768,6 +833,7 @@ function GameRenderer(board_div, info_div) {
         renderer.render(scene, camera);
         
         requestAnimationFrame(render);
+        //console.timeEnd("render");
     }
     
     self.resize = function() {
