@@ -187,6 +187,9 @@
       </table>
     </div>
 
+    <%= link "Classic View", to: play_path(@conn, :show, @game), class: "btn btn-default btn-xs view-btn" %>
+    
+    
   </body>
 </html>
 
