@@ -50,6 +50,10 @@
 </div>
 
 <div>
+  <%= link "Finals", to: skin_path(@conn, :show, @game) %>
+</div>
+
+<div>
   <%= link "Show", to: game_path(@conn, :show, @game) %>
 </div>
 
