@@ -5,7 +5,6 @@ exports.config = {
         joinTo: {
             'js/app.js': /^(web\/static\/js)|(node_modules)/
             ,'js/skin.js': /^(web\/static\/js)|(node_modules)/
-            ,"js/vendor.js": /^(web\/static\/vendor)/
         }    
 
       // To use a separate vendor.js bundle, specify two files path
