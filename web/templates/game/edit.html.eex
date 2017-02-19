@@ -6,8 +6,7 @@
     <%= submit "Update game" %>
   <% end %>
 
-<%= link "Play", to: play_path(@conn, :show, @game) %>
-<%= link "Finals", to: skin_path(@conn, :show, @game) %>
-<%= link "Show", to: game_path(@conn, :show, @game) %>
-<%= link "Back", to: game_path(@conn, :index) %>
+  <%= link "Play", to: play_path(@conn, :show, @game) %>
+  <%= link "Finals", to: skin_path(@conn, :show, @game) %>
+  <%= link "Back", to: game_path(@conn, :index) %>
 </section>
