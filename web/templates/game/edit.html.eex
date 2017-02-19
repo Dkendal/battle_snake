@@ -1,11 +1,13 @@
-<h2>Edit game</h2>
+<section class="section-container">
+  <h2>Edit game</h2>
 
-<%= form_for @changeset, game_path(@conn, :update, @game), [method: :put], fn f -> %>
-  <%= render "_form.html", form: f %>
-  <%= submit "Update game" %>
-<% end %>
+  <%= form_for @changeset, game_path(@conn, :update, @game), [method: :put], fn f -> %>
+    <%= render "_form.html", form: f %>
+    <%= submit "Update game" %>
+  <% end %>
 
 <%= link "Play", to: play_path(@conn, :show, @game) %>
 <%= link "Finals", to: skin_path(@conn, :show, @game) %>
 <%= link "Show", to: game_path(@conn, :show, @game) %>
 <%= link "Back", to: game_path(@conn, :index) %>
+</section>
