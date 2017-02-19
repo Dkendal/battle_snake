@@ -33,17 +33,24 @@ const init = () => {
     game_renderer = new GameRenderer("#snake-board", "#snake-info-list");
     
     boardViewerChannel.on("tick", ({content}) => {
-        console.log("skin.js: tick content=" + content)
+        console.time("skin.tick");
+        //console.log("skin.js: tick content=" + content)
+        try {
+            var board = JSON.parse(content);
 
-        var board = JSON.parse(content);
-        for(var i=0; i<board.snakes.length; i++) {
-            var snake = board.snakes[i];
-            snake.board_id = snake.id;
-            snake.health = snake.health_points;
+            // fixup snake data structure
+            for(var i=0; i<board.snakes.length; i++) {
+                var snake = board.snakes[i];
+                snake.board_id = snake.id;
+                snake.health = snake.health_points;
+            }
+        
+            game_renderer.render(board);
         }
-        
-        game_renderer.render(board);
-        
+        catch(err) {
+            console.error("error rendering content! err=" + err + " content=" + content);
+        }
+        console.timeEnd("skin.tick");
     });
 
     boardViewerChannel.
