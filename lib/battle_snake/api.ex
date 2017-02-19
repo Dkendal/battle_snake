@@ -81,6 +81,9 @@ defmodule BattleSnake.Api do
     data = %Snake{}
     types = %{color: :string,
               head_url: :string,
+              tail_url: :string,
+              body_url: :string,
+              kink_url: :string,
               name: :string,
               taunt: :string, url: :string}
 

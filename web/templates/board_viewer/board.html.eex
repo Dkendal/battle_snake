@@ -15,6 +15,7 @@
   <defs>
     <pattern id="GameBoardPattern" x="0" y="0" width="1" height="1" patternUnits="userSpaceOnUse">
       <%= board_tile(class: "game-board-tile") %>
+      <%= snake_pattern(world) %>
     </pattern>
   </defs>
 
@@ -27,9 +28,7 @@
       height: height,
       class: "game-board-table-top") %>
 
-  <%= for snake <- world.snakes, {point, index} <- Enum.with_index(snake.coords, 1) do %>
-    <%= raw snake_obj(point, snake, index) %>
-  <% end %>
+  <%= snake_obj(world.snakes) %>
 
   <%= for x <- world.food do %>
     <%= raw food_obj(x) %>
