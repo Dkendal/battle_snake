@@ -26,7 +26,7 @@ select {
 
 #{$all-text-inputs},
 select[multiple] {
-  background-color: $base-background-color;
+  background-color: $input-background-color;
   border: $base-border;
   border-radius: $base-border-radius;
   box-shadow: $form-box-shadow;

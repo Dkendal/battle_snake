@@ -3,21 +3,5 @@
 @import "base/base";
 @import "neat/neat";
 @import "empties/modal";
+@import "layout";
 @import "game-board";
-
-html,
-body,
-main {
-    font-family: 'Montserrat', sans-serif;
-    height: 100%;
-    padding: 0;
-    margin: 0;
-    background-color: $base-background-color;
-}
-
-.view-btn {
-    position: absolute; 
-    bottom: 10px;
-    left: 10px;
-}
-     
