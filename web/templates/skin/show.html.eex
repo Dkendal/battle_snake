@@ -20,12 +20,12 @@
       console.log("Skin!");
     </script>
 
-    <script src="<%= static_path(@conn, "/js/vendor.js") %>"></script>
     <style>
      body {
+         font-family: 'Montserrat', sans-serif
          margin: 0px;
          overflow: hidden;
-         background: #333333;
+         background: #6a6676;
      }
      
      #snake-board {
@@ -33,29 +33,52 @@
          top: 0px;
          left: 0px;
          bottom: 0px;
-         right: 310px;
+         right: 410px;
      }
 
-     #snake-info-list {
+     #scoreboard-panel {
          position: absolute; 
          top: 10px;
-         width: 300px;
+         width: 400px;
          right: 10px;
          bottom: 10px;
-         z-index: 99;
+     }
+
+     .scoreboard-game-info {
+         margin-left: 5px;
+         margin-top: 5px;
+         margin-bottom: 5px;
+     }
+     
+     .scoreboard-flag {
+         height: 5em;
+     }
+     
+     #snake-info-list {
+         position: absolute; 
+         top: 150px;
+         width: 400px;
+         right: 10px;
+         bottom: 100px;
      }
 
      .snake-info {
          position: absolute;
-         border: 5px solid blue;
-         border-radius: 15px;
-         margin-bottom: 10px;
-         padding: 5px;
-         background: white;
-         box-shadow: 6px 6px 6px rgba(0, 0, 0, .5);
-         width: 300px;
+         width: 400px;
+         top: 150px;
          right: 10px;
-         top: 10px;
+         /*
+            border: 5px solid blue;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            padding: 5px;
+            background: white;
+            box-shadow: 6px 6px 6px rgba(0, 0, 0, .5);
+          */
+     }
+
+     .noborder {
+         border: none;
      }
 
      #snake-info-template {
@@ -64,30 +87,49 @@
      
      .snake-info-right {
          margin-left: 10px;
-         width: 85%;
+         width: 300px;
      }
      
      .snake-info-health-border {
-         height: 10px;
-         background-color: white;
-         border: 1px solid black;
+         position: relative;
          left: 0px;
          right: 0px;
+         height: 40px;
      }
 
-     .snake-info-health {
-         height: 10px;
-         background-color: green;
+     .snake-info-health-background {
+         position: absolute;
          left: 0px;
+         top: 0px;
+         bottom: 0px;
+         right: 0px;
+         background: green;
+         opacity: 0.3;
+     }
+     
+     .snake-info-health {
+         position: absolute;
+         left: 0px;
+         top: 0px;
+         bottom: 0px;
+         background: green;
+         width: 35%;
      }
      
      .snake-info-name {
+         color: white;
          font-weight: bold;
      }
 
      .snake-info-taunt {
+         position: absolute;
          overflow: hidden;
-         height: 20px;
+         color: white;
+         z-index: 10;
+         line-height: 40px;
+         top: 0px;
+         bottom: 0px;
+         margin-left: 10px;
      }
      
      .snake-info-img {
@@ -101,24 +143,44 @@
   <body>
     <div id="snake-board"></div>
 
+    <div id="scoreboard-panel">
+      
+      <div id="scoreboard-logo">
+	<img src="/images/bs-logo-light.svg"/>
+      </div>
+      
+      <div id="scoreboard-game-info" class="scoreboard-game-info-wrapper">
+	<div class="scoreboard-game-info">
+	  <div>
+            <span>{{game_name}}</span>
+	  </div>
+	  <div>
+            <span>Turn</span>
+            <span>{{game_turn}}</span>
+	  </div>
+	</div>
+	<svg viewBox="0 0 100 100" class="scoreboard-flag" preserveAspectRatio="none">
+	  <polygon points="0 0, 0 100, 100 100, 93, 50, 100 0"></polygon>
+	</svg>
+      </div>
+
+    </div>
+
     <div id="snake-info-list"></div>
     
     <!-- snake-info-block-template -->
     <div class="snake-info" id="snake-info-template" v-bind:style="{'border-color': color}">
       <table width="100%" cellspacing="0" cellpadding="0">
         <tr>
-          <td valign="top"><img class="snake-info-img" v-bind:src="img"/></td>
-          <td valign="top" width="100%">
+          <td class="noborder" valign="top" width="64px"><img class="snake-info-img" v-bind:src="img"/></td>
+          <td class="noborder" valign="top" width="100%">
             <div class="snake-info-right">
               <div class="snake-info-name">{{name}}</div>
               <div class="snake-info-health-border"> 
-               <div class="snake-info-health" v-bind:style="{width: health + '%', 'background': color}"></div>
+                <div class="snake-info-health-background"  v-bind:style="{'background': color}"></div>
+                <div class="snake-info-health" v-bind:style="{width: health + '%', 'background': color}"></div>
+	        <div class="snake-info-taunt">{{taunt}}</div>
               </div>
-              <div class="snake-info-turns-killed" v-bind:style="{visibility: turns ? 'visible' : 'hidden'}">
-                Turns: <span class="snake-info-turns">{{turns}}</span>
-                <span class="snake-info-killed">{{killed}}</span>
-              </div>
-              <div class="snake-info-taunt">{{taunt}}</div>
             </div>
           </td>
         </tr>
