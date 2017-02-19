@@ -55,7 +55,11 @@ defmodule BattleSnake.GameController do
     redirect(conn, to: game_path(conn, :edit, game_form))
   end
 
-  def delete(_conn, %{"id" => _id}) do
+  def delete(conn, %{"id" => id}) do
+    GameForm
+    |> Mnesia.Repo.delete(id)
+ 
+    index(conn, {})
   end
 
   def create_params(params) do

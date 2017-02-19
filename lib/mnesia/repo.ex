@@ -45,6 +45,13 @@ defmodule Mnesia.Repo do
     struct
   end
 
+  def delete(tab, id) do
+    del = fn ->
+      :mnesia.delete({tab, id})
+    end
+    {:atomic, :ok} = :mnesia.transaction(del)
+  end
+
   def dirty_read(tab, id), do: dirty_find(tab, id)
 
   def dirty_find!(tab, id) do
