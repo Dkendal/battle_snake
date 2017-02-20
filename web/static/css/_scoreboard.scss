@@ -4,6 +4,15 @@
   @include media($mobile) {
     @include span-columns(12);
   }
+  &-snake {
+    display: flex;
+    align-items: flex-end;
+  }
+  &-avatar {
+    width: ms(8);
+    height: ms(8);
+    margin-right: ms(-1);
+  }
   &-logo {
     margin-bottom: ms(4);
   }
@@ -26,7 +35,8 @@
     width: 35px;
   }
   &-healthbar {
-    margin-bottom: ms(2);
+    line-height: ms(4);
+    height: ms(4);
   }
   &-taunt {
     color: $scoreboard-font-color;
@@ -41,7 +51,7 @@
     line-height: ms(4);
   }
   &-healthpoints {
-    height: ms(4);
+    height: 100%;
     width: 100%;
   }
   &-healthpoints-shadow {
