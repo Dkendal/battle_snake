@@ -43,14 +43,15 @@ $mobile: new-breakpoint(max-width 480px);
   &-game-info-wrapper {
     position: relative;
   }
-  &-game-info {
-    position: absolute;
-    color: $scoreboard-font-color;
-  }
   &-flag {
-    height: 4em;
-    width: 100%;
+    background-color: $scoreboard-flag-color;
+  }
+  &-flag-container {
+    display: flex;
+  }
+  &-flag-end {
     fill: $scoreboard-flag-color;
+    width: 35px;
   }
   &-healthbar {
     position: relative;
