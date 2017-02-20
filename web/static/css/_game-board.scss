@@ -1,67 +1,72 @@
 $mobile: new-breakpoint(max-width 480px);
 
 .play-show {
-    @include outer-container;
+  @include outer-container;
 }
 
 .game-board {
-    height: 100%;
-    @include span-columns(9);
-    @include media($mobile) {
-        @include span-columns(12);
-    }
-    &-tile {
-        fill: $secondary-background-color;
-    }
-    &-table-top {
-        fill: transparent;
-    }
+  height: 100%;
+  @include span-columns(9);
+  @include media($mobile) {
+    @include span-columns(12);
+  }
+  &-tile {
+    fill: $secondary-background-color;
+  }
+  &-table-top {
+    fill: transparent;
+  }
 }
 
 .obj-food {
-    fill: $obj-food-bg-color;
+  fill: $obj-food-bg-color;
 }
 
 .obj-snake {
-    stroke-width: $obj-snake-stroke-width;
+  height: 1;
+  width: 1;
+  fill: transparent;
+  stroke-linecap: butt;
+  stroke-linejoin: round;
+  stroke-width: $obj-snake-stroke-width;
 }
 
 .scoreboard {
-    @include span-columns(3);
+  @include span-columns(3);
 
-    @include media($mobile) {
-        @include span-columns(12);
-    }
-    &-dead-snake {
-        opacity: $dead-snake-opacity;
-    }
-    &-game-info-wrapper {
-        position: relative;
-    }
-    &-game-info {
-        position: absolute;
-        color: $scoreboard-font-color;
-    }
-    &-flag {
-        height: 4em;
-        width: 100%;
-        fill: $scoreboard-flag-color;
-    }
-    &-healthbar {
-        position: relative;
-    }
-    &-taunt {
-        position: absolute;
-        color: $scoreboard-font-color;
-    }
-    &-snake-name {
-        color: $scoreboard-font-color;
-    }
-    &-healthpoints {
-        height: $healthbar-height;
-        width: 100%;
-    }
-    &-healthpoints-shadow {
-        opacity: $healthbar-opacity;
-    }
+  @include media($mobile) {
+    @include span-columns(12);
+  }
+  &-dead-snake {
+    opacity: $dead-snake-opacity;
+  }
+  &-game-info-wrapper {
+    position: relative;
+  }
+  &-game-info {
+    position: absolute;
+    color: $scoreboard-font-color;
+  }
+  &-flag {
+    height: 4em;
+    width: 100%;
+    fill: $scoreboard-flag-color;
+  }
+  &-healthbar {
+    position: relative;
+  }
+  &-taunt {
+    position: absolute;
+    color: $scoreboard-font-color;
+  }
+  &-snake-name {
+    color: $scoreboard-font-color;
+  }
+  &-healthpoints {
+    height: $healthbar-height;
+    width: 100%;
+  }
+  &-healthpoints-shadow {
+    opacity: $healthbar-opacity;
+  }
 }

@@ -1,5 +1,5 @@
 // Typography
-$base-font-family: $helvetica;
+$base-font-family: 'Montserrat', sans-serif;
 $heading-font-family: $base-font-family;
 
 // Font Sizes
@@ -16,20 +16,19 @@ $small-spacing: $base-spacing / 2;
 $base-z-index: 0;
 
 // Colors
-$blue: #1565c0;
+$black: #000000;
 $dark-gray: #333;
 $medium-gray: #999;
 $light-gray: #ddd;
-
 $dark-purple: #6a6676;
-$white: white;
+$white: #ffffff;
 $green: #57a4aa;
 $grey: #797784;
 $orange: #f06a53;
 
 // Font Colors
-$base-font-color: $dark-gray;
-$action-color: $blue;
+$base-font-color: $white;
+$action-color: $orange;
 $scoreboard-font-color: $white;
 
 // Border
@@ -37,8 +36,9 @@ $base-border-color: $light-gray;
 $base-border: 1px solid $base-border-color;
 
 // Background Colors
-$base-background-color: $dark-purple;
-$secondary-background-color: $grey;
+$base-background-color: shade($dark-purple, 0);
+$secondary-background-color: tint($base-background-color, 15);
+$input-background-color: white;
 
 // Game Board colors
 $scoreboard-flag-color: $grey;
@@ -58,7 +58,7 @@ $generic-stroke-width: 0.08;
 $game-board-stroke-width: $generic-stroke-width;
 
 
-$obj-snake-stroke-width: 0.3;
+$obj-snake-stroke-width: 0.8;
 
 // This should be the same as @snake_stroke_width
 $game-board-divider-stroke-length: 0.3;
