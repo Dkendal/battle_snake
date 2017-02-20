@@ -81,21 +81,24 @@
 <div class="scoreboard">
   <%= img_tag "/images/bs-logo-light.svg", class: "scoreboard-logo" %>
 
-  <div class="scoreboard-game-info-wrapper">
-    <div class="scoreboard-game-info">
-      <div>
-        <span><%= @state.game_form.id %></span>
-      </div>
+  <div class="scoreboard-flag-container">
+    <div class="scoreboard-flag">
+      <div><%= @state.game_form.id %></div>
       <div>
         <span>Turn</span>
         <span><%= world.turn %></span>
       </div>
     </div>
-    <svg viewBox="0 0 100 100"
-         class="scoreboard-flag"
-         preserveAspectRatio="none">
-      <polygon points="0 0, 0 100, 100 100, 93, 50, 100 0"></polygon>
-    </svg>
+    <div class="scoreboard-flag-end">
+      <svg height="100%"
+           preserveAspectRatio="none"
+           viewBox="0 0 100 100"
+           width="100%"
+           x="0"
+           y="0">
+        <polygon points="0 0, 0 100, 100 100, 0, 50, 100 0"></polygon>
+      </svg>
+    </div>
   </div>
 
   <%= for snake <- snakes do %>
