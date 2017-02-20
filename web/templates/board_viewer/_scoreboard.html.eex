@@ -3,8 +3,8 @@
 
   <div class="scoreboard-flag-container">
     <div class="scoreboard-flag">
-      <div><%= @state.game_form.id %></div>
-      <div>
+      <div class="scoreboard-game-name"><%= @state.game_form.id %></div>
+      <div class="scoreboard-game-turn">
         <span>Turn</span>
         <span><%= @turn %></span>
       </div>

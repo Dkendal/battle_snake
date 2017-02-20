@@ -1,12 +1,15 @@
+$ms-base: 1em;
+$ms-ratio: $minor-third;
+
 // Typography
 $base-font-family: 'Montserrat', sans-serif;
 $heading-font-family: $base-font-family;
 
 // Font Sizes
-$base-font-size: 1em;
+$base-font-size: ms(0);
 
 // Line height
-$base-line-height: 1.5;
+$base-line-height: $ms-ratio;
 $heading-line-height: 1.2;
 
 // Other Sizes
