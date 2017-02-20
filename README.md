@@ -15,7 +15,7 @@ The 2017 Game Server
 ## Running With Docker
 
 * Install [Docker](https://docs.docker.com/engine/installation/)
-* `docker run -d -p 4000:4000 stembolt/battle_snake`
+* `docker run -it -p 4000:4000 stembolt/battle_snake`
 * Connect to http://localhost:4000
 Docker runs on a virtual lan so when you add a snake to the game you cannot use `localhost`, use your internal IP instead.
 
@@ -45,5 +45,5 @@ mix test
 ## Building the docker image locally
 
 * `docker build --rm -t battle_snake_server .`
-* `docker run -d -p 4000:4000 battle_snake_server`
+* `docker run -it -p 4000:4000 battle_snake_server`
 * Connect to http://localhost:4000
