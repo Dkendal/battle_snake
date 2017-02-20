@@ -1,0 +1,52 @@
+<% alias BattleSnake.SnakeForm %>
+
+<% initial_empty_snakes = 4 %>
+<% n = max((initial_empty_snakes - length(@form.data.snakes)) - 1, 0) + 1 %>
+<% snakes = List.duplicate(%SnakeForm{}, n)%>
+
+<fieldset>
+  <div>
+    <%= label :f, :width %>
+    <%= number_input @form, :width %>
+  </div>
+
+  <div>
+    <%= label @form, :height %>
+    <%= number_input @form, :height %>
+  </div>
+
+  <div>
+    <%= label @form, :delay %>
+    <%= number_input @form, :delay %>
+  </div>
+
+  <div>
+    <%= label @form, :max_food %>
+    <%= number_input @form, :max_food %>
+  </div>
+
+  <div>
+    <%= label @form, :game_mode %>
+    <%= select @form, :game_mode, BattleSnake.GameForm.game_modes() %>
+  </div>
+</fieldset>
+
+<fieldset>
+  <h3>Snakes</h3>
+  <table>
+    <thead>
+      <tr>
+        <td>url</td>
+        <td>delete</td>
+      </tr>
+    </thead>
+    <tbody>
+      <%= inputs_for @form, :snakes, [append: snakes], fn g -> %>
+        <tr>
+          <td><%= url_input g, :url %></td>
+          <td><%= checkbox g, :delete %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</fieldset>

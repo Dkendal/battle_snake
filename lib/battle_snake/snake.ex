@@ -22,9 +22,9 @@ defmodule BattleSnake.Snake do
   defstruct [
     :id,
     :cause_of_death,
+    :head_url,
     color: "",
     coords: [],
-    head_url: "",
     name: "",
     taunt: "",
     url: "",
