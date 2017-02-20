@@ -4,32 +4,44 @@
   @include media($mobile) {
     @include span-columns(12);
   }
+  &-logo {
+    margin-bottom: ms(4);
+  }
   &-dead-snake {
     opacity: $dead-snake-opacity;
   }
   &-flag {
     background-color: $scoreboard-flag-color;
-    padding: ms(-3);
+    padding-left: ms(-3);
+    padding-right: ms(-3);
+    padding-top: ms(-3);
+    padding-bottom: ms(-3);
   }
   &-flag-container {
     display: flex;
+    margin-bottom: ms(2);
   }
   &-flag-end {
     fill: $scoreboard-flag-color;
     width: 35px;
   }
   &-healthbar {
-    position: relative;
+    margin-bottom: ms(2);
   }
   &-taunt {
-    position: absolute;
     color: $scoreboard-font-color;
+    font-size: ms(0);
+    line-height: ms(4);
+    margin-left: ms(-3);
+    position: absolute;
   }
   &-snake-name {
     color: $scoreboard-font-color;
+    font-size: ms(1);
+    line-height: ms(4);
   }
   &-healthpoints {
-    height: $healthbar-height;
+    height: ms(4);
     width: 100%;
   }
   &-healthpoints-shadow {
@@ -37,10 +49,11 @@
   }
   &-game-name {
     font-weight: bold;
-    font-size: ms(0);
-    margin-bottom: ms(0);
+    font-size: ms(1);
+    line-height: ms(1);
   }
   &-game-turn {
     font-size: ms(-1);
+    line-height: ms(3);
   }
 }
