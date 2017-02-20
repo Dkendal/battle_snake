@@ -1,5 +1,3 @@
-$mobile: new-breakpoint(max-width 480px);
-
 .play-show {
   @include outer-container;
 }
@@ -29,45 +27,4 @@ $mobile: new-breakpoint(max-width 480px);
   stroke-linecap: butt;
   stroke-linejoin: round;
   stroke-width: $obj-snake-stroke-width;
-}
-
-.scoreboard {
-  @include span-columns(3);
-
-  @include media($mobile) {
-    @include span-columns(12);
-  }
-  &-dead-snake {
-    opacity: $dead-snake-opacity;
-  }
-  &-game-info-wrapper {
-    position: relative;
-  }
-  &-flag {
-    background-color: $scoreboard-flag-color;
-  }
-  &-flag-container {
-    display: flex;
-  }
-  &-flag-end {
-    fill: $scoreboard-flag-color;
-    width: 35px;
-  }
-  &-healthbar {
-    position: relative;
-  }
-  &-taunt {
-    position: absolute;
-    color: $scoreboard-font-color;
-  }
-  &-snake-name {
-    color: $scoreboard-font-color;
-  }
-  &-healthpoints {
-    height: $healthbar-height;
-    width: 100%;
-  }
-  &-healthpoints-shadow {
-    opacity: $healthbar-opacity;
-  }
 }
