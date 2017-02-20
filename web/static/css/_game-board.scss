@@ -23,6 +23,11 @@ $mobile: new-breakpoint(max-width 480px);
 }
 
 .obj-snake {
+  height: 1;
+  width: 1;
+  fill: transparent;
+  stroke-linecap: butt;
+  stroke-linejoin: round;
   stroke-width: $obj-snake-stroke-width;
 }
 

@@ -46,20 +46,15 @@
     <% [tail|ts] = Enum.take(coords, -2) |> Enum.reverse %>
 
     <polyline
-        fill="transparent"
         points="<%= snake_polyline_points(coords) %>"
         stroke="<%= snake.color %>"
-        stroke-linecap="butt"
-        stroke-linejoin="round"
-        stroke-width="0.8"
+        class="obj-snake"
     ></polyline>
 
     <use
         class="obj-snake"
-        height="1"
         style="fill: <%= snake.color %>"
         transform="<%= transform_segment(head, hs) %>"
-        width="1"
         x="<%= head.x %>"
         xlink:href="#snake-head"
         y="<%= head.y %>"
@@ -67,10 +62,8 @@
 
     <use
         class="obj-snake"
-        height="1"
         style="fill: <%= snake.color %>"
         transform="<%= transform_segment(tail, ts) %>"
-        width="1"
         x="<%= tail.x %>"
         xlink:href="#snake-tail"
         y="<%= tail.y %>"
