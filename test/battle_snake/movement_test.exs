@@ -1,5 +1,5 @@
-defmodule BattleSnake.World.MoveTest do
-  alias BattleSnake.World.Move
+defmodule BattleSnake.MovementTest do
+  alias BattleSnake.Movement
   use BattleSnake.Case, async: false
   use BattleSnake.Point
   import BattleSnake.Point
@@ -30,7 +30,7 @@ defmodule BattleSnake.World.MoveTest do
     :ok
   end
 
-  describe "Move.next/1" do
+  describe "Movement.next/1" do
     test "updates the location of snakes" do
       snake = build(:snake,
         name: :good_snake,
@@ -39,23 +39,23 @@ defmodule BattleSnake.World.MoveTest do
 
       world = build(:world, snakes: [snake])
 
-      assert %BattleSnake.World{} = Move.next(world)
+      assert %BattleSnake.World{} = Movement.next(world)
 
-      [snake] = Move.next(world).snakes
+      [snake] = Movement.next(world).snakes
 
       assert snake.coords == [p(0, 1)]
     end
   end
 
-  describe "Move.next/1 when a request worker dies" do
+  describe "Movement.next/1 when a request worker dies" do
     test "chooses a default move" do
       for name <- ~w(bad_move bad_content error)a do
         snake = build(:snake, name: name, url: "http://example.com", coords: [p(0, 0)])
         world = build(:world, snakes: [snake])
 
-        assert %BattleSnake.World{} = Move.next(world)
+        assert %BattleSnake.World{} = Movement.next(world)
 
-        [snake] = Move.next(world).snakes
+        [snake] = Movement.next(world).snakes
 
         default_move = BattleSnake.Move.to_point(BattleSnake.Move.default_move)
 
