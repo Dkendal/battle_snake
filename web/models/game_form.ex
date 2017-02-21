@@ -19,11 +19,15 @@ defmodule BattleSnake.GameForm do
   @singleplayer "singleplayer"
   @multiplayer "multiplayer"
   @game_modes [@singleplayer, @multiplayer]
-  @required [:delay,
-             :game_mode,
-             :height,
-             :max_food,
-             :width]
+
+  @required [
+    :delay,
+    :game_mode,
+    :height,
+    :max_food,
+    :recv_timeout,
+    :width,
+  ]
 
   defmacro game_modes, do: @game_modes
   defmacro multiplayer, do: @multiplayer
@@ -35,6 +39,7 @@ defmodule BattleSnake.GameForm do
     width: pos_integer,
     height: pos_integer,
     delay: non_neg_integer,
+    recv_timeout: integer,
     max_food: non_neg_integer,
     winners: [Snake.t],
     game_mode: binary,
@@ -49,6 +54,7 @@ defmodule BattleSnake.GameForm do
     field :max_food, :integer, default: 1
     field :winners, {:array, :string}, default: []
     field :game_mode, :string, default: @multiplayer
+    field :recv_timeout, :integer, default: 200
   end
 
   def changeset(game, params \\ %{}) do
