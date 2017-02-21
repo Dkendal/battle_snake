@@ -51,6 +51,9 @@
     margin-left: ms(-3);
     position: absolute;
   }
+  &-snake {
+    padding-bottom: ms(2);
+  }
   &-snake-name {
     color: $scoreboard-font-color;
     font-size: ms(1);
