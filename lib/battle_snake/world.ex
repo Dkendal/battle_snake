@@ -1,13 +1,10 @@
 defmodule BattleSnake.World do
   use Mnesia.Repo
 
-  alias __MODULE__
-
-  alias BattleSnake.{
-    Move,
-    Point,
-    Snake,
-    Point}
+  alias BattleSnake.Move
+  alias BattleSnake.Point
+  alias BattleSnake.Snake
+  alias BattleSnake.Point
 
   defmodule DeathEvent do
     defstruct [:turn, :snake]
@@ -156,7 +153,7 @@ defmodule BattleSnake.World do
 
     world = update_in(world.dead_snakes, & &1 ++ head_to_head_dead)
 
-    world = update_in(world.deaths, fn deaths ->
+    world = update_in(world.deaths, fn _deaths ->
       dead = acc.dead ++ head_to_head_dead
       for snake <- dead, do: %DeathEvent{turn: world.turn, snake: snake}
     end)
@@ -220,13 +217,6 @@ defmodule BattleSnake.World do
         f.(p)
       end
     end
-  end
-
-  defp times(n) when n <= 0, do: []
-
-  defp times(n) do
-    Stream.iterate(0, &(&1+1))
-    |> Stream.take(n)
   end
 end
 

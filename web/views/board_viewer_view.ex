@@ -1,17 +1,10 @@
 defmodule BattleSnake.BoardViewerView do
-  alias BattleSnake.Snake
   alias BattleSnake.Point
   use BattleSnake.Web, :view
   use BattleSnake.Point
 
-  @snake_stroke_width 0.03
   @food_r 0.25
-  @factor 0.8
-  @center 0.5
   @polyline_term_offset 0.38
-  @offset (1 - @factor) / 2
-  @trans -@center * (@factor - 1)
-  @transform "translate(#{to_string @trans}, #{to_string @trans}) scale(#{to_string @factor})"
 
   def snake_polyline_points(body, acc \\ [])
 
@@ -61,7 +54,7 @@ defmodule BattleSnake.BoardViewerView do
     Enum.sort_by(world.snakes, &(&1.name), &<=/2)
   end
 
-  def transform_segment(h1, []) do
+  def transform_segment(_, []) do
     ""
   end
 
