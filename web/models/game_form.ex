@@ -63,6 +63,8 @@ defmodule BattleSnake.GameForm do
     |> cast_embed(:world)
     |> cast_embed(:snakes)
     |> validate_inclusion(:game_mode, @game_modes)
+    |> validate_number(:recv_timeout, greater_than_or_equal_to: 0)
+    |> validate_number(:delay, greater_than_or_equal_to: 0)
     |> validate_required(@required)
     |> set_id()
     |> remove_empty_snakes()
