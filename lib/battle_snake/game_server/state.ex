@@ -1,10 +1,7 @@
 defmodule BattleSnake.GameServer.State do
   alias __MODULE__
 
-  alias BattleSnake.{
-    World,
-    GameServer,
-  }
+  alias BattleSnake.World
 
   defmodule Event, do: defstruct([:name, :data])
 
@@ -116,6 +113,7 @@ defmodule BattleSnake.GameServer.State do
   def step(state) do
     state
     |> save_history()
+    |> BattleSnake.Movement.next()
     |> Map.update!(:world, &World.step/1)
     |> on_change()
   end
@@ -161,15 +159,4 @@ defmodule BattleSnake.GameServer.State do
       [h |Enum.take(t, @max_history)]
     end
   end
-
-  # defp broadcast(state, event) do
-  #   topic = topic(state)
-  #   event = %Event{name: event, data: state}
-  #   GameServer.PubSub.broadcast(topic, event)
-  #   state
-  # end
-
-  # defp topic(state) do
-  #   state.game_form_id
-  # end
 end

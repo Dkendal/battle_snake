@@ -6,28 +6,33 @@
 
 <fieldset>
   <div>
-    <%= label :f, :width %>
-    <%= number_input @form, :width %>
+    <%= label :f, :width, "Board Width" %>
+    <%= number_input @form, :width, required: true %>
   </div>
 
   <div>
     <%= label @form, :height %>
-    <%= number_input @form, :height %>
+    <%= number_input @form, :height, required: true %>
   </div>
 
   <div>
-    <%= label @form, :delay %>
-    <%= number_input @form, :delay %>
+    <%= label @form, :delay, "Turn delay (ms)" %>
+    <%= number_input @form, :delay, required: true %>
+  </div>
+
+  <div>
+    <%= label @form, :recv_timeout, "API timeout (ms)" %>
+    <%= number_input @form, :recv_timeout, required: true %>
   </div>
 
   <div>
     <%= label @form, :max_food %>
-    <%= number_input @form, :max_food %>
+    <%= number_input @form, :max_food, required: true %>
   </div>
 
   <div>
     <%= label @form, :game_mode %>
-    <%= select @form, :game_mode, BattleSnake.GameForm.game_modes() %>
+    <%= select @form, :game_mode, BattleSnake.GameForm.game_modes(), required: true %>
   </div>
 </fieldset>
 
@@ -43,7 +48,9 @@
     <tbody>
       <%= inputs_for @form, :snakes, [append: snakes], fn g -> %>
         <tr>
-          <td><%= url_input g, :url %></td>
+          <td><%= url_input g, :url,
+              title: "Please enter a valid url (e.g. http://localhost:4000)",
+              pattern: "https?://.+" %></td>
           <td><%= checkbox g, :delete %></td>
         </tr>
       <% end %>
