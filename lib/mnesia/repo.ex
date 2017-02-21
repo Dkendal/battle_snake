@@ -5,6 +5,29 @@ defmodule Mnesia.RecordNotFoundError do
     do: "Couldn't find #{inspect table} with id=#{id}"
 end
 
+defmodule Mnesia do
+  defdelegate record(struct), to: Mnesia.Util
+  defdelegate record(struct, fields), to: Mnesia.Util
+  defdelegate record(struct, fields, table_name), to: Mnesia.Util
+end
+
+defmodule Mnesia.Util do
+  def record(struct) do
+    record(struct, struct.__struct__.fields(), struct.__struct__)
+  end
+
+  def record(struct, fields) do
+    record(struct, fields, struct.__struct__)
+  end
+
+  def record(struct, fields, table_name) do
+    get = &Map.get(struct, &1)
+    attrs = Enum.map(fields, get)
+    List.to_tuple [table_name |attrs]
+  end
+end
+
+
 defmodule Mnesia.Repo do
   @moduledoc """
   Thin wrapper between Ecto and Mnesia, allows Ecto.Changeset's to be used in
@@ -37,7 +60,7 @@ defmodule Mnesia.Repo do
     end
 
     write = fn ->
-      :mnesia.write(module.record(struct))
+      :mnesia.write(Mnesia.record(struct))
     end
 
     {:atomic, :ok} = :mnesia.transaction(write)
@@ -113,13 +136,6 @@ defmodule Mnesia.Repo do
       end
 
       def table, do: [attributes: fields()]
-
-      def record(struct) do
-        get = &Map.get(struct, &1)
-        attrs = Enum.map(fields(), get)
-        mod = struct.__struct__
-        List.to_tuple [mod |attrs]
-      end
 
       def fields do
         __schema__(:fields)

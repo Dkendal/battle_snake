@@ -3,39 +3,6 @@ defmodule BattleSnake.GameTest do
   use BattleSnake.Case, async: true
   import Ecto.Changeset
 
-  describe "#table" do
-    test "returns the decleration for mnesia" do
-      assert GameForm.table == [attributes: [
-        :id,
-        :snakes,
-        :world,
-        :width,
-        :height,
-        :delay,
-        :max_food,
-        :winners,
-        :game_mode
-      ]]
-    end
-  end
-
-  describe "#record" do
-    test "converts a struct into a record" do
-      game = %GameForm{
-        id: 1,
-        snakes: [],
-        world: %{},
-        width: 20,
-        height: 40,
-        delay: 300,
-        max_food: 1,
-        winners: [],
-        game_mode: "multiplayer"
-      }
-      assert GameForm.record(game) == {GameForm, 1, [], %{}, 20, 40, 300, 1, [], "multiplayer"}
-    end
-  end
-
   describe "#set_id" do
     test "adds an id if the id is missing" do
       game = GameForm.changeset %GameForm{id: nil}, %{}

@@ -1,35 +1,58 @@
-defmodule Mnesia.RepoTest.DummyStruct do
+defmodule Dummy do
   use Mnesia.Repo
   defstruct [:id, :x, :y]
-
   def fields, do: [:id, :x, :y]
 end
 
-defmodule Mnesia.RepoTest do
-  alias __MODULE__.DummyStruct
+defmodule Mnesia.UtilTest do
   use BattleSnake.Case, async: false
 
-  @struct struct(DummyStruct, id: 0, x: 1, y: 2)
-  @record {DummyStruct, 0, 1, 2}
+  describe "Mnesia.Util.record/1" do
+    test "converts the struct to a record" do
+      dummy = %Dummy{id: 1, x: 2, y: 3}
+      assert Mnesia.Util.record(dummy) == {Dummy, 1, 2, 3}
+    end
+  end
+
+  describe "Mnesia.Util.record/2" do
+    test "converts the struct to a record" do
+      dummy = %Dummy{id: 1, x: 2, y: 3}
+      assert Mnesia.Util.record(dummy, [:id]) == {Dummy, 1}
+    end
+  end
+
+  describe "Mnesia.Util.record/3" do
+    test "converts the struct to a record" do
+      dummy = %Dummy{id: 1, x: 2, y: 3}
+      assert Mnesia.Util.record(dummy, [:id], :table) == {:table, 1}
+    end
+  end
+end
+
+defmodule Mnesia.RepoTest do
+  use BattleSnake.Case, async: false
+
+  @struct struct(Dummy, id: 0, x: 1, y: 2)
+  @record {Dummy, 0, 1, 2}
 
   setup [:create_table]
 
   describe "Mnesia.Repo.save/1" do
     test "saves the record" do
-      Mnesia.Repo.save(%DummyStruct{})
+      Mnesia.Repo.save(%Dummy{})
     end
   end
 
   describe "Mnesia.Repo.fields/0" do
     test "returns fields defined as a module attribute" do
-      assert DummyStruct.fields == [
+      assert Dummy.fields == [
         :id,
         :x,
         :y]
     end
 
     test "returns the column names" do
-      assert DummyStruct.fields == [
+      assert Dummy.fields == [
         :id,
         :x,
         :y]
@@ -38,17 +61,11 @@ defmodule Mnesia.RepoTest do
 
   describe "Mnesia.Repo.table/0" do
     test "returns the decleration for mnesia" do
-      assert DummyStruct.table == [
+      assert Dummy.table == [
         attributes: [
           :id,
           :x,
           :y]]
-    end
-  end
-
-  describe "Mnesia.Repo.record/1" do
-    test "converts the struct to a record" do
-      assert DummyStruct.record(@struct) == @record
     end
   end
 
@@ -63,7 +80,7 @@ defmodule Mnesia.RepoTest do
 
     test "writes the record to mnesia" do
       assert @struct == Mnesia.Repo.save(@struct)
-      assert 1 == :mnesia.table_info(DummyStruct, :size)
+      assert 1 == :mnesia.table_info(Dummy, :size)
     end
   end
 
@@ -71,20 +88,20 @@ defmodule Mnesia.RepoTest do
     setup [:create_table, :delete_table, :create_dummy]
 
     test "returns the record", %{dummy: dummy} do
-      assert {:ok, @struct} == DummyStruct.get(dummy.id)
+      assert {:ok, @struct} == Dummy.get(dummy.id)
     end
 
     test "returns an error when the record doesn't exist" do
-      assert {:error, %Mnesia.RecordNotFoundError{table: DummyStruct, id: "fake-record"}} ==
-        DummyStruct.get("fake-record")
+      assert {:error, %Mnesia.RecordNotFoundError{table: Dummy, id: "fake-record"}} ==
+        Dummy.get("fake-record")
     end
   end
 
   describe "Mnesia.Repo.create_table/0" do
     test "creates the mnesia table" do
-      :mnesia.delete_table DummyStruct
-      assert {:atomic, :ok} == DummyStruct.create_table()
-      assert DummyStruct == :mnesia.table_info(DummyStruct, :record_name)
+      :mnesia.delete_table Dummy
+      assert {:atomic, :ok} == Dummy.create_table()
+      assert Dummy == :mnesia.table_info(Dummy, :record_name)
     end
   end
 
@@ -92,7 +109,7 @@ defmodule Mnesia.RepoTest do
     test "returns all records for the table" do
       :mnesia.activity :transaction, fn ->
         :mnesia.write @record
-        assert [_] = Mnesia.Repo.all(DummyStruct)
+        assert [_] = Mnesia.Repo.all(Dummy)
       end
     end
   end
@@ -103,13 +120,13 @@ defmodule Mnesia.RepoTest do
   end
 
   def create_table(_) do
-    :mnesia.create_table DummyStruct, attributes: DummyStruct.fields()
+    :mnesia.create_table Dummy, attributes: Dummy.fields()
     :ok
   end
 
   def delete_table(context \\ %{}) do
     on_exit fn ->
-      {:atomic, _} = :mnesia.delete_table(DummyStruct)
+      {:atomic, _} = :mnesia.delete_table(Dummy)
     end
     context
   end

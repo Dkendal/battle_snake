@@ -15,15 +15,9 @@ defmodule BattleSnake.GameForm do
   use BattleSnake.Web, :model
   use Mnesia.Repo
 
-  @permitted [:height, :width, :delay, :max_food, :game_mode]
   @singleplayer "singleplayer"
   @multiplayer "multiplayer"
   @game_modes [@singleplayer, @multiplayer]
-  @required [:delay,
-             :game_mode,
-             :height,
-             :max_food,
-             :width]
 
   defmacro game_modes, do: @game_modes
   defmacro multiplayer, do: @multiplayer
@@ -35,6 +29,7 @@ defmodule BattleSnake.GameForm do
     width: pos_integer,
     height: pos_integer,
     delay: non_neg_integer,
+    recv_timeout: integer,
     max_food: non_neg_integer,
     winners: [Snake.t],
     game_mode: binary,
@@ -49,14 +44,33 @@ defmodule BattleSnake.GameForm do
     field :max_food, :integer, default: 1
     field :winners, {:array, :string}, default: []
     field :game_mode, :string, default: @multiplayer
+    field :recv_timeout, :integer, default: 200
   end
 
+  @required [
+    :delay,
+    :game_mode,
+    :height,
+    :max_food,
+    :recv_timeout,
+    :width,
+  ]
+  @permitted [
+    :delay,
+    :game_mode,
+    :height,
+    :max_food,
+    :recv_timeout,
+    :width,
+  ]
   def changeset(game, params \\ %{}) do
     game
     |> cast(params, @permitted)
     |> cast_embed(:world)
     |> cast_embed(:snakes)
     |> validate_inclusion(:game_mode, @game_modes)
+    |> validate_number(:recv_timeout, greater_than_or_equal_to: 0)
+    |> validate_number(:delay, greater_than_or_equal_to: 0)
     |> validate_required(@required)
     |> set_id()
     |> remove_empty_snakes()
