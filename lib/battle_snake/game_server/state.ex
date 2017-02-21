@@ -162,15 +162,4 @@ defmodule BattleSnake.GameServer.State do
       [h |Enum.take(t, @max_history)]
     end
   end
-
-  # defp broadcast(state, event) do
-  #   topic = topic(state)
-  #   event = %Event{name: event, data: state}
-  #   GameServer.PubSub.broadcast(topic, event)
-  #   state
-  # end
-
-  # defp topic(state) do
-  #   state.game_form_id
-  # end
 end
