@@ -25,22 +25,6 @@ defmodule BattleSnake.GameChannel do
     end
   end
 
-  def load_game_form(game_id) do
-    GameForm.get(game_id)
-  end
-
-  @spec load_game_server_pid(GameForm.t) :: {:ok, pid} | {:error, any}
-  def load_game_server_pid(game_form) do
-    case GameServer.Registry.lookup(game_form.id) do
-      [{game_server_pid, _}] ->
-        {:ok, game_server_pid}
-      [] ->
-        state = GameForm.reload_game_server_state(game_form)
-        {:ok, game_server_pid} = GameServer.Registry.create(game_form.id, state)
-        {:ok, game_server_pid}
-    end
-  end
-
   @spec handle_info(:after_join, Phoenix.Socket.t) ::
   {:noreply, Phoenix.Socket.t}
   def handle_info(:after_join,
