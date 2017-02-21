@@ -1,10 +1,7 @@
 defmodule BattleSnake.GameServer.State do
   alias __MODULE__
 
-  alias BattleSnake.{
-    World,
-    GameServer,
-  }
+  alias BattleSnake.World
 
   defmodule Event, do: defstruct([:name, :data])
 
