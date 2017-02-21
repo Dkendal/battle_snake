@@ -7,6 +7,8 @@ defmodule BattleSnake.World.Move do
 
   require Logger
 
+  @sup_timeout 10_000
+
   @moduledoc """
   Updates the positions of all snakes on the board.
   """
@@ -16,7 +18,7 @@ defmodule BattleSnake.World.Move do
 
     @spec run(BattleSnake.World.t, BattleSnake.Snake.t) :: BattleSnake.Point.t
     def run(%Snake{} = snake, %World{} = world) do
-      response = @api.request_move(snake, world)
+      response = @api.request_move(snake, world, [recv_timeout: 200])
       response
       |> process_response
       |> Move.to_point
@@ -48,6 +50,8 @@ defmodule BattleSnake.World.Move do
   """
   @spec next(World.t) :: World.t
   def next(world) do
+    options = [timeout: @sup_timeout]
+
     snakes = world.snakes
 
     snakes = Task.Supervisor.async_stream_nolink(
@@ -55,7 +59,8 @@ defmodule BattleSnake.World.Move do
       snakes,
       Worker,
       :run,
-      [world])
+      [world],
+      options)
       |> Stream.zip(snakes)
       |> Stream.map(&get_move_for_snake/1)
       |> Stream.map(&move_snake/1)
