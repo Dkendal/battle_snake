@@ -25,8 +25,10 @@ defmodule BattleSnake.MockApi do
     BattleSnake.Api.move(x, y, mock_post(@move))
   end
 
-  def request_move(%Snake{} = snake, %World{} = world) do
-    GenServer.call(__MODULE__, {:request_move, [snake, world]})
+  def request_move(target, data, ops \\ [])
+
+  def request_move(%Snake{} = snake, %World{} = world, opts) do
+    GenServer.call(__MODULE__, {:request_move, [snake, world, opts]})
   end
 
   def handle_call({:request_move, args}, _from, mocks) do
