@@ -1,0 +1,91 @@
+<div class="scoreboard">
+  <%= img_tag "/images/bs-logo-light.svg", class: "scoreboard-logo" %>
+  <div class="scoreboard-flag-container">
+    <div class="scoreboard-flag">
+      <image class="scoreboard-division-img"
+             src="/images/division-advanced.svg"></image>
+      <div>
+        <div class="scoreboard-game-name">
+          <span><%= @state.game_form.id %></span>
+        </div>
+        <div class="scoreboard-game-turn">
+          <span>Turn</span>
+          <span><%= @turn %></span>
+        </div>
+      </div>
+    </div>
+    <div class="scoreboard-flag-end">
+      <svg height="100%"
+           preserveAspectRatio="none"
+           viewBox="0 0 100 100"
+           width="100%"
+           x="0"
+           y="0">
+        <polygon points="0 0, 0 100, 100 100, 0, 50, 100 0"></polygon>
+      </svg>
+    </div>
+  </div>
+
+  <%= for snake <- @snakes do %>
+    <div class="scoreboard-snake">
+      <div class="scoreboard-avatar">
+        <image src="<%= head_image_url snake %>"></image>
+      </div>
+      <div>
+        <div class="scoreboard-snake-name"><%= snake.name %></div>
+        <div class="scoreboard-healthbar">
+          <div class="scoreboard-taunt"><%= snake.taunt %></div>
+          <svg class="scoreboard-healthpoints"
+               preserveAspectRatio="none"
+               viewBox="0 0 100 100">
+            <%= content_tag(:rect,
+              "",
+              fill: snake.color,
+              x: 0,
+              y: 0,
+              height: 100,
+              width: 100,
+              class: "scoreboard-healthpoints-shadow") %>
+
+            <%= content_tag(:rect,
+              "",
+              fill: snake.color,
+              x: 0,
+              y: 0,
+              height: 100,
+              width: snake.health_points) %>
+          </svg>
+        </div>
+      </div>
+    </div>
+  <% end %>
+
+  <%= for snake <- @dead_snakes do %>
+    <div class="scoreboard-dead-snake">
+      <div class="scoreboard-snake-name"><%= snake.name %></div>
+      <div class="scoreboard-healthbar">
+        <div class="scoreboard-taunt"><%= snake.taunt %></div>
+        <svg class="scoreboard-healthpoints"
+             preserveAspectRatio="none"
+             viewBox="0 0 100 100">
+          <%= content_tag(:rect,
+              "",
+              fill: snake.color,
+              x: 0,
+              y: 0,
+              height: 100,
+              width: 100,
+              class: "scoreboard-healthpoints-shadow") %>
+
+          <%= content_tag(:rect,
+              "",
+              fill: snake.color,
+              x: 0,
+              y: 0,
+              height: 100,
+              width: snake.health_points) %>
+        </svg>
+      </div>
+    </div>
+  <% end %>
+</div>
