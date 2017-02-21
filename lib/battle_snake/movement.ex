@@ -8,7 +8,7 @@ defmodule BattleSnake.Movement do
 
   require Logger
 
-  @sup_timeout 10_000
+  @sup_timeout :infinity
 
   @moduledoc """
   Updates the positions of all snakes on the board.
@@ -17,9 +17,9 @@ defmodule BattleSnake.Movement do
   defmodule Worker do
     @api Application.get_env(:battle_snake, :snake_api)
 
-    @spec run(BattleSnake.World.t, BattleSnake.Snake.t) :: BattleSnake.Point.t
-    def run(%Snake{} = snake, %World{} = world) do
-      response = @api.request_move(snake, world, [recv_timeout: 200])
+    @spec run(BattleSnake.World.t, BattleSnake.Snake.t, timeout) :: BattleSnake.Point.t
+    def run(%Snake{} = snake, %World{} = world, recv_timeout) do
+      response = @api.request_move(snake, world, [recv_timeout: recv_timeout])
       response
       |> process_response
       |> Move.to_point
@@ -48,14 +48,17 @@ defmodule BattleSnake.Movement do
 
   @spec next(State.t) :: State.t
   def next(%State{} = state) do
-    %{state| world: next(state.world)}
+    recv_timeout = state.game_form.recv_timeout
+
+    %{state| world: next(state.world, recv_timeout)}
   end
 
   @doc """
   Fetch and update the position of all snakes
   """
-  @spec next(World.t) :: World.t
-  def next(%World{} = world) do
+  @spec next(World.t, timeout) :: World.t
+  def next(world, recv_timeout \\ :infinity)
+  def next(%World{} = world, recv_timeout) do
     options = [timeout: @sup_timeout]
 
     snakes = world.snakes
@@ -65,7 +68,7 @@ defmodule BattleSnake.Movement do
       snakes,
       Worker,
       :run,
-      [world],
+      [world, recv_timeout],
       options)
       |> Stream.zip(snakes)
       |> Stream.map(&get_move_for_snake/1)
