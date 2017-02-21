@@ -1,6 +1,5 @@
 defmodule BattleSnake.GameChannel do
   alias BattleSnake.GameServer
-  alias BattleSnake.GameForm
   alias BattleSnake.GameServer.State.Event
 
   use BattleSnake.Web, :channel
