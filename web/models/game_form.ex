@@ -15,19 +15,9 @@ defmodule BattleSnake.GameForm do
   use BattleSnake.Web, :model
   use Mnesia.Repo
 
-  @permitted [:height, :width, :delay, :max_food, :game_mode]
   @singleplayer "singleplayer"
   @multiplayer "multiplayer"
   @game_modes [@singleplayer, @multiplayer]
-
-  @required [
-    :delay,
-    :game_mode,
-    :height,
-    :max_food,
-    :recv_timeout,
-    :width,
-  ]
 
   defmacro game_modes, do: @game_modes
   defmacro multiplayer, do: @multiplayer
@@ -57,6 +47,22 @@ defmodule BattleSnake.GameForm do
     field :recv_timeout, :integer, default: 200
   end
 
+  @required [
+    :delay,
+    :game_mode,
+    :height,
+    :max_food,
+    :recv_timeout,
+    :width,
+  ]
+  @permitted [
+    :delay,
+    :game_mode,
+    :height,
+    :max_food,
+    :recv_timeout,
+    :width,
+  ]
   def changeset(game, params \\ %{}) do
     game
     |> cast(params, @permitted)
