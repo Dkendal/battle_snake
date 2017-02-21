@@ -1,12 +1,17 @@
 <div class="scoreboard">
   <%= img_tag "/images/bs-logo-light.svg", class: "scoreboard-logo" %>
-
   <div class="scoreboard-flag-container">
     <div class="scoreboard-flag">
-      <div class="scoreboard-game-name"><%= @state.game_form.id %></div>
-      <div class="scoreboard-game-turn">
-        <span>Turn</span>
-        <span><%= @turn %></span>
+      <image class="scoreboard-division-img"
+             src="/images/division-advanced.svg"></image>
+      <div>
+        <div class="scoreboard-game-name">
+          <span><%= @state.game_form.id %></span>
+        </div>
+        <div class="scoreboard-game-turn">
+          <span>Turn</span>
+          <span><%= @turn %></span>
+        </div>
       </div>
     </div>
     <div class="scoreboard-flag-end">
