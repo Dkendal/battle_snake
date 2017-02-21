@@ -93,7 +93,18 @@ defmodule BattleSnake.Mixfile do
   end
 
   defp aliases do
-     [setup: [&check_prereqs/1, &npm_install/1, "deps.get", "compile", "battle_snake.schema", &test/1]]
+    [setup: [
+        &check_prereqs/1,
+        &npm_install/1,
+        "deps.get",
+        "compile",
+        "battle_snake.schema",
+        &test/1],
+
+     "battle_snake.schema": [
+       "battle_snake.schema.drop",
+       "battle_snake.schema.create",
+       "battle_snake.schema.tables.create"]]
   end
 
   defp npm_install(_) do
