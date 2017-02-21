@@ -1,0 +1,75 @@
+.scoreboard {
+  @include span-columns(4);
+
+  @include media($mobile) {
+    @include span-columns(12);
+  }
+  &-division-img {
+    width: ms(9);
+    margin-right: ms(-3);
+  }
+  &-snake {
+    display: flex;
+    align-items: flex-end;
+  }
+  &-avatar {
+    width: ms(8);
+    height: ms(8);
+    margin-right: ms(-1);
+  }
+  &-logo {
+    margin-bottom: ms(4);
+  }
+  &-dead-snake {
+    opacity: $dead-snake-opacity;
+  }
+  &-flag {
+    background-color: $scoreboard-flag-color;
+    padding-left: ms(-3);
+    padding-right: ms(-3);
+    padding-top: ms(-3);
+    padding-bottom: ms(-3);
+    display: flex;
+    align-items: center;
+  }
+  &-flag-container {
+    display: flex;
+    margin-bottom: ms(2);
+  }
+  &-flag-end {
+    fill: $scoreboard-flag-color;
+    width: 35px;
+  }
+  &-healthbar {
+    line-height: ms(4);
+    height: ms(4);
+  }
+  &-taunt {
+    color: $scoreboard-font-color;
+    font-size: ms(0);
+    line-height: ms(4);
+    margin-left: ms(-3);
+    position: absolute;
+  }
+  &-snake-name {
+    color: $scoreboard-font-color;
+    font-size: ms(1);
+    line-height: ms(4);
+  }
+  &-healthpoints {
+    height: 100%;
+    width: 100%;
+  }
+  &-healthpoints-shadow {
+    opacity: $healthbar-opacity;
+  }
+  &-game-name {
+    font-weight: bold;
+    font-size: ms(1);
+    line-height: ms(1);
+  }
+  &-game-turn {
+    font-size: ms(-1);
+    line-height: ms(3);
+  }
+}
