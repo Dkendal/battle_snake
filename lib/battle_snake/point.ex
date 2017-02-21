@@ -18,6 +18,7 @@ defmodule BattleSnake.Point do
           x: unquote(x),
           y: unquote(y)}
 
+  @spec sub(t, t) :: t
   def sub(a, b) do
     %__MODULE__{
       y: a.y - b.y,
@@ -26,11 +27,13 @@ defmodule BattleSnake.Point do
   end
 
   @doc "Scalar addition of a vector"
+  @spec add(t, number) :: t
   def add(a, b) when is_number(b) do
     add(a, p(b, b))
   end
 
   @doc "Add two vectors"
+  @spec add(t, t) :: t
   def add(a, b) do
     %__MODULE__{
       y: a.y + b.y,
@@ -39,10 +42,12 @@ defmodule BattleSnake.Point do
   end
 
   @doc "Scalar multiplication of a vector"
+  @spec mul(t, number) :: t
   def mul(v, s) when is_number(s) do
     p(v.x * s, v.y * s)
   end
 
+  @spec line(t, t, pos_integer) :: [t]
   def line(from, dir, length) do
     Stream.iterate(from, &add(&1, dir))
     |> Enum.take(length)
