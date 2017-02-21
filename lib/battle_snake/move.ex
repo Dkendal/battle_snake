@@ -1,11 +1,6 @@
 defmodule BattleSnake.Move do
   alias __MODULE__
-
-  alias BattleSnake.{
-    World,
-    Point,
-    Snake,
-  }
+  alias BattleSnake.Point
 
   defstruct [
     :move,

@@ -1,8 +1,5 @@
 defmodule BattleSnake.GameServer.Client do
-  alias BattleSnake.{
-    GameServer,
-    GameServer.State,
-  }
+  alias BattleSnake.GameServer
 
   def get_state(pid) do
     GenServer.call(pid, :get_state)
