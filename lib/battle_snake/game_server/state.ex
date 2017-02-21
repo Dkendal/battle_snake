@@ -116,6 +116,7 @@ defmodule BattleSnake.GameServer.State do
   def step(state) do
     state
     |> save_history()
+    |> BattleSnake.Movement.next()
     |> Map.update!(:world, &World.step/1)
     |> on_change()
   end

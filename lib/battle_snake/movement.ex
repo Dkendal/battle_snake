@@ -1,9 +1,10 @@
-defmodule BattleSnake.World.Move do
+defmodule BattleSnake.Movement do
   alias BattleSnake.World
   alias BattleSnake.Snake
   alias BattleSnake.Api
   alias BattleSnake.Move
   alias BattleSnake.Point
+  alias BattleSnake.GameServer.State
 
   require Logger
 
@@ -45,11 +46,16 @@ defmodule BattleSnake.World.Move do
     end
   end
 
+  @spec next(State.t) :: State.t
+  def next(%State{} = state) do
+    %{state| world: next(state.world)}
+  end
+
   @doc """
   Fetch and update the position of all snakes
   """
   @spec next(World.t) :: World.t
-  def next(world) do
+  def next(%World{} = world) do
     options = [timeout: @sup_timeout]
 
     snakes = world.snakes
