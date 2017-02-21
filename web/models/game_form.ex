@@ -1,6 +1,4 @@
 defmodule BattleSnake.GameForm do
-  @api Application.get_env(:battle_snake, :snake_api)
-
   alias __MODULE__
   alias BattleSnake.{
     GameServer,

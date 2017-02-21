@@ -1,8 +1,5 @@
 defmodule BattleSnake.Api.GameServerController do
-  alias BattleSnake.{
-    GameForm,
-    GameServer
-  }
+  alias BattleSnake.GameServer
 
   use BattleSnake.Web, :controller
 

@@ -1,7 +1,6 @@
 defmodule Types do
   import Property
   require Property
-  import :proper
   import :proper_types
 
   def point(world) do

@@ -29,6 +29,7 @@ defmodule BattleSnake.GameServer.Server do
     |> do_reply
   end
 
+  @spec handle_call(:get_game_state, pid, State.t) :: {:reply, State.t, State.t}
   def handle_call(:get_game_state, _from, state) do
     {:reply, state, state}
   end
