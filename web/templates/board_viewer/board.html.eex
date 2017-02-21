@@ -4,10 +4,6 @@
 <% snakes = snakes(world) %>
 <% dead_snakes = dead_snakes(world) %>
 
-<% factor = 0.8 %>
-<% center = 0.5 %>
-<% trans = -center * (factor - 1 )%>
-
 <%= content_tag(:svg,
     viewBox: "0 0 #{width} #{height}",
     class: "game-board") do %>
