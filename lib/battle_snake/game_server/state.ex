@@ -6,31 +6,80 @@ defmodule BattleSnake.GameServer.State do
   defmodule Event, do: defstruct([:name, :data])
 
   @max_history 20
+
   @statuses [:cont, :replay, :halted, :suspend]
 
-  for status <- @statuses do
-    method_name = :"#{status}!"
-    @spec unquote(method_name)(t) :: t
-    def unquote(method_name)(state) do
-      put_in(state.status, unquote(status))
-    end
-
-    method_name = :"#{status}?"
-    @spec unquote(method_name)(t) :: t
-    def unquote(method_name)(state) do
-      state.status == unquote(status)
-    end
-
-    method_name = :"is_#{status}"
-    defmacrop unquote(method_name)(state) do
-      status = unquote(status)
-      quote do
-        %__MODULE__{status: unquote(status)} = unquote(state)
-      end
-    end
-
-    defoverridable("#{status}!": 1, "#{status}?": 1)
+  @spec cont!(t) :: t
+  def cont!(state) do
+    put_in(state.status, :cont)
   end
+
+  @spec cont?(t) :: t
+  def cont?(state) do
+    state.status == :cont
+  end
+
+  defmacrop is_cont(state) do
+    quote do
+      %__MODULE__{status: :cont} = unquote(state)
+    end
+  end
+
+  defoverridable("cont!": 1, "cont?": 1)
+
+  @spec suspend!(t) :: t
+  def suspend!(state) do
+    put_in(state.status, :suspend)
+  end
+
+  @spec suspend?(t) :: t
+  def suspend?(state) do
+    state.status == :suspend
+  end
+
+  defmacrop is_suspend(state) do
+    quote do
+      %__MODULE__{status: :suspend} = unquote(state)
+    end
+  end
+
+  defoverridable("suspend!": 1, "suspend?": 1)
+
+  @spec halted!(t) :: t
+  def halted!(state) do
+    put_in(state.status, :halted)
+  end
+
+  @spec halted?(t) :: t
+  def halted?(state) do
+    state.status == :halted
+  end
+
+  defmacrop is_halted(state) do
+    quote do
+      %__MODULE__{status: :halted} = unquote(state)
+    end
+  end
+
+  defoverridable("halted!": 1, "halted?": 1)
+
+  @spec replay!(t) :: t
+  def replay!(state) do
+    put_in(state.status, :replay)
+  end
+
+  @spec replay?(t) :: t
+  def replay?(state) do
+    state.status == :replay
+  end
+
+  defmacrop is_replay(state) do
+    quote do
+      %__MODULE__{status: :replay} = unquote(state)
+    end
+  end
+
+  defoverridable("replay!": 1, "replay?": 1)
 
   @typedoc """
   Any function that takes a State, and returns a new State.
@@ -77,20 +126,40 @@ defmodule BattleSnake.GameServer.State do
     state.objective.(state.world)
   end
 
-  for event <- @events do
-    method_name = event
-    @doc "Execute the #{method_name} event-handler function"
-    @spec unquote(method_name)(t) :: t
-    def unquote(method_name)(state) do
-      state.unquote(method_name).(state)
-    end
+  @doc "Execute the on_done event-handler function"
+  @spec on_done(t) :: t
+  def on_done(state) do
+    state.on_done.(state)
+  end
 
-    method_name = :"put_#{event}"
-    @doc "Put a new #{method_name} event-handler function into state"
-    @spec unquote(method_name)(t, (t -> t)) :: t
-    def unquote(method_name)(state, handler) do
-      put_in(state.unquote(method_name), handler)
-    end
+  @doc "Put a new on_done event-handler function into state"
+  @spec on_done(t, (t -> t)) :: t
+  def on_done(state, handler) do
+    put_in(state.on_done, handler)
+  end
+
+  @doc "Execute the on_start event-handler function"
+  @spec on_start(t) :: t
+  def on_start(state) do
+    state.on_start.(state)
+  end
+
+  @doc "Put a new on_start event-handler function into state"
+  @spec on_start(t, (t -> t)) :: t
+  def on_start(state, handler) do
+    put_in(state.on_start, handler)
+  end
+
+  @doc "Execute the on_change event-handler function"
+  @spec on_change(t) :: t
+  def on_change(state) do
+    state.on_change.(state)
+  end
+
+  @doc "Put a new on_change event-handler function into state"
+  @spec on_change(t, (t -> t)) :: t
+  def on_change(state, handler) do
+    put_in(state.on_change, handler)
   end
 
   def identity(x), do: x
