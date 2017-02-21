@@ -150,23 +150,26 @@ defmodule BattleSnake.Api do
     end
   end
 
-  def request_move(url, data)
+  def request_move(target, data, opts \\ [])
+
+  def request_move(url, data, options)
   when is_binary(url)
   and is_binary(data) do
     Logger.info("POST #{url}")
 
     {time, value} = :timer.tc(HTTPoison, :post,
-      [url, data, %{"content-type" => "application/json"}])
+      [url, data, ["content-type": "application/json"], options])
 
     Logger.info("Response from POST #{url} in #{div(time, 1000)}ms")
 
     value
   end
 
-  def request_move(%Snake{} = snake, %World{} = world) do
+  def request_move(%Snake{} = snake, %World{} = world, options) do
     request_move(
       BattleSnake.URL.move_url(snake.url),
-      Poison.encode!(world, me: snake.id)
+      Poison.encode!(world, me: snake.id),
+      options
     )
   end
 

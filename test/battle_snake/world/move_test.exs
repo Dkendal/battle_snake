@@ -4,28 +4,28 @@ defmodule BattleSnake.World.MoveTest do
   use BattleSnake.Point
   import BattleSnake.Point
 
-  def request_move(%{name: :good_snake}, _world) do
+  def request_move(%{name: :good_snake}, _world, _) do
     json = %{move: "down"}
     body = Poison.encode!(json)
     {:ok, %HTTPoison.Response{body: body}}
   end
 
-  def request_move(%{name: :error}, _world) do
+  def request_move(%{name: :error}, _world, _) do
     {:error, :forced_failure}
   end
 
-  def request_move(%{name: :bad_content}, _world) do
+  def request_move(%{name: :bad_content}, _world, _) do
     {:ok, %HTTPoison.Response{body: "hurr durr"}}
   end
 
-  def request_move(%{name: :bad_move}, _world) do
+  def request_move(%{name: :bad_move}, _world, _) do
     json = %{move: "NORTH"}
     body = Poison.encode!(json)
     {:ok, %HTTPoison.Response{body: body}}
   end
 
   setup_all do
-    mocks = %{request_move: &request_move/2}
+    mocks = %{request_move: &request_move/3}
     {:ok, _pid} = BattleSnake.MockApi.start_link(mocks)
     :ok
   end
