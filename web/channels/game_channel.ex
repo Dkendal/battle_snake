@@ -1,10 +1,6 @@
 defmodule BattleSnake.GameChannel do
-  alias BattleSnake.{
-    World,
-    GameServer,
-    GameForm,
-    GameServer.State.Event
-  }
+  alias BattleSnake.GameServer
+  alias BattleSnake.GameServer.State.Event
 
   use BattleSnake.Web, :channel
 
@@ -25,34 +21,6 @@ defmodule BattleSnake.GameChannel do
 
     else
       {:error, %{reason: "unauthorized"}}
-    end
-  end
-
-  def handle_in("replay", _, socket) do
-    game_server_pid = socket.assigns.game_server_pid
-    :ok = GameServer.replay(game_server_pid)
-    {:reply, :ok, socket}
-  end
-
-  def handle_in("start", _, socket) do
-    game_server_pid = socket.assigns.game_server_pid
-    :ok = GameServer.resume(game_server_pid)
-    {:reply, :ok, socket}
-  end
-
-  def load_game_form(game_id) do
-    GameForm.get(game_id)
-  end
-
-  @spec load_game_server_pid(GameForm.t) :: {:ok, pid} | {:error, any}
-  def load_game_server_pid(game_form, callback \\ &(&1)) do
-    case GameServer.Registry.lookup(game_form.id) do
-      [{game_server_pid, _}] ->
-        {:ok, game_server_pid}
-      [] ->
-        state = GameForm.reload_game_server_state(game_form)
-        {:ok, game_server_pid} = GameServer.Registry.create(game_form.id, state)
-        {:ok, game_server_pid}
     end
   end
 
@@ -83,6 +51,18 @@ defmodule BattleSnake.GameChannel do
     {:noreply, socket}
   end
 
+  def handle_in("replay", _, socket) do
+    game_server_pid = socket.assigns.game_server_pid
+    :ok = GameServer.replay(game_server_pid)
+    {:reply, :ok, socket}
+  end
+
+  def handle_in("start", _, socket) do
+    game_server_pid = socket.assigns.game_server_pid
+    :ok = GameServer.resume(game_server_pid)
+    {:reply, :ok, socket}
+  end
+
   def handle_in("pause", _, socket) do
     :ok = socket.assigns.game_server_pid
     |> GameServer.pause()
@@ -106,9 +86,6 @@ defmodule BattleSnake.GameChannel do
     |> GameServer.prev()
     {:reply, :ok, socket}
   end
-
-  defp game_id(%{topic: "game:" <> id}),
-    do: id
 
   defp authorized?(_payload) do
     true

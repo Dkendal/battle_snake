@@ -1,6 +1,4 @@
 defmodule BattleSnake.Api.Response do
-  alias __MODULE__
-
   @type error :: {:error, any} | {:error, :no_response}
   @type raw_response :: {:ok, HTTPoison.Response.t} | error
   @type parsed_response :: {:ok, map | struct} | error
