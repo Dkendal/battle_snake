@@ -6,6 +6,7 @@ defmodule BattleSnake.Snake do
   @max_health_points 100
 
   @type health :: :ok | {:error, any}
+  @type cause_of_death :: {atom, any}
 
   @type t :: %Snake{
     id: reference,
@@ -16,7 +17,7 @@ defmodule BattleSnake.Snake do
     taunt: String.t,
     url: String.t,
     health: health,
-    cause_of_death: binary,
+    cause_of_death: cause_of_death,
   }
 
   defstruct [
