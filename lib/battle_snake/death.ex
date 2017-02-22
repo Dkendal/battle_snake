@@ -1,4 +1,5 @@
 defmodule BattleSnake.Death do
+  alias __MODULE__
   alias BattleSnake.Snake
   alias BattleSnake.GameServer.State
 
@@ -9,8 +10,22 @@ defmodule BattleSnake.Death do
   @type dim :: {width, height}
   @type state :: State.t
   @type snake :: Snake.t
+  @type point :: BattleSnake.Point.t
   @type live :: [snake]
   @type dead :: [snake]
+  @type cause :: %{where: point}
+  @type death :: %Death{turn: pos_integer, causes: [cause], where: point}
+  @type t :: death
+
+  defstruct [:turn, :causes, :where]
+  defmodule(Kill, do: defstruct([:turn, :with, :where, :cause]))
+
+  defmodule(BodyCollisionCause, do: defstruct([:with]))
+  defmodule(Cause, do: defstruct([]))
+  defmodule(HeadCollisionCause, do: defstruct([:with]))
+  defmodule(SelfCollisionCause, do: defstruct([]))
+  defmodule(StarvationCause, do: defstruct([]))
+  defmodule(WallCollisionCause, do: defstruct([]))
 
   @spec combine_live([[snake]]) :: [snake]
   def combine_live(l) do
@@ -77,7 +92,7 @@ defmodule BattleSnake.Death do
 
   def do_starvation([%{health_points: hp} = snake|rest], {live, dead})
   when hp <= 0 do
-    reason = [{:starvation, []}]
+    reason = [%StarvationCause{}]
     snake = put_in(snake.cause_of_death, reason)
     do_starvation(rest, {live, [snake|dead]})
   end
@@ -101,7 +116,7 @@ defmodule BattleSnake.Death do
   def do_wall_collision([%{coords: [p(x, y)|_]} = snake|rest], {w, h}, {live, dead})
   when not y in 0..(w-1)
   or not x in 0..(h-1) do
-    reason = [{:wall_collision, []}]
+    reason = [%WallCollisionCause{}]
     snake = put_in(snake.cause_of_death, reason)
     do_wall_collision(rest, {w, h}, {live, [snake|dead]})
   end
@@ -134,30 +149,29 @@ defmodule BattleSnake.Death do
     {:live, snake}
   end
 
-  defp unzip_result({{:ok, collisions}, snake}) do
-    reason = [{:collision, collisions}]
+  defp unzip_result({{:ok, reason}, snake}) do
     snake = put_in(snake.cause_of_death, reason)
     {:dead, snake}
   end
-end
 
-defmodule BattleSnake.Death.Collision do
-  def run(snake, snakes) do
-    head = hd(snake.coords)
+  defmodule Collision do
+    def run(snake, snakes) do
+      head = hd(snake.coords)
 
-    Stream.map(snakes, fn other ->
-      cond do
-        other.id != snake.id and head == hd(other.coords) and length(snake.coords) <= length(other.coords) ->
-          {:collision_head, other.id}
+      Stream.map(snakes, fn other ->
+        cond do
+          other.id != snake.id and head == hd(other.coords) and length(snake.coords) <= length(other.coords) ->
+            %HeadCollisionCause{with: other.id}
 
-        head in tl(other.coords) ->
-          {:collision_body, other.id}
+          head in tl(other.coords) ->
+            %BodyCollisionCause{with: other.id}
 
-        true ->
-          false
-      end
-    end)
-    |> Stream.filter(& &1)
-    |> Enum.to_list
+          true ->
+            false
+        end
+      end)
+      |> Stream.filter(& &1)
+      |> Enum.to_list
+    end
   end
 end

@@ -12,6 +12,7 @@ defmodule BattleSnake.DeathTest do
         build(:snake, id: 2, coords: [p(0, 0)]),
         build(:snake, id: 3, coords: [p(1, 0), p(2, 0), p(3, 0)]),
         build(:snake, id: 4, coords: [p(101, 0)]),
+        build(:snake, id: 5, coords: [p(0, 0)]),
       ]
 
       world = build(:world, width: 100, height: 100, snakes: snakes)
@@ -25,12 +26,21 @@ defmodule BattleSnake.DeathTest do
     test "updates who dies and who lives this turn", %{state: state} do
       live = state.world.snakes
       dead = state.world.dead_snakes
+
       assert [0] == (for x <- live, do: x.id)
-      assert [1, 2, 3, 4] == (for x <- dead, do: x.id)
-      assert [{1, [starvation: []]},
-              {2, [collision: [collision_head: 1]]},
-              {3, [collision: [collision_body: 1]]},
-              {4, [wall_collision: []]}] == (for x <- dead, do: {x.id, x.cause_of_death})
+      assert [1, 2, 3, 4, 5] == (for x <- dead, do: x.id)
+    end
+
+    test "sets the cause of death", %{state: state} do
+      dead = state.world.dead_snakes
+
+      causes = (for x <- dead, do: {x.id, x.cause_of_death})
+
+      assert [{1, [%Death.StarvationCause{}]},
+              {2, [%Death.HeadCollisionCause{with: 1}, %Death.HeadCollisionCause{with: 5}]},
+              {3, [%Death.BodyCollisionCause{with: 1}]},
+              {4, [%Death.WallCollisionCause{}]},
+              {5, [%Death.HeadCollisionCause{with: 1}, %Death.HeadCollisionCause{with: 2}]}] == causes
     end
   end
 
@@ -50,7 +60,7 @@ defmodule BattleSnake.DeathTest do
     end
 
     test "sets the cause of death", %{result: {_live, dead}} do
-      assert [starvation: []] == hd(dead).cause_of_death
+      assert [%Death.StarvationCause{}] == hd(dead).cause_of_death
     end
   end
 
@@ -75,7 +85,7 @@ defmodule BattleSnake.DeathTest do
     end
 
     test "sets the cause of death", %{result: {_live, dead}} do
-      assert [wall_collision: []] == hd(dead).cause_of_death
+      assert [%Death.WallCollisionCause{}] == hd(dead).cause_of_death
     end
   end
 
@@ -103,11 +113,8 @@ defmodule BattleSnake.DeathTest do
     end
 
     test "sets the cause of death", %{result: {_live, dead}} do
-      assert [collision: _] = hd(dead).cause_of_death
-    end
-
-    test "sets who was collided with", %{result: {_live, dead}} do
-      assert [{_, [collision_head: 1, collision_head: 3]}] = hd(dead).cause_of_death
+      assert [%Death.HeadCollisionCause{with: 1},
+              %Death.HeadCollisionCause{with: 3}] == hd(dead).cause_of_death
     end
   end
 
