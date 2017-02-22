@@ -96,11 +96,59 @@ defmodule BattleSnake.Death do
     do_wall_collision(rest, {w, h}, {[snake|living], dead})
   end
 
-  @doc "Kill all snakes that crashed into a body"
-  def body_collision do
+  @doc "Kill all snakes that crashed into another snake"
+  @spec collision(state) :: state
+  def collision(state) do
+    snakes = state.world.snakes
+
+    tasks = Task.async_stream(
+      snakes,
+      BattleSnake.Death.Collision,
+      :run,
+      [snakes])
+
+    results = tasks
+    |> Stream.zip(snakes)
+    |> Stream.map(&unzip_result/1)
+    |> Enum.group_by(&elem(&1, 0), &elem(&1, 1))
+
+    dead = Map.get(results, :dead, [])
+    live = Map.get(results, :live, [])
+
+    state = put_in(state.world.snakes, live)
+    state = update_in(state.world.dead_snakes, &(dead ++ &1))
+
+    state
   end
 
-  @doc "Kill all snakes that died in a head on collision"
-  def head_collision do
+  defp unzip_result({{:ok, []}, snake}) do
+    {:live, snake}
+  end
+
+  defp unzip_result({{:ok, collisions}, snake}) do
+    reason = {:collision, collisions}
+    snake = put_in(snake.cause_of_death, reason)
+    {:dead, snake}
+  end
+end
+
+defmodule BattleSnake.Death.Collision do
+  def run(snake, snakes) do
+    head = hd(snake.coords)
+
+    Stream.map(snakes, fn other ->
+      cond do
+        other.id != snake.id and head == hd(other.coords) and length(snake.coords) <= length(other.coords) ->
+          {:collision_head, other.id}
+
+        head in tl(other.coords) ->
+          {:collision_body, other.id}
+
+        true ->
+          false
+      end
+    end)
+    |> Stream.filter(& &1)
+    |> Enum.to_list
   end
 end

@@ -98,4 +98,40 @@ defmodule BattleSnake.DeathTest do
       assert {:wall_collision, []} == hd(state.world.dead_snakes).cause_of_death
     end
   end
+
+  describe "Death.collision/1" do
+    setup do
+      snakes =[
+        build(:snake, id: 1, coords: [p(0, 0), p(1, 0), p(2, 0)]),
+        build(:snake, id: 2, coords: [p(0, 0), p(1, 0)]),
+        build(:snake, id: 3, coords: [p(0, 0), p(1, 0)]),
+        build(:snake, id: 4, coords: [p(1, 0)])
+      ]
+
+      world = build(:world, snakes: snakes)
+
+      state = build(:state, world: world)
+
+      state = Death.collision(state)
+
+      [state: state]
+    end
+
+    test "kills snakes the hit another snake", %{state: state} do
+      dead = (for x <- state.world.dead_snakes, do: x.id)
+      assert 2 in dead
+      assert 3 in dead
+      assert 4 in dead
+      assert length(dead) == 3
+      assert [%{id: 1}] = state.world.snakes
+    end
+
+    test "sets the cause of death", %{state: state} do
+      assert {:collision, _} = hd(state.world.dead_snakes).cause_of_death
+    end
+
+    test "sets who was collided with", %{state: state} do
+      assert {_, [collision_head: 1, collision_head: 3]} = hd(state.world.dead_snakes).cause_of_death
+    end
+  end
 end
