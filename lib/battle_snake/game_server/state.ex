@@ -183,6 +183,7 @@ defmodule BattleSnake.GameServer.State do
     state
     |> save_history()
     |> BattleSnake.Movement.next()
+    |> BattleSnake.Death.reap()
     |> Map.update!(:world, &World.step/1)
     |> on_change()
   end

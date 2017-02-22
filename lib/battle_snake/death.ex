@@ -1,10 +1,16 @@
 defmodule BattleSnake.Death do
   alias BattleSnake.World
   alias BattleSnake.Snake
+  alias BattleSnake.GameServer.State
   alias BattleSnake.World.DeathEvent
 
+  @spec reap(State.t) :: State.t
+  def reap(%State{} = state) do
+    %{state| world: reap(state.world)}
+  end
+
   @spec reap(World.t) :: World.t
-  def reap(world) do
+  def reap(%World{} = world) do
     snakes = world.snakes
 
     acc = %{live: [], dead: []}
