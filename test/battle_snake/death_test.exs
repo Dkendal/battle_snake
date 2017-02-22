@@ -50,4 +50,28 @@ defmodule BattleSnake.DeathTest do
         %World.DeathEvent{turn: 10, snake: @snake}]
     end
   end
+
+  describe "Death.starvation" do
+    setup do
+      snakes =[build(:snake, id: :dead, health_points: 0),
+               build(:snake, id: :alive, health_points: 100)]
+
+      world = build(:world, snakes: snakes)
+
+      state = build(:state, world: world)
+
+      state = Death.starvation(state)
+
+      [state: state]
+    end
+
+    test "kills snakes that starve this turn", %{state: state} do
+      assert [%{id: :dead}] = state.world.dead_snakes
+      assert [%{id: :alive}] = state.world.snakes
+    end
+
+    test "sets the cause of dead", %{state: state} do
+      assert {:starvation, []} == hd(state.world.dead_snakes).cause_of_death
+    end
+  end
 end

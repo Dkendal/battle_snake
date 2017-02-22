@@ -4,6 +4,8 @@ defmodule BattleSnake.Death do
   alias BattleSnake.GameServer.State
   alias BattleSnake.World.DeathEvent
 
+  @type state :: State.t
+
   @spec reap(State.t) :: State.t
   def reap(%State{} = state) do
     %{state| world: reap(state.world)}
@@ -38,5 +40,42 @@ defmodule BattleSnake.Death do
     end)
 
     put_in(world.snakes, living_snakes)
+  end
+
+  @doc "Kill all snakes that starved this turn"
+  @spec starvation(state) :: state
+  def starvation(state) do
+    {living, dead} = do_starvation(state.world.snakes)
+    state = put_in(state.world.snakes, living)
+    update_in(state.world.dead_snakes, &(dead ++ &1))
+  end
+
+  def do_starvation(snakes, acc \\ {[], []})
+
+  def do_starvation([], acc) do
+    acc
+  end
+
+  def do_starvation([%{health_points: hp} = snake |rest], {living, dead})
+  when hp <= 0 do
+    reason = {:starvation, []}
+    snake = put_in(snake.cause_of_death, reason)
+    do_starvation(rest, {living, [snake|dead]})
+  end
+
+  def do_starvation([snake|rest], {living, dead}) do
+    do_starvation(rest, {[snake|living], dead})
+  end
+
+  @doc "Kill all snakes that crashed into a wall"
+  def wall_collision do
+  end
+
+  @doc "Kill all snakes that crashed into a body"
+  def body_collision do
+  end
+
+  @doc "Kill all snakes that died in a head on collision"
+  def head_collision do
   end
 end
