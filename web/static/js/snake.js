@@ -1,11 +1,119 @@
+/* Explodey Battlesnake skin
+ * Noel Burton-Krahn <noel@burton-krahn.com>
+ */
 import $ from "jquery";
-import Vue from "vue";
 import * as THREE from "three";
 import * as TWEEN from "tween.js";
+import { Howler, Howl } from 'howler';
+import Vue from 'vue/dist/vue.js';
 
 var SNAKE_HEAD_URL = "/images/snake_head_nerdy.png";
 var SNAKE_HEAD_SCALE = 1.5;
 var FOOD_URL = "/images/food.png"
+var AUDIO_URL = "/audio/"
+var AUDIO_PLAYLISTS_URL = AUDIO_URL + "playlists.json"
+
+function audio_url(url) {
+    if( url[0] == '.' ) {
+        url = AUDIO_URL + url;
+    }
+    return url;
+}
+
+function audio_list(list, preload) {
+    var audios = [];
+    for(var i=0; i<list.length; i++) {
+        var play_entry = list[i];
+        var player;
+        if( preload ) {
+            player = new Howl({src: [audio_url(play_entry.url)],
+                               format: [play_entry.format || "mp3"]});
+        }
+        audios.push({player: player, playlist: list[i]});
+    }
+    return audios;
+}
+
+function choose(list) {
+    var i = Math.floor(Math.random() * list.length);
+    if( i >= list.length ) {
+        i = list.length;
+    }
+    return list[i];
+}
+
+var effects_playlist = {};
+var effects_volume = 0.5;
+function set_effects_volume(val) {
+    effects_volume = val;
+}
+var effects_on = true;
+function set_effects_on(val) {
+    effects_on = val;
+    $('#effects-on').prop('checked', effects_on);
+}
+function play_effects(name) {
+    if( effects_on && effects_playlist ) {
+        var player = choose(effects_playlist[name]);
+        var volume = effects_volume * (player.playlist.volume || 1);
+        player.player.play();
+        player.player.volume(volume);
+    }
+}
+
+var music_playlist = {};
+var music_volume = 0.2;
+var music_theme;
+var music_player;
+var music_on = false;
+function set_music_volume(val) {
+    music_volume = val;
+    if( music_player ) {
+        var volume = music_volume * (music_player.volume || 1);
+        music_player.player.volume(volume);
+    }
+}
+function set_music_on(val) {
+    music_on = val;
+    play_music();
+}
+function play_music(theme, continue_theme) {
+    if( continue_theme && theme == music_theme ) {
+        return;
+    }
+    
+    if( theme ) {
+        music_theme = theme;
+    }
+    
+    if( music_playlist && music_theme ) {
+        var old_player = music_player;
+        if( old_player && old_player.player ) {
+            old_player.player.off('end');
+            old_player.player.stop();
+        }
+        if( music_on ) {
+            music_player = choose(music_playlist[music_theme]);
+            var volume = music_volume * (music_player.volume || 1);
+            if( !music_player.player ) {
+                music_player.player = new Howl({
+                    src: [audio_url(music_player.playlist.url)],
+                    format: [music_player.playlist.format || "mp3"],
+                    volume: volume,
+                    onend: function() {
+                        play_music(music_theme);
+                    },
+                    loaderror: function(id, msg) {
+                        console.error("play_music loaderror msg=" + msg);
+                        play_music(music_theme);
+                    }
+                });
+            }
+            music_player.player.play();
+            music_player.player.volume(volume);
+        }
+    }
+}
 
 function SnakeInfoDiv(div_id, data) {
     // render snake info into a div using Vue
@@ -100,7 +208,7 @@ function hex2rgba(hex, opacity) {
 
 function interpolateWithArcs(pts) {
     /*
-       return a function(t) that interpolates pts with straight lines and arcs, 0<=t<=1
+      return a function(t) that interpolates pts with straight lines and arcs, 0<=t<=1
     */
     function interp_arc(pt0, pt1, pt2) {
         // return a function(t) that interpolates from the
@@ -197,12 +305,40 @@ function memoize(fn) {
     };
 }
 
-var img_loader = new THREE.TextureLoader();
-var imgTexture = memoize(function(url) {
-    var tex = img_loader.load(url);
+var texture_cache = {};
+var load_texture = function(url, callback) {
+    var tex = texture_cache[url];
+    if( tex ) {
+        if( callback ) {
+            callback(tex);
+        }
+        return tex;
+    }
+    
+    var loader = new THREE.TextureLoader();
+    loader.crossOrigin = '';
+    var tex = loader.load(url
+                          ,function(tex) {
+                              tex.minFilter = THREE.LinearFilter;
+                              texture_cache[url] = tex;
+                              if( callback ) {
+                                  callback(tex);
+                              }
+                          }
+                          ,function(xhr) {}
+                          ,function(xhr) {
+                              if( url != SNAKE_HEAD_URL ) {
+                                  tex = loader.load(SNAKE_HEAD_URL);
+                                  tex.minFilter = THREE.LinearFilter;
+                                  texture_cache[url] = tex;
+                                  if( callback ) {
+                                      callback(tex);
+                                  }
+                              }
+                          });
     tex.minFilter = THREE.LinearFilter;
     return tex;
-});
+};
 
 var radialCanvas = memoize(function(width, height, stops) {
     var canvas = document.createElement('canvas');
@@ -265,8 +401,8 @@ function SnakeRenderer(board_renderer) {
 
     self.render = function(snake) {
         //console.time("SnakeRenderer.render");
-        var color = snake.color || stringToColor(snake.name);
-        var body = snake.coords || snake.body;
+        var color = snake.color;
+        var body = snake.body;
 
         // body
         if( !body_material ) {
@@ -313,12 +449,12 @@ function SnakeRenderer(board_renderer) {
         }
 
         // head
-        var img = snake.img || SNAKE_HEAD_URL;
+        var img = snake.img;
         if( !head_material ) {
             // TODO - reload material if head changes
             head_material = new THREE.SpriteMaterial({
-                map: imgTexture(img)
             });
+            load_texture(img, function(tex) {head_material.map = tex});
         }
         if( !head_particle ) {
             head_particle = new THREE.Sprite(head_material);
@@ -335,6 +471,8 @@ function SnakeRenderer(board_renderer) {
         var dur = 750;
         var mag = 5;
 
+        play_effects("explode");
+        
         // explode particles
         var explode_material = explodeMaterial();
         new TWEEN.Tween(explode_material)
@@ -430,14 +568,15 @@ function SnakeRenderer(board_renderer) {
 function FoodRenderer(board_renderer, food_pt) {
     var self = this;
 
-    var material = new THREE.SpriteMaterial({
-        map: imgTexture(FOOD_URL)
-    });
+    var material = new THREE.SpriteMaterial();
+    load_texture(FOOD_URL, function(tex) { material.map = tex; });
     var sprite = new THREE.Sprite(material);
     board_renderer.board_node.add(sprite);
     sprite.position.copy(food_pt);
 
     self.explode = function() {
+        play_effects("eat");
+
         var explode_material = foodMaterial();
         var mag = 5;
         var dur = 750;
@@ -526,6 +665,27 @@ function SnakeBoardRenderer(game_renderer) {
     var grid_mesh = null;
     var board_info_vue = null;
 
+    self.fixup_snake = function(snake) {
+        if( !('board_id' in snake) ) {
+            snake.board_id = snake.id;
+        }
+        if( !('img' in snake) ) {
+            snake.img = snake.head_url || SNAKE_HEAD_URL;
+        }
+        if( !('color' in snake) ) {
+            snake.color = stringToColor(snake.board_id);
+        }
+        if( !('body' in snake) ) {
+            snake.body = snake.coords;
+        }
+    }
+    
+    self.fixup_snakes = function(snakes) {
+        for(var i=0; i<snakes.length; i++) {
+            self.fixup_snake(snakes[i]);
+        }
+    }
+    
     // the center point of a board cell
     self.board_point = function(cell_x, cell_y, pt_z) {
         var pt_x = (cell_x + 0.5) * self.board_size / self.board.width - self.board_size / 2;
@@ -612,9 +772,29 @@ function SnakeBoardRenderer(game_renderer) {
     self.render = function(board) {
         //console.time("SnakeBoardRenderer.render");
 
+        // fixup board
+        if( !('killed' in board) ) {
+            board.killed = board.dead_snakes;
+        }
+        self.fixup_snakes(board.snakes);
+        self.fixup_snakes(board.killed);
+
         self.board = board;
         self.cell_width = self.board_size / board.width / 2 * .9;
 
+        // audio
+        var music_theme;
+        if( board.turn == 0 ) {
+            music_theme = "prologue";
+        }
+        else if( board.end ) {
+            music_theme = "epilogue";
+        }
+        else {
+            music_theme = "fight";
+        }
+        play_music(music_theme, true);
+        
         if( !board_info_vue ) {
             board_info_vue = new Vue({
                 el: '#scoreboard-game-info',
@@ -624,6 +804,8 @@ function SnakeBoardRenderer(game_renderer) {
                 }
             });
         }
+
+        // board turns
         board_info_vue.$data.game_turn = board.turn;
         board_info_vue.$data.game_name = board.game_id;
 
@@ -710,12 +892,6 @@ function SnakeBoardRenderer(game_renderer) {
         // render living snakes
         for(var snake_i=0; snake_i<board.snakes.length; snake_i++) {
             var snake = board.snakes[snake_i];
-            if( !snake.color ) {
-                snake.color = stringToColor(snake.id);
-            }
-            if( !snake.img ) {
-                snake.img = SNAKE_HEAD_URL;
-            }
 
             var snake_renderer = snake_renderers[snake.id];
             if( !snake_renderer ) {
@@ -870,7 +1046,33 @@ function GameRenderer(board_div, info_div) {
     }
 
     function init() {
-        // make divs: snake-board and snake-info
+        // load audio playlists
+        $.getJSON(AUDIO_PLAYLISTS_URL)
+            .done(function(data) {
+                for(var name in data.effects) {
+                    effects_playlist[name] = audio_list(data.effects[name], true);
+                }
+                for(var theme in data.music) {
+                    music_playlist[theme] = audio_list(data.music[theme], false);
+                }
+            })
+            .fail(function(response, error) {
+                console.error("failed to load: " + AUDIO_PLAYLISTS_URL + " error: " + error[2]);
+            });
+
+        // audio controls
+        $("#effects-on").change(function() { set_effects_on($(this).is(':checked')) });
+        $('#effects-on').prop('checked', effects_on);
+        
+        $("#effects-volume-slider")
+            .val(effects_volume*100)
+            .on('input', function() { set_effects_volume($(this).val()/100); });
+        $('#music-on').prop('checked', music_on);
+        $("#music-on").change(function() { set_music_on($(this).prop('checked')) })
+        $("#music-volume-slider")
+            .val(music_volume*100)
+            .on('input', function() { set_music_volume($(this).val()/100); });
+        $('.ui-slider-handle').show();
 
         clock = new THREE.Clock();
         scene = new THREE.Scene();
