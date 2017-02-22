@@ -160,7 +160,9 @@ defmodule BattleSnake.SnakeTest do
         url: "example.com",
         id: "1",
         taunt: "",
-        health_points: 100
+        health_points: 100,
+        color: "red",
+        head_url: "head.example.com",
       }
 
       expected = %{
@@ -168,7 +170,9 @@ defmodule BattleSnake.SnakeTest do
         "coords" => [[0, 1]],
         "health_points" => 100,
         "taunt" => "",
-        "id" => "1"
+        "id" => "1",
+        "head_url" => "head.example.com",
+        "color" => "red",
       }
 
       actual = PoisonTesting.cast!(snake)

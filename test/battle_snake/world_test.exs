@@ -269,6 +269,8 @@ defmodule BattleSnake.WorldTest do
           name: "me",
           id: "1",
           url: "me.example.com",
+          head_url: "snake1.example.com",
+          color: "color1",
           coords: [
             p(1, 1),
           ]
@@ -277,6 +279,8 @@ defmodule BattleSnake.WorldTest do
           name: "other",
           id: "2",
           url: "example.com",
+          head_url: "snake2.example.com",
+          color: "color2",
           coords: [
             p(0, 0),
             p(1, 0),
@@ -300,6 +304,8 @@ defmodule BattleSnake.WorldTest do
           "taunt" => "",
           "name" => "me",
           "health_points" => 100,
+          "head_url" => "snake1.example.com",
+          "color" => "color1",
           "coords" => [
             [1,1],
           ]
@@ -308,6 +314,8 @@ defmodule BattleSnake.WorldTest do
           "id" => "2",
           "taunt" => "",
           "health_points" => 100,
+          "head_url" => "snake2.example.com",
+          "color" => "color2",
           "name" => "other",
           "coords" => [
             [0,0],
