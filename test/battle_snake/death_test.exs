@@ -51,7 +51,7 @@ defmodule BattleSnake.DeathTest do
     end
   end
 
-  describe "Death.starvation" do
+  describe "Death.starvation/1" do
     setup do
       snakes =[build(:snake, id: :dead, health_points: 0),
                build(:snake, id: :alive, health_points: 100)]
@@ -72,6 +72,30 @@ defmodule BattleSnake.DeathTest do
 
     test "sets the cause of dead", %{state: state} do
       assert {:starvation, []} == hd(state.world.dead_snakes).cause_of_death
+    end
+  end
+
+  describe "Death.wall_collision/1" do
+    setup do
+      snakes =[build(:snake, id: :dead, coords: [p(-1, -1)]),
+               build(:snake, id: :alive, coords: [p(0, 0)])]
+
+      world = build(:world, snakes: snakes, width: 100, height: 100)
+
+      state = build(:state, world: world)
+
+      state = Death.wall_collision(state)
+
+      [state: state]
+    end
+
+    test "kills snakes the hit a wall", %{state: state} do
+      assert [%{id: :dead}] = state.world.dead_snakes
+      assert [%{id: :alive}] = state.world.snakes
+    end
+
+    test "sets the cause of dead", %{state: state} do
+      assert {:wall_collision, []} == hd(state.world.dead_snakes).cause_of_death
     end
   end
 end

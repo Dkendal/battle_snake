@@ -4,6 +4,8 @@ defmodule BattleSnake.Death do
   alias BattleSnake.GameServer.State
   alias BattleSnake.World.DeathEvent
 
+  use BattleSnake.Point
+
   @type state :: State.t
 
   @spec reap(State.t) :: State.t
@@ -56,7 +58,7 @@ defmodule BattleSnake.Death do
     acc
   end
 
-  def do_starvation([%{health_points: hp} = snake |rest], {living, dead})
+  def do_starvation([%{health_points: hp} = snake|rest], {living, dead})
   when hp <= 0 do
     reason = {:starvation, []}
     snake = put_in(snake.cause_of_death, reason)
@@ -67,8 +69,31 @@ defmodule BattleSnake.Death do
     do_starvation(rest, {[snake|living], dead})
   end
 
-  @doc "Kill all snakes that crashed into a wall"
-  def wall_collision do
+  @doc "Kills all snakes that hit a wall"
+  @spec wall_collision(state) :: state
+  def wall_collision(state) do
+    dim = {state.world.width, state.world.height}
+    {living, dead} = do_wall_collision(state.world.snakes, dim)
+    state = put_in(state.world.snakes, living)
+    update_in(state.world.dead_snakes, &(dead ++ &1))
+  end
+
+  def do_wall_collision(snakes, dim, acc \\ {[], []})
+
+  def do_wall_collision([], _dim, acc) do
+    acc
+  end
+
+  def do_wall_collision([%{coords: [p(x, y)|_]} = snake|rest], {w, h}, {living, dead})
+  when not y in 0..(w-1)
+  or not x in 0..(h-1) do
+    reason = {:wall_collision, []}
+    snake = put_in(snake.cause_of_death, reason)
+    do_wall_collision(rest, {w, h}, {living, [snake|dead]})
+  end
+
+  def do_wall_collision([snake|rest], {w, h}, {living, dead}) do
+    do_wall_collision(rest, {w, h}, {[snake|living], dead})
   end
 
   @doc "Kill all snakes that crashed into a body"
