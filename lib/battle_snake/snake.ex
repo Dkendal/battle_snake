@@ -1,5 +1,16 @@
+defimpl Poison.Encoder, for: BattleSnake.Snake do
+  def encode(snake, opts) do
+    me = Keyword.get(opts, :me)
+    map = if me do
+            Map.take(snake, [:coords, :id, :taunt, :health_points, :name])
+          else
+            Map.take(snake, [:coords, :id, :taunt, :health_points, :name, :head_url, :color])
+          end
+    Poison.encode!(map, opts)
+  end
+end
+
 defmodule BattleSnake.Snake do
-  @derive {Poison.Encoder, only: [:coords, :id, :taunt, :health_points, :name]}
   alias __MODULE__
   alias BattleSnake.{Point}
 
