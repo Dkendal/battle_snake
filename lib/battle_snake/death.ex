@@ -13,12 +13,13 @@ defmodule BattleSnake.Death do
   @type point :: BattleSnake.Point.t
   @type live :: [snake]
   @type dead :: [snake]
-  @type cause :: %{where: point}
-  @type death :: %Death{turn: pos_integer, causes: [cause], where: point}
+  @type turn :: non_neg_integer
+  @type cause :: %{}
+  @type death :: %Death{turn: turn, causes: [cause]}
   @type t :: death
 
-  defstruct [:turn, :causes, :where]
-  defmodule(Kill, do: defstruct([:turn, :with, :where, :cause]))
+  defstruct [:turn, :causes]
+  defmodule(Kill, do: defstruct([:turn, :with, :cause]))
 
   defmodule(BodyCollisionCause, do: defstruct([:with]))
   defmodule(Cause, do: defstruct([]))
@@ -35,23 +36,36 @@ defmodule BattleSnake.Death do
     |> MapSet.to_list
   end
 
-  @spec combine_dead([[snake]]) :: [snake]
-  def combine_dead(l) do
+  @spec combine_dead([[snake]], turn) :: [snake]
+  def combine_dead(l, turn) do
     l
     |> Enum.flat_map(&(&1))
-    |> do_combine_dead(%{})
+    |> do_combine_dead(turn, %{})
   end
 
-  defp do_combine_dead([], acc) do
-    Map.values(acc)
+  defp do_combine_dead([], turn, acc) do
+    to_death = fn snake ->
+      causes = snake.cause_of_death
+
+      death = %Death{
+        turn: turn,
+        causes: causes
+      }
+
+      put_in(snake.cause_of_death, death)
+    end
+
+    acc
+    |> Map.values
+    |> Enum.map(to_death)
   end
 
-  defp do_combine_dead([snake|rest], acc) do
-    acc = do_combine_dead(snake, acc)
-    do_combine_dead(rest, acc)
+  defp do_combine_dead([snake|rest], turn, acc) do
+    acc = update_dead_snake(snake, acc)
+    do_combine_dead(rest, turn, acc)
   end
 
-  defp do_combine_dead(%Snake{} = snake, acc) do
+  defp update_dead_snake(%Snake{} = snake, acc) do
     cause = snake.cause_of_death
     merge_cause = &(cause ++ &1)
     update_snake = &update_in(&1.cause_of_death, merge_cause)
@@ -61,6 +75,7 @@ defmodule BattleSnake.Death do
   @spec reap(State.t) :: State.t
   def reap(%State{} = state) do
     world = state.world
+    turn = world.turn
     dim = {world.width, world.height}
 
     snakes = state.world.snakes
@@ -70,7 +85,7 @@ defmodule BattleSnake.Death do
     {l3, d3} = collision(snakes)
 
     live = combine_live([l1, l2, l3])
-    dead = combine_dead([d1, d2, d3])
+    dead = combine_dead([d1, d2, d3], turn)
 
     world = put_in(world.snakes, live)
     world = update_in(world.dead_snakes, &(dead ++ &1))

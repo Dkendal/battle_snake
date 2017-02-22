@@ -39,8 +39,21 @@ defmodule BattleSnake.Factory do
     end
   end
 
+  def death_factory do
+     %BattleSnake.Death{
+      turn: 0,
+      causes: [%BattleSnake.Death.StarvationCause{}]
+    }
+  end
+
   def snake_factory do
-    %BattleSnake.Snake{}
+    %BattleSnake.Snake{
+      coords: [p(0, 0)]
+    }
+  end
+
+  def kill_snake(snake, turn) do
+    %{snake| cause_of_death: build(:death, turn: turn)}
   end
 
   def with_snake_in_world(snake: snake, world: world, length: length) do

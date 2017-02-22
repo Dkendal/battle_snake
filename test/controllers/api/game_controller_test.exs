@@ -9,7 +9,7 @@ defmodule BattleSnake.Api.GameControllerTest do
 
   describe "GET index" do
     setup do
-      snakes = build_list(2, :snake, url: sequence("example.com:"))
+      snakes = build_list(2, :snake, url: sequence("example.com:"), coords: [])
       game_form = create(:game_form, snakes: snakes)
       GameServer.Registry.create(game_form, game_form.id)
       :ok

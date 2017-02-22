@@ -1,24 +1,39 @@
 defmodule BattleSnake.Rules do
   alias BattleSnake.GameServer.State
-  alias BattleSnake.World
 
   @spec last_standing(State.t) :: State.t
   def last_standing(state) do
-    put_in(state.winners, do_last_standing(state))
+    world = state.world
+    live = world.snakes
+    dead = world.dead_snakes
+    winners = do_last_standing(live, dead)
+    put_in(state.winners, winners)
   end
 
-  def do_last_standing(%State{} = state) do
-    do_last_standing(state.world)
+  defp do_last_standing([], dead) do
+    mapper = & &1.cause_of_death.turn
+
+    reduce_while = fn
+      snake, [] ->
+        {:cont, [snake]}
+
+      %{cause_of_death: %{turn: t}} = s,
+        [%{cause_of_death: %{turn: t}}|_] = acc ->
+        {:cont, [s|acc]}
+
+      _, acc ->
+        {:halt, acc}
+    end
+
+    map_finish = & &1.id
+
+    dead
+    |> Enum.sort_by(mapper, &>=/2)
+    |> Enum.reduce_while([], reduce_while)
+    |> Enum.map(map_finish)
   end
 
-  def do_last_standing(%World{snakes: []} = world) do
-    {_turn, deaths} = world.deaths
-    |> Enum.group_by(&(&1.turn))
-    |> Enum.max_by(fn {turn, _} -> turn end)
-    for %{snake: snake} <- deaths, do: snake
-  end
-
-  def do_last_standing(%World{} = world) do
-    world.snakes
+  defp do_last_standing(live, _dead) do
+    (for s <- live, do: s.id)
   end
 end
