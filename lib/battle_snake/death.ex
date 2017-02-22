@@ -1,8 +1,6 @@
 defmodule BattleSnake.Death do
-  alias BattleSnake.World
   alias BattleSnake.Snake
   alias BattleSnake.GameServer.State
-  alias BattleSnake.World.DeathEvent
 
   use BattleSnake.Point
 
@@ -14,40 +12,54 @@ defmodule BattleSnake.Death do
   @type live :: [snake]
   @type dead :: [snake]
 
-  @spec reap(State.t) :: State.t
-  def reap(%State{} = state) do
-    %{state| world: reap(state.world)}
+  @spec combine_live([[snake]]) :: [snake]
+  def combine_live(l) do
+    l
+    |> Stream.map(&MapSet.new/1)
+    |> Enum.reduce(&MapSet.intersection/2)
+    |> MapSet.to_list
   end
 
-  @spec reap(World.t) :: World.t
-  def reap(%World{} = world) do
-    snakes = world.snakes
+  @spec combine_dead([[snake]]) :: [snake]
+  def combine_dead(l) do
+    l
+    |> Enum.flat_map(&(&1))
+    |> do_combine_dead(%{})
+  end
 
-    acc = %{live: [], dead: []}
+  defp do_combine_dead([], acc) do
+    Map.values(acc)
+  end
 
-    acc = Enum.reduce snakes, acc, fn snake, acc ->
-      f = &[snake |&1]
-      if Snake.dead?(snake, world) do
-        update_in(acc.dead, f)
-      else
-        update_in(acc.live, f)
-      end
-    end
+  defp do_combine_dead([snake|rest], acc) do
+    acc = do_combine_dead(snake, acc)
+    do_combine_dead(rest, acc)
+  end
 
-    world = put_in(world.snakes, acc.live)
-    world = update_in(world.dead_snakes, & &1 ++ acc.dead)
+  defp do_combine_dead(%Snake{} = snake, acc) do
+    cause = snake.cause_of_death
+    merge_cause = &(cause ++ &1)
+    update_snake = &update_in(&1.cause_of_death, merge_cause)
+    Map.update(acc, snake.id, snake, update_snake)
+  end
 
-    live_snakes = Snake.resolve_head_to_head(acc.live)
-    head_to_head_dead = acc.live -- live_snakes
+  @spec reap(State.t) :: State.t
+  def reap(%State{} = state) do
+    world = state.world
+    dim = {world.width, world.height}
 
-    world = update_in(world.dead_snakes, & &1 ++ head_to_head_dead)
+    snakes = state.world.snakes
 
-    world = update_in(world.deaths, fn _deaths ->
-      dead = acc.dead ++ head_to_head_dead
-      for snake <- dead, do: %DeathEvent{turn: world.turn, snake: snake}
-    end)
+    {l1, d1} = starvation(snakes)
+    {l2, d2} = wall_collision(snakes, dim)
+    {l3, d3} = collision(snakes)
 
-    put_in(world.snakes, live_snakes)
+    live = combine_live([l1, l2, l3])
+    dead = combine_dead([d1, d2, d3])
+
+    world = put_in(world.snakes, live)
+    world = update_in(world.dead_snakes, &(dead ++ &1))
+    put_in state.world, world
   end
 
   @doc "Kill all snakes that starved this turn"
@@ -65,7 +77,7 @@ defmodule BattleSnake.Death do
 
   def do_starvation([%{health_points: hp} = snake|rest], {live, dead})
   when hp <= 0 do
-    reason = {:starvation, []}
+    reason = [{:starvation, []}]
     snake = put_in(snake.cause_of_death, reason)
     do_starvation(rest, {live, [snake|dead]})
   end
@@ -89,7 +101,7 @@ defmodule BattleSnake.Death do
   def do_wall_collision([%{coords: [p(x, y)|_]} = snake|rest], {w, h}, {live, dead})
   when not y in 0..(w-1)
   or not x in 0..(h-1) do
-    reason = {:wall_collision, []}
+    reason = [{:wall_collision, []}]
     snake = put_in(snake.cause_of_death, reason)
     do_wall_collision(rest, {w, h}, {live, [snake|dead]})
   end
@@ -123,7 +135,7 @@ defmodule BattleSnake.Death do
   end
 
   defp unzip_result({{:ok, collisions}, snake}) do
-    reason = {:collision, collisions}
+    reason = [{:collision, collisions}]
     snake = put_in(snake.cause_of_death, reason)
     {:dead, snake}
   end
