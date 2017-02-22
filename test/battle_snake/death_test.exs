@@ -36,11 +36,23 @@ defmodule BattleSnake.DeathTest do
 
       causes = (for x <- dead, do: {x.id, x.cause_of_death})
 
-      assert [{1, [%Death.StarvationCause{}]},
-              {2, [%Death.HeadCollisionCause{with: 1}, %Death.HeadCollisionCause{with: 5}]},
-              {3, [%Death.BodyCollisionCause{with: 1}]},
-              {4, [%Death.WallCollisionCause{}]},
-              {5, [%Death.HeadCollisionCause{with: 1}, %Death.HeadCollisionCause{with: 2}]}] == causes
+      assert [{1,
+               %Death{turn: 0,
+                      causes: [%Death.StarvationCause{}]}},
+              {2,
+               %Death{turn: 0,
+                      causes: [%Death.HeadCollisionCause{with: 1},
+                               %Death.HeadCollisionCause{with: 5}]}},
+              {3,
+               %Death{turn: 0,
+                      causes: [%Death.BodyCollisionCause{with: 1}]}},
+              {4,
+               %Death{turn: 0,
+                      causes: [%Death.WallCollisionCause{}]}},
+              {5,
+               %Death{turn: 0,
+                      causes: [%Death.HeadCollisionCause{with: 1},
+                               %Death.HeadCollisionCause{with: 2}]}}] == causes
     end
   end
 
@@ -121,7 +133,7 @@ defmodule BattleSnake.DeathTest do
   describe "Death.combine_dead/1" do
     setup do
       snakes = [
-        s1 = build(:snake, id: 1),
+        s1 = build(:snake, id: 1, coords: [p(0, 0)]),
         s2 = build(:snake, id: 2),
         s3 = build(:snake, id: 3),
         build(:snake, id: 4)
@@ -137,7 +149,7 @@ defmodule BattleSnake.DeathTest do
         [%{s1|cause_of_death: [cause_c]}, s3],
       ]
 
-      result = Death.combine_dead(l)
+      result = Death.combine_dead(l, 0)
 
       [result: result, snakes: snakes]
     end
@@ -149,7 +161,8 @@ defmodule BattleSnake.DeathTest do
 
     test "merges the causes of death", %{result: result} do
       [s1|_] = result
-      assert [kill_c: [], kill_b: [], kill_a: []] == s1.cause_of_death
+      causes = [kill_c: [], kill_b: [], kill_a: []]
+      assert %Death{turn: 0, causes: causes} == s1.cause_of_death
     end
   end
 

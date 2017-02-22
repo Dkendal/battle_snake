@@ -1,46 +1,41 @@
 defmodule BattleSnake.RulesTest do
+  alias BattleSnake.Rules
   use BattleSnake.Case, async: true
 
-  @living_snake_a %BattleSnake.Snake{name: "living a"}
-  @living_snake_b %BattleSnake.Snake{name: "living b"}
+  describe "Rules.last_standing(state)" do
+    test "sets the winner to anyone that is still alive" do
+      dead_snakes = [
+        kill_snake(build(:snake, id: 0), 1),
+        kill_snake(build(:snake, id: 1), 2),
+        kill_snake(build(:snake, id: 2), 2)
+      ]
 
-  @dead_snake_10 %BattleSnake.Snake{name: "dead 10"}
-  @dead_snake_20_a %BattleSnake.Snake{name: "dead 20 a"}
-  @dead_snake_20_b %BattleSnake.Snake{name: "dead 20 b"}
+      snakes = [
+        build(:snake, id: 3)
+      ]
 
-  @deaths [
-    %BattleSnake.World.DeathEvent{turn: 10, snake: @dead_snake_10},
-    %BattleSnake.World.DeathEvent{turn: 20, snake: @dead_snake_20_a},
-    %BattleSnake.World.DeathEvent{turn: 20, snake: @dead_snake_20_b}
-  ]
+      world = build(:world, dead_snakes: dead_snakes, snakes: snakes)
 
-  @state_with_living %BattleSnake.GameServer.State{
-    world: %BattleSnake.World{
-      snakes: [@living_snake_a, @living_snake_b],
-      deaths: @deaths}}
+      state = build(:state, world: world)
 
-  @state_all_dead %BattleSnake.GameServer.State{
-    world: %BattleSnake.World{
-      snakes: [],
-      deaths: @deaths}}
+      state = Rules.last_standing(state)
 
-  describe "BattleSnake.Rules.last_standing/1" do
-    test "sets the winners" do
-      state = BattleSnake.Rules.last_standing(@state_with_living)
-      assert [@living_snake_a, @living_snake_b] == state.winners
-    end
-  end
-
-  describe "BattleSnake.Rules.do_last_standing/1" do
-    test "any snakes that are still alive are considered the winner" do
-      assert [@living_snake_a, @living_snake_b] ==
-        BattleSnake.Rules.do_last_standing(@state_with_living)
+      assert [3] = state.winners
     end
 
-    test "if there are no living snakes the snakes the died on the last turn " <>
-      "are considered to be the winner" do
-      assert [@dead_snake_20_a, @dead_snake_20_b] ==
-        BattleSnake.Rules.do_last_standing(@state_all_dead)
+    test "sets the winner to the snake that died last" do
+      snakes = [
+        kill_snake(build(:snake, id: 0), 1),
+        kill_snake(build(:snake, id: 1), 2),
+        kill_snake(build(:snake, id: 2), 2)]
+
+      world = build(:world, dead_snakes: snakes)
+
+      state = build(:state, world: world)
+
+      state = Rules.last_standing(state)
+
+      assert [2, 1] = state.winners
     end
   end
 end
