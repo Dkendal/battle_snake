@@ -1,0 +1,55 @@
+{
+    "effects": {
+        "eat": [
+            { "url": "./Cartoon-Munch.mp3", "volume": 0.2 }
+            ,{ "url": "./Cartoon-Bite.mp3", "volume": 0.2 }
+        ]
+        ,"explode": [
+	    { "url": "./Barrel-Exploding.mp3" }
+	    ,{ "url": "./Grenade.mp3" }
+	    ,{ "url": "./Blast.mp3" }
+	    ,{ "url": "./Bomb-3.mp3" }
+	    ,{ "url": "./Explosion.mp3" }
+	    ,{ "url": "./Grenade-Explosion.mp3" }
+            ,{ "url": "./Wilhelm_Scream.ogg" }
+        ]
+    }
+    ,"music": {
+	"prologue": [
+	    {"url": "http://drive.google.com/uc?export=download&id=0B0Y-FESP0bc-ZkdYblAwMVpMMEU"
+             ,"name": "14 - Vena's Dance.mp3" }
+	    ,{"url": "http://drive.google.com/uc?export=download&id=0B0Y-FESP0bc-Nm8zR3d6TWZCUkk"
+              ,"name": "9-42 The Apple_ M4 tk 1.mp3" }
+	    ,{"url": "http://drive.google.com/uc?export=download&id=0B0Y-FESP0bc-bGUzSU8wZ19sMzQ"
+              ,"name": "9-39 The Apple_ M1 tk 1.mp3" }
+	]
+	,"fight": [
+	    { "url": "http://drive.google.com/uc?export=download&id=0B0Y-FESP0bc-UHpzSzNkOXBUMEU"
+               ,"name": "Speedy Reader" }
+	    ,{ "url": "http://drive.google.com/uc?export=download&id=0B0Y-FESP0bc-VWdZT1BwZTU1WVk"
+               ,"name": "Temporal Wake"}
+	    ,{ "url": "http://drive.google.com/uc?export=download&id=0B0Y-FESP0bc-ZFdHZEpDYzFDd2s"
+               ,"name": "Surprise Attack" }
+	    ,{ "url": "http://drive.google.com/uc?export=download&id=0B0Y-FESP0bc-UUszZWRuZzZ3NGs"
+               ,"name": "Klingon Battle" }
+	    ,{ "url": "http://drive.google.com/uc?export=download&id=0B0Y-FESP0bc-alhGWW1RMWJmSk0"
+               ,"name": "7-12 Amok Time_ Ritual _ To the Deat" }
+	    ,{ "url": "http://drive.google.com/uc?export=download&id=0B0Y-FESP0bc-YVlfaTc2RkRPTGc"
+               ,"name": "Amok Time The Ancient Combat" }
+            ,{ "url": "http://drive.google.com/uc?export=download&id=0B0Y-FESP0bc-Nkd5RnB5OG5KY2s"
+               ,"name": "James Horner - 1986 - Aliens - Deluxe Edition - Ripley's Rescue" }
+            ,{ "url": "http://drive.google.com/uc?export=download&id=0B0Y-FESP0bc-dHJ3dk1HaFB1cVE"
+               ,"name": "Utah Saints - Utah Saints Take On The Theme From Mortal Kombat" }
+            ,{ "url": "http://drive.google.com/uc?export=download&id=0B0Y-FESP0bc-YlI4YWM3WHMzcXM"
+               ,"name": "Traci Lords - Control (Juno Reactor Instrumental)"}
+            ,{ "url": "http://drive.google.com/uc?export=download&id=0B0Y-FESP0bc-TkZtTmNQTmJoNXc"
+               ,"name": "The Immortals - Techno-Syndrome 7 Mix"}
+	]
+	,"epilogue": [
+	    { "url": "http://drive.google.com/uc?export=download&id=0B0Y-FESP0bc-c0FGQk1IR1JOS1k"
+              ,"name": "03 - Survivors.mp3"}
+	    ,{ "url": "http://drive.google.com/uc?export=download&id=0B0Y-FESP0bc-MEd4VkxSS3ZMenc"
+               ,"name": "04 - Prime Specimen.mp3"}
+	]
+    }
+}
