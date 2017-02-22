@@ -171,13 +171,18 @@ defmodule BattleSnake.SnakeTest do
         "health_points" => 100,
         "taunt" => "",
         "id" => "1",
-        "head_url" => "head.example.com",
-        "color" => "red",
       }
 
       actual = PoisonTesting.cast!(snake)
-
       assert expected == actual
+
+      # consumer encoding gets head_url and color
+      actual = Poison.decode!(Poison.encode!(snake, consumer: true))
+      assert actual == Map.merge(expected,
+                                 %{
+                                         "head_url" => "head.example.com",
+                                         "color" => "red",
+                                     })
     end
   end
 end

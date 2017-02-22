@@ -304,8 +304,6 @@ defmodule BattleSnake.WorldTest do
           "taunt" => "",
           "name" => "me",
           "health_points" => 100,
-          "head_url" => "snake1.example.com",
-          "color" => "color1",
           "coords" => [
             [1,1],
           ]
@@ -314,8 +312,6 @@ defmodule BattleSnake.WorldTest do
           "id" => "2",
           "taunt" => "",
           "health_points" => 100,
-          "head_url" => "snake2.example.com",
-          "color" => "color2",
           "name" => "other",
           "coords" => [
             [0,0],
@@ -326,11 +322,31 @@ defmodule BattleSnake.WorldTest do
       "game_id" => 0
     }
 
-
     @expected PoisonTesting.cast! @world
 
     test "formats as JSON" do
       assert @expected == @json
+    end
+
+    test "consumer formats as JSON with head_url and color" do
+      actual = Poison.decode!(Poison.encode!(@world, consumer: true))
+      expected = @json
+      |> update_in(["snakes"], fn snakes ->
+        snakes
+        |> List.update_at(0, fn snake ->
+          Map.merge(snake,  %{
+                             "head_url" => "snake1.example.com",
+                             "color" => "color1",
+                         })
+        end)
+        |> List.update_at(1, fn snake ->
+          Map.merge(snake,  %{
+                             "head_url" => "snake2.example.com",
+                             "color" => "color2",
+                         })
+        end)
+      end)
+      assert expected == actual
     end
   end
 end
