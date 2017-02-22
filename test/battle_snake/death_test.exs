@@ -56,22 +56,18 @@ defmodule BattleSnake.DeathTest do
       snakes =[build(:snake, id: :dead, health_points: 0),
                build(:snake, id: :alive, health_points: 100)]
 
-      world = build(:world, snakes: snakes)
+      result = Death.starvation(snakes)
 
-      state = build(:state, world: world)
-
-      state = Death.starvation(state)
-
-      [state: state]
+      [result: result]
     end
 
-    test "kills snakes that starve this turn", %{state: state} do
-      assert [%{id: :dead}] = state.world.dead_snakes
-      assert [%{id: :alive}] = state.world.snakes
+    test "kills snakes that starve this turn", %{result: {live, dead}} do
+      assert [%{id: :dead}] = dead
+      assert [%{id: :alive}] = live
     end
 
-    test "sets the cause of death", %{state: state} do
-      assert {:starvation, []} == hd(state.world.dead_snakes).cause_of_death
+    test "sets the cause of death", %{result: {_live, dead}} do
+      assert {:starvation, []} == hd(dead).cause_of_death
     end
   end
 
@@ -80,22 +76,18 @@ defmodule BattleSnake.DeathTest do
       snakes =[build(:snake, id: :dead, coords: [p(-1, -1)]),
                build(:snake, id: :alive, coords: [p(0, 0)])]
 
-      world = build(:world, snakes: snakes, width: 100, height: 100)
+      result = Death.wall_collision(snakes, {100, 100})
 
-      state = build(:state, world: world)
-
-      state = Death.wall_collision(state)
-
-      [state: state]
+      [result: result]
     end
 
-    test "kills snakes the hit a wall", %{state: state} do
-      assert [%{id: :dead}] = state.world.dead_snakes
-      assert [%{id: :alive}] = state.world.snakes
+    test "kills snakes the hit a wall", %{result: {live, dead}} do
+      assert [%{id: :dead}] = dead
+      assert [%{id: :alive}] = live
     end
 
-    test "sets the cause of death", %{state: state} do
-      assert {:wall_collision, []} == hd(state.world.dead_snakes).cause_of_death
+    test "sets the cause of death", %{result: {_live, dead}} do
+      assert {:wall_collision, []} == hd(dead).cause_of_death
     end
   end
 
@@ -108,30 +100,26 @@ defmodule BattleSnake.DeathTest do
         build(:snake, id: 4, coords: [p(1, 0)])
       ]
 
-      world = build(:world, snakes: snakes)
+      result = Death.collision(snakes)
 
-      state = build(:state, world: world)
-
-      state = Death.collision(state)
-
-      [state: state]
+      [result: result]
     end
 
-    test "kills snakes the hit another snake", %{state: state} do
-      dead = (for x <- state.world.dead_snakes, do: x.id)
-      assert 2 in dead
-      assert 3 in dead
-      assert 4 in dead
-      assert length(dead) == 3
-      assert [%{id: 1}] = state.world.snakes
+    test "kills snakes the hit another snake", %{result: {live, dead}} do
+      dead_ids = (for x <- dead, do: x.id)
+      assert 2 in dead_ids
+      assert 3 in dead_ids
+      assert 4 in dead_ids
+      assert length(dead_ids) == 3
+      assert [%{id: 1}] = live
     end
 
-    test "sets the cause of death", %{state: state} do
-      assert {:collision, _} = hd(state.world.dead_snakes).cause_of_death
+    test "sets the cause of death", %{result: {_live, dead}} do
+      assert {:collision, _} = hd(dead).cause_of_death
     end
 
-    test "sets who was collided with", %{state: state} do
-      assert {_, [collision_head: 1, collision_head: 3]} = hd(state.world.dead_snakes).cause_of_death
+    test "sets who was collided with", %{result: {_live, dead}} do
+      assert {_, [collision_head: 1, collision_head: 3]} = hd(dead).cause_of_death
     end
   end
 end
