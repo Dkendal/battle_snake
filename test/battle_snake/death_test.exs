@@ -70,7 +70,7 @@ defmodule BattleSnake.DeathTest do
       assert [%{id: :alive}] = state.world.snakes
     end
 
-    test "sets the cause of dead", %{state: state} do
+    test "sets the cause of death", %{state: state} do
       assert {:starvation, []} == hd(state.world.dead_snakes).cause_of_death
     end
   end
@@ -94,7 +94,7 @@ defmodule BattleSnake.DeathTest do
       assert [%{id: :alive}] = state.world.snakes
     end
 
-    test "sets the cause of dead", %{state: state} do
+    test "sets the cause of death", %{state: state} do
       assert {:wall_collision, []} == hd(state.world.dead_snakes).cause_of_death
     end
   end
