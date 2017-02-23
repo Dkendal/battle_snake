@@ -1,3 +1,2 @@
 <%= render "_modal_keybinds.html" %>
 <div id="board-viewer" class="play-show"></div>
-<%= link "Finals View", to: skin_path(@conn, :show, @game), class: "btn btn-default btn-xs view-btn" %>
