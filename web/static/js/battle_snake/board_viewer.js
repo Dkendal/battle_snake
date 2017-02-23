@@ -1,5 +1,4 @@
 import Mousetrap from "mousetrap";
-import $ from "jquery";
 import socket from "../socket"
 import "../empties/modal";
 
@@ -16,7 +15,7 @@ const init = (gameId) => {
   const gameAdminChannel = socket.channel(`game_admin:${gameId}`);
 
   boardViewerChannel.on("tick", ({content}) => {
-    $("#board-viewer").html()
+    document.getElementById("board-viewer").innerHTML = content;
   });
 
   boardViewerChannel.
