@@ -73,8 +73,3 @@ $healthbar-height: $base-spacing;
 $healthbar-opacity: 0.2;
 
 $dead-snake-opacity: 0.3;
-
-// Breakpoints
-$mobile: new-breakpoint(max-width 480px);
-$medium-screen: 30em !default;
-$large-screen: 50em !default;
