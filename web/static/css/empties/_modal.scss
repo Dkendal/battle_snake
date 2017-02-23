@@ -65,4 +65,8 @@
   overflow: auto;
 }
 
+.modal-content * {
+  color: $modal-font-color;
+}
+
 // Based on code by Kasper Mikiewicz
