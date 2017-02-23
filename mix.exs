@@ -69,6 +69,7 @@ defmodule BattleSnake.Mixfile do
       {:dialyxir, "~> 0.4", only: [:dev], runtime: false},
       {:distillery, "~> 1.1"},
       {:ecto, "~> 2.0"},
+      {:edeliver, "~> 1.4"},
       {:ex_machina, "~> 1.0", only: :test},
       {:excoveralls, "~> 0.6", only: :test},
       {:exvcr, "~> 0.8", only: :test},
