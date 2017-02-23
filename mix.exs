@@ -31,6 +31,11 @@ defmodule BattleSnake.Mixfile do
     [:debug_info]
   end
 
+  def extra_applications(:dev) do
+    [:mix|
+     extra_applications(:all)]
+  end
+
   def extra_applications(_all) do
     [:logger,
      :mnesia]
