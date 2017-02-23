@@ -18,6 +18,7 @@ import "phoenix_html"
 // paths "./socket" or full ones "web/static/js/socket".
 import socket from "./socket"
 import $ from "jquery";
+import vue from "vue";
 import Mousetrap from "mousetrap";
 import GameRenderer from "./snake";
 
@@ -31,7 +32,7 @@ const init = () => {
     const gameAdminChannel = socket.channel(`game_admin:${gameId}`);
 
     game_renderer = new GameRenderer("#snake-board", "#snake-info-list");
-    
+
     boardViewerChannel.on("tick", ({content}) => {
         console.time("skin.tick");
         //console.log("skin.js: tick content=" + content)
@@ -44,7 +45,7 @@ const init = () => {
                 snake.board_id = snake.id;
                 snake.health = snake.health_points;
             }
-        
+
             game_renderer.render(board);
         }
         catch(err) {
@@ -87,7 +88,6 @@ console.log("skin.js: gameId=" + gameId)
 if(typeof gameId !== "undefined") {
     $(init)
 
-    // TODO: debounce? 
+    // TODO: debounce?
     $(window).on("resize", resize);
 }
-

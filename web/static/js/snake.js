@@ -1,4 +1,5 @@
 import $ from "jquery";
+import Vue from "vue";
 import * as THREE from "three";
 import * as TWEEN from "tween.js";
 
@@ -26,7 +27,7 @@ function SnakeInfoDiv(div_id, data) {
             'killed': null,
             'turns': null
         }
-        
+
         vue = new Vue({
             el: '#' + self.div_id,
             data: self.data
@@ -44,7 +45,7 @@ function SnakeInfoDiv(div_id, data) {
         }
         return $(selector);
     }
-    
+
     self.set_data = function(data) {
         for(var key in self.data ) {
             if( key in data ) {
@@ -98,7 +99,7 @@ function hex2rgba(hex, opacity) {
 }
 
 function interpolateWithArcs(pts) {
-    /* 
+    /*
        return a function(t) that interpolates pts with straight lines and arcs, 0<=t<=1
     */
     function interp_arc(pt0, pt1, pt2) {
@@ -130,19 +131,19 @@ function interpolateWithArcs(pts) {
             if( err > Number.EPSILON ) {
                 console.error("ERROR: m0=" + m0 + " can't rotate to m1=" + m1 + " angle=" + angle + " error=" + err);
             }
-            
+
             var v = new THREE.Vector3();
             return function(t) {
                 return v.copy(m0).applyAxisAngle(cross, t*angle).add(c);
             }
         }
     }
-    
+
     if( pts.length < 2 ) {
         var f = function(t) { return pts[0]; }
         return f;
     }
-    
+
     var interp_funcs = []
     for(var i=1; i+1<pts.length; i++) {
         // make interpolating functions for 0.5 <= t * N < N-0.5
@@ -152,7 +153,7 @@ function interpolateWithArcs(pts) {
             pts[i+1]
         ));
     }
-    
+
     return function(t) {
         t = t * (pts.length - 1);
         if( t < 0.5 ) {
@@ -256,12 +257,12 @@ function foodMaterial() {
 function SnakeRenderer(board_renderer) {
     var self = this;
     self.board_renderer = board_renderer;
-    
+
     var body_particles = [];
     var body_material = null;
     var head_material = null;
     var head_particle = null;
-    
+
     self.render = function(snake) {
         //console.time("SnakeRenderer.render");
         var color = snake.color || stringToColor(snake.name);
@@ -333,7 +334,7 @@ function SnakeRenderer(board_renderer) {
         var delay = 0;
         var dur = 750;
         var mag = 5;
-        
+
         // explode particles
         var explode_material = explodeMaterial();
         new TWEEN.Tween(explode_material)
@@ -370,7 +371,7 @@ function SnakeRenderer(board_renderer) {
             }
         }
 
-        // head flies into camera and fades out 
+        // head flies into camera and fades out
         if( head_particle ) {
             var particle = head_particle;
             new TWEEN.Tween(particle.scale)
@@ -398,7 +399,7 @@ function SnakeRenderer(board_renderer) {
             .delay(delay)
             .to({opacity: .01}, dur)
             .start();
-        
+
         for(var i=0; i<body_particles.length; i++) {
             var particle = body_particles[i];
             new TWEEN.Tween(particle)
@@ -457,7 +458,7 @@ function FoodRenderer(board_renderer, food_pt) {
                      y: p0.y + (Math.random() - 0.5) * mag,
                      z: p0.z + (Math.random()*mag/2)}, dur)
                 .start();
-            
+
             // particle expands
             new TWEEN.Tween(particle.scale)
                 .delay(delay)
@@ -490,7 +491,7 @@ function FoodRenderer(board_renderer, food_pt) {
                 board_renderer.board_node.remove(sprite);
             })
             .start();
-        
+
         // fade out food
         new TWEEN.Tween(material)
             .delay(delay)
@@ -505,7 +506,7 @@ function FoodRenderer(board_renderer, food_pt) {
     self.dispose = function() {
         //material.map.dispose();
     }
-    
+
 }
 
 function SnakeBoardRenderer(game_renderer) {
@@ -515,10 +516,10 @@ function SnakeBoardRenderer(game_renderer) {
     self.board_node = game_renderer.board_node; // the THREE.Object that I should attach child objects to
     self.board_size = game_renderer.board_size; // board size in scene units
     self.snake_info_div = game_renderer.snake_info_div;
-    
+
     self.board = null;
     self.cell_width = null;
-    
+
     var food_renderers = {};  // map from food_key() -> FoodRenderer
     var snake_renderers = {}; // map from id -> SnakeRenderer
     var snake_infos = {};     // map from id -> SnakeInfoDiv
@@ -534,7 +535,7 @@ function SnakeBoardRenderer(game_renderer) {
 
     function layout_snake_info() {
         //console.time("layout_snake_info");
-        
+
         // sort into living and dead
         var snake_info_killed = [];
         var snake_info_living = [];
@@ -555,7 +556,7 @@ function SnakeBoardRenderer(game_renderer) {
         }
         pos.bottom = pos.top + container.innerHeight();
         var left = pos.left;
-        
+
         // killed snakes go from bottom to top
         snake_info_killed.sort(function(a, b) { return a.data.turns - b.data.turns });
         var y = 0;
@@ -575,7 +576,7 @@ function SnakeBoardRenderer(game_renderer) {
             var width = div_width(container, div);
             div.animate({top: top, left: left, width: width}, 750);
         }
-        
+
         // living snakes go from top to bottom
         snake_info_living.sort(function(a, b) { return a.order - b.order });
         y = 0;
@@ -610,7 +611,7 @@ function SnakeBoardRenderer(game_renderer) {
 
     self.render = function(board) {
         //console.time("SnakeBoardRenderer.render");
-        
+
         self.board = board;
         self.cell_width = self.board_size / board.width / 2 * .9;
 
@@ -625,7 +626,7 @@ function SnakeBoardRenderer(game_renderer) {
         }
         board_info_vue.$data.game_turn = board.turn;
         board_info_vue.$data.game_name = board.game_id;
-        
+
         // grid
         if( !grid_mesh ) {
             var grid_material = new THREE.LineBasicMaterial({
@@ -664,7 +665,7 @@ function SnakeBoardRenderer(game_renderer) {
             var grid2_mesh = new THREE.Line(grid2_geometry, grid2_material);
             self.board_node.add(grid2_mesh);
         }
-        
+
         // food
         for(k in food_renderers) {
             food_renderers[k].keep = false;
@@ -705,7 +706,7 @@ function SnakeBoardRenderer(game_renderer) {
             snake_infos = {};
             snake_info_layout = true;
         }
-        
+
         // render living snakes
         for(var snake_i=0; snake_i<board.snakes.length; snake_i++) {
             var snake = board.snakes[snake_i];
@@ -745,7 +746,7 @@ function SnakeBoardRenderer(game_renderer) {
                 }
             }
         }
-        
+
         // explode killed snakes
         for(var id in snake_renderers) {
             var snake_renderer = snake_renderers[id];
@@ -760,7 +761,7 @@ function SnakeBoardRenderer(game_renderer) {
                 }
             }
         }
-        
+
         // re-layout snake_infos
         if( snake_info_layout ) {
             layout_snake_info();
@@ -776,7 +777,7 @@ function SnakeBoardRenderer(game_renderer) {
     self.shake = function(dur) {
         self.game_renderer.shake(dur);
     }
-    
+
 }
 
 function GameRenderer(board_div, info_div) {
@@ -794,9 +795,9 @@ function GameRenderer(board_div, info_div) {
     var camera_pos = new THREE.Vector3(0, 0, 28);
     var camera_shake = null;
     var play_pause = 0;
-    
+
     var board_renderer;
-    
+
     // board size in renderer units
     self.board_size = 20;
     self.scene_size = self.board_size * 1.05;
@@ -831,11 +832,11 @@ function GameRenderer(board_div, info_div) {
             camera.position.add(camera_shake);
         }
         renderer.render(scene, camera);
-        
+
         requestAnimationFrame(render);
         //console.timeEnd("render");
     }
-    
+
     self.resize = function() {
         if( camera && renderer ) {
             var innerWidth = self.board_div.innerWidth();
@@ -867,10 +868,10 @@ function GameRenderer(board_div, info_div) {
             })
             .start();
     }
-    
+
     function init() {
         // make divs: snake-board and snake-info
-        
+
         clock = new THREE.Clock();
         scene = new THREE.Scene();
 
@@ -880,7 +881,7 @@ function GameRenderer(board_div, info_div) {
         update_camera(innerWidth, innerHeight)
         camera.position.copy(camera_pos);
         camera.lookAt(scene.position);
-        
+
         renderer = new THREE.WebGLRenderer();
         renderer.setClearColor(getRealCssColor(self.board_div, "background-color"), 1.0);
         renderer.setSize(innerWidth, innerHeight);
@@ -895,7 +896,7 @@ function GameRenderer(board_div, info_div) {
         self.board_node = new THREE.Group();
         scene.add(self.board_node);
         board_renderer = new SnakeBoardRenderer(self);
-        
+
         self.resize();
         render();
     }

@@ -3,24 +3,9 @@ exports.config = {
   files: {
     javascripts: {
         joinTo: {
-            'js/app.js': /^(web\/static\/js)|(node_modules)/
-            ,'js/skin.js': /^(web\/static\/js)|(node_modules)/
-        }    
-
-      // To use a separate vendor.js bundle, specify two files path
-      // http://brunch.io/docs/config#-files-
-      // joinTo: {
-      //  "js/app.js": /^(web\/static\/js)|(node_modules)/,
-      //  "js/vendor.js": /^(web\/static\/vendor)/
-      // }
-      //
-      // To change the order of concatenation of files, explicitly mention here
-      // order: {
-      //   before: [
-      //     "web/static/vendor/js/jquery-2.1.1.js",
-      //     "web/static/vendor/js/bootstrap.min.js"
-      //   ]
-      // }
+          'js/app.js': /^(web\/static\/js)|(node_modules)/,
+          'js/skin.js': /^(web\/static\/js)|(node_modules)/
+        }
     },
     stylesheets: {
       joinTo: "css/app.css",
@@ -29,30 +14,24 @@ exports.config = {
       }
     },
     templates: {
-      joinTo: "js/app.js"
+      joinTo: "js/app.js",
+      joinTo: "js/skin.js",
     }
   },
 
   conventions: {
-    // This option sets where we should place non-css and non-js assets in.
-    // By default, we set this to "/web/static/assets". Files in this directory
-    // will be copied to `paths.public`, which is "priv/static" by default.
     assets: /^(web\/static\/assets)/
   },
 
-  // Phoenix paths configuration
   paths: {
-    // Dependencies and current project directories to watch
     watched: [
       "web/static",
       "test/static"
     ],
 
-    // Where to compile files to
     public: "priv/static"
   },
 
-  // Configure your plugins
   plugins: {
     sass: {
       mode: 'ruby',
@@ -61,22 +40,18 @@ exports.config = {
     },
     babel: {
       presets: ['es2015', 'es2016'],
-      // Do not use ES6 compiler in vendor code
       ignore: [/web\/static\/vendor/]
     }
   },
 
   modules: {
     autoRequire: {
-        "js/app.js": ["web/static/js/app"]
-        ,"js/skin.js": ["web/static/js/skin"]
+      "js/app.js": ["web/static/js/app"],
+      "js/skin.js": ["web/static/js/skin"],
     }
   },
 
   npm: {
     enabled: true,
-    globals: {
-      Vue: 'vue/dist/vue.common.js'
-    }
   }
 };
