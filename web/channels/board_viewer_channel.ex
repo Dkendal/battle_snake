@@ -47,7 +47,10 @@ defmodule BattleSnake.BoardViewerChannel do
   end
 
   defp render_content(_, state) do
-    Phoenix.View.render_to_string(BattleSnake.BoardViewerView, "board.html", state: state)
+    BattleSnake.BoardViewerView
+    |> Phoenix.View.render_to_string("board.html", state: state)
+    |> String.replace(~r/^\s+|\s+$/m, "")
+    |> String.replace(~r/\n+/m, " ")
   end
 
   defp set_content_type(socket, payload) do
