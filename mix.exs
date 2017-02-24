@@ -31,6 +31,11 @@ defmodule BattleSnake.Mixfile do
     [:debug_info]
   end
 
+  def extra_applications(:dev) do
+    [:mix|
+     extra_applications(:all)]
+  end
+
   def extra_applications(_all) do
     [:logger,
      :mnesia]
@@ -62,10 +67,11 @@ defmodule BattleSnake.Mixfile do
       {:cowboy, "~> 1.0"},
       {:dbg, github: "fishcakez/dbg"},
       {:dialyxir, "~> 0.4", only: [:dev], runtime: false},
+      {:distillery, "~> 1.1"},
       {:ecto, "~> 2.0"},
+      {:edeliver, "~> 1.4"},
       {:ex_machina, "~> 1.0", only: :test},
       {:excoveralls, "~> 0.6", only: :test},
-      {:exrm, "~> 1.0.0"},
       {:exvcr, "~> 0.8", only: :test},
       {:gettext, "~> 0.11"},
       {:httpoison, "~> 0.11"},
