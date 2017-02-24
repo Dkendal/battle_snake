@@ -1,8 +1,26 @@
 defimpl Poison.Encoder, for: BattleSnake.Snake do
   def encode(snake, opts) do
-    keys = [:coords, :id, :taunt, :health_points, :name] ++
-      if Keyword.get(opts, :consumer) do  [ :head_url, :color] else [] end
-    Poison.encode!(Map.take(snake, keys))
+    case Keyword.pop(opts, :mode) do
+      {:consumer, opts} ->
+        consumer_encode(snake, opts)
+
+      {_, opts} ->
+        do_encode(snake, opts)
+    end
+  end
+
+  def do_encode(snake, opts) do
+    keys = [:coords, :id, :taunt, :health_points, :name]
+    snake
+    |> Map.take(keys)
+    |> Poison.encode!(opts)
+  end
+
+  def consumer_encode(snake, opts) do
+    keys = [:coords, :id, :taunt, :health_points, :name, :head_url, :color]
+    snake
+    |> Map.take(keys)
+    |> Poison.encode!(opts)
   end
 end
 

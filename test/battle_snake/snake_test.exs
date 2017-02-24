@@ -175,14 +175,34 @@ defmodule BattleSnake.SnakeTest do
 
       actual = PoisonTesting.cast!(snake)
       assert expected == actual
+    end
+  end
+  
+  describe "Poison.Encoder.encode(BattleSnake.Snake, [mode: :consumer])" do
+    test "formats as JSON" do
+      snake = %Snake{
+        coords: [%Point{x: 0, y: 1}],
+        name: "snake",
+        url: "example.com",
+        id: "1",
+        taunt: "",
+        health_points: 100,
+        color: "red",
+        head_url: "head.example.com",
+      }
 
-      # consumer encoding gets head_url and color
-      actual = Poison.decode!(Poison.encode!(snake, consumer: true))
-      assert actual == Map.merge(expected,
-                                 %{
-                                         "head_url" => "head.example.com",
-                                         "color" => "red",
-                                     })
+      expected = %{
+        "name" => "snake",
+        "coords" => [[0, 1]],
+        "health_points" => 100,
+        "taunt" => "",
+        "id" => "1",
+        "head_url" => "head.example.com",
+        "color" => "red",
+      }
+
+      actual = Poison.decode!(Poison.encode!(snake, mode: :consumer))
+      assert expected == actual
     end
   end
 end
