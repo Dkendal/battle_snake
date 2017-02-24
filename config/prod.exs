@@ -14,7 +14,9 @@ config :battle_snake, snake_api: BattleSnake.Api
 # which you typically run after static files are built.
 config :battle_snake, BattleSnake.Endpoint,
   http: [port: {:system, "PORT"}],
-  url: [host: {:system, "HOST"}, port: {:system, "PORT"}],
+  url: [host: "battlesnake.stembolt.com"],
+  root: ".",
+  version: Mix.Project.config[:version],
   cache_static_manifest: "priv/static/manifest.json",
   server: true
 
@@ -50,7 +52,7 @@ config :logger, level: :info
 # If you are doing OTP releases, you need to instruct Phoenix
 # to start the server for all endpoints:
 #
-#     config :phoenix, :serve_endpoints, true
+config :phoenix, :serve_endpoints, true
 #
 # Alternatively, you can configure exactly which server to
 # start per endpoint:
