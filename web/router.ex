@@ -22,6 +22,15 @@ defmodule BattleSnake.Router do
     resources "/skin", SkinController, only: [:show]
   end
 
+  scope "/test", BattleSnake.Test, as: :test do
+    pipe_through :api
+
+    get "/example/start", ExampleController, :start
+    get "/example/move", ExampleController, :move
+    post "/example/start", ExampleController, :start
+    post "/example/move", ExampleController, :move
+  end
+
   scope "/api", BattleSnake.Api, as: :api do
     pipe_through :api
 
