@@ -9,28 +9,9 @@
        class="scoreboard-avatar"></div>
   <div>
     <div class="scoreboard-name"><%= name %></div>
-    <div class="scoreboard-healthbar">
-      <div class="scoreboard-taunt"><%= taunt %></div>
-      <svg class="scoreboard-healthpoints"
-           preserveAspectRatio="none"
-           viewBox="0 0 100 100">
-        <%= content_tag(:rect,
-          "",
-          fill: color,
-          x: 0,
-          y: 0,
-          height: 100,
-          width: 100,
-          class: "scoreboard-healthpoints-shadow") %>
-
-        <%= content_tag(:rect,
-          "",
-          fill: color,
-          x: 0,
-          y: 0,
-          height: 100,
-          width: health_points) %>
-      </svg>
-    </div>
+    <div>Turn: <%= @snake.cause_of_death.turn %></div>
+    <%= for cause <- @snake.cause_of_death.causes do %>
+      <div><%= cause_of_death_text(cause) %></div>
+    <% end %>
   </div>
 </div>

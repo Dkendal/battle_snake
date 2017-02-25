@@ -1,13 +1,16 @@
 .play-show {
-  @include outer-container;
+  display: flex;
+}
+
+.game-board-container {
+  display: flex;
+  flex: 1;
+  justify-content: center;
 }
 
 .game-board {
-  height: 100%;
-  @include span-columns(8);
-  @include media($mobile) {
-    @include span-columns(12);
-  }
+  height: 92vh;
+
   &-tile {
     fill: $secondary-background-color;
   }

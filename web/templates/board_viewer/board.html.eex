@@ -4,6 +4,7 @@
 <% snakes = snakes(world) %>
 <% dead_snakes = dead_snakes(world) %>
 
+<div class="game-board-container">
 <%= content_tag(:svg,
     viewBox: "0 0 #{width} #{height}",
     class: "game-board") do %>
@@ -73,5 +74,6 @@
     ></use>
   <% end %>
 <% end %>
+</div>
 
 <%= render "_scoreboard.html", state: @state, turn: world.turn, snakes: snakes, dead_snakes: dead_snakes %>
