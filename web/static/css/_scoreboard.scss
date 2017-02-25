@@ -2,16 +2,24 @@
   display: flex;
   flex-direction: column;
 
-  width: ms(21);
-  padding-right: ms(12);
+  width: ms(20);
+  margin-right: ms(10);
+  margin-left: ms(3);
+
+  @include media($mobile) {
+    width: initial;
+    margin-right: ms(1);
+    margin-left: ms(1);
+  }
 
   &-division-img {
     width: ms(9);
     margin-right: ms(-3);
   }
   &-snake {
+    align-items: flex-start;
     display: flex;
-    align-items: flex-end;
+    min-height: ms(10);
   }
   &-avatar {
     border-radius: 50%;
@@ -57,13 +65,9 @@
     margin-left: ms(-3);
     position: absolute;
   }
-  &-snake {
-    padding-bottom: ms(2);
-  }
-  &-snake-name {
-    color: $scoreboard-font-color;
-    font-size: ms(1);
-    line-height: ms(4);
+  &-name {
+    font-size: ms(2);
+    line-height: ms(2);
   }
   &-healthpoints {
     height: 100%;
@@ -76,9 +80,10 @@
     font-weight: bold;
     font-size: ms(1);
     line-height: ms(1);
+    margin-bottom: ms(1);
   }
   &-game-turn {
-    font-size: ms(-1);
-    line-height: ms(3);
+    font-size: ms(0);
+    line-height: ms(0);
   }
 }

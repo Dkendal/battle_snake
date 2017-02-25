@@ -1,3 +1,4 @@
-$mobile: new-breakpoint(max-width 480px);
+$mobile: new-breakpoint(max-width 425px);
+$tablet: new-breakpoint(max-width 768px);
 $medium-screen: 30em !default;
 $large-screen: 50em !default;
