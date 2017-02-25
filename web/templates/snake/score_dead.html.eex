@@ -3,14 +3,16 @@
 <% name = @snake.name %>
 <% health_points = @snake.health_points %>
 <% img_src = head_image_url @snake %>
+<% turn = @snake.cause_of_death.turn %>
+<% causes = @snake.cause_of_death.causes %>
 
-<div class="scoreboard-snake scoreboard-dead-snake">
+<div class="scoreboard-snake">
   <div style="border-color: <%= color %>;background-image:url(<%= img_src %>);"
-       class="scoreboard-avatar"></div>
+       class="scoreboard-avatar scoreboard-dead-snake"></div>
   <div>
     <div class="scoreboard-name"><%= name %></div>
-    <div>Turn: <%= @snake.cause_of_death.turn %></div>
-    <%= for cause <- @snake.cause_of_death.causes do %>
+    <div>Died on turn <%= turn %></div>
+    <%= for cause <- causes do %>
       <div><%= cause_of_death_text(cause) %></div>
     <% end %>
   </div>

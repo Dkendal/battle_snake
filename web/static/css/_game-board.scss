@@ -1,11 +1,19 @@
 .play-show {
   display: flex;
+
+  @include media($mobile) {
+    flex-direction: column;
+  }
 }
 
 .game-board-container {
   display: flex;
   flex: 1;
-  justify-content: center;
+  justify-content: flex-end;
+
+  @include media($mobile) {
+    justify-content: center;
+  }
 }
 
 .game-board {
