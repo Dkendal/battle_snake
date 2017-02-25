@@ -1,5 +1,6 @@
 defmodule BattleSnake.BoardViewerView do
   alias BattleSnake.Point
+  alias BattleSnake.SnakeView
   use BattleSnake.Web, :view
   use BattleSnake.Point
 
@@ -77,13 +78,5 @@ defmodule BattleSnake.BoardViewerView do
       cx: point.x + 0.5,
       r: @food_r,
       class: "obj-food")
-  end
-
-  def head_image_url(%{url: base, head_url: "/" <> url}) do
-    base <> "/" <> url
-  end
-
-  def head_image_url(%{head_url: url}) do
-    url
   end
 end
