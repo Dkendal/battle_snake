@@ -13,9 +13,14 @@
     align-items: flex-end;
   }
   &-avatar {
-    width: ms(8);
+    border-radius: 50%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    border-style: solid;
+    border-width: $avatar-border-width;
     height: ms(8);
     margin-right: ms(-1);
+    width: ms(8);
   }
   &-logo {
     margin-bottom: ms(4);

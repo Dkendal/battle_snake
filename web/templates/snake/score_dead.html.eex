@@ -2,13 +2,11 @@
 <% taunt = @snake.taunt %>
 <% name = @snake.name %>
 <% health_points = @snake.health_points %>
+<% img_src = head_image_url @snake %>
 
 <div class="scoreboard-snake scoreboard-dead-snake">
-  <div style="border-color: <%= color %>"
-       class="scoreboard-avatar">
-    <img class="scoreboard-avatar-img"
-         src="<%= head_image_url @snake %>"></img>
-  </div>
+  <div style="border-color: <%= color %>;background-image:url(<%= img_src %>);"
+       class="scoreboard-avatar"></div>
   <div>
     <div class="scoreboard-name"><%= name %></div>
     <div class="scoreboard-healthbar">
