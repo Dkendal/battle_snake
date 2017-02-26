@@ -86,10 +86,6 @@ defmodule BattleSnake.SnakeView do
     {a0, b0}
   end
 
-  defp snake_curve(p(ax, ay), p(bx, by)) do
-    [ay, ax, by, bx, "Q"]
-  end
-
   defp do_snake_path(_, _ \\ [])
 
   defp do_snake_path([], acc) do
@@ -99,17 +95,31 @@ defmodule BattleSnake.SnakeView do
     |> Enum.reverse
   end
 
+  defp do_snake_path([{a, b}], []) do
+    {c, d} = scale_vector({a, b})
+    acc = [c.y, c.x, "L",
+           d.y, d.x, "M"]
+    do_snake_path([], acc)
+  end
+
   defp do_snake_path([{a, b} | rest], []) do
-    {a0, b0} = scale_vector({a, b})
-    acc = [a0.y, a0.x, "L", b0.y, b0.x, "M"]
+    {_c, d} = scale_vector({a, b})
+    acc = [a.y, a.x, "L",
+           d.y, d.x, "M"]
     do_snake_path(rest, acc)
   end
 
+  defp do_snake_path([{a, b}], acc) do
+    {c, d} = scale_vector({a, b})
+    acc = [c.y, c.x, "L",
+           b.y, b.x, "L"| acc]
+    do_snake_path([], acc)
+  end
+
   defp do_snake_path([{a, b} | rest], acc) do
-    {a0, b0} = scale_vector({a, b})
-    q =  snake_curve(b0, b)
-    acc = q ++ acc
-    acc = [a0.y, a0.x, "L", b0.y, b0.x, "L" | acc]
+    acc = [a.y, a.x, "L",
+           b.y, b.x, "L"|
+           acc]
     do_snake_path(rest, acc)
   end
 

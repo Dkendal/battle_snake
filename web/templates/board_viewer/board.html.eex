@@ -34,7 +34,8 @@
           height="<%= height %>"
           fill="url(#GameBoardPattern)"></rect>
 
-    <%= render_many world.snakes, SnakeView, "snake.html" %>
+    <%= render_many world.snakes, SnakeView, "snake_live.html" %>
+    <%= render_many world.dead_snakes, SnakeView, "snake_dead.html" %>
 
     <%= for point <- world.food do %>
       <use xlink:href="#food"
