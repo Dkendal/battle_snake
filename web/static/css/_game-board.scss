@@ -18,7 +18,12 @@
 
 .game-board {
   height: 92vh;
+  width: 100%;
 
+  @include media($mobile) {
+    height: 100vw;
+    width: 100vw;
+  }
   &-tile {
     fill: $secondary-background-color;
   }
@@ -32,10 +37,6 @@
 }
 
 .obj-snake {
-  height: 1;
-  width: 1;
   fill: transparent;
-  stroke-linecap: butt;
-  stroke-linejoin: round;
   stroke-width: $obj-snake-stroke-width;
 }
