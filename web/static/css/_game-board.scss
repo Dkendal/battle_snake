@@ -36,7 +36,13 @@
   fill: $obj-food-bg-color;
 }
 
+.obj-snake-dead {
+  stroke-opacity: 0.25;
+  fill-opacity: 0.25;
+}
+
 .obj-snake {
   fill: transparent;
   stroke-width: $obj-snake-stroke-width;
+  stroke-linejoin: round;
 }
