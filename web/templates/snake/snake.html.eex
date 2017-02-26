@@ -1,0 +1,29 @@
+<% coords = Enum.dedup(@snake.coords) %>
+<% [head|hs] = Enum.take(coords, 2) %>
+<% [tail|ts] = Enum.take(coords, -2) |> Enum.reverse %>
+<% color = @snake.color %>
+
+<g transform="translate(0.5 0.5)">
+  <path class="obj-snake"
+        stroke="<%= color %>"
+        d="<%= snake_path(@snake) %>">
+  </path>
+</g>
+
+<use
+    class="obj-snake"
+    style="fill: <%= color %>"
+    transform="<%= transform_segment(head, hs) %>"
+    x="<%= head.x %>"
+    xlink:href="#snake-head"
+    y="<%= head.y %>"
+></use>
+
+<use
+    class="obj-snake"
+    style="fill: <%= color %>"
+    transform="<%= transform_segment(tail, ts) %>"
+    x="<%= tail.x %>"
+    xlink:href="#snake-tail"
+    y="<%= tail.y %>"
+></use>
