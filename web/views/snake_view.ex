@@ -1,11 +1,8 @@
 defmodule BattleSnake.SnakeView do
   alias BattleSnake.Point
   alias BattleSnake.Death
-  alias BattleSnake.Snake
   use BattleSnake.Web, :view
   use BattleSnake.Point
-
-  @polyline_term_offset 0.38
 
   def head_image_url(%{url: base, head_url: "/" <> url}) do
     base <> "/" <> url
@@ -89,7 +86,7 @@ defmodule BattleSnake.SnakeView do
   defp do_snake_path(_, _ \\ [])
 
   defp do_snake_path([], acc) do
-    a = acc
+    acc
     |> Stream.map(& to_string &1)
     |> Stream.map(& [&1, " "])
     |> Enum.reverse
@@ -110,7 +107,7 @@ defmodule BattleSnake.SnakeView do
   end
 
   defp do_snake_path([{a, b}], acc) do
-    {c, d} = scale_vector({a, b})
+    {c, _} = scale_vector({a, b})
     acc = [c.y, c.x, "L",
            b.y, b.x, "L"| acc]
     do_snake_path([], acc)
