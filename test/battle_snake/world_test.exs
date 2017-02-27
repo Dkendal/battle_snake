@@ -81,6 +81,17 @@ defmodule BattleSnake.WorldTest do
       end
     end
 
+    test "does the thing" do
+      world = build(:world,
+        width: 100,
+        height: 100,
+        food: (for x <- 0..90, y <- 0..90, do: p(x, y)))
+
+      assert {:ok, p(x, y)} = World.rand_unoccupied_space(world)
+      assert_in_delta 90, 99, x
+      assert_in_delta 90, 99, y
+    end
+
     test "returns an error if there is no space" do
       world = build(:world, width: 1, height: 1, food: [p(0, 0)])
       assert {:error, :empty_error} == World.rand_unoccupied_space(world)
@@ -331,7 +342,7 @@ defmodule BattleSnake.WorldTest do
 
   describe "Poison.Encoder.encode(%BattleSnake.World{}, [mode: :consumer])" do
     use Point
-    
+
     @world %World{
                turn: 0,
                height: 2,
