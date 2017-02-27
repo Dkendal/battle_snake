@@ -46,4 +46,4 @@
   </svg>
 </div>
 
-<%= render "_scoreboard.html", state: @state, turn: world.turn, snakes: snakes, dead_snakes: dead_snakes %>
+<%= render "_scoreboard.html", state: @state %>
