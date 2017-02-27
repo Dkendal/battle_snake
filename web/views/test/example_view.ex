@@ -1,10 +1,10 @@
 defmodule BattleSnake.Test.ExampleView do
   use BattleSnake.Web, :view
 
-  def render("move.json", _assigns) do
-    %{
-      move: "down",
-    }
+  def render("move.json", assigns) do
+    turn = assigns["turn"]
+    move = Enum.at(~w(up right down left), rem(turn, 4))
+    %{move: move}
   end
 
   def render("start.json", _assigns) do
