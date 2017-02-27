@@ -1,11 +1,11 @@
 defmodule BattleSnake.GameServerTest do
   alias BattleSnake.GameServer
-  alias BattleSnake.GameServer.State
+  alias BattleSnake.GameState
 
   use BattleSnake.Case, async: true
 
-  @state %State{world: 10, hist: [9, 8, 7]}
-  @prev %State{world: 9, hist: [8, 7]}
+  @state %GameState{world: 10, hist: [9, 8, 7]}
+  @prev %GameState{world: 9, hist: [8, 7]}
   @suspend_state put_in(@state.status, :suspend)
   @cont_state put_in(@state.status, :cont)
   @halt_state put_in(@state.status, :halted)
@@ -28,7 +28,7 @@ defmodule BattleSnake.GameServerTest do
     end
 
     test "executes the reducer", %{running: state} do
-      state = State.cont!(state)
+      state = GameState.cont!(state)
 
       assert({_, %{world: %{turn: 11}}} =
         GameServer.handle_info(:tick, state))
@@ -84,9 +84,9 @@ defmodule BattleSnake.GameServerTest do
     setup %{running: state} do
       f = &GameServer.handle_call(:next, self(), &1)
 
-      cont_state = state |> State.cont!
-      suspend_state = state |> State.suspend!
-      halted_state = state |> State.halted!
+      cont_state = state |> GameState.cont!
+      suspend_state = state |> GameState.suspend!
+      halted_state = state |> GameState.halted!
 
       cont_reply = cont_state |> f.()
       suspend_reply = suspend_state |> f.()
@@ -104,12 +104,12 @@ defmodule BattleSnake.GameServerTest do
 
     test "suspends the game when status is :cont", %{cont_reply: reply} do
       assert {:reply, :ok, new_state} = reply
-      assert State.suspend?(new_state), "#{new_state.status}"
+      assert GameState.suspend?(new_state), "#{new_state.status}"
     end
 
     test "suspends the game when status is :suspend", %{suspend_reply: reply} do
       assert {:reply, :ok, new_state} = reply
-      assert State.suspend?(new_state), "#{new_state.status}"
+      assert GameState.suspend?(new_state), "#{new_state.status}"
     end
 
     test "does nothing when the game is halted", %{halted_state: state, halted_reply: reply} do

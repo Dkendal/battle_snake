@@ -1,6 +1,6 @@
 defmodule BattleSnake.GameServer.ServerTest do
   alias BattleSnake.GameServer.Server
-  alias BattleSnake.GameServer.State
+  alias BattleSnake.GameState
   use BattleSnake.Case, async: false
 
   def create_game_form(_) do
@@ -31,9 +31,9 @@ defmodule BattleSnake.GameServer.ServerTest do
     end
   end
 
-  describe "Server.init(State.t)" do
+  describe "Server.init(GameState.t)" do
     test "returns ok" do
-      assert {:ok, %State{}} == Server.init(%State{})
+      assert {:ok, %GameState{}} == Server.init(%GameState{})
     end
   end
 

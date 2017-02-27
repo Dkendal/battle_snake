@@ -1,11 +1,11 @@
 defmodule BattleSnake.GameServer do
   alias __MODULE__
-  alias __MODULE__.State
+  alias BattleSnake.GameState
   use GenServer
 
   defmodule Command, do: defstruct [:name, :data]
 
-  @type state :: State.t
+  @type state :: GameState.t
   @type server :: GenServer.server
 
   @moduledoc """

@@ -1,14 +1,9 @@
 defmodule BattleSnake.GameForm do
   alias __MODULE__
-  alias BattleSnake.{
-    GameServer,
-    GameServer.State,
-    Rules,
-    Snake,
-    SnakeForm,
-    WinConditions,
-    World,
-  }
+  alias BattleSnake.GameState
+  alias BattleSnake.SnakeForm
+  alias BattleSnake.WinConditions
+  alias BattleSnake.World
 
   use BattleSnake.Web, :model
   use Mnesia.Repo
@@ -31,6 +26,8 @@ defmodule BattleSnake.GameForm do
     max_food: non_neg_integer,
     game_mode: binary,
   }
+
+  @type game_state :: GameState.t
 
   schema "game" do
     embeds_many :snakes, SnakeForm
@@ -97,14 +94,14 @@ defmodule BattleSnake.GameForm do
 
   def set_id(changeset, _id), do: changeset
 
-  @spec reload_game_server_state(t) :: State.t
+  @spec reload_game_server_state(t) :: game_state
   def reload_game_server_state(%GameForm{} = game_form) do
     game_form
     |> GameForm.Reset.reset_game_form
     |> to_game_server_state
   end
 
-  @spec to_game_server_state(t) :: State.t
+  @spec to_game_server_state(t) :: game_state
   def to_game_server_state(%GameForm{} = game_form) do
     delay = game_form.delay
     game_form_id = game_form.id
@@ -112,7 +109,7 @@ defmodule BattleSnake.GameForm do
 
     objective = WinConditions.game_mode(game_form.game_mode)
 
-    %State{
+    %GameState{
       delay: delay,
       game_form: game_form,
       game_form_id: game_form_id,

@@ -1,9 +1,7 @@
-defmodule BattleSnake.GameServer.State do
+defmodule BattleSnake.GameState do
   alias __MODULE__
 
   alias BattleSnake.World
-
-  defmodule Event, do: defstruct([:name, :data])
 
   @max_history 20
 
@@ -19,12 +17,6 @@ defmodule BattleSnake.GameServer.State do
     state.status == :cont
   end
 
-  defmacrop is_cont(state) do
-    quote do
-      %__MODULE__{status: :cont} = unquote(state)
-    end
-  end
-
   defoverridable("cont!": 1, "cont?": 1)
 
   @spec suspend!(t) :: t
@@ -37,12 +29,6 @@ defmodule BattleSnake.GameServer.State do
     state.status == :suspend
   end
 
-  defmacrop is_suspend(state) do
-    quote do
-      %__MODULE__{status: :suspend} = unquote(state)
-    end
-  end
-
   defoverridable("suspend!": 1, "suspend?": 1)
 
   @spec halted!(t) :: t
@@ -53,12 +39,6 @@ defmodule BattleSnake.GameServer.State do
   @spec halted?(t) :: t
   def halted?(state) do
     state.status == :halted
-  end
-
-  defmacrop is_halted(state) do
-    quote do
-      %__MODULE__{status: :halted} = unquote(state)
-    end
   end
 
   defoverridable("halted!": 1, "halted?": 1)
@@ -82,7 +62,7 @@ defmodule BattleSnake.GameServer.State do
   defoverridable("replay!": 1, "replay?": 1)
 
   @typedoc """
-  Any function that takes a State, and returns a new State.
+  Any function that takes a GameState, and returns a new GameState.
   """
   @type state_fun :: (t -> t)
 
@@ -93,7 +73,7 @@ defmodule BattleSnake.GameServer.State do
   """
   @type objective_fun :: state_predicate
 
-  @type t :: %State{
+  @type t :: %GameState{
     world: World.t,
     objective: objective_fun,
     delay: non_neg_integer,

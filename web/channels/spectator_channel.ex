@@ -1,5 +1,6 @@
 defmodule BattleSnake.SpectatorChannel do
   alias BattleSnake.GameServer
+  alias BattleSnake.GameStateEvent
 
   use BattleSnake.Web, :channel
 
@@ -24,7 +25,7 @@ defmodule BattleSnake.SpectatorChannel do
     end
   end
 
-  def handle_info(%GameServer.State.Event{name: _name, data: state}, socket) do
+  def handle_info(%GameStateEvent{name: _name, data: state}, socket) do
     content = render_content(content_type(socket), state)
     broadcast(socket, "tick", %{content: content})
     {:noreply, socket}
