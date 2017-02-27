@@ -17,15 +17,6 @@ defmodule BattleSnake.GameServer.StateTest do
     test "rewinds the state to the last move" do
       assert State.step_back(@state) == @prev
     end
-
-    test "calls the on_change function" do
-      state = %{@state| on_change: ping(self())}
-      prev = %{@prev| on_change: ping(self())}
-
-      State.step_back(state)
-
-      assert_receive {:ping, ^prev}
-    end
   end
 
   describe "State.load_history/1" do

@@ -95,18 +95,12 @@ defmodule BattleSnake.GameServer.State do
 
   @type t :: %State{
     world: World.t,
-    on_change: state_fun,
     on_done: state_fun,
     objective: objective_fun,
     delay: non_neg_integer,
     hist: [World.t],
     game_form: BattleSnake.GameForm.t
   }
-
-  @events [
-    :on_change,
-    :on_done,
-  ]
 
   defstruct([
     :world,
@@ -117,7 +111,8 @@ defmodule BattleSnake.GameServer.State do
     hist: [],
     status: :suspend,
     winners: [],
-  ] ++ for(event <- @events, do: {event, &State.identity/1}))
+    on_done: &State.identity/1,
+  ])
 
   @spec done?(t) :: boolean
   def done?(state) do
@@ -136,18 +131,6 @@ defmodule BattleSnake.GameServer.State do
     put_in(state.on_done, handler)
   end
 
-  @doc "Execute the on_change event-handler function"
-  @spec on_change(t) :: t
-  def on_change(state) do
-    state.on_change.(state)
-  end
-
-  @doc "Put a new on_change event-handler function into state"
-  @spec on_change(t, (t -> t)) :: t
-  def on_change(state, handler) do
-    put_in(state.on_change, handler)
-  end
-
   def identity(x), do: x
 
   # TODO change :hist to {forward, backward} so that that
@@ -161,7 +144,6 @@ defmodule BattleSnake.GameServer.State do
         state = put_in(state.world, h)
         state = put_in(state.hist, t)
         state
-        |> on_change()
     end
   end
 
@@ -171,7 +153,6 @@ defmodule BattleSnake.GameServer.State do
     |> BattleSnake.Movement.next()
     |> BattleSnake.Death.reap()
     |> Map.update!(:world, &World.step/1)
-    |> on_change()
   end
 
   @doc "Loads the game history for a game matching this id"
@@ -191,9 +172,7 @@ defmodule BattleSnake.GameServer.State do
   def step_back(%{hist: []} = s), do: s
 
   def step_back(state) do
-    state
-    |> prev_turn
-    |> State.on_change()
+    prev_turn(state)
   end
 
   def delay(state) do

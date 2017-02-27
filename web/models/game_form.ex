@@ -116,13 +116,6 @@ defmodule BattleSnake.GameForm do
       Enum.reduce(funs, state, fn fun, s -> fun.(s) end)
     end
 
-    save = fn state ->
-      Mnesia.Repo.save(state.world)
-      state
-    end
-
-    on_change = &fun_apply.([save], &1)
-
     on_done = fn state ->
       fun_apply.(
         [&Rules.last_standing/1,
@@ -137,7 +130,6 @@ defmodule BattleSnake.GameForm do
       game_form: game_form,
       game_form_id: game_form_id,
       objective: objective,
-      on_change: on_change,
       on_done: on_done,
       world: world,
     }
