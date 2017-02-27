@@ -6,7 +6,6 @@ defmodule BattleSnake.Move do
     :move,
     :taunt,
     :snake_id,
-    __meta__: %Move.Meta{}
   ]
 
   @type direction :: String.t
