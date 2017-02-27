@@ -10,7 +10,7 @@
         </div>
         <div class="scoreboard-game-turn">
           <span>Turn</span>
-          <span><%= @turn %></span>
+          <span><%= @state.world.turn %></span>
         </div>
       </div>
     </div>
