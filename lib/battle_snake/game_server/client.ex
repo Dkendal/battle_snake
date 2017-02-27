@@ -23,9 +23,6 @@ defmodule BattleSnake.GameServer.Client do
   def on_done(pid),
     do: GenServer.call(pid, :on_done)
 
-  def on_start(pid),
-    do: GenServer.call(pid, :on_start)
-
   def pause(pid) do
     GenServer.call(pid, :pause)
   end

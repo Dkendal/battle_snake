@@ -97,7 +97,6 @@ defmodule BattleSnake.GameServer.State do
     world: World.t,
     on_change: state_fun,
     on_done: state_fun,
-    on_start: state_fun,
     objective: objective_fun,
     delay: non_neg_integer,
     hist: [World.t],
@@ -107,7 +106,6 @@ defmodule BattleSnake.GameServer.State do
   @events [
     :on_change,
     :on_done,
-    :on_start,
   ]
 
   defstruct([
@@ -136,18 +134,6 @@ defmodule BattleSnake.GameServer.State do
   @spec on_done(t, (t -> t)) :: t
   def on_done(state, handler) do
     put_in(state.on_done, handler)
-  end
-
-  @doc "Execute the on_start event-handler function"
-  @spec on_start(t) :: t
-  def on_start(state) do
-    state.on_start.(state)
-  end
-
-  @doc "Put a new on_start event-handler function into state"
-  @spec on_start(t, (t -> t)) :: t
-  def on_start(state, handler) do
-    put_in(state.on_start, handler)
   end
 
   @doc "Execute the on_change event-handler function"

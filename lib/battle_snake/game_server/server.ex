@@ -29,7 +29,6 @@ defmodule BattleSnake.GameServer.Server do
   end
 
   def init(%State{} = state) do
-    state = State.on_start(state)
     do_reply({:ok, state})
   end
 
