@@ -43,7 +43,7 @@ defmodule BattleSnake.BoardViewerChannel do
   end
 
   defp render_content(:json, state) do
-    Poison.encode!(state.world)
+    Poison.encode!(state.world, mode: :consumer)
   end
 
   defp render_content(_, state) do
