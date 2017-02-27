@@ -7,7 +7,7 @@
 <div class="scoreboard-snake">
   <div style="border-color: <%= color %>;background-image:url(<%= img_src %>);"
        class="scoreboard-avatar"></div>
-  <div>
+  <div class="scoreboard-snake-info">
     <div class="scoreboard-name"><%= name %></div>
     <div class="scoreboard-healthbar">
       <div class="scoreboard-taunt"><%= taunt %></div>
