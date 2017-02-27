@@ -4,6 +4,29 @@ defmodule BattleSnake.SnakeView do
   use BattleSnake.Web, :view
   use BattleSnake.Point
 
+  def render("score.html", %{state: state}) do
+    mapper = fn snake ->
+      case snake.cause_of_death do
+        %{turn: turn} -> turn
+        nil -> {snake.name, snake.id}
+      end
+    end
+
+    stream = Stream.concat(state.world.snakes, state.world.dead_snakes)
+
+    snakes = Enum.sort_by(stream, mapper, &>=/2)
+
+    render_many(snakes, __MODULE__, "score.html")
+  end
+
+  def render("score.html", %{snake: snake}) do
+    if snake.cause_of_death == nil do
+      render_one(snake, __MODULE__, "score_live.html")
+    else
+      render_one(snake, __MODULE__, "score_dead.html")
+    end
+  end
+
   def head_image_url(%{url: base, head_url: "/" <> url}) do
     base <> "/" <> url
   end
