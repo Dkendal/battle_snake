@@ -115,18 +115,6 @@ defmodule BattleSnake.GameServer.Server do
     do_reply({:reply, :ok, state})
   end
 
-  ##########
-  # Replay #
-  ##########
-
-  def handle_call(:replay, _from, state) do
-    send(self(), :tick)
-    state = state
-    |> load_history
-    |> replay!
-    do_reply({:reply, :ok, state})
-  end
-
   def handle_call(request, from, state) do
     super(request, from, state)
   end
@@ -159,7 +147,6 @@ defmodule BattleSnake.GameServer.Server do
     state =
       case state.status do
         :cont -> tick_cont(state)
-        :replay -> State.step(state)
         _ -> state
       end
     do_reply({:noreply, state})
