@@ -1,7 +1,5 @@
 <% color = @snake.color %>
-<% taunt = @snake.taunt %>
 <% name = @snake.name %>
-<% health_points = @snake.health_points %>
 <% img_src = head_image_url @snake %>
 <% turn = @snake.cause_of_death.turn %>
 <% causes = @snake.cause_of_death.causes %>
