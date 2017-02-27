@@ -6,10 +6,13 @@
   margin-right: ms(10);
   margin-left: ms(3);
 
-  @include media($mobile) {
-    width: initial;
+  @include media($laptop) {
+    width: ms(18);
     margin-right: ms(1);
     margin-left: ms(1);
+  }
+  @include media($mobile) {
+    width: initial;
   }
 
   &-division-img {
