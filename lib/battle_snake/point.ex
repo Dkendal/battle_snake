@@ -47,10 +47,32 @@ defmodule BattleSnake.Point do
     p(v.x * s, v.y * s)
   end
 
+  @doc "Scalar division of a vector"
+  @spec mul(t, number) :: t
+  def div(v, s) when is_number(s) do
+    p(v.x / s, v.y / s)
+  end
+
+  @spec mag(t) :: non_neg_integer
+  def mag(p), do: magnitude(p)
+
+  @spec magnitude(t) :: non_neg_integer
+  def magnitude(p(0, y)) do
+    abs y
+  end
+
+  def magnitude(p(x, 0)) do
+    abs x
+  end
+
+  def magnitude(p(x, y)) do
+    :math.sqrt(x * x + y * y)
+  end
+
   @spec line(t, t, pos_integer) :: [t]
-  def line(from, dir, length) do
+  def line(from, dir, magnitude) do
     Stream.iterate(from, &add(&1, dir))
-    |> Enum.take(length)
+    |> Enum.take(magnitude)
   end
 end
 
