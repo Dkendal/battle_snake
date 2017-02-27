@@ -29,7 +29,6 @@ defmodule BattleSnake.GameForm do
     delay: non_neg_integer,
     recv_timeout: integer,
     max_food: non_neg_integer,
-    winners: [Snake.t],
     game_mode: binary,
   }
 
@@ -40,7 +39,6 @@ defmodule BattleSnake.GameForm do
     field :height, :integer, default: 20
     field :delay, :integer, default: 300
     field :max_food, :integer, default: 1
-    field :winners, {:array, :string}, default: []
     field :game_mode, :string, default: @multiplayer
     field :recv_timeout, :integer, default: 200
   end
@@ -111,10 +109,6 @@ defmodule BattleSnake.GameForm do
     delay = game_form.delay
     game_form_id = game_form.id
     world = game_form.world
-
-    fun_apply = fn (funs, state) ->
-      Enum.reduce(funs, state, fn fun, s -> fun.(s) end)
-    end
 
     objective = WinConditions.game_mode(game_form.game_mode)
 
