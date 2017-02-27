@@ -1,8 +1,6 @@
 <% world = @state.world %>
 <% width = world.width %>
 <% height = world.height %>
-<% snakes = world.snakes %>
-<% dead_snakes = world.dead_snakes %>
 <% view_box = "0 0 #{width} #{height}" %>
 
 <div class="game-board-container">
