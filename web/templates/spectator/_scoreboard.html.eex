@@ -26,6 +26,5 @@
     </div>
   </div>
 
-  <%= render_many(@snakes, SnakeView, "score_live.html") %>
-  <%= render_many(@dead_snakes, SnakeView, "score_dead.html") %>
+  <%= render SnakeView, "score.html", state: @state %>
 </div>
