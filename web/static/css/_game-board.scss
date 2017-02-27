@@ -1,12 +1,28 @@
 .play-show {
-  @include outer-container;
+  display: flex;
+
+  @include media($mobile) {
+    flex-direction: column;
+  }
+}
+
+.game-board-container {
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+
+  @include media($mobile) {
+    justify-content: center;
+  }
 }
 
 .game-board {
-  height: 100%;
-  @include span-columns(8);
+  height: 92vh;
+  width: 100%;
+
   @include media($mobile) {
-    @include span-columns(12);
+    height: 100vw;
+    width: 100vw;
   }
   &-tile {
     fill: $secondary-background-color;
@@ -20,11 +36,13 @@
   fill: $obj-food-bg-color;
 }
 
+.obj-snake-dead {
+  stroke-opacity: 0.25;
+  fill-opacity: 0.25;
+}
+
 .obj-snake {
-  height: 1;
-  width: 1;
   fill: transparent;
-  stroke-linecap: butt;
-  stroke-linejoin: round;
   stroke-width: $obj-snake-stroke-width;
+  stroke-linejoin: round;
 }
