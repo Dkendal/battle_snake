@@ -116,13 +116,6 @@ defmodule BattleSnake.GameForm do
       Enum.reduce(funs, state, fn fun, s -> fun.(s) end)
     end
 
-    on_done = fn state ->
-      fun_apply.(
-        [&Rules.last_standing/1,
-         &GameServer.Persistance.save_winner/1],
-        state)
-    end
-
     objective = WinConditions.game_mode(game_form.game_mode)
 
     %State{
@@ -130,7 +123,6 @@ defmodule BattleSnake.GameForm do
       game_form: game_form,
       game_form_id: game_form_id,
       objective: objective,
-      on_done: on_done,
       world: world,
     }
   end

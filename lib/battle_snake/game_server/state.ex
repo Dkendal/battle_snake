@@ -95,7 +95,6 @@ defmodule BattleSnake.GameServer.State do
 
   @type t :: %State{
     world: World.t,
-    on_done: state_fun,
     objective: objective_fun,
     delay: non_neg_integer,
     hist: [World.t],
@@ -111,24 +110,11 @@ defmodule BattleSnake.GameServer.State do
     hist: [],
     status: :suspend,
     winners: [],
-    on_done: &State.identity/1,
   ])
 
   @spec done?(t) :: boolean
   def done?(state) do
     state.objective.(state.world)
-  end
-
-  @doc "Execute the on_done event-handler function"
-  @spec on_done(t) :: t
-  def on_done(state) do
-    state.on_done.(state)
-  end
-
-  @doc "Put a new on_done event-handler function into state"
-  @spec on_done(t, (t -> t)) :: t
-  def on_done(state, handler) do
-    put_in(state.on_done, handler)
   end
 
   def identity(x), do: x
