@@ -6,6 +6,8 @@ defmodule BattleSnake.World do
   alias BattleSnake.Snake
   alias BattleSnake.Point
 
+  use Point
+
   defmodule DeathEvent do
     defstruct [:turn, :snake]
   end
@@ -85,21 +87,26 @@ defmodule BattleSnake.World do
   def rand_unoccupied_space(%{width: w, height: h} = world)
   when w > 0
   and h > 0 do
-    h = max(world.height - 1, 0)
-    w = max(world.width - 1, 0)
+    spaces = Stream.flat_map(world.snakes, (& &1.coords))
+    spaces = Stream.concat(spaces, world.food)
+    spaces = Enum.into(spaces, MapSet.new)
+    width = world.width - 1
+    height = world.height - 1
 
-    snakes = Enum.flat_map world.snakes, & &1.coords
-    food = world.food
+    domain = Stream.map(0..width, (& &1))
+    range = Stream.map(0..height, (& &1))
+    stream = Stream.zip(domain, range)
+    stream = Stream.map(stream, fn {x, y} -> p(x, y) end)
+    stream = Stream.filter(stream, fn p ->
+      !MapSet.member?(spaces, p)
+    end)
 
-    open_spaces = for y <- 0..h, x <- 0..w,
-      not %Point{y: y, x: x} in snakes,
-      not %Point{y: y, x: x} in food,
-      do: %Point{y: y, x: x}
+    open = Enum.to_list(stream)
 
-    if 0 == length(open_spaces) do
+    if length(open) == 0 do
       {:error, :empty_error}
     else
-      {:ok, Enum.random(open_spaces)}
+      {:ok, Enum.random(open)}
     end
   end
 
