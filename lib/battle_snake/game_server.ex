@@ -22,7 +22,6 @@ defmodule BattleSnake.GameServer do
   defdelegate get_state(pid), to: GameServer.Client
   defdelegate get_status(pid), to: GameServer.Client
   defdelegate next(pid), to: GameServer.Client
-  defdelegate on_change(pid), to: GameServer.Client
   defdelegate on_done(pid), to: GameServer.Client
   defdelegate pause(pid), to: GameServer.Client
   defdelegate prev(pid), to: GameServer.Client
