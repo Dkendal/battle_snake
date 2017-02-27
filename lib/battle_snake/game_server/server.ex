@@ -167,7 +167,6 @@ defmodule BattleSnake.GameServer.Server do
     state = State.step(state)
 
     if State.done?(state) do
-      state = State.on_done(state)
       halted!(state)
     else
       cont!(state)
