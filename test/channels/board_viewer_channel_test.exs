@@ -22,7 +22,9 @@ defmodule BattleSnake.BoardViewerChannelTest do
   @tag content_type: "json"
   test "renders json" do
     assert_broadcast "tick", %{content: content}
-    assert {:ok, _} = Poison.decode content
+    assert {:ok, board} = Poison.decode content
+    assert is_list(board["food"]), "food is not in board: #{inspect board}"
+    assert is_list(board["snakes"])
   end
 
   def broadcast_state(c) do

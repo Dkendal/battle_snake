@@ -49,9 +49,5 @@ exports.config = {
       "js/app.js": ["web/static/js/app"],
       "js/skin.js": ["web/static/js/skin"],
     }
-  },
-
-  npm: {
-    enabled: true,
   }
 };

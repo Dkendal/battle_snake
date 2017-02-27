@@ -269,6 +269,8 @@ defmodule BattleSnake.WorldTest do
           name: "me",
           id: "1",
           url: "me.example.com",
+          head_url: "snake1.example.com",
+          color: "color1",
           coords: [
             p(1, 1),
           ]
@@ -277,6 +279,8 @@ defmodule BattleSnake.WorldTest do
           name: "other",
           id: "2",
           url: "example.com",
+          head_url: "snake2.example.com",
+          color: "color2",
           coords: [
             p(0, 0),
             p(1, 0),
@@ -318,8 +322,86 @@ defmodule BattleSnake.WorldTest do
       "game_id" => 0
     }
 
-
     @expected PoisonTesting.cast! @world
+
+    test "formats as JSON" do
+      assert @expected == @json
+    end
+  end
+
+  describe "Poison.Encoder.encode(%BattleSnake.World{}, [mode: :consumer])" do
+    use Point
+    
+    @world %World{
+               turn: 0,
+               height: 2,
+               width: 2,
+               food: [
+                 p(0, 1)
+               ],
+               snakes: [
+                 %Snake{
+                         name: "me",
+                         id: "1",
+                         url: "me.example.com",
+                         head_url: "snake1.example.com",
+                         color: "color1",
+                         coords: [
+                           p(1, 1),
+                         ]
+                     },
+                 %Snake{
+                         name: "other",
+                         id: "2",
+                         url: "example.com",
+                         head_url: "snake2.example.com",
+                         color: "color2",
+                         coords: [
+                           p(0, 0),
+                           p(1, 0),
+                         ]
+                     }
+               ],
+               game_id: 0
+           }
+
+    @json %{
+              "width" => 2,
+              "height" => 2,
+              "turn" => 0,
+              "food" => [
+                [0, 1]
+              ],
+              "dead_snakes" => [],
+              "snakes" => [
+                %{
+                        "id" => "1",
+                        "taunt" => "",
+                        "name" => "me",
+                        "health_points" => 100,
+                        "color" => "color1",
+                        "head_url" => "snake1.example.com",
+                        "coords" => [
+                          [1,1],
+                        ]
+                    },
+                %{
+                        "id" => "2",
+                        "taunt" => "",
+                        "health_points" => 100,
+                        "name" => "other",
+                        "color" => "color2",
+                        "head_url" => "snake2.example.com",
+                        "coords" => [
+                          [0,0],
+                          [1,0]
+                        ]
+                    }
+              ],
+              "game_id" => 0
+          }
+
+    @expected Poison.decode!(Poison.encode!(@world, mode: :consumer))
 
     test "formats as JSON" do
       assert @expected == @json

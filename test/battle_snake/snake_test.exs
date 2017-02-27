@@ -160,7 +160,9 @@ defmodule BattleSnake.SnakeTest do
         url: "example.com",
         id: "1",
         taunt: "",
-        health_points: 100
+        health_points: 100,
+        color: "red",
+        head_url: "head.example.com",
       }
 
       expected = %{
@@ -168,11 +170,38 @@ defmodule BattleSnake.SnakeTest do
         "coords" => [[0, 1]],
         "health_points" => 100,
         "taunt" => "",
-        "id" => "1"
+        "id" => "1",
       }
 
       actual = PoisonTesting.cast!(snake)
+      assert expected == actual
+    end
+  end
+  
+  describe "Poison.Encoder.encode(BattleSnake.Snake, [mode: :consumer])" do
+    test "formats as JSON" do
+      snake = %Snake{
+        coords: [%Point{x: 0, y: 1}],
+        name: "snake",
+        url: "example.com",
+        id: "1",
+        taunt: "",
+        health_points: 100,
+        color: "red",
+        head_url: "head.example.com",
+      }
 
+      expected = %{
+        "name" => "snake",
+        "coords" => [[0, 1]],
+        "health_points" => 100,
+        "taunt" => "",
+        "id" => "1",
+        "head_url" => "head.example.com",
+        "color" => "red",
+      }
+
+      actual = Poison.decode!(Poison.encode!(snake, mode: :consumer))
       assert expected == actual
     end
   end
