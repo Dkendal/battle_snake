@@ -4,7 +4,7 @@ defmodule BattleSnake.Movement do
   alias BattleSnake.Api
   alias BattleSnake.Move
   alias BattleSnake.Point
-  alias BattleSnake.GameServer.State
+  alias BattleSnake.GameState
 
   require Logger
 
@@ -46,8 +46,8 @@ defmodule BattleSnake.Movement do
     end
   end
 
-  @spec next(State.t) :: State.t
-  def next(%State{} = state) do
+  @spec next(GameState.t) :: GameState.t
+  def next(%GameState{} = state) do
     recv_timeout = state.game_form.recv_timeout
 
     %{state| world: next(state.world, recv_timeout)}

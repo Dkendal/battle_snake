@@ -1,7 +1,7 @@
 defmodule BattleSnake.Rules do
-  alias BattleSnake.GameServer.State
+  alias BattleSnake.GameState
 
-  @spec last_standing(State.t) :: State.t
+  @spec last_standing(GameState.t) :: GameState.t
   def last_standing(state) do
     world = state.world
     live = world.snakes

@@ -1,11 +1,11 @@
 defmodule BattleSnake.GameServer.Registry do
   alias BattleSnake.GameServer
-  alias BattleSnake.GameServer.State
+  alias BattleSnake.GameState
   alias BattleSnake.GameForm
   @name __MODULE__
 
   @type name :: binary | atom
-  @type initializer :: name | State.t | GameForm.t
+  @type initializer :: name | GameState.t | GameForm.t
 
   @spec via(name) :: GenServer.name
   def via(id), do: {:via, Registry, {@name, id}}

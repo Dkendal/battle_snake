@@ -1,25 +1,25 @@
-defmodule BattleSnake.GameServer.StateTest do
-  alias BattleSnake.GameServer.State
+defmodule BattleSnake.GameStateTest do
+  alias BattleSnake.GameState
 
   use BattleSnake.Case, async: false
 
-  @state %State{world: 10, hist: [9, 8, 7]}
-  @prev %State{world: 9, hist: [8, 7]}
-  @empty_state %State{world: 1, hist: []}
+  @state %GameState{world: 10, hist: [9, 8, 7]}
+  @prev %GameState{world: 9, hist: [8, 7]}
+  @empty_state %GameState{world: 1, hist: []}
 
   def ping(pid), do: &send(pid, {:ping, &1})
 
-  describe "State.step_back/1" do
+  describe "GameState.step_back/1" do
     test "does nothing when the history is empty" do
-      assert State.step_back(@empty_state) == @empty_state
+      assert GameState.step_back(@empty_state) == @empty_state
     end
 
     test "rewinds the state to the last move" do
-      assert State.step_back(@state) == @prev
+      assert GameState.step_back(@state) == @prev
     end
   end
 
-  describe "State.load_history/1" do
+  describe "GameState.load_history/1" do
     # TODO: fix random failures
     test "loads a game's history from mnesia" do
       create(:world, game_form_id: 2, turn: 1)
@@ -29,7 +29,7 @@ defmodule BattleSnake.GameServer.StateTest do
 
       state = build(:state, game_form_id: 1)
 
-      state = State.load_history(state)
+      state = GameState.load_history(state)
 
       assert [
         %{turn: 0, game_form_id: 1},
@@ -40,17 +40,17 @@ defmodule BattleSnake.GameServer.StateTest do
     end
   end
 
-  describe "State.step(%{status: :replay})" do
+  describe "GameState.step(%{status: :replay})" do
     test "halts the game if the history is empty" do
-      state = State.replay!(build(:state, hist: []))
-      new_state = State.step(state)
-      assert new_state == State.halted!(state)
+      state = GameState.replay!(build(:state, hist: []))
+      new_state = GameState.step(state)
+      assert new_state == GameState.halted!(state)
     end
 
     test "steps forwards to the next turn" do
       hist = for t <- (0..3), do: build(:world, turn: t)
-      state = State.replay!(build(:state, hist: hist))
-      state = State.step(state)
+      state = GameState.replay!(build(:state, hist: hist))
+      state = GameState.step(state)
 
       [h | hist] = hist
 
@@ -59,20 +59,20 @@ defmodule BattleSnake.GameServer.StateTest do
     end
   end
 
-  for status <- State.statuses() do
+  for status <- GameState.statuses() do
     method = "#{status}!"
-    test "State.#{method}/1" do
-      assert State.unquote(:"#{method}")(@state).status ==
+    test "GameState.#{method}/1" do
+      assert GameState.unquote(:"#{method}")(@state).status ==
         unquote(status)
     end
 
     method = "#{status}?"
-    test "State.#{method}/1" do
+    test "GameState.#{method}/1" do
       state = put_in @state.status, unquote(status)
-      assert State.unquote(:"#{method}")(state) == true
+      assert GameState.unquote(:"#{method}")(state) == true
 
       state = put_in @state.status, :__fake_state__
-      assert State.unquote(:"#{method}")(state) == false
+      assert GameState.unquote(:"#{method}")(state) == false
     end
   end
 end
