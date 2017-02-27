@@ -5,7 +5,7 @@ defmodule BattleSnake.Test.ExampleController do
     render(conn, "start.json")
   end
 
-  def move(conn, _params) do
-    render(conn, "move.json")
+  def move(conn, params) do
+    render(conn, "move.json", params)
   end
 end
