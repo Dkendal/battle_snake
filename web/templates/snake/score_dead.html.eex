@@ -11,7 +11,7 @@
     <div class="scoreboard-name"><%= name %></div>
     <div>Died on turn <%= turn %></div>
     <%= for cause <- causes do %>
-      <div><%= cause_of_death_text(cause) %></div>
+      <div><%= cause_of_death_text(cause, @state) %></div>
     <% end %>
   </div>
 </div>
