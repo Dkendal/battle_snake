@@ -30,6 +30,7 @@ defmodule BattleSnake.GameState do
   @type state_predicate :: (t -> boolean)
   @type uuid :: binary
   @type snake_id :: uuid
+  @type game_result :: BattleSnake.GameResult.t
 
   @typedoc """
   A function that, when true, indicates that the game is over.
@@ -169,6 +170,20 @@ defmodule BattleSnake.GameState do
 
   def objective(state) do
     state.objective.(state.world)
+  end
+
+  @spec get_game_results(t) :: game_result
+  def get_game_results(state) do
+    import BattleSnake.GameResult
+    for snake_id <- state.winners do
+      game_result(
+        id: Ecto.UUID.generate(),
+        game_id: state.game_form_id,
+        snake_id: snake_id,
+        is_winner: true,
+        created_at: DateTime.utc_now()
+      )
+    end
   end
 
   defdelegate fetch(state, key), to: Map
