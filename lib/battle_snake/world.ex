@@ -93,10 +93,12 @@ defmodule BattleSnake.World do
     width = world.width - 1
     height = world.height - 1
 
-    domain = Stream.map(0..width, (& &1))
-    range = Stream.map(0..height, (& &1))
-    stream = Stream.zip(domain, range)
-    stream = Stream.map(stream, fn {x, y} -> p(x, y) end)
+    stream = Stream.flat_map(0..width, fn x ->
+      Stream.flat_map(0..height, fn y ->
+        [p(x, y)]
+      end)
+    end)
+
     stream = Stream.filter(stream, fn p ->
       !MapSet.member?(spaces, p)
     end)
