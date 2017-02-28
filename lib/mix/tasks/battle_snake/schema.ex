@@ -32,6 +32,14 @@ defmodule Mix.Tasks.BattleSnake.Schema.Tables.Create do
 
     BattleSnake.World.create_table(disc_copies: [node()])
 
+    import BattleSnake.GameResult
+
+    :mnesia.create_table(
+      BattleSnake.GameResult, [
+        attributes: Keyword.keys(game_result(game_result())),
+        index: [:game_id, :snake_id, :is_winner],
+        disc_copies: [node()]])
+
     :mnesia.add_table_index(BattleSnake.World, :game_form_id)
   end
 end
