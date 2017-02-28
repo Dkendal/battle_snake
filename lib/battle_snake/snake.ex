@@ -163,4 +163,6 @@ defmodule BattleSnake.Snake do
     body = [Point.add(head, move) | body]
     put_in(snake.coords, body)
   end
+
+  defdelegate fetch(snake, key), to: Map
 end
