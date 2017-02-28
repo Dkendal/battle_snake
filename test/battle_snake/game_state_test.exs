@@ -14,13 +14,13 @@ defmodule BattleSnake.GameStateTest do
       world = build(:world,
         snakes: [],
         dead_snakes: [
-          build(:snake, id: 1) |> kill_snake(1),
+          build(:snake, id: 3) |> kill_snake(1),
           build(:snake, id: 2) |> kill_snake(2),
-          build(:snake, id: 3) |> kill_snake(2)])
+          build(:snake, id: 1) |> kill_snake(2)])
 
       state = build(:state, world: world)
       state = GameState.set_winners(state)
-      assert state.winners == [2, 3]
+      assert state.winners == [1, 2]
     end
   end
 
