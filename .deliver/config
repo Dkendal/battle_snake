@@ -1,0 +1,53 @@
+APP="battle_snake"
+
+BUILD_HOST="callisto.local"
+BUILD_USER="dylan"
+BUILD_AT="/tmp/battle_snake/builds"
+
+STAGING_HOSTS=""
+STAGING_USER=""
+
+PRODUCTION_HOSTS="battlesnake.stembolt.com"
+PRODUCTION_USER="ubuntu"
+DELIVER_TO="/web"
+
+# For *Phoenix* projects, symlink prod.secret.exs to our tmp source
+pre_erlang_get_and_update_deps() {
+    local _prod_secret_path="/home/edeliver/prod.secret.exs"
+    if [ "$TARGET_MIX_ENV" = "prod" ]; then
+        __sync_remote "
+      ln -sfn '$_prod_secret_path' '$BUILD_AT/config/prod.secret.exs'
+    "
+    fi
+}
+
+
+pre_erlang_clean_compile() {
+    status "Installing NPM dependencies"
+    __sync_remote "
+      [ -f ~/.profile ] && source ~/.profile
+      set -e # fail if any command fails
+
+      cd '$BUILD_AT' # go to the build directory on the build host
+      npm install $SILENCE
+    "
+
+    status "Building static files"
+    __sync_remote "
+      [ -f ~/.profile ]
+      set -e
+
+      cd '$BUILD_AT'
+      mkdir -p priv/static
+      npm run deploy $SILENCE
+    "
+
+    status "Running phoenix.digest"
+    __sync_remote "
+      [ -f ~/.profile ] && source ~/.profile
+      set -e
+
+      cd '$BUILD_AT'
+      APP='$APP' MIX_ENV='$TARGET_MIX_ENV' $MIX_CMD phoenix.digest $SILENCE
+    "
+}
