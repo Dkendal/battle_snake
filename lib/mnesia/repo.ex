@@ -19,11 +19,11 @@ defmodule Mnesia do
 
     BattleSnake.World.create_table(disc_copies: nodes)
 
-    import BattleSnake.GameResult
+    import BattleSnake.GameResultSnake
 
     :mnesia.create_table(
-      BattleSnake.GameResult, [
-        attributes: Keyword.keys(game_result(game_result())),
+      BattleSnake.GameResultSnake, [
+        attributes: Keyword.keys(game_result_snake(game_result_snake())),
         index: [:game_id],
         disc_copies: nodes])
 

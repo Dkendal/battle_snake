@@ -9,18 +9,27 @@ defmodule BattleSnake.GameStateTest do
 
   def ping(pid), do: &send(pid, {:ping, &1})
 
-  describe "GameState.get_game_results(t)" do
+  describe "GameState.get_game_result_snakes(t)" do
     test "produces a list of game result records" do
-      import BattleSnake.GameResult
-      state = build(:state, game_form_id: "game-1", winners: ["snake-1"])
-      results = GameState.get_game_results(state)
+      import BattleSnake.GameResultSnake
+      snake = build(:snake, name: "snake 1", url: "example.com")
+
+      snakes = %{"snake-1" => snake}
+
+      state = build(:state,
+        game_form_id: "game-1",
+        winners: ["snake-1"],
+        snakes: snakes)
+
+      results = GameState.get_game_result_snakes(state)
 
       assert is_list results
       assert [result] = results
-      assert game_result(snake_id: "snake-1", _: _) = result
-      assert game_result(game_id: "game-1", _: _) = result
-      assert game_result(created_at: created_at, _: _) = result
-      assert %DateTime{} = created_at
+      assert game_result_snake(result, :snake_id) == "snake-1"
+      assert game_result_snake(result, :snake_name) == "snake 1"
+      assert game_result_snake(result, :snake_url) == "example.com"
+      assert game_result_snake(result, :game_id) == "game-1"
+      assert %DateTime{} = game_result_snake(result, :created_at)
     end
   end
 

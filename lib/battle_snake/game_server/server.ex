@@ -172,9 +172,9 @@ defmodule BattleSnake.GameServer.Server do
     do_reply({:noreply, state})
   end
 
-  ################
-  # Write Winner #
-  ################
+  #############
+  # Game Done #
+  #############
 
   @callback handle_info(msg :: :timeout | term(), state :: term()) ::
   {:noreply, new_state} |
