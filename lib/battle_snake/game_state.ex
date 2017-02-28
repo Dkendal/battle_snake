@@ -51,8 +51,6 @@ defmodule BattleSnake.GameState do
     state.status == :cont
   end
 
-  defoverridable("cont!": 1, "cont?": 1)
-
   @spec suspend!(t) :: t
   def suspend!(state) do
     put_in(state.status, :suspend)
@@ -63,8 +61,6 @@ defmodule BattleSnake.GameState do
     state.status == :suspend
   end
 
-  defoverridable("suspend!": 1, "suspend?": 1)
-
   @spec halted!(t) :: t
   def halted!(state) do
     put_in(state.status, :halted)
@@ -74,8 +70,6 @@ defmodule BattleSnake.GameState do
   def halted?(state) do
     state.status == :halted
   end
-
-  defoverridable("halted!": 1, "halted?": 1)
 
   @spec replay!(t) :: t
   def replay!(state) do
@@ -92,8 +86,6 @@ defmodule BattleSnake.GameState do
       %__MODULE__{status: :replay} = unquote(state)
     end
   end
-
-  defoverridable("replay!": 1, "replay?": 1)
 
   @spec done?(t) :: boolean
   def done?(state) do
