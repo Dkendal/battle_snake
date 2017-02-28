@@ -113,7 +113,7 @@ defmodule BattleSnake.GameStateTest do
     end
 
     test "sends a message to itself to save the winner" do
-      assert_receive :write_winner
+      assert_receive :game_done
     end
   end
 
