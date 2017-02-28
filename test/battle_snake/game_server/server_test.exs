@@ -22,12 +22,37 @@ defmodule BattleSnake.GameServer.ServerTest do
   end
 
   describe "Server.init(GameForm.t)" do
-    setup [:create_game_form]
+    setup do
+      snake = build(:snake_form, url: "url")
+      game_form = build(:game_form, id: 1, snakes: [snake])
+      [game_form: game_form]
+    end
 
     test "initializes the game state with the id", c do
       assert {:ok, state} = Server.init(c.game_form)
       assert state.game_form_id == c.game_form.id
       assert state.game_form.id == c.game_form.id
+    end
+
+    test "sets .world", c do
+      assert {:ok, state} = Server.init(c.game_form)
+      assert state.world.__struct__ == BattleSnake.World
+    end
+
+    test "sets .world.snakes", c do
+      assert {:ok, state} = Server.init(c.game_form)
+      assert assert [%BattleSnake.Snake{}] = state.world.snakes
+    end
+
+    test "sets .snakes", c do
+      assert {:ok, state} = Server.init(c.game_form)
+      assert is_map state.snakes
+      assert [id] = Map.keys(state.snakes)
+      assert [
+        %BattleSnake.Snake{
+          id: ^id,
+          coords: [_, _, _]}
+      ] = Map.values(state.snakes)
     end
   end
 

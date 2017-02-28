@@ -24,9 +24,22 @@ defmodule BattleSnake.GameServer.Server do
   end
 
   def init(%GameForm{} = game_form) do
-    game_form
+    state = game_form
     |> GameForm.reload_game_server_state
-    |> init
+
+    stream = Stream.concat(
+      get_in(state, [Access.key(:world, %{}),
+                     Access.key(:snakes, [])]),
+      get_in(state, [Access.key(:world, %{}),
+                     Access.key(:dead_snakes, [])]))
+
+    snakes = stream
+    |> Stream.map(& {&1.id, &1})
+    |> Enum.into(%{})
+
+    state = put_in(state.snakes, snakes)
+
+    init(state)
   end
 
   def init(%GameState{} = state) do
