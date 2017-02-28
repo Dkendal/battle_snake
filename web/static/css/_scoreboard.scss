@@ -25,14 +25,14 @@
     min-height: ms(10);
   }
   &-avatar {
-    border-radius: 50%;
     background-repeat: no-repeat;
     background-size: cover;
+    border-radius: 50%;
     border-style: solid;
     border-width: $avatar-border-width;
-    height: ms(8);
     margin-right: ms(-1);
-    width: ms(8);
+    min-height: ms(8);
+    min-width: ms(8);
   }
   &-logo {
     margin-bottom: ms(4);
