@@ -81,20 +81,39 @@ defmodule BattleSnake.GameStateTest do
       :ok
     end
 
-    test "sets the winner if the game is done" do
-      snake = build(:snake)
-      world = build(:world, snakes: [snake])
-      state = build(:state, world: world, objective: fn _ -> true end)
-      state = GameState.step(state)
-      assert state.winners == MapSet.new([snake.id])
-    end
-
-    test "doesn't set the winenr" do
+    test "doesn't set the winner" do
       snake = build(:snake)
       world = build(:world, snakes: [snake])
       state = build(:state, world: world, objective: fn _ -> false end)
       state = GameState.step(state)
       assert state.winners == []
+    end
+  end
+
+  describe "GameState.step(t) when the game is done" do
+    setup do
+      request_move = fn(_, _, _) ->
+        {:ok, %HTTPoison.Response{body: "{\"move\":\"up\"}"}}
+      end
+
+      mocks = %{request_move: request_move}
+
+      BattleSnake.MockApi.start_link(mocks)
+
+      snake = build(:snake)
+      world = build(:world, snakes: [snake])
+      state = build(:state, world: world, objective: fn _ -> true end)
+      state = GameState.step(state)
+
+      [state: state, snake: snake]
+    end
+
+    test "sets the winner if the game is done", c do
+      assert c.state.winners == MapSet.new([c.snake.id])
+    end
+
+    test "sends a message to itself to save the winner" do
+      assert_receive :write_winner
     end
   end
 

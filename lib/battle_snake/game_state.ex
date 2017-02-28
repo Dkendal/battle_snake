@@ -119,7 +119,7 @@ defmodule BattleSnake.GameState do
     |> BattleSnake.Death.reap
     |> Map.update!(:world, &World.step/1)
 
-    if done?(state), do: set_winners(state), else: state
+    if done?(state), do: step_done(state), else: state
   end
 
   @doc """
@@ -204,5 +204,15 @@ defmodule BattleSnake.GameState do
     else
       []
     end
+  end
+
+  defp step_done(state) do
+    state = set_winners(state)
+    send_write_winner()
+    state
+  end
+
+  defp send_write_winner do
+    send(self(), :write_winner)
   end
 end
