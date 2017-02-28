@@ -14,7 +14,7 @@ config :battle_snake, snake_api: BattleSnake.Api
 # which you typically run after static files are built.
 config :battle_snake, BattleSnake.Endpoint,
   http: [port: "8080"],
-  url: [host: "battlesnake.stembolt.com"],
+  url: [host: "http://battlesnake.stembolt.com"],
   root: ".",
   version: Mix.Project.config[:version],
   cache_static_manifest: "priv/static/manifest.json",
