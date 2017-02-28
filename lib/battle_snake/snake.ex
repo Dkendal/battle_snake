@@ -164,5 +164,26 @@ defmodule BattleSnake.Snake do
     put_in(snake.coords, body)
   end
 
+  @spec died_on(t) :: pos_integer
+  def died_on(snake) do
+    case snake.cause_of_death do
+      nil -> {:error, :alive}
+      %{turn: turn} -> {:ok, turn}
+    end
+  end
+
+  @spec dead?(t) :: boolean
+  def dead?(snake) do
+    case snake.cause_of_death do
+      nil -> false
+      _ -> true
+    end
+  end
+
+  @spec alive?(t) :: boolean
+  def alive?(snake) do
+    !dead?(snake)
+  end
+
   defdelegate fetch(snake, key), to: Map
 end

@@ -9,6 +9,35 @@ defmodule BattleSnake.GameStateTest do
 
   def ping(pid), do: &send(pid, {:ping, &1})
 
+  describe "GameState.set_winners(t) when everyone is dead" do
+    test "sets the winner to whoever died last" do
+      world = build(:world,
+        snakes: [],
+        dead_snakes: [
+          build(:snake, id: 1) |> kill_snake(1),
+          build(:snake, id: 2) |> kill_snake(2),
+          build(:snake, id: 3) |> kill_snake(2)])
+
+      state = build(:state, world: world)
+      state = GameState.set_winners(state)
+      assert state.winners == [2, 3]
+    end
+  end
+
+  describe "GameState.set_winners(t)" do
+    test "sets the winner to anyone that is still alive" do
+      world = build(:world,
+        snakes: [
+          build(:snake, id: 1)],
+        dead_snakes: [
+          build(:snake, id: 2) |> kill_snake(1)])
+
+      state = build(:state, world: world)
+      state = GameState.set_winners(state)
+      assert state.winners == [1]
+    end
+  end
+
   describe "GameState.step_back/1" do
     test "does nothing when the history is empty" do
       assert GameState.step_back(@empty_state) == @empty_state
@@ -37,6 +66,35 @@ defmodule BattleSnake.GameStateTest do
         %{turn: 2, game_form_id: 1},
         %{turn: 3, game_form_id: 1},
       ] = state.hist
+    end
+  end
+
+  describe "GameState.step(t)" do
+    setup do
+      request_move = fn(_, _, _) ->
+        {:ok, %HTTPoison.Response{body: "{\"move\":\"up\"}"}}
+      end
+
+      mocks = %{request_move: request_move}
+
+      BattleSnake.MockApi.start_link(mocks)
+      :ok
+    end
+
+    test "sets the winner if the game is done" do
+      snake = build(:snake)
+      world = build(:world, snakes: [snake])
+      state = build(:state, world: world, objective: fn _ -> true end)
+      state = GameState.step(state)
+      assert state.winners == [snake.id]
+    end
+
+    test "doesn't set the winenr" do
+      snake = build(:snake)
+      world = build(:world, snakes: [snake])
+      state = build(:state, world: world, objective: fn _ -> false end)
+      state = GameState.step(state)
+      assert state.winners == []
     end
   end
 

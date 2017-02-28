@@ -1,6 +1,6 @@
 defmodule BattleSnake.GameState do
   alias __MODULE__
-
+  alias BattleSnake.Snake
   alias BattleSnake.World
 
   @max_history 20
@@ -117,11 +117,23 @@ defmodule BattleSnake.GameState do
   end
 
   def step(state) do
-    state
-    |> save_history()
-    |> BattleSnake.Movement.next()
-    |> BattleSnake.Death.reap()
+    state = state
+    |> save_history
+    |> BattleSnake.Movement.next
+    |> BattleSnake.Death.reap
     |> Map.update!(:world, &World.step/1)
+
+    if done?(state), do: set_winners(state), else: state
+  end
+
+  @doc """
+  Sets the winners to be anyone that is still alive, or whoever died last.
+  """
+  @spec set_winners(t) :: t
+  def set_winners(state) do
+    winners = for s <- state.world.snakes, do: s.id
+    winners = if length(winners) != 0, do: winners, else: who_died_last(state)
+    put_in(state.winners, winners)
   end
 
   @doc "Loads the game history for a game matching this id"
@@ -152,6 +164,12 @@ defmodule BattleSnake.GameState do
     state.objective.(state.world)
   end
 
+  defdelegate fetch(state, key), to: Map
+
+  #####################
+  # Private Functions #
+  #####################
+
   defp prev_turn(state) do
     [h|t] = state.hist
     state = put_in state.world, h
@@ -161,6 +179,23 @@ defmodule BattleSnake.GameState do
   defp save_history(%{world: h} = state) do
     update_in state.hist, fn t ->
       [h |Enum.take(t, @max_history)]
+    end
+  end
+
+  defp who_died_last(state) do
+    map_fun = &(&1.id)
+
+    groups = Enum.group_by(
+      state.world.dead_snakes,
+      &Snake.died_on/1,
+      map_fun)
+
+    if Enum.count(groups) > 0 do
+      groups
+      |> Enum.max_by(&elem(&1, 1))
+      |> elem(1)
+    else
+      []
     end
   end
 end
