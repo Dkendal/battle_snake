@@ -9,6 +9,28 @@ defmodule Mnesia do
   defdelegate record(struct), to: Mnesia.Util
   defdelegate record(struct, fields), to: Mnesia.Util
   defdelegate record(struct, fields, table_name), to: Mnesia.Util
+
+  def install(nodes) do
+    :ok = :mnesia.create_schema(nodes)
+
+    :rpc.multicall(nodes, :application, :start, [:mnesia])
+
+    BattleSnake.GameForm.create_table(disc_copies: nodes)
+
+    BattleSnake.World.create_table(disc_copies: nodes)
+
+    import BattleSnake.GameResult
+
+    :mnesia.create_table(
+      BattleSnake.GameResult, [
+        attributes: Keyword.keys(game_result(game_result())),
+        index: [:game_id],
+        disc_copies: nodes])
+
+    :mnesia.add_table_index(BattleSnake.World, :game_form_id)
+
+    :rpc.multicall(nodes, :application, :stop, [:mnesia])
+  end
 end
 
 defmodule Mnesia.Util do
