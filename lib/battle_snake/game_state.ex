@@ -7,6 +7,40 @@ defmodule BattleSnake.GameState do
 
   @statuses [:cont, :replay, :halted, :suspend]
 
+  @typedoc """
+  Any function that takes a GameState, and returns a new GameState.
+  """
+  @type state_fun :: (t -> t)
+  @type state_predicate :: (t -> boolean)
+  @type uuid :: binary
+  @type snake_id :: uuid
+
+  @typedoc """
+  A function that, when true, indicates that the game is over.
+  """
+  @type objective_fun :: state_predicate
+
+  @type t :: %GameState{
+    world: World.t,
+    objective: objective_fun,
+    delay: non_neg_integer,
+    hist: [World.t],
+    game_form: BattleSnake.GameForm.t,
+    winners: [snake_id]
+  }
+
+  defstruct([
+    :world,
+    :objective,
+    :game_form_id,
+    :snakes,
+    game_form: {:error, :init},
+    delay: 0,
+    hist: [],
+    status: :suspend,
+    winners: [],
+  ])
+
   @spec cont!(t) :: t
   def cont!(state) do
     put_in(state.status, :cont)
@@ -60,37 +94,6 @@ defmodule BattleSnake.GameState do
   end
 
   defoverridable("replay!": 1, "replay?": 1)
-
-  @typedoc """
-  Any function that takes a GameState, and returns a new GameState.
-  """
-  @type state_fun :: (t -> t)
-
-  @type state_predicate :: (t -> boolean)
-
-  @typedoc """
-  A function that, when true, indicates that the game is over.
-  """
-  @type objective_fun :: state_predicate
-
-  @type t :: %GameState{
-    world: World.t,
-    objective: objective_fun,
-    delay: non_neg_integer,
-    hist: [World.t],
-    game_form: BattleSnake.GameForm.t
-  }
-
-  defstruct([
-    :world,
-    :objective,
-    :game_form_id,
-    game_form: {:error, :init},
-    delay: 0,
-    hist: [],
-    status: :suspend,
-    winners: [],
-  ])
 
   @spec done?(t) :: boolean
   def done?(state) do
