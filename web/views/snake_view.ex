@@ -42,6 +42,8 @@ defmodule BattleSnake.SnakeView do
         "Starved to death"
       %Death.WallCollisionCause{} ->
         "Crashed into a wall"
+      %Death.SelfCollisionCause{} ->
+        "Collided with itself"
       %Death.BodyCollisionCause{with: id} ->
         "Collided with #{id}'s body"
       %Death.HeadCollisionCause{with: id} ->
