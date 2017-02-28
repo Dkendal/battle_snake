@@ -178,6 +178,9 @@ defmodule BattleSnake.Death do
           other.id != snake.id and head == hd(other.coords) and length(snake.coords) <= length(other.coords) ->
             %HeadCollisionCause{with: other.id}
 
+          other.id == snake.id and head in tl(other.coords) ->
+            %SelfCollisionCause{}
+
           head in tl(other.coords) ->
             %BodyCollisionCause{with: other.id}
 
