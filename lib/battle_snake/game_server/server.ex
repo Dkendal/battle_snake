@@ -181,8 +181,8 @@ defmodule BattleSnake.GameServer.Server do
   {:noreply, new_state, timeout() | :hibernate} |
   {:stop, reason :: term(), new_state} when new_state: term()
 
-  @spec handle_info(:write_winner, state) :: noreply
-  def handle_info(:write_winner, state) do
+  @spec handle_info(:game_done, state) :: noreply
+  def handle_info(:game_done, state) do
     {:noreply, state}
   end
 

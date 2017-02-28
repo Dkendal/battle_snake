@@ -208,11 +208,11 @@ defmodule BattleSnake.GameState do
 
   defp step_done(state) do
     state = set_winners(state)
-    send_write_winner()
+    send_game_done()
     state
   end
 
-  defp send_write_winner do
-    send(self(), :write_winner)
+  defp send_game_done do
+    send(self(), :game_done)
   end
 end
