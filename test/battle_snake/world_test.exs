@@ -82,14 +82,16 @@ defmodule BattleSnake.WorldTest do
     end
 
     test "does the thing" do
+      food = (for x <- 0..90, y <- 0..90, do: p(x, y))
+
       world = build(:world,
+        snakes: [],
         width: 100,
         height: 100,
-        food: (for x <- 0..90, y <- 0..90, do: p(x, y)))
+        food: food)
 
-      assert {:ok, p(x, y)} = World.rand_unoccupied_space(world)
-      assert_in_delta 90, 99, x
-      assert_in_delta 90, 99, y
+      assert {:ok, v} = World.rand_unoccupied_space(world)
+      assert MapSet.member?(MapSet.new(food), v) == false
     end
 
     test "returns an error if there is no space" do
