@@ -7,6 +7,22 @@ defmodule BattleSnake.GameState do
 
   @statuses [:cont, :replay, :halted, :suspend]
 
+  defstruct([
+    :world,
+    :objective,
+    :game_form_id,
+    :snakes,
+    game_form: {:error, :init},
+    delay: 0,
+    hist: [],
+    status: :suspend,
+    winners: [],
+  ])
+
+  ####################
+  # Type Definitions #
+  ####################
+
   @typedoc """
   Any function that takes a GameState, and returns a new GameState.
   """
@@ -28,18 +44,6 @@ defmodule BattleSnake.GameState do
     game_form: BattleSnake.GameForm.t,
     winners: [snake_id]
   }
-
-  defstruct([
-    :world,
-    :objective,
-    :game_form_id,
-    :snakes,
-    game_form: {:error, :init},
-    delay: 0,
-    hist: [],
-    status: :suspend,
-    winners: [],
-  ])
 
   @spec cont!(t) :: t
   def cont!(state) do
