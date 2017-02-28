@@ -9,6 +9,21 @@ defmodule BattleSnake.GameStateTest do
 
   def ping(pid), do: &send(pid, {:ping, &1})
 
+  describe "GameState.get_game_results(t)" do
+    test "produces a list of game result records" do
+      import BattleSnake.GameResult
+      state = build(:state, game_form_id: "game-1", winners: ["snake-1"])
+      results = GameState.get_game_results(state)
+
+      assert is_list results
+      assert [result] = results
+      assert game_result(snake_id: "snake-1", _: _) = result
+      assert game_result(game_id: "game-1", _: _) = result
+      assert game_result(created_at: created_at, _: _) = result
+      assert %DateTime{} = created_at
+    end
+  end
+
   describe "GameState.set_winners(t) when everyone is dead" do
     test "sets the winner to whoever died last" do
       world = build(:world,
