@@ -184,7 +184,7 @@ defmodule BattleSnake.GameState do
 
     if Enum.count(groups) > 0 do
       groups
-      |> Enum.max_by(&elem(&1, 1))
+      |> Enum.max_by(&elem(&1, 0))
       |> elem(1)
     else
       []
