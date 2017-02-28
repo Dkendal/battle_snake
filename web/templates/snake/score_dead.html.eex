@@ -3,8 +3,9 @@
 <% img_src = head_image_url @snake %>
 <% turn = @snake.cause_of_death.turn %>
 <% causes = @snake.cause_of_death.causes %>
+<% css_class = if GameState.winner?(@state, @snake), do: "scoreboard-snake-winner" %>
 
-<div class="scoreboard-snake">
+<div class="scoreboard-snake <%= css_class %>">
   <div style="border-color: <%= color %>;background-image:url(<%= img_src %>);"
        class="scoreboard-avatar scoreboard-dead-snake"></div>
   <div class="scoreboard-snake-info">

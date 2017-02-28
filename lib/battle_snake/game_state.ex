@@ -125,6 +125,7 @@ defmodule BattleSnake.GameState do
   def set_winners(state) do
     winners = for s <- state.world.snakes, do: s.id
     winners = if length(winners) != 0, do: winners, else: who_died_last(state)
+    winners = MapSet.new(winners)
     put_in(state.winners, winners)
   end
 
@@ -150,6 +151,16 @@ defmodule BattleSnake.GameState do
 
   def delay(state) do
     state.delay
+  end
+
+  @spec winner?(t, Snake.t) :: boolean
+  def winner?(state, %Snake{} = snake) do
+    winner?(state, snake.id)
+  end
+
+  @spec winner?(t, snake_id) :: boolean
+  def winner?(state, snake_id) do
+    Enum.member?(state.winners, snake_id)
   end
 
   def objective(state) do

@@ -1,6 +1,7 @@
 defmodule BattleSnake.SnakeView do
   alias BattleSnake.Point
   alias BattleSnake.Death
+  alias BattleSnake.GameState
   use BattleSnake.Web, :view
   use BattleSnake.Point
 

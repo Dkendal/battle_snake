@@ -20,7 +20,7 @@ defmodule BattleSnake.GameStateTest do
 
       state = build(:state, world: world)
       state = GameState.set_winners(state)
-      assert state.winners == [1, 2]
+      assert state.winners == MapSet.new([1, 2])
     end
   end
 
@@ -34,7 +34,7 @@ defmodule BattleSnake.GameStateTest do
 
       state = build(:state, world: world)
       state = GameState.set_winners(state)
-      assert state.winners == [1]
+      assert state.winners == MapSet.new([1])
     end
   end
 
@@ -86,7 +86,7 @@ defmodule BattleSnake.GameStateTest do
       world = build(:world, snakes: [snake])
       state = build(:state, world: world, objective: fn _ -> true end)
       state = GameState.step(state)
-      assert state.winners == [snake.id]
+      assert state.winners == MapSet.new([snake.id])
     end
 
     test "doesn't set the winenr" do
