@@ -7,6 +7,13 @@ defmodule BattleSnake.GameServer.Server do
   import GameState
   use GenServer
 
+  ####################
+  # Type Definitions #
+  ####################
+
+  @type noreply :: {:noreply, state}
+  @type state :: GameState.t
+
   ########
   # Init #
   ########
@@ -163,6 +170,20 @@ defmodule BattleSnake.GameServer.Server do
         _ -> state
       end
     do_reply({:noreply, state})
+  end
+
+  ################
+  # Write Winner #
+  ################
+
+  @callback handle_info(msg :: :timeout | term(), state :: term()) ::
+  {:noreply, new_state} |
+  {:noreply, new_state, timeout() | :hibernate} |
+  {:stop, reason :: term(), new_state} when new_state: term()
+
+  @spec handle_info(:write_winner, state) :: noreply
+  def handle_info(:write_winner, state) do
+    {:noreply, state}
   end
 
   def handle_info(request, state) do
