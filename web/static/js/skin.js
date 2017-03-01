@@ -27,7 +27,7 @@ const logError = resp => { console.error("Unable to join", resp) };
 var game_renderer;
 
 const init = () => {
-    const boardViewerChannel = socket.channel(`board_viewer:${gameId}`, {contentType: "json"});
+    const boardViewerChannel = socket.channel(`spectator:json:${gameId}`, {});
     const gameAdminChannel = socket.channel(`game_admin:${gameId}`);
 
     game_renderer = new GameRenderer("#snake-board", "#snake-info-list");
