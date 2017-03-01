@@ -118,6 +118,30 @@ defmodule BattleSnake.GameServer.ServerTest do
     end
   end
 
+  #############
+  # Game Done #
+  #############
+
+  describe "Server.handle_info(:game_done, state)" do
+    test "writes the winner to disk" do
+      import BattleSnake.GameResultSnake
+
+      snake = build(:snake, id: "snake-1")
+
+      snakes = %{"snake-1" => snake}
+
+      state = build(:state,
+        game_form_id: "game-1",
+        winners: ["snake-1"],
+        snakes: snakes)
+
+      Server.handle_info(:game_done, state)
+
+      assert [game_result_snake(snake_id: "snake-1")] =
+        Mnesia.dirty_all(BattleSnake.GameResultSnake)
+    end
+  end
+
   ########
   # Next #
   ########
