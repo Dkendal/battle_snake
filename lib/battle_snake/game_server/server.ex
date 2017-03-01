@@ -176,11 +176,6 @@ defmodule BattleSnake.GameServer.Server do
   # Game Done #
   #############
 
-  @callback handle_info(msg :: :timeout | term(), state :: term()) ::
-  {:noreply, new_state} |
-  {:noreply, new_state, timeout() | :hibernate} |
-  {:stop, reason :: term(), new_state} when new_state: term()
-
   @spec handle_info(:game_done, state) :: noreply
   def handle_info(:game_done, state) do
     {:noreply, state}
