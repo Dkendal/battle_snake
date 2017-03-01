@@ -7,5 +7,5 @@ window.BattleSnake = BattleSnake;
 
 if ($("#board-viewer").length) {
   const gameId = window.BattleSnake.gameId;
-  window.BattleSnake.BoardViewer.init(gameId);
+  window.BattleSnake.Spectator.init(gameId);
 }

@@ -1,1 +1,1 @@
-export {default as BoardViewer} from "./board_viewer";
+export {default as Spectator} from "./spectator";
