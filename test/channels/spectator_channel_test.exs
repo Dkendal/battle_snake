@@ -1,8 +1,8 @@
-defmodule BattleSnake.BoardViewerChannelTest do
+defmodule BattleSnake.SpectatorChannelTest do
   use BattleSnake.ChannelCase
 
   alias BattleSnake.{
-    BoardViewerChannel,
+    SpectatorChannel,
     GameServer
   }
 
@@ -37,7 +37,7 @@ defmodule BattleSnake.BoardViewerChannelTest do
     content_type = c.content_type
     {:ok, _, socket} =
       socket("user_id", %{})
-      |> subscribe_and_join(BoardViewerChannel, "board_viewer:#{id}", %{"contentType" => content_type})
+      |> subscribe_and_join(SpectatorChannel, "spectator:#{id}", %{"contentType" => content_type})
 
     [socket: socket, id: id]
   end

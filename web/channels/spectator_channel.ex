@@ -1,4 +1,4 @@
-defmodule BattleSnake.BoardViewerChannel do
+defmodule BattleSnake.SpectatorChannel do
   alias BattleSnake.GameServer
 
   use BattleSnake.Web, :channel
@@ -9,7 +9,7 @@ defmodule BattleSnake.BoardViewerChannel do
   """
   @type join_payload :: %{optional(binary) => binary}
   @spec join(binary, join_payload, Phoenix.Socket.t) :: {:ok, Phoenix.Socket} | {:error, any}
-  def join("board_viewer:" <> game_id, payload, socket) do
+  def join("spectator:" <> game_id, payload, socket) do
     if authorized?(payload) do
       GameServer.PubSub.subscribe(game_id)
       send(self(), :after_join)
@@ -47,7 +47,7 @@ defmodule BattleSnake.BoardViewerChannel do
   end
 
   defp render_content(_, state) do
-    BattleSnake.BoardViewerView
+    BattleSnake.SpectatorView
     |> Phoenix.View.render_to_string("board.html", state: state)
     |> String.replace(~r/^\s+|\s+$/m, "")
     |> String.replace(~r/\n+/m, " ")
