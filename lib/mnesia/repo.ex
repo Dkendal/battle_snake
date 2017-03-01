@@ -10,6 +10,19 @@ defmodule Mnesia do
   defdelegate record(struct, fields), to: Mnesia.Util
   defdelegate record(struct, fields, table_name), to: Mnesia.Util
 
+  defdelegate dirty_select(table, spec), to: :mnesia
+  defdelegate select(table, spec), to: :mnesia
+  defdelegate start, to: :mnesia
+  defdelegate stop, to: :mnesia
+  defdelegate create_schema(nodes), to: :mnesia
+  defdelegate delete_schema(nodes), to: :mnesia
+
+  def all(table),
+    do: select(table, [{:"$1", [], [:"$1"]}])
+
+  def dirty_all(table),
+    do: dirty_select(table, [{:"$1", [], [:"$1"]}])
+
   def install(nodes) do
     :ok = :mnesia.create_schema(nodes)
 
