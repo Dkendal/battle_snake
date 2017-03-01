@@ -32,14 +32,13 @@ The 2017 Game Server
 ```sh
 git clone git@github.com:StemboltHQ/battle_snake.git`
 cd battle_snake
-mix setup
+./scripts/setup
 ./scripts/dev-server
 ```
 
 ## Testing
 
 ```sh
-mix setup # only required the first time
 mix test
 ```
 
