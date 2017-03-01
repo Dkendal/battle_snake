@@ -11,7 +11,7 @@ const init = (gameId) => {
     return;
   }
 
-  const boardViewerChannel = socket.channel(`spectator:${gameId}`, {contentType: "html"});
+  const boardViewerChannel = socket.channel(`spectator:html:${gameId}`, {contentType: "html"});
   const gameAdminChannel = socket.channel(`game_admin:${gameId}`);
 
   boardViewerChannel.on("tick", ({content}) => {
