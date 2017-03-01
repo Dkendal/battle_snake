@@ -178,6 +178,12 @@ defmodule BattleSnake.GameServer.Server do
 
   @spec handle_info(:game_done, state) :: noreply
   def handle_info(:game_done, state) do
+    game_results_snakes = GameState.get_game_result_snakes(state)
+
+    {:atomic, _} = :mnesia.transaction fn ->
+      for s <- game_results_snakes, do: :mnesia.write(s)
+    end
+
     {:noreply, state}
   end
 
