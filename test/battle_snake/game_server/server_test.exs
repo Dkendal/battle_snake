@@ -7,6 +7,16 @@ defmodule BattleSnake.GameServer.ServerTest do
     [game_form: create(:game_form)]
   end
 
+  ########
+  # Init #
+  ########
+
+  describe "Server.init(GameState.t)" do
+    test "returns ok" do
+      assert {:ok, %GameState{}} == Server.init(%GameState{})
+    end
+  end
+
   describe "Server.init(integer)" do
     setup [:create_game_form]
 
@@ -56,17 +66,19 @@ defmodule BattleSnake.GameServer.ServerTest do
     end
   end
 
-  describe "Server.init(GameState.t)" do
-    test "returns ok" do
-      assert {:ok, %GameState{}} == Server.init(%GameState{})
-    end
-  end
+  ##################
+  # Get Game State #
+  ##################
 
   describe "Server.handle_call(:get_game_state, _, _)" do
     test "returns the state" do
       assert Server.handle_call(:get_game_state, self(), 1) == {:reply, 1, 1}
     end
   end
+
+  ########
+  # Tick #
+  ########
 
   describe "Server.handle_info(:tick, state) when status is not :cont" do
     test "does nothing" do
@@ -106,6 +118,10 @@ defmodule BattleSnake.GameServer.ServerTest do
     end
   end
 
+  ########
+  # Next #
+  ########
+
   describe "Server.handle_call(:next, pid, state)" do
     test "suspends the game" do
       state = build(:state, status: :cont)
@@ -118,6 +134,10 @@ defmodule BattleSnake.GameServer.ServerTest do
       assert {:reply, :ok, ^state} = Server.handle_call(:next, self(), state)
     end
   end
+
+  #########
+  # Pause #
+  #########
 
   describe "Server.handle_call(:pause, pid, state)" do
     test "suspends the game" do
@@ -132,6 +152,10 @@ defmodule BattleSnake.GameServer.ServerTest do
     end
   end
 
+  ########
+  # Prev #
+  ########
+
   describe "Server.handle_call(:prev, pid, state)" do
     test "suspends the game" do
       state = build(:state, status: :halted)
@@ -139,6 +163,10 @@ defmodule BattleSnake.GameServer.ServerTest do
       assert state.status == :suspend
     end
   end
+
+  ##########
+  # Resume #
+  ##########
 
   describe "Server.handle_call(:resume, pid, state)" do
     test "continues the game" do
