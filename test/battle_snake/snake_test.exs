@@ -189,6 +189,7 @@ defmodule BattleSnake.SnakeTest do
         health_points: 100,
         color: "red",
         head_url: "head.example.com",
+        cause_of_death: %BattleSnake.Death.StarvationCause{},
       }
 
       expected = %{
@@ -199,6 +200,7 @@ defmodule BattleSnake.SnakeTest do
         "id" => "1",
         "head_url" => "head.example.com",
         "color" => "red",
+        "cause_of_death" => "Starved to death",
       }
 
       actual = Poison.decode!(Poison.encode!(snake, mode: :consumer))

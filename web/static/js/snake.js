@@ -672,11 +672,14 @@ function SnakeBoardRenderer(game_renderer) {
         if( !('img' in snake) ) {
             snake.img = snake.head_url || SNAKE_HEAD_URL;
         }
-        if( !('color' in snake) ) {
+        if( !('color' in snake) || !snake.color ) {
             snake.color = stringToColor(snake.board_id);
         }
         if( !('body' in snake) ) {
             snake.body = snake.coords;
+        }
+        if( snake.cause_of_death ) {
+            snake.taunt = snake.cause_of_death;
         }
     }
     
