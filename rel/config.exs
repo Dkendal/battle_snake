@@ -20,17 +20,16 @@ use Mix.Releases.Config,
 # an environment's settings will override those of a release
 # when building in that environment, this combination of release
 # and environment configuration is called a profile
-
 environment :dev do
   set dev_mode: true
   set include_erts: false
-  set cookie: :"vzcQho^e&y/3S`/ze1C&Mf[vzchK*$jlxO?0hu[G]P)WV4I!XK(!UJpAJH~vBJiR"
+  set cookie: :test
 end
 
 environment :prod do
   set include_erts: true
   set include_src: false
-  set cookie: :"htON>>IGk0{`qz/$WTX3l4eC!{s9[lWg}*<To7%5!^,Kz$TOCc.BqD]gSWOfLQA?"
+  set cookie: :"#{:crypto.hash(:sha256, System.get_env("COOKIE"))}"
 end
 
 # You may define one or more releases in this file.
@@ -41,4 +40,3 @@ end
 release :battle_snake do
   set version: current_version(:battle_snake)
 end
-
