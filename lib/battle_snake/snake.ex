@@ -17,7 +17,11 @@ defimpl Poison.Encoder, for: BattleSnake.Snake do
   end
 
   def consumer_encode(snake, opts) do
-    keys = [:coords, :id, :taunt, :health_points, :name, :head_url, :color]
+    keys = [:coords, :id, :taunt, :health_points, :name, :head_url, :color, :cause_of_death]
+
+    # get the cause_of_death text, from the struct
+    snake = Map.update(snake, :cause_of_death, nil, &(BattleSnake.SnakeView.cause_of_death_text(&1)))
+    
     snake
     |> Map.take(keys)
     |> Poison.encode!(opts)

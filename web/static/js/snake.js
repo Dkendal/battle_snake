@@ -678,6 +678,9 @@ function SnakeBoardRenderer(game_renderer) {
         if( !('body' in snake) ) {
             snake.body = snake.coords;
         }
+        if( snake.cause_of_death ) {
+            snake.taunt = snake.cause_of_death;
+        }
     }
     
     self.fixup_snakes = function(snakes) {
