@@ -129,8 +129,8 @@ defmodule BattleSnake.Death do
   end
 
   def do_wall_collision([%{coords: [p(x, y)|_]} = snake|rest], {w, h}, {live, dead})
-  when not y in 0..(w-1)
-  or not x in 0..(h-1) do
+  when not x in 0..(w-1)
+  or not y in 0..(h-1) do
     reason = [%WallCollisionCause{}]
     snake = put_in(snake.cause_of_death, reason)
     do_wall_collision(rest, {w, h}, {live, [snake|dead]})

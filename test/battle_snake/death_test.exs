@@ -83,17 +83,18 @@ defmodule BattleSnake.DeathTest do
         build(:snake, id: 2, coords: [p(0, -1)]),
         build(:snake, id: 3, coords: [p(0, 100)]),
         build(:snake, id: 4, coords: [p(-1, 0)]),
-        build(:snake, id: 5, coords: [p(100, 0)]),
+        build(:snake, id: 5, coords: [p(200, 0)]),
+        build(:snake, id: 6, coords: [p(150, 0)]),
       ]
 
-      result = Death.wall_collision(snakes, {100, 100})
+      result = Death.wall_collision(snakes, {200, 100})
 
       [result: result]
     end
 
     test "kills snakes the hit a wall", %{result: {live, dead}} do
       assert [5, 4, 3, 2] == (for x <- dead, do: x.id)
-      assert [1] == (for x <- live, do: x.id)
+      assert [6, 1] == (for x <- live, do: x.id)
     end
 
     test "sets the cause of death", %{result: {_live, dead}} do
