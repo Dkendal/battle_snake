@@ -15,4 +15,4 @@ TODOs.org
 TODOs.org_archive
 databases/
 erl_crash.dump
-rel
+.deliver/releases
