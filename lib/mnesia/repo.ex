@@ -16,6 +16,13 @@ defmodule Mnesia do
   defdelegate stop, to: :mnesia
   defdelegate create_schema(nodes), to: :mnesia
   defdelegate delete_schema(nodes), to: :mnesia
+  defdelegate read(table, id), to: :mnesia
+  defdelegate dirty_read(table, id), to: :mnesia
+  defdelegate system_info(key), to: :mnesia
+  defdelegate info(), to: :mnesia
+  defdelegate table(tab), to: :mnesia
+  defdelegate table_info(tab, info_key), to: :mnesia
+  defdelegate delete_table(tab), to: :mnesia
 
   def all(table),
     do: select(table, [{:"$1", [], [:"$1"]}])
