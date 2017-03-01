@@ -7,7 +7,7 @@ const gameId = window.BattleSnake.gameId;
 const logError = resp => { console.error("Unable to join", resp) };
 
 const init = () => {
-  const boardViewerChannel = socket.channel(`spectator:html:${gameId}`, {contentType: "html"});
+  const boardViewerChannel = socket.channel(`spectator:html:${gameId}`, {});
   const gameAdminChannel = socket.channel(`game_admin:${gameId}`);
 
   boardViewerChannel.on("tick", ({content}) => {

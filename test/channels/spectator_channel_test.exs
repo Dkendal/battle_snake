@@ -33,16 +33,13 @@ defmodule BattleSnake.SpectatorChannelTest do
     game_form = create(:game_form)
     id = game_form.id
     channel = SpectatorChannel
-
     caller = self()
 
     spawn_link fn ->
       topic = "spectator:json:#{id}"
-      assigns = %{"contentType" => "json"}
-      {:ok, _, socket} =
-        "user-1"
-        |> socket(%{})
-        |> subscribe_and_join(channel, topic, assigns)
+      {:ok, _, _} = "user-1"
+      |> socket(%{})
+      |> subscribe_and_join(channel, topic)
 
       forward_msg = fn f ->
         receive do
@@ -55,11 +52,9 @@ defmodule BattleSnake.SpectatorChannelTest do
 
     spawn_link fn ->
       topic = "spectator:html:#{id}"
-      assigns = %{"contentType" => "html"}
-      {:ok, _, socket} =
-        "user-1"
-        |> socket(%{})
-        |> subscribe_and_join(channel, topic, assigns)
+      {:ok, _, _} = "user-2"
+      |> socket(%{})
+      |> subscribe_and_join(channel, topic)
 
       forward_msg = fn f ->
         receive do
@@ -72,7 +67,13 @@ defmodule BattleSnake.SpectatorChannelTest do
 
     broadcast_state(%{id: id})
 
+    assert_receive {:json, %Phoenix.Socket.Message{event: "tick", payload: %{content: "{" <> _ }}}
+    assert_receive {:html, %Phoenix.Socket.Message{event: "tick", payload: %{content: "<div" <> _ }}}
+
+    assert_receive {:json, %Phoenix.Socket.Broadcast{event: "tick", payload: %{content: "{" <> _ }}}
     assert_receive {:html, %Phoenix.Socket.Broadcast{event: "tick", payload: %{content: "<div" <> _ }}}
+
+    refute_receive {:json, %Phoenix.Socket.Broadcast{event: "tick", payload: %{content: "<div" <> _ }}}
     refute_receive {:html, %Phoenix.Socket.Broadcast{event: "tick", payload: %{content: "{" <> _ }}}
   end
 
@@ -86,7 +87,7 @@ defmodule BattleSnake.SpectatorChannelTest do
     content_type = c.content_type
     {:ok, _, socket} =
       socket("user_id", %{})
-      |> subscribe_and_join(SpectatorChannel, "spectator:#{content_type}:#{id}", %{"contentType" => content_type})
+      |> subscribe_and_join(SpectatorChannel, "spectator:#{content_type}:#{id}")
 
     [socket: socket, id: id]
   end
