@@ -9,7 +9,15 @@ defmodule BattleSnake.SpectatorChannel do
   """
   @type join_payload :: %{optional(binary) => binary}
   @spec join(binary, join_payload, Phoenix.Socket.t) :: {:ok, Phoenix.Socket} | {:error, any}
-  def join("spectator:" <> game_id, payload, socket) do
+  def join("spectator:html:" <> game_id, payload, socket) do
+    do_join(game_id, payload, socket)
+  end
+
+  def join("spectator:json:" <> game_id, payload, socket) do
+    do_join(game_id, payload, socket)
+  end
+
+  defp do_join(game_id, payload, socket) do
     if authorized?(payload) do
       GameServer.PubSub.subscribe(game_id)
       send(self(), :after_join)
