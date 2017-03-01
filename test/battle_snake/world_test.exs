@@ -369,6 +369,7 @@ defmodule BattleSnake.WorldTest do
                          url: "example.com",
                          head_url: "snake2.example.com",
                          color: "color2",
+                         cause_of_death: %BattleSnake.Death.StarvationCause{},
                          coords: [
                            p(0, 0),
                            p(1, 0),
@@ -394,6 +395,7 @@ defmodule BattleSnake.WorldTest do
                         "health_points" => 100,
                         "color" => "color1",
                         "head_url" => "snake1.example.com",
+                        "cause_of_death" => "",
                         "coords" => [
                           [1,1],
                         ]
@@ -405,6 +407,7 @@ defmodule BattleSnake.WorldTest do
                         "name" => "other",
                         "color" => "color2",
                         "head_url" => "snake2.example.com",
+                        "cause_of_death" => "Starved to death",
                         "coords" => [
                           [0,0],
                           [1,0]
