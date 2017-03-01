@@ -36,6 +36,7 @@ defmodule BattleSnake.GameServer do
   defdelegate init(args), to: GameServer.Server
 
   def find!({:ok, pid}), do: pid
+  def find!({:error, {:already_started, pid}}), do: pid
   def find!({:error, e}), do: raise(e)
   def find!(name), do: name |> find |> find!
 
