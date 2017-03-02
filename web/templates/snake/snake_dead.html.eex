@@ -1,35 +1,35 @@
 <% coords = Enum.dedup(@snake.coords) %>
-<% len = length coords %>
 <% [head|hs] = Enum.take(coords, 2) %>
 <% [tail|ts] = Enum.take(coords, -2) |> Enum.reverse %>
-<% color = @snake.color %>
-<% path_id = [@snake.id, "-path"] %>
+<% fill = @snake.color || "#ffffff" %>
+<% color = @snake.secondary_color || "#000000" %>
+<% head_href = ["#snakehead-", (@snake.head_type || "regular")] %>
+<% tail_href = ["#snaketail-", (@snake.tail_type || "regular")] %>
+<% stroke = fill %>
+<% style = "color:#{color};fill:#{fill};" %>
 <g class="obj-snake-dead">
-  <%= if len > 1 do %>
+  <use
+      class="obj-snake"
+      style="<%= style %>"
+      transform="<%= transform_segment(head, hs) %>"
+      x="<%= head.x %>"
+      xlink:href="<%= head_href %>"
+      y="<%= head.y %>"
+  ></use>
+  <%= if length(coords) > 1 do %>
     <g transform="translate(0.5 0.5)">
       <path class="obj-snake"
-            id="<%= path_id %>"
-            stroke-dasharray="<%= len %>"
-            stroke="<%= color %>"
+            stroke="<%= stroke %>"
             d="<%= snake_path(@snake) %>">
       </path>
     </g>
     <use
         class="obj-snake"
-        style="fill: <%= color %>"
+        style="<%= style %>"
         transform="<%= transform_segment(tail, ts) %>"
         x="<%= tail.x %>"
         xlink:href="#snake-tail"
         y="<%= tail.y %>"
     ></use>
-    <use
-        class="obj-snake"
-        style="fill: <%= color %>"
-        transform="<%= transform_segment(head, hs) %>"
-        x="<%= head.x %>"
-        xlink:href="#snake-head"
-        y="<%= head.y %>"
-    >
-    </use>
   <% end %>
 </g>
