@@ -6,23 +6,33 @@ defmodule Mnesia.RecordNotFoundError do
 end
 
 defmodule Mnesia do
+  # TODO remove this
   defdelegate record(struct), to: Mnesia.Util
   defdelegate record(struct, fields), to: Mnesia.Util
   defdelegate record(struct, fields, table_name), to: Mnesia.Util
 
+  defdelegate struct2record(struct), to: Mnesia.Util
+  defdelegate struct2record(struct, fields), to: Mnesia.Util
+  defdelegate struct2record(struct, fields, table_name), to: Mnesia.Util
+
+  defdelegate create_schema(nodes), to: :mnesia
+  defdelegate delete_schema(nodes), to: :mnesia
+  defdelegate delete_table(tab), to: :mnesia
+  defdelegate dirty_index_read(tab, secondary_key, pos), to: :mnesia
+  defdelegate dirty_read(table, id), to: :mnesia
   defdelegate dirty_select(table, spec), to: :mnesia
+  defdelegate dirty_write(record), to: :mnesia
+  defdelegate index_read(tab, secondary_key, pos), to: :mnesia
+  defdelegate info(), to: :mnesia
+  defdelegate read(table, id), to: :mnesia
   defdelegate select(table, spec), to: :mnesia
   defdelegate start, to: :mnesia
   defdelegate stop, to: :mnesia
-  defdelegate create_schema(nodes), to: :mnesia
-  defdelegate delete_schema(nodes), to: :mnesia
-  defdelegate read(table, id), to: :mnesia
-  defdelegate dirty_read(table, id), to: :mnesia
   defdelegate system_info(key), to: :mnesia
-  defdelegate info(), to: :mnesia
   defdelegate table(tab), to: :mnesia
   defdelegate table_info(tab, info_key), to: :mnesia
-  defdelegate delete_table(tab), to: :mnesia
+  defdelegate transaction(fun), to: :mnesia
+  defdelegate write(record), to: :mnesia
 
   def all(table),
     do: select(table, [{:"$1", [], [:"$1"]}])
@@ -54,19 +64,24 @@ defmodule Mnesia do
 end
 
 defmodule Mnesia.Util do
-  def record(struct) do
-    record(struct, struct.__struct__.fields(), struct.__struct__)
+  def struct2record(struct) do
+    struct2record(struct, struct.__struct__.fields(), struct.__struct__)
   end
 
-  def record(struct, fields) do
-    record(struct, fields, struct.__struct__)
+  def struct2record(struct, fields) do
+    struct2record(struct, fields, struct.__struct__)
   end
 
-  def record(struct, fields, table_name) do
+  def struct2record(struct, fields, table_name) do
     get = &Map.get(struct, &1)
     attrs = Enum.map(fields, get)
     List.to_tuple [table_name |attrs]
   end
+
+  # TODO remove this
+  def record(struct), do: struct2record(struct)
+  def record(struct, fields), do: struct2record(struct, fields)
+  def record(struct, fields, table_name), do: struct2record(struct, fields, table_name)
 end
 
 

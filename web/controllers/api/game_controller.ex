@@ -36,8 +36,19 @@ defmodule BattleSnake.Api.GameController do
             :dead
         end
 
+      import BattleSnake.GameResultSnake
+
+      winners = Mnesia.dirty_index_read(
+        BattleSnake.GameResultSnake,
+        game_form.id,
+        :game_id)
+
+      winners = for t <- winners do
+        struct(BattleSnake.GameResultSnake, game_result_snake(t))
+      end
+
       %Game{id: game_form.id,
-            winners: [],
+            winners: winners,
             snakes: game_form.snakes,
             status: status}
     end
