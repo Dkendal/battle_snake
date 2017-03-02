@@ -29,7 +29,7 @@ end
 environment :prod do
   set include_erts: true
   set include_src: false
-  set cookie: :"#{:crypto.hash(:sha256, System.get_env("COOKIE"))}"
+  set cookie: String.to_atom(File.read!("config/cookie"))
 end
 
 # You may define one or more releases in this file.
