@@ -176,6 +176,8 @@ defmodule BattleSnake.GameState do
   def get_game_result_snakes(state) do
     import BattleSnake.GameResultSnake
 
+    created_at = DateTime.utc_now()
+
     for snake_id <- state.winners do
       snake = get_in(state, [:snakes,
                              Access.key!(snake_id)])
@@ -188,7 +190,7 @@ defmodule BattleSnake.GameState do
         snake_id: snake_id,
         snake_url: snake_url,
         snake_name: snake_name,
-        created_at: DateTime.utc_now()
+        created_at: created_at
       )
     end
   end
