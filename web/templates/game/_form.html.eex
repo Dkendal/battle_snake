@@ -1,6 +1,6 @@
 <% alias BattleSnake.SnakeForm %>
 
-<% initial_empty_snakes = 4 %>
+<% initial_empty_snakes = 10 %>
 <% n = max((initial_empty_snakes - length(@form.data.snakes)) - 1, 0) + 1 %>
 <% snakes = List.duplicate(%SnakeForm{}, n)%>
 
