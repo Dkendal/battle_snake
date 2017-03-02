@@ -24,6 +24,12 @@
     display: flex;
     min-height: ms(10);
   }
+  &-snake-info {
+    width: 100%;
+  }
+  &-snake-winner {
+    color: gold;
+  }
   &-avatar {
     background-repeat: no-repeat;
     background-size: cover;
@@ -33,6 +39,7 @@
     margin-right: ms(-1);
     min-height: ms(8);
     min-width: ms(8);
+    flex: 0;
   }
   &-logo {
     margin-bottom: ms(4);
@@ -41,13 +48,14 @@
     opacity: $dead-snake-opacity;
   }
   &-flag {
+    align-items: center;
     background-color: $scoreboard-flag-color;
+    display: flex;
+    flex: 1;
+    padding-bottom: ms(-3);
     padding-left: ms(-3);
     padding-right: ms(-3);
     padding-top: ms(-3);
-    padding-bottom: ms(-3);
-    display: flex;
-    align-items: center;
   }
   &-flag-container {
     display: flex;

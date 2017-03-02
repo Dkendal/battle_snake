@@ -1,14 +1,9 @@
 defmodule BattleSnake.GameForm do
   alias __MODULE__
-  alias BattleSnake.{
-    GameServer,
-    GameServer.State,
-    Rules,
-    Snake,
-    SnakeForm,
-    WinConditions,
-    World,
-  }
+  alias BattleSnake.GameState
+  alias BattleSnake.SnakeForm
+  alias BattleSnake.WinConditions
+  alias BattleSnake.World
 
   use BattleSnake.Web, :model
   use Mnesia.Repo
@@ -29,9 +24,10 @@ defmodule BattleSnake.GameForm do
     delay: non_neg_integer,
     recv_timeout: integer,
     max_food: non_neg_integer,
-    winners: [Snake.t],
     game_mode: binary,
   }
+
+  @type game_state :: GameState.t
 
   schema "game" do
     embeds_many :snakes, SnakeForm
@@ -40,7 +36,6 @@ defmodule BattleSnake.GameForm do
     field :height, :integer, default: 20
     field :delay, :integer, default: 300
     field :max_food, :integer, default: 1
-    field :winners, {:array, :string}, default: []
     field :game_mode, :string, default: @multiplayer
     field :recv_timeout, :integer, default: 200
   end
@@ -99,46 +94,26 @@ defmodule BattleSnake.GameForm do
 
   def set_id(changeset, _id), do: changeset
 
-  @spec reload_game_server_state(t) :: State.t
+  @spec reload_game_server_state(t) :: game_state
   def reload_game_server_state(%GameForm{} = game_form) do
     game_form
     |> GameForm.Reset.reset_game_form
     |> to_game_server_state
   end
 
-  @spec to_game_server_state(t) :: State.t
+  @spec to_game_server_state(t) :: game_state
   def to_game_server_state(%GameForm{} = game_form) do
     delay = game_form.delay
     game_form_id = game_form.id
     world = game_form.world
 
-    fun_apply = fn (funs, state) ->
-      Enum.reduce(funs, state, fn fun, s -> fun.(s) end)
-    end
-
-    save = fn state ->
-      Mnesia.Repo.save(state.world)
-      state
-    end
-
-    on_change = &fun_apply.([save], &1)
-
-    on_done = fn state ->
-      fun_apply.(
-        [&Rules.last_standing/1,
-         &GameServer.Persistance.save_winner/1],
-        state)
-    end
-
     objective = WinConditions.game_mode(game_form.game_mode)
 
-    %State{
+    %GameState{
       delay: delay,
       game_form: game_form,
       game_form_id: game_form_id,
       objective: objective,
-      on_change: on_change,
-      on_done: on_done,
       world: world,
     }
   end

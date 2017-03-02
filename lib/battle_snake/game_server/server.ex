@@ -1,10 +1,18 @@
 defmodule BattleSnake.GameServer.Server do
   alias BattleSnake.GameForm
-  alias BattleSnake.GameServer.State
+  alias BattleSnake.GameState
+  alias BattleSnake.GameStateEvent
   alias BattleSnake.GameServer.PubSub
 
-  import State
+  import GameState
   use GenServer
+
+  ####################
+  # Type Definitions #
+  ####################
+
+  @type noreply :: {:noreply, state}
+  @type state :: GameState.t
 
   ########
   # Init #
@@ -23,13 +31,25 @@ defmodule BattleSnake.GameServer.Server do
   end
 
   def init(%GameForm{} = game_form) do
-    game_form
+    state = game_form
     |> GameForm.reload_game_server_state
-    |> init
+
+    stream = Stream.concat(
+      get_in(state, [Access.key(:world, %{}),
+                     Access.key(:snakes, [])]),
+      get_in(state, [Access.key(:world, %{}),
+                     Access.key(:dead_snakes, [])]))
+
+    snakes = stream
+    |> Stream.map(& {&1.id, &1})
+    |> Enum.into(%{})
+
+    state = put_in(state.snakes, snakes)
+
+    init(state)
   end
 
-  def init(%State{} = state) do
-    state = State.on_start(state)
+  def init(%GameState{} = state) do
     do_reply({:ok, state})
   end
 
@@ -41,7 +61,7 @@ defmodule BattleSnake.GameServer.Server do
   # Get Game State #
   ##################
 
-  @spec handle_call(:get_game_state, pid, State.t) :: {:reply, State.t, State.t}
+  @spec handle_call(:get_game_state, pid, GameState.t) :: {:reply, GameState.t, GameState.t}
   def handle_call(:get_game_state, _from, state) do
     {:reply, state, state}
   end
@@ -66,8 +86,8 @@ defmodule BattleSnake.GameServer.Server do
 
         _status ->
           state
-          |> State.step
-          |> State.suspend!
+          |> GameState.step
+          |> GameState.suspend!
       end
 
     do_reply({:reply, :ok, state})
@@ -91,7 +111,7 @@ defmodule BattleSnake.GameServer.Server do
 
   def handle_call(:prev, _from, state) do
     state = state
-    |> State.step_back
+    |> GameState.step_back
     |> suspend!
 
     do_reply({:reply, :ok, state})
@@ -115,18 +135,6 @@ defmodule BattleSnake.GameServer.Server do
     do_reply({:reply, :ok, state})
   end
 
-  ##########
-  # Replay #
-  ##########
-
-  def handle_call(:replay, _from, state) do
-    send(self(), :tick)
-    state = state
-    |> load_history
-    |> replay!
-    do_reply({:reply, :ok, state})
-  end
-
   def handle_call(request, from, state) do
     super(request, from, state)
   end
@@ -143,9 +151,9 @@ defmodule BattleSnake.GameServer.Server do
   # Handle Info Callbacks #
   #########################
 
-  #############
-  # Get State #
-  #############
+  #################
+  # Get GameState #
+  #################
 
   def handle_info(:get_state, state) do
     {:reply, state, state.status}
@@ -159,10 +167,24 @@ defmodule BattleSnake.GameServer.Server do
     state =
       case state.status do
         :cont -> tick_cont(state)
-        :replay -> State.step(state)
         _ -> state
       end
     do_reply({:noreply, state})
+  end
+
+  #############
+  # Game Done #
+  #############
+
+  @spec handle_info(:game_done, state) :: noreply
+  def handle_info(:game_done, state) do
+    game_results_snakes = GameState.get_game_result_snakes(state)
+
+    {:atomic, _} = :mnesia.transaction fn ->
+      for s <- game_results_snakes, do: :mnesia.write(s)
+    end
+
+    {:noreply, state}
   end
 
   def handle_info(request, state) do
@@ -174,14 +196,13 @@ defmodule BattleSnake.GameServer.Server do
   ###################
 
   defp tick_cont(state) do
-    delay = State.delay(state)
+    delay = GameState.delay(state)
 
     Process.send_after(self(), :tick, delay)
 
-    state = State.step(state)
+    state = GameState.step(state)
 
-    if State.done?(state) do
-      state = State.on_done(state)
+    if GameState.done?(state) do
       halted!(state)
     else
       cont!(state)
@@ -195,7 +216,7 @@ defmodule BattleSnake.GameServer.Server do
   end
 
   defp tick_event(state) do
-    %State.Event{name: :tick, data: state}
+    %GameStateEvent{name: :tick, data: state}
   end
 
   defp do_reply({_, state} = reply) do

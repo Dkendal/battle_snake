@@ -1,11 +1,11 @@
 defmodule BattleSnake.GameServer do
   alias __MODULE__
-  alias __MODULE__.State
+  alias BattleSnake.GameState
   use GenServer
 
   defmodule Command, do: defstruct [:name, :data]
 
-  @type state :: State.t
+  @type state :: GameState.t
   @type server :: GenServer.server
 
   @moduledoc """
@@ -22,9 +22,6 @@ defmodule BattleSnake.GameServer do
   defdelegate get_state(pid), to: GameServer.Client
   defdelegate get_status(pid), to: GameServer.Client
   defdelegate next(pid), to: GameServer.Client
-  defdelegate on_change(pid), to: GameServer.Client
-  defdelegate on_done(pid), to: GameServer.Client
-  defdelegate on_start(pid), to: GameServer.Client
   defdelegate pause(pid), to: GameServer.Client
   defdelegate prev(pid), to: GameServer.Client
   defdelegate resume(pid), to: GameServer.Client

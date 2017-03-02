@@ -1,37 +1,76 @@
 defmodule BattleSnake.Api.GameControllerTest do
   alias BattleSnake.{
     GameForm,
-    GameServer,
     SnakeForm,
   }
 
   use BattleSnake.ConnCase, async: false
 
   describe "GET index" do
-    setup do
-      snakes = build_list(2, :snake, url: sequence("example.com:"), coords: [])
-      game_form = create(:game_form, snakes: snakes)
-      GameServer.Registry.create(game_form, game_form.id)
-      :ok
-    end
-
     test "lists all games", %{conn: conn} do
+      use BattleSnake.Point
+
+      game_form = build(:game_form,
+        id: "game-1",
+        snakes: [
+          build(:snake, id: "snake-1", name: "SnakeOne", coords: [p(0, 0)]),
+          build(:snake, id: "snake-2", name: "SnakeTwo", coords: [p(1, 1)]),
+        ]
+      )
+
+      import BattleSnake.GameResultSnake
+
+      {:ok, d, _} = DateTime.from_iso8601("2017-01-01T12:00:00.000000Z")
+
+      {:atomic, :ok} =
+        Mnesia.transaction(fn ->
+          game_form |> Mnesia.struct2record |> Mnesia.write
+
+          game_result_snake(
+            id: "game-result-snake-1",
+            created_at: d,
+            game_id: "game-1",
+            snake_id: "snake-1",
+            snake_name: "SnakeOne",
+            snake_url: "snake.one.com"
+          )
+          |> Mnesia.write
+        end)
+
       conn = get conn, api_game_path(conn, :index)
-      assert(
-        [%{"id" => _,
-           "status" => "suspend",
-           "winners" => [],
-           "snakes" => [
-             %{"coords" => [],
-               "health_points" => 100,
-               "id" => _,
-               "name" => "",
-               "taunt" => ""},
-             %{"coords" => [],
-               "health_points" => 100,
-               "id" => _,
-               "name" => "",
-               "taunt" => ""}]}] = json_response(conn, 200))
+
+      expected = [
+        %{
+          "id" => "game-1",
+          "status" => "dead",
+          "winners" => [
+            %{
+              "created_at" => "2017-01-01T12:00:00.000000Z",
+              "game_id" => "game-1",
+              "snake_name" => "SnakeOne",
+              "snake_url" => "snake.one.com"
+            }
+          ],
+          "snakes" => [
+            %{
+              "coords" => [[0, 0]],
+              "health_points" => 100,
+              "id" => "snake-1",
+              "name" => "SnakeOne",
+              "taunt" => ""
+            },
+            %{
+              "coords" => [[1, 1]],
+              "health_points" => 100,
+              "id" => "snake-2",
+              "name" => "SnakeTwo",
+              "taunt" => ""
+            }
+          ]
+        }
+      ]
+
+      assert(expected == json_response(conn, 200))
     end
   end
 
