@@ -1,0 +1,14 @@
+<svg height="1" id="snake-head" viewBox="0 0 1 1" width="1">
+  <svg height="0.8" viewBox="0 0 39.6 39.33" width="0.8" x="0.1" y="0.1">
+    <path d="M39.6,8.33V0L0,0V39.29H39.6L22.14,22ZM9.4,15a3.67,3.67,0,1,1,3.67-3.67A3.67,3.67,0,0,1,9.4,15Z">
+    </path>
+  </svg>
+</svg>
+
+<%= for name <- ~w(bendr dead fang pxl regular safe sand-worm shades smile tongue) do %>
+  <%= content_tag(:svg,
+    raw(render("snakehead-#{name}.svg")),
+    id: ["snakehead-", name],
+    width: 0.8, height: 0.8,
+    x: 0.1, y: 0.1)%>
+<% end %>
