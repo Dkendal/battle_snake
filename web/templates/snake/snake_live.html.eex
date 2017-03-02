@@ -27,7 +27,7 @@
       style="<%= style %>"
       transform="<%= transform_segment(tail, ts) %>"
       x="<%= tail.x %>"
-      xlink:href="#snake-tail"
+      xlink:href="<%= tail_href %>"
       y="<%= tail.y %>"
   ></use>
 <% end %>
