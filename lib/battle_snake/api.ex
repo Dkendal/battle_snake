@@ -79,14 +79,22 @@ defmodule BattleSnake.Api do
 
   def cast_load(map) do
     data = %Snake{}
-    types = %{color: :string,
-              head_url: :string,
-              name: :string,
-              taunt: :string, url: :string}
+    types = %{
+      color: :string,
+      head_type: :string,
+      head_url: :string,
+      name: :string,
+      secondary_color: :string,
+      tail_type: :string,
+      taunt: :string,
+      url: :string,
+    }
 
     changeset = {data, types}
     |> Changeset.cast(map, Map.keys(types))
     |> Changeset.validate_required([:name])
+    |> Changeset.validate_inclusion(:head_type, BattleSnake.SnakeHeads.list())
+    |> Changeset.validate_inclusion(:tail_type, BattleSnake.SnakeTails.list())
 
     if changeset.valid? do
       {:ok, Changeset.apply_changes(changeset)}

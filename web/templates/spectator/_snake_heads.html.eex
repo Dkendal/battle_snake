@@ -5,7 +5,7 @@
   </svg>
 </svg>
 
-<%= for name <- ~w(bendr dead fang pxl regular safe sand-worm shades smile tongue) do %>
+<%= for name <- BattleSnake.SnakeHeads.list() do %>
   <%= content_tag(:svg,
     raw(render("snakehead-#{name}.svg")),
     id: ["snakehead-", name],
