@@ -1,8 +1,32 @@
 defmodule BattleSnake.SnakeView do
   alias BattleSnake.Point
   alias BattleSnake.Death
+  alias BattleSnake.GameState
   use BattleSnake.Web, :view
   use BattleSnake.Point
+
+  def render("score.html", %{snake: snake, state: state}) do
+    if snake.cause_of_death == nil do
+      render_one(snake, __MODULE__, "score_live.html", %{state: state})
+    else
+      render_one(snake, __MODULE__, "score_dead.html", %{state: state})
+    end
+  end
+
+  def render("score.html", %{state: state}) do
+    mapper = fn snake ->
+      case snake.cause_of_death do
+        %{turn: turn} -> turn
+        nil -> {snake.name, snake.id}
+      end
+    end
+
+    stream = Stream.concat(state.world.snakes, state.world.dead_snakes)
+
+    snakes = Enum.sort_by(stream, mapper, &>=/2)
+
+    render_many(snakes, __MODULE__, "score.html", %{state: state})
+  end
 
   def head_image_url(%{url: base, head_url: "/" <> url}) do
     base <> "/" <> url
@@ -12,17 +36,19 @@ defmodule BattleSnake.SnakeView do
     url
   end
 
-  def cause_of_death_text(cause) do
+  def cause_of_death_text(cause, state) do
     alias BattleSnake.Death
     case cause do
       %Death.StarvationCause{} ->
         "Starved to death"
       %Death.WallCollisionCause{} ->
         "Crashed into a wall"
+      %Death.SelfCollisionCause{} ->
+        "Collided with itself"
       %Death.BodyCollisionCause{with: id} ->
-        "Collided with #{id}'s body"
+        "Collided with #{get_in state, [:snakes, id, :name]}'s body"
       %Death.HeadCollisionCause{with: id} ->
-        "Consumed by #{id}"
+        "Consumed by #{get_in state, [:snakes, id, :name]}"
       _ ->
         ""
     end

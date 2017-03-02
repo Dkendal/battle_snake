@@ -68,9 +68,10 @@ defmodule BattleSnake.Factory do
   end
 
   def state_factory do
-    %BattleSnake.GameServer.State{
+    %BattleSnake.GameState{
       world: build(:world),
       game_form: build(:game_form),
+      objective: (fn _ -> false end)
     }
   end
 end

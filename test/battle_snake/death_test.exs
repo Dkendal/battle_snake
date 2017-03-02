@@ -13,6 +13,7 @@ defmodule BattleSnake.DeathTest do
         build(:snake, id: 3, coords: [p(1, 0), p(2, 0), p(3, 0)]),
         build(:snake, id: 4, coords: [p(101, 0)]),
         build(:snake, id: 5, coords: [p(0, 0)]),
+        build(:snake, id: 6, coords: [p(9, 0), p(9, 0)]),
       ]
 
       world = build(:world, width: 100, height: 100, snakes: snakes)
@@ -28,7 +29,7 @@ defmodule BattleSnake.DeathTest do
       dead = state.world.dead_snakes
 
       assert [0] == (for x <- live, do: x.id)
-      assert [1, 2, 3, 4, 5] == (for x <- dead, do: x.id)
+      assert [1, 2, 3, 4, 5, 6] == (for x <- dead, do: x.id)
     end
 
     test "sets the cause of death", %{state: state} do
@@ -52,7 +53,10 @@ defmodule BattleSnake.DeathTest do
               {5,
                %Death{turn: 0,
                       causes: [%Death.HeadCollisionCause{with: 1},
-                               %Death.HeadCollisionCause{with: 2}]}}] == causes
+                               %Death.HeadCollisionCause{with: 2}]}},
+              {6,
+               %Death{turn: 0,
+                      causes: [%Death.SelfCollisionCause{}]}}] == causes
     end
   end
 

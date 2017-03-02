@@ -1,8 +1,6 @@
 <% world = @state.world %>
 <% width = world.width %>
 <% height = world.height %>
-<% snakes = world.snakes %>
-<% dead_snakes = world.dead_snakes %>
 <% view_box = "0 0 #{width} #{height}" %>
 
 <div class="game-board-container">
@@ -46,4 +44,4 @@
   </svg>
 </div>
 
-<%= render "_scoreboard.html", state: @state, turn: world.turn, snakes: snakes, dead_snakes: dead_snakes %>
+<%= render "_scoreboard.html", state: @state %>

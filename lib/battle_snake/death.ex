@@ -1,14 +1,14 @@
 defmodule BattleSnake.Death do
   alias __MODULE__
   alias BattleSnake.Snake
-  alias BattleSnake.GameServer.State
+  alias BattleSnake.GameState
 
   use BattleSnake.Point
 
   @type width :: pos_integer
   @type height :: pos_integer
   @type dim :: {width, height}
-  @type state :: State.t
+  @type state :: GameState.t
   @type snake :: Snake.t
   @type point :: BattleSnake.Point.t
   @type live :: [snake]
@@ -72,8 +72,8 @@ defmodule BattleSnake.Death do
     Map.update(acc, snake.id, snake, update_snake)
   end
 
-  @spec reap(State.t) :: State.t
-  def reap(%State{} = state) do
+  @spec reap(GameState.t) :: GameState.t
+  def reap(%GameState{} = state) do
     world = state.world
     turn = world.turn
     dim = {world.width, world.height}
@@ -177,6 +177,9 @@ defmodule BattleSnake.Death do
         cond do
           other.id != snake.id and head == hd(other.coords) and length(snake.coords) <= length(other.coords) ->
             %HeadCollisionCause{with: other.id}
+
+          other.id == snake.id and head in tl(other.coords) ->
+            %SelfCollisionCause{}
 
           head in tl(other.coords) ->
             %BodyCollisionCause{with: other.id}
