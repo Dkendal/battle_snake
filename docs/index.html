@@ -194,6 +194,12 @@ $(function() {
 <style>
 </style>
 
+
+<figure>
+<p><img src="./bs-logo-dark.png" class="img-responsive" alt="bs-logo-dark.png">
+</p>
+</figure>
+
 <div id="outline-container-sec-1" class="outline-2">
 <h2 id="sec-1"><span class="section-number-2">1</span> Introduction</h2>
 <div class="outline-text-2" id="text-1">
@@ -355,15 +361,8 @@ use the <a href="#post-move">move callback</a> for any and all game play logic.
 <tr>
 <td class="text-left"><b>color</b></td>
 <td class="text-left">&#xa0;</td>
-<td class="text-left">string</td>
-<td class="text-left">A valid css color. HSL, RBG, hex, or named colours are all valid.</td>
-</tr>
-
-<tr>
-<td class="text-left"><b>head_url</b></td>
-<td class="text-left"><i>optional</i></td>
-<td class="text-left">url</td>
-<td class="text-left">Url of an image to use for the head of your snake.</td>
+<td class="text-left"><a href="#type-color">Color</a></td>
+<td class="text-left">Primary color for your snake and avatar</td>
 </tr>
 
 <tr>
@@ -374,10 +373,38 @@ use the <a href="#post-move">move callback</a> for any and all game play logic.
 </tr>
 
 <tr>
+<td class="text-left"><b>head_url</b></td>
+<td class="text-left"><i>optional</i></td>
+<td class="text-left">url</td>
+<td class="text-left">Url of an image to use for the head of your snake.</td>
+</tr>
+
+<tr>
 <td class="text-left"><b>taunt</b></td>
 <td class="text-left"><i>optional</i></td>
 <td class="text-left">string</td>
 <td class="text-left">Message to display in the game client.</td>
+</tr>
+
+<tr>
+<td class="text-left"><b>head_type</b></td>
+<td class="text-left"><i>optional</i></td>
+<td class="text-left"><a href="#type-head-type">HeadType</a></td>
+<td class="text-left">String matching one of the snake heads listed below.</td>
+</tr>
+
+<tr>
+<td class="text-left"><b>tail_type</b></td>
+<td class="text-left"><i>optional</i></td>
+<td class="text-left"><a href="#type-tail-type">TailType</a></td>
+<td class="text-left">String matching one of the snake tails listed below.</td>
+</tr>
+
+<tr>
+<td class="text-left"><b>secondary_color</b></td>
+<td class="text-left"><i>optional</i></td>
+<td class="text-left"><a href="#type-color">Color</a></td>
+<td class="text-left">Accent color used by some snake heads.</td>
 </tr>
 </tbody>
 </table>
@@ -917,8 +944,175 @@ For example:
 </div>
 </div>
 </div>
+
+<div id="outline-container-type-color" class="outline-3">
+<h3 id="type-color"><a id="sec-3-3" name="sec-3-3"></a><span class="section-number-3">3.3</span> Color</h3>
+<div class="outline-text-3" id="text-type-color">
+<pre class="example">
+color :: hexcode | hsl | named_color | rbg
+</pre>
+
+<pre class="example">
+"gold"
+</pre>
+
+<pre class="example">
+"#ffffff"
+</pre>
+
+<pre class="example">
+"rgb(255, 255, 255)"
+</pre>
+
+<pre class="example">
+"hsl(255, 100%, 100%)"
+</pre>
+</div>
 </div>
 
+<div id="outline-container-type-head-type" class="outline-3">
+<h3 id="type-head-type"><a id="sec-3-4" name="sec-3-4"></a><span class="section-number-3">3.4</span> HeadType</h3>
+<div class="outline-text-3" id="text-type-head-type">
+<p>
+A string matching one of the values listed below:
+</p>
+<table class="table">
+
+
+<colgroup>
+<col  class="left">
+
+<col  class="left">
+</colgroup>
+<tbody>
+<tr>
+<td class="text-left">Value</td>
+<td class="text-left">Preview</td>
+</tr>
+
+<tr>
+<td class="text-left"><code>"bendr"</code></td>
+<td class="text-left"><img width="100px" src="./bendr-snakehead.png" /></td>
+</tr>
+
+<tr>
+<td class="text-left"><code>"dead"</code></td>
+<td class="text-left"><img width="100px" src="./dead-snakehead.png" /></td>
+</tr>
+
+<tr>
+<td class="text-left"><code>"fang"</code></td>
+<td class="text-left"><img width="100px" src="./fang-snakehead.png" /></td>
+</tr>
+
+<tr>
+<td class="text-left"><code>"pixel"</code></td>
+<td class="text-left"><img width="100px" src="./pixel-snakehead.png" /></td>
+</tr>
+
+<tr>
+<td class="text-left"><code>"regular"</code></td>
+<td class="text-left"><img width="100px" src="./regular-snakehead.png" /></td>
+</tr>
+
+<tr>
+<td class="text-left"><code>"safe"</code></td>
+<td class="text-left"><img width="100px" src="./safe-snakehead.png" /></td>
+</tr>
+
+<tr>
+<td class="text-left"><code>"sand-worm"</code></td>
+<td class="text-left"><img width="100px" src="./sand-worm.png" /></td>
+</tr>
+
+<tr>
+<td class="text-left"><code>"shades"</code></td>
+<td class="text-left"><img width="100px" src="./shades-snakehead.png" /></td>
+</tr>
+
+<tr>
+<td class="text-left"><code>"smile"</code></td>
+<td class="text-left"><img width="100px" src="./smile-snakehead.png" /></td>
+</tr>
+
+<tr>
+<td class="text-left"><code>"tongue"</code></td>
+<td class="text-left"><img width="100px" src="./tongue-snakehead.png" /></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-type-tail-type" class="outline-3">
+<h3 id="type-tail-type"><a id="sec-3-5" name="sec-3-5"></a><span class="section-number-3">3.5</span> TailType</h3>
+<div class="outline-text-3" id="text-type-tail-type">
+<p>
+A string matching one of the values listed below:
+</p>
+<table class="table">
+
+
+<colgroup>
+<col  class="left">
+
+<col  class="left">
+</colgroup>
+<tbody>
+<tr>
+<td class="text-left">Value</td>
+<td class="text-left">Preview</td>
+</tr>
+
+<tr>
+<td class="text-left"><code>"small-rattle"</code></td>
+<td class="text-left"><img width="100px" src="./small-rattle-snaketail.png" /></td>
+</tr>
+
+<tr>
+<td class="text-left"><code>"skinny-tail"</code></td>
+<td class="text-left"><img width="100px" src="./skinny-tail-snaketail.png" /></td>
+</tr>
+
+<tr>
+<td class="text-left"><code>"round-bum"</code></td>
+<td class="text-left"><img width="100px" src="./round-bum-snaketail.png" /></td>
+</tr>
+
+<tr>
+<td class="text-left"><code>"pointed"</code></td>
+<td class="text-left"><img width="100px" src="./pointed-snaketail.png" /></td>
+</tr>
+
+<tr>
+<td class="text-left"><code>"pixel"</code></td>
+<td class="text-left"><img width="100px" src="./pixel-snaketail.png" /></td>
+</tr>
+
+<tr>
+<td class="text-left"><code>"freckled"</code></td>
+<td class="text-left"><img width="100px" src="./freckled-snaketail.png" /></td>
+</tr>
+
+<tr>
+<td class="text-left"><code>"fat-rattle"</code></td>
+<td class="text-left"><img width="100px" src="./fat-rattle-snaketail.png" /></td>
+</tr>
+
+<tr>
+<td class="text-left"><code>"curled"</code></td>
+<td class="text-left"><img width="100px" src="./curled-snaketail.png" /></td>
+</tr>
+
+<tr>
+<td class="text-left"><code>"block-bum"</code></td>
+<td class="text-left"><img width="100px" src="./block-bum-snaketail.png" /></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
 <div id="outline-container-sec-4" class="outline-2">
 <h2 id="sec-4"><span class="section-number-2">4</span> Game Rules</h2>
 <div class="outline-text-2" id="text-4">
@@ -1073,6 +1267,9 @@ more coming soon&#x2026;
 <ul class="nav">
 <li><a href="#type-point">3.1. Point</a></li>
 <li><a href="#type-snake">3.2. Snake</a></li>
+<li><a href="#type-color">3.3. Color</a></li>
+<li><a href="#type-head-type">3.4. HeadType</a></li>
+<li><a href="#type-tail-type">3.5. TailType</a></li>
 </ul>
 </li>
 <li><a href="#sec-4">4. Game Rules</a>

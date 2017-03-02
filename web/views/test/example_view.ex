@@ -9,9 +9,13 @@ defmodule BattleSnake.Test.ExampleView do
 
   def render("start.json", _assigns) do
     %{
-      name: "BattleSnake Example Snake",
-      color: "#ffffff",
-      head_url: "http://placecage.com/c/300/300"
+      name: "BATTLE★SNAKE",
+      color: "#99c1bc",
+      secondary_color: "6a6676",
+      head_type: "dead",
+      head_type: BattleSnake.SnakeHeads.list() |> Enum.random,
+      tail_type: BattleSnake.SnakeTails.list() |> Enum.random,
+      head_url: "http://battlesnake.stembolt.com/images/division-classic.png"
     }
   end
 end

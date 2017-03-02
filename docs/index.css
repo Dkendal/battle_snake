@@ -3478,13 +3478,7 @@ body {
     /* yas-field-highlight-face */
     background-color: #eee8d5;
 }
-
 a {
-    color: inherit;
-    background-color: inherit;
-    font: inherit;
-    text-decoration: inherit;
-}
-a:hover {
-    text-decoration: underline;
+  color: blue;
+  text-decoration: underline;
 }
