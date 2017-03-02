@@ -13,7 +13,7 @@ RUN mix compile
 RUN mkdir -p databases
 RUN mix test
 RUN rm -rf databases/dev
-RUN mix battle_snake.schema
+RUN mix setup
 EXPOSE 4000
 ENV PORT 4000
 CMD mix phoenix.server

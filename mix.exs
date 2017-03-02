@@ -109,8 +109,7 @@ defmodule BattleSnake.Mixfile do
 
      "battle_snake.schema": [
        "battle_snake.schema.drop",
-       "battle_snake.schema.create",
-       "battle_snake.schema.tables.create"]]
+       "battle_snake.schema.install"]]
   end
 
   defp npm_install(_) do
