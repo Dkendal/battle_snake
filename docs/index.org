@@ -104,18 +104,15 @@ All responses are expected to have a =200 OK= status code.
     #+END_SRC
 
 *** Response Attributes
-    :LOGBOOK:
-    CLOCK: [2017-03-02 Thu 00:19]--[2017-03-02 Thu 00:43] =>  0:24
-    :END:
-    | Attribute         |            | Type     |                                                      |
-    |-------------------+------------+----------+------------------------------------------------------|
-    | *color*           |            | [[#type-color][Color]]    | Primary color for your snake and avatar              |
-    | *name*            |            | string   | Your snake's name.                                   |
-    | *head_url*        | /optional/ | url      | Url of an image to use for the head of your snake.   |
-    | *taunt*           | /optional/ | string   | Message to display in the game client.               |
-    | *head_type*       | /optional/ | [[#type-head-type][HeadType]] | String matching one of the snake heads listed below. |
-    | *tail_type*       | /optional/ | [[#type-tail-type][TailType]] | String matching one of the snake tails listed below. |
-    | *secondary_color* | /optional/ | [[#type-color][Color]]    | Accent color used by some snake heads.               |
+    | Attribute         |            | Type     |                                                                                                                                |
+    |-------------------+------------+----------+--------------------------------------------------------------------------------------------------------------------------------|
+    | *color*           |            | [[#type-color][Color]]    | Primary color for your snake and avatar                                                                                        |
+    | *name*            |            | string   | Your snake's name.                                                                                                             |
+    | *head_url*        | /optional/ | url      | An image to be displayed as your avatar. Name is for compatibility with previous years. Avatars are displayed in a square box. |
+    | *taunt*           | /optional/ | string   | Message to display in the game client.                                                                                         |
+    | *head_type*       | /optional/ | [[#type-head-type][HeadType]] | String matching one of the snake heads listed [[#type-head-type][here]].                                                                            |
+    | *tail_type*       | /optional/ | [[#type-tail-type][TailType]] | String matching one of the snake tails listed [[#type-tail-type][here]].                                                                            |
+    | *secondary_color* | /optional/ | [[#type-color][Color]]    | Accent color used by some snake heads.                                                                                         |
 
 *** Example Response
     - Code: =200 OK=
@@ -520,7 +517,7 @@ All responses are expected to have a =200 OK= status code.
    | ="small-rattle"= | @@html:<img width="100px" src="./small-rattle-snaketail.png" />@@ |
    | ="skinny-tail"=  | @@html:<img width="100px" src="./skinny-tail-snaketail.png" />@@  |
    | ="round-bum"=    | @@html:<img width="100px" src="./round-bum-snaketail.png" />@@    |
-   | ="pointed"=      | @@html:<img width="100px" src="./pointed-snaketail.png" />@@      |
+   | ="regular"=      | @@html:<img width="100px" src="./pointed-snaketail.png" />@@      |
    | ="pixel"=        | @@html:<img width="100px" src="./pixel-snaketail.png" />@@        |
    | ="freckled"=     | @@html:<img width="100px" src="./freckled-snaketail.png" />@@     |
    | ="fat-rattle"=   | @@html:<img width="100px" src="./fat-rattle-snaketail.png" />@@   |
