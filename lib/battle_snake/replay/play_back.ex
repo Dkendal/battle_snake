@@ -27,7 +27,8 @@ defmodule BattleSnake.Replay.PlayBack do
     tab = Row
     [row] = Mnesia.dirty_read(tab, game_id)
     attributes = Row.row(row, :attributes)
-    recorder = Keyword.fetch!(attributes, :recorder)
+    bin = Keyword.fetch!(attributes, :bin)
+    recorder = :erlang.binary_to_term(bin)
     frames = recorder.frames
     topic = "replay:#{game_id}"
     replay_speed = 50

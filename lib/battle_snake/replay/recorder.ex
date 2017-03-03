@@ -91,10 +91,11 @@ defmodule BattleSnake.Replay.Recorder do
     require Logger
     Logger.info("writing replay for #{state.topic}")
 
-    state = update_in(state.frames, &Enum.reverse/1)
-
+    rewound_state = update_in(state.frames, &Enum.reverse/1)
     created_at = DateTime.utc_now()
-    attributes = [recorder: state, created_at: created_at]
+    bin = :erlang.term_to_binary(rewound_state, [:compressed])
+    attributes = [bin: bin, created_at: created_at]
+
     :ok = %Row{id: state.topic, attributes: attributes}
     |> Row.struct2record
     |> Mnesia.dirty_write
