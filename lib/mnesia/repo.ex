@@ -5,6 +5,27 @@ defmodule Mnesia.RecordNotFoundError do
     do: "Couldn't find #{inspect table} with id=#{id}"
 end
 
+defmodule Mnesia.Row do
+  defmacro defrow(attributes, enforce_keys \\ []) do
+    quote do
+      require Record
+      @enforce_keys unquote(enforce_keys)
+      @attributes unquote(attributes)
+
+      Record.defrecord(:row, __MODULE__, @attributes)
+      defstruct(@attributes)
+
+      def attributes, do: @attributes
+
+      def struct2record(struct) do
+        [:__struct__ | @attributes]
+        |> Enum.map(&Map.get(struct, &1))
+        |> List.to_tuple
+      end
+    end
+  end
+end
+
 defmodule Mnesia do
   # TODO remove this
   defdelegate record(struct), to: Mnesia.Util
@@ -35,6 +56,7 @@ defmodule Mnesia do
   defdelegate table_info(tab, info_key), to: :mnesia
   defdelegate transaction(fun), to: :mnesia
   defdelegate write(record), to: :mnesia
+  defdelegate dirty_all_keys(tab), to: :mnesia
 
   def all(table),
     do: select(table, [{:"$1", [], [:"$1"]}])
@@ -51,11 +73,19 @@ defmodule Mnesia do
 
     BattleSnake.World.create_table(disc_copies: nodes)
 
-    import BattleSnake.GameResultSnake
+    attributes = BattleSnake.Replay.Recorder.Row.attributes()
+    :mnesia.create_table(
+      BattleSnake.Replay.Recorder.Row, [
+        attributes: attributes,
+        disc_copies: nodes])
 
+    import BattleSnake.GameResultSnake
+    attributes = game_result_snake()
+    |> game_result_snake()
+    |> Keyword.keys()
     :mnesia.create_table(
       BattleSnake.GameResultSnake, [
-        attributes: Keyword.keys(game_result_snake(game_result_snake())),
+        attributes: attributes,
         index: [:game_id],
         disc_copies: nodes])
 
