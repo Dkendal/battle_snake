@@ -1,5 +1,7 @@
 defmodule BattleSnake.Replay do
   alias __MODULE__
+  alias BattleSnake.Replay.Recorder
+  alias BattleSnake.Replay.PlayBack
 
   defdelegate recorder_name(game_id), to: Replay.Registry
   defdelegate play_back_name(game_id), to: Replay.Registry
@@ -8,121 +10,24 @@ defmodule BattleSnake.Replay do
     "replay:#{game_id}"
   end
 
-  def start_link_recorder(game_id) do
+  def start_recording(game_id) do
     name = recorder_name(game_id)
-    case GenServer.start_link(Replay.Recorder, game_id, name: name) do
+
+    case Recorder.Supervisor.start_child([game_id, [name: name]]) do
       {:error, {:already_started, pid}} -> {:ok, pid}
       {:ok, pid} -> {:ok, pid}
     end
   end
 
-  def start_link_play_back(game_id) do
+  def start_play_back(game_id) do
     name = play_back_name(game_id)
 
-    case GenServer.start_link(Replay.PlayBack, game_id, name: name) do
+    # case GenServer.start_link(Replay.PlayBack, game_id, name: name) do
+    case PlayBack.Supervisor.start_child([game_id, [name: name]]) do
       {:error, {:already_started, pid}} -> {:ok, pid}
       {:ok, pid} -> {:ok, pid}
     end
   end
-end
-
-defmodule BattleSnake.Replay.Recorder.Row do
-  require Mnesia.Row
-
-  Mnesia.Row.defrow(
-    [:id, :attributes],
-    [:id, :attributes])
-end
-
-defmodule BattleSnake.Replay.Recorder do
-  alias BattleSnake.Replay.Recorder
-  alias BattleSnake.GameStateEvent
-  alias BattleSnake.Replay.Recorder.Row
-  alias BattleSnake.GameServer.PubSub
-  use GenServer
-
-  #############
-  # Type Defs #
-  #############
-
-  @type t :: %Recorder{}
-
-  @attributes [:topic, frames: []]
-  defstruct @attributes
-
-  ########
-  # Init #
-  ########
-
-  def init(topic) do
-    send(self(), :subscribe_to_topic)
-    new_state = %Recorder{topic: topic}
-    {:ok, new_state}
-  end
-
-  #########################
-  # Handle Info Callbacks #
-  #########################
-
-  ######################
-  # Subscribe to Topic #
-  ######################
-
-  def handle_info(:subscribe_to_topic, state) do
-    PubSub.subscribe(state.topic)
-    {:noreply, state}
-  end
-
-  ####################
-  # Game State Event #
-  ####################
-
-  @doc """
-  Incoming Game State Events are appended to the state's "frames" attributes.
-
-  These events are streamed from BattleSnake.GameServer.PubSub after subscribing
-  in handle_info(:subscribe_to_topic, state).
-
-  If the event indicates that the game has ended this gen server
-  will enable a timeout call.
-  """
-  @spec handle_info(GameStateEvent.t, t) :: {:noreply, t} | {:noreply, t, timeout}
-  def handle_info(%GameStateEvent{data: frame}, state) do
-    new_state = update_in(state.frames, &[frame|&1])
-    if frame.done? do
-      timeout = 100
-      {:noreply, new_state, timeout}
-    else
-      {:noreply, new_state}
-    end
-  end
-
-  ###########
-  # Timeout #
-  ###########
-
-  @doc """
-  Timeout handler, started from handle_info(game_state_event, t).
-
-  Once the timeout has expired write the recording to disk and hibernate the
-  recorder.
-  """
-  def handle_info(:timeout, state) do
-    require Logger
-    Logger.info("writing replay for #{state.topic}")
-
-    state = update_in(state.frames, &Enum.reverse/1)
-
-    :ok = %Row{id: state.topic, attributes: [recorder: state]}
-    |> Row.struct2record
-    |> Mnesia.dirty_write
-
-    {:noreply, state, :hibernate}
-  end
-
-  #####################
-  # Private Functions #
-  #####################
 end
 
 defmodule BattleSnake.Replay.Registry do
@@ -135,8 +40,51 @@ defmodule BattleSnake.Replay.Registry do
   end
 end
 
+defmodule BattleSnake.Replay.PlayBack.Supervisor do
+  use Supervisor
+  alias BattleSnake.Replay
+
+  def start_link do
+    Supervisor.start_link(__MODULE__, :ok, name: __MODULE__)
+  end
+
+  def start_child(opts) do
+    Supervisor.start_child(__MODULE__, opts)
+  end
+
+  def init(:ok) do
+    children = [
+      worker(Replay.PlayBack, [], restart: :temporary)
+    ]
+
+    supervise(children, strategy: :simple_one_for_one)
+  end
+end
+
+defmodule BattleSnake.Replay.Recorder.Supervisor do
+  use Supervisor
+  alias BattleSnake.Replay
+
+  def start_link do
+    Supervisor.start_link(__MODULE__, :ok, name: __MODULE__)
+  end
+
+  def start_child(opts) do
+    Supervisor.start_child(__MODULE__, opts)
+  end
+
+  def init(:ok) do
+    children = [
+      worker(Replay.Recorder, [], restart: :temporary)
+    ]
+
+    supervise(children, strategy: :simple_one_for_one)
+  end
+end
+
 defmodule BattleSnake.Replay.Supervisor do
   use Supervisor
+  alias BattleSnake.Replay
 
   def start_link do
     Supervisor.start_link(__MODULE__, :ok, name: __MODULE__)
@@ -144,6 +92,8 @@ defmodule BattleSnake.Replay.Supervisor do
 
   def init(:ok) do
     children = [
+      supervisor(Replay.PlayBack.Supervisor, []),
+      supervisor(Replay.Recorder.Supervisor, []),
       supervisor(Registry,
         [:unique, BattleSnake.Replay.Registry],
         [id: BattleSnake.Replay.Registry])

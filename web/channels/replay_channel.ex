@@ -17,7 +17,7 @@ defmodule BattleSnake.ReplayChannel do
     if authorized?(payload) do
       socket = assign(socket, :game_id, game_id)
 
-      {:ok, _pid} = Replay.start_link_play_back(game_id)
+      {:ok, _pid} = Replay.start_play_back(game_id)
 
       topic = Replay.topic(game_id)
 
