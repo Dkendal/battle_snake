@@ -1,5 +1,7 @@
 defmodule BattleSnake.ReplayChannel do
+  alias BattleSnake.Replay.PlayBack
   alias BattleSnake.Replay.PlayBack.Frame
+  alias BattleSnake.GameServer.PubSub
   use BattleSnake.Web, :channel
 
   def join("replay:html:" <> game_id, payload, socket) do
@@ -12,17 +14,32 @@ defmodule BattleSnake.ReplayChannel do
 
   defp do_join(game_id, payload, socket) do
     if authorized?(payload) do
+      {:ok, pid} = GenServer.start_link(PlayBack, game_id, name: :playback)
+      :ok = PubSub.subscribe("test")
       {:ok, socket}
     else
       {:error, %{reason: "unauthorized"}}
     end
   end
 
+  #########################
+  # Handle Info Callbacks #
+  #########################
+
   def handle_info(%Frame{data: state}, socket) do
     content = render_content(content_type(socket), state)
     broadcast(socket, "tick", %{content: content})
     {:noreply, socket}
   end
+
+  def handle_in("resume", _from, socket) do
+    GenServer.cast(:playback, :resume)
+    {:noreply, socket}
+  end
+
+  ###################
+  # Private Methods #
+  ###################
 
   defp authorized?(_payload) do
     true
