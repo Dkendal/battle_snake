@@ -5,6 +5,17 @@ defmodule BattleSnake.ReplayChannelTest do
 
   alias BattleSnake.ReplayChannel
 
+  describe "ReplayChannel.handle_info(:after_join, socket)" do
+    test "subscribes the caller to the topic" do
+      topic = "replay:game-1"
+      socket = socket("user-1", %{game_id: "game-1"})
+
+      ReplayChannel.handle_info(:after_join, socket)
+      BattleSnake.GameServer.PubSub.broadcast(topic, :hello)
+      assert_receive :hello
+    end
+  end
+
   describe "ReplayChannel.handle_info(frame, socket) when content type is HTML" do
     setup do
       {:ok, _, socket} = socket("user-1", %{})

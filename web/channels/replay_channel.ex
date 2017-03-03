@@ -1,9 +1,13 @@
 defmodule BattleSnake.ReplayChannel do
+  use BattleSnake.Web, :channel
   alias BattleSnake.Replay
   alias BattleSnake.Replay.PlayBack
   alias BattleSnake.Replay.PlayBack.Frame
   alias BattleSnake.GameServer.PubSub
-  use BattleSnake.Web, :channel
+
+  #################
+  # Join Callback #
+  #################
 
   def join("replay:html:" <> game_id, payload, socket) do
     do_join(game_id, payload, socket)
@@ -28,6 +32,10 @@ defmodule BattleSnake.ReplayChannel do
   # Handle Info Callbacks #
   #########################
 
+  ##############
+  # After Join #
+  ##############
+
   def handle_info(:after_join, socket) do
     game_id = socket.assigns.game_id
     {:ok, _pid} = Replay.start_play_back(game_id)
@@ -36,16 +44,24 @@ defmodule BattleSnake.ReplayChannel do
     {:noreply, socket}
   end
 
-  def handle_info(%Frame{data: state}, socket) do
-    content = render_content(content_type(socket), state)
-    broadcast(socket, "tick", %{content: content})
-    {:noreply, socket}
-  end
+  ##########
+  # Resume #
+  ##########
 
   def handle_in("resume", _from, socket) do
     game_id = socket.assigns.game_id
     name = Replay.play_back_name(game_id)
     GenServer.cast(name, :resume)
+    {:noreply, socket}
+  end
+
+  ###########################
+  # Process Frame Broadcast #
+  ###########################
+
+  def handle_info(%Frame{data: state}, socket) do
+    content = render_content(content_type(socket), state)
+    broadcast(socket, "tick", %{content: content})
     {:noreply, socket}
   end
 
