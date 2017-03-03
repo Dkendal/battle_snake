@@ -18,6 +18,8 @@ defmodule Mnesia do
   defdelegate create_schema(nodes), to: :mnesia
   defdelegate delete_schema(nodes), to: :mnesia
   defdelegate delete_table(tab), to: :mnesia
+  defdelegate delete(tab_key), to: :mnesia
+  defdelegate delete(tab, key, lock_kind), to: :mnesia
   defdelegate dirty_index_read(tab, secondary_key, pos), to: :mnesia
   defdelegate dirty_read(table, id), to: :mnesia
   defdelegate dirty_select(table, spec), to: :mnesia
