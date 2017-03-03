@@ -16,12 +16,8 @@ defmodule BattleSnake.ReplayChannel do
   defp do_join(game_id, payload, socket) do
     if authorized?(payload) do
       socket = assign(socket, :game_id, game_id)
+      send(self(), :after_join)
 
-      {:ok, _pid} = Replay.start_play_back(game_id)
-
-      topic = Replay.topic(game_id)
-
-      :ok = PubSub.subscribe(topic)
       {:ok, socket}
     else
       {:error, %{reason: "unauthorized"}}
@@ -31,6 +27,14 @@ defmodule BattleSnake.ReplayChannel do
   #########################
   # Handle Info Callbacks #
   #########################
+
+  def handle_info(:after_join, socket) do
+    game_id = socket.assigns.game_id
+    {:ok, _pid} = Replay.start_play_back(game_id)
+    topic = Replay.topic(game_id)
+    :ok = PubSub.subscribe(topic)
+    {:noreply, socket}
+  end
 
   def handle_info(%Frame{data: state}, socket) do
     content = render_content(content_type(socket), state)
