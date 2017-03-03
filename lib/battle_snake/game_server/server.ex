@@ -178,10 +178,24 @@ defmodule BattleSnake.GameServer.Server do
 
   @spec handle_info(:game_done, state) :: noreply
   def handle_info(:game_done, state) do
+    alias BattleSnake.GameResultSnake
+    import BattleSnake.GameResultSnake
+
     game_results_snakes = GameState.get_game_result_snakes(state)
 
-    {:atomic, _} = :mnesia.transaction fn ->
-      for s <- game_results_snakes, do: :mnesia.write(s)
+    game_form_id = state.game_form_id
+
+    {:atomic, _} = Mnesia.transaction fn ->
+      records = Mnesia.index_read(
+      GameResultSnake,
+      game_form_id,
+      :game_id)
+
+      for s <- records,
+        do: {GameResultSnake, game_result_snake(s, :id)}
+        |> Mnesia.delete
+
+      for s <- game_results_snakes, do: Mnesia.write(s)
     end
 
     {:noreply, state}

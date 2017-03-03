@@ -123,6 +123,36 @@ defmodule BattleSnake.GameServer.ServerTest do
   #############
 
   describe "Server.handle_info(:game_done, state)" do
+    test "deletes any previous records for this game" do
+      import BattleSnake.GameResultSnake
+
+      snake = build(:snake, id: "snake-1")
+
+      snakes = %{"snake-1" => snake}
+
+      state = build(:state,
+        game_form_id: "game-1",
+        winners: ["snake-1"],
+        snakes: snakes)
+
+      :ok = game_result_snake(id: "0", game_id: "game-0", snake_id: "snake-0")
+      |> Mnesia.dirty_write
+
+      :ok = game_result_snake(id: "1", game_id: "game-1", snake_id: "snake-1")
+      |> Mnesia.dirty_write
+
+      Server.handle_info(:game_done, state)
+
+      actual = BattleSnake.GameResultSnake
+      |> Mnesia.dirty_all
+      |> Enum.sort_by(&elem(&1, game_result_snake(:game_id)))
+
+      assert [
+        game_result_snake(id: "0", game_id: "game-0", snake_id: "snake-0"),
+        game_result_snake(game_id: "game-1", snake_id: "snake-1"),
+      ] = actual
+    end
+
     test "writes the winner to disk" do
       import BattleSnake.GameResultSnake
 
