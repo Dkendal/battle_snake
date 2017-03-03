@@ -16,6 +16,8 @@ defmodule BattleSnake.SpectatorChannel do
 
   defp do_join(game_id, payload, socket) do
     if authorized?(payload) do
+      {:ok, pid} = GenServer.start_link(BattleSnake.Replay.Recorder, game_id)
+
       GameServer.PubSub.subscribe(game_id)
       send(self(), :after_join)
       socket = assign(socket, :game_id, game_id)
@@ -25,11 +27,19 @@ defmodule BattleSnake.SpectatorChannel do
     end
   end
 
+  ####################
+  # Game State Event #
+  ####################
+
   def handle_info(%GameStateEvent{name: _name, data: state}, socket) do
     content = render_content(content_type(socket), state)
     broadcast(socket, "tick", %{content: content})
     {:noreply, socket}
   end
+
+  ##############
+  # After Join #
+  ##############
 
   def handle_info(:after_join, socket) do
     state = socket.assigns.game_id
@@ -40,6 +50,10 @@ defmodule BattleSnake.SpectatorChannel do
     push(socket, "tick", %{content: content})
     {:noreply, socket}
   end
+
+  ###################
+  # Private Methods #
+  ###################
 
   # Add authorization logic here as required.
   defp authorized?(_payload) do

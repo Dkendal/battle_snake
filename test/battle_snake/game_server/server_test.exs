@@ -239,6 +239,4 @@ defmodule BattleSnake.GameServer.ServerTest do
   ##########
   # Replay #
   ##########
-
-  describe "Server.handle_call(:replay, pid, state)"
 end

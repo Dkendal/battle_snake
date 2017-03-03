@@ -8,7 +8,7 @@ defmodule BattleSnake.GameAdminChannel do
   def join("game_admin:" <> game_id, payload, socket) do
     if authorized?(payload) do
       socket = assign(socket, :game_id, game_id)
-      {:ok, pid} = game_server(game_id)
+      pid = game_server(game_id)
       socket = assign(socket, :game_server_pid, pid)
       {:ok, socket}
     else
@@ -63,6 +63,6 @@ defmodule BattleSnake.GameAdminChannel do
   end
 
   defp game_server(game_id) when is_binary(game_id) do
-    GameServer.find(game_id)
+    GameServer.find!(game_id)
   end
 end

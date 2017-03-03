@@ -17,6 +17,7 @@ defmodule BattleSnake.GameState do
     hist: [],
     status: :suspend,
     winners: [],
+    done?: false,
   ])
 
   ####################
@@ -232,6 +233,7 @@ defmodule BattleSnake.GameState do
 
   defp step_done(state) do
     state = set_winners(state)
+    state = put_in(state.done?, true)
     send_game_done()
     state
   end
