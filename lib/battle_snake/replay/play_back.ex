@@ -21,10 +21,16 @@ defmodule BattleSnake.Replay.PlayBack do
   # Init #
   ########
 
-  def init(game_id) do
-    alias BattleSnake.Replay
+  def init(game_id)
+  when is_binary(game_id) do
+    case Mnesia.dirty_read(Replay, game_id) do
+      [] -> :ignore
+      [row] -> init(row, game_id)
+    end
+  end
 
-    [row] = Mnesia.dirty_read(Replay, game_id)
+  def init(Replay.row() = row, game_id)
+  when is_binary(game_id) do
     attributes = Replay.row(row, :attributes)
     bin = Keyword.fetch!(attributes, :bin)
     recorder = :erlang.binary_to_term(bin)
