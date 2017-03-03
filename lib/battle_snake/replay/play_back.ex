@@ -1,6 +1,5 @@
 defmodule BattleSnake.Replay.PlayBack do
   use GenServer
-  alias __MODULE__
   alias BattleSnake.GameServer.PubSub
   alias BattleSnake.Replay.Recorder.Row
   require Record
@@ -9,6 +8,14 @@ defmodule BattleSnake.Replay.PlayBack do
   @attributes [:receiver, :replay_speed, :frames, :topic]
   defstruct(@attributes)
   defmodule Frame, do: defstruct([:data])
+
+  ##############
+  # Start Link #
+  ##############
+
+  def start_link(args, opts) do
+    GenServer.start_link(__MODULE__, args, opts)
+  end
 
   ########
   # Init #
