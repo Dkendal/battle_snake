@@ -1,4 +1,5 @@
 defmodule BattleSnake.ReplayChannel do
+  alias BattleSnake.Replay
   alias BattleSnake.Replay.PlayBack
   alias BattleSnake.Replay.PlayBack.Frame
   alias BattleSnake.GameServer.PubSub
@@ -14,8 +15,12 @@ defmodule BattleSnake.ReplayChannel do
 
   defp do_join(game_id, payload, socket) do
     if authorized?(payload) do
-      {:ok, pid} = GenServer.start_link(PlayBack, game_id, name: :playback)
-      topic = "replay:#{game_id}"
+      socket = assign(socket, :game_id, game_id)
+
+      {:ok, _pid} = Replay.start_link_play_back(game_id)
+
+      topic = Replay.topic(game_id)
+
       :ok = PubSub.subscribe(topic)
       {:ok, socket}
     else
@@ -34,7 +39,9 @@ defmodule BattleSnake.ReplayChannel do
   end
 
   def handle_in("resume", _from, socket) do
-    GenServer.cast(:playback, :resume)
+    game_id = socket.assigns.game_id
+    name = Replay.play_back_name(game_id)
+    GenServer.cast(name, :resume)
     {:noreply, socket}
   end
 
