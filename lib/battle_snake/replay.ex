@@ -122,6 +122,9 @@ defmodule BattleSnake.Replay.Recorder do
   recorder.
   """
   def handle_info(:timeout, state) do
+    require Logger
+    Logger.info("writing replay for #{state.topic}")
+
     :ok = %Row{id: state.topic, attributes: [recorder: state]}
     |> Row.struct2record
     |> Mnesia.dirty_write
