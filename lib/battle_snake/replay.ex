@@ -1,4 +1,29 @@
 defmodule BattleSnake.Replay do
+  alias __MODULE__
+
+  defdelegate recorder_name(game_id), to: Replay.Registry
+  defdelegate play_back_name(game_id), to: Replay.Registry
+
+  def topic(game_id) do
+    "replay:#{game_id}"
+  end
+
+  def start_link_recorder(game_id) do
+    name = recorder_name(game_id)
+    case GenServer.start_link(Replay.Recorder, game_id, name: name) do
+      {:error, {:already_started, pid}} -> {:ok, pid}
+      {:ok, pid} -> {:ok, pid}
+    end
+  end
+
+  def start_link_play_back(game_id) do
+    name = play_back_name(game_id)
+
+    case GenServer.start_link(Replay.PlayBack, game_id, name: name) do
+      {:error, {:already_started, pid}} -> {:ok, pid}
+      {:ok, pid} -> {:ok, pid}
+    end
+  end
 end
 
 defmodule BattleSnake.Replay.Recorder.Row do
@@ -100,6 +125,16 @@ defmodule BattleSnake.Replay.Recorder do
   #####################
 end
 
+defmodule BattleSnake.Replay.Registry do
+  def recorder_name(game_id) do
+    {:via, Registry, {BattleSnake.Replay.Registry, "recorder:#{game_id}"}}
+  end
+
+  def play_back_name(game_id) do
+    {:via, Registry, {BattleSnake.Replay.Registry, "playback:#{game_id}"}}
+  end
+end
+
 defmodule BattleSnake.Replay.Supervisor do
   use Supervisor
 
@@ -109,7 +144,9 @@ defmodule BattleSnake.Replay.Supervisor do
 
   def init(:ok) do
     children = [
-      supervisor(Registry, [:unique, BattleSnake.Replay.Registry], [id: BattleSnake.Replay.Registry])
+      supervisor(Registry,
+        [:unique, BattleSnake.Replay.Registry],
+        [id: BattleSnake.Replay.Registry])
     ]
 
     supervise(children, strategy: :one_for_one)
