@@ -5,6 +5,12 @@ defmodule BattleSnake.LayoutView do
 
   def battle_snake_js_object(assigns, acc  \\ %{})
 
+  def battle_snake_js_object(%{is_replay: is_replay} = h, acc) do
+    h
+    |> Map.delete(:is_replay)
+    |> battle_snake_js_object(put_in(acc[:isReplay], is_replay))
+  end
+
   def battle_snake_js_object(%{game: game} = h, acc) do
     h
     |> Map.delete(:game)
