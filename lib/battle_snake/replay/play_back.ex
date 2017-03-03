@@ -1,9 +1,9 @@
 defmodule BattleSnake.Replay.PlayBack do
   use GenServer
   alias BattleSnake.GameServer.PubSub
-  alias BattleSnake.Replay.Recorder.Row
+  alias BattleSnake.Replay
+  require BattleSnake.Replay
   require Record
-  require Row
 
   @attributes [:receiver, :replay_speed, :frames, :topic]
   defstruct(@attributes)
@@ -22,11 +22,10 @@ defmodule BattleSnake.Replay.PlayBack do
   ########
 
   def init(game_id) do
-    alias BattleSnake.Replay.Recorder.Row
+    alias BattleSnake.Replay
 
-    tab = Row
-    [row] = Mnesia.dirty_read(tab, game_id)
-    attributes = Row.row(row, :attributes)
+    [row] = Mnesia.dirty_read(Replay, game_id)
+    attributes = Replay.row(row, :attributes)
     bin = Keyword.fetch!(attributes, :bin)
     recorder = :erlang.binary_to_term(bin)
     frames = recorder.frames
@@ -71,9 +70,6 @@ defmodule BattleSnake.Replay.PlayBack do
 
     frame = %Frame{data: frame}
     topic = topic
-
-    require Logger
-    Logger.debug "broadcasting to #{topic}"
 
     PubSub.broadcast(topic, frame)
 

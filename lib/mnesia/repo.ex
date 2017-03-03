@@ -73,9 +73,9 @@ defmodule Mnesia do
 
     BattleSnake.World.create_table(disc_copies: nodes)
 
-    attributes = BattleSnake.Replay.Recorder.Row.attributes()
+    attributes = BattleSnake.Replay.attributes()
     :mnesia.create_table(
-      BattleSnake.Replay.Recorder.Row, [
+      BattleSnake.Replay, [
         attributes: attributes,
         disc_copies: nodes])
 

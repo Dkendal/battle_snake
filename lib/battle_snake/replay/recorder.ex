@@ -1,16 +1,8 @@
-defmodule BattleSnake.Replay.Recorder.Row do
-  require Mnesia.Row
-
-  Mnesia.Row.defrow(
-    [:id, :attributes],
-    [:id, :attributes])
-end
-
 defmodule BattleSnake.Replay.Recorder do
-  alias BattleSnake.Replay.Recorder
-  alias BattleSnake.GameStateEvent
-  alias BattleSnake.Replay.Recorder.Row
   alias BattleSnake.GameServer.PubSub
+  alias BattleSnake.GameStateEvent
+  alias BattleSnake.Replay
+  alias BattleSnake.Replay.Recorder
   use GenServer
 
   #############
@@ -96,8 +88,8 @@ defmodule BattleSnake.Replay.Recorder do
     bin = :erlang.term_to_binary(rewound_state, [:compressed])
     attributes = [bin: bin, created_at: created_at]
 
-    :ok = %Row{id: state.topic, attributes: attributes}
-    |> Row.struct2record
+    :ok = %Replay{id: state.topic, attributes: attributes}
+    |> Replay.struct2record
     |> Mnesia.dirty_write
 
     {:noreply, state, :hibernate}

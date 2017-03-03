@@ -3,6 +3,12 @@ defmodule BattleSnake.Replay do
   alias BattleSnake.Replay.Recorder
   alias BattleSnake.Replay.PlayBack
 
+  require Mnesia.Row
+
+  Mnesia.Row.defrow(
+    [:id, :attributes],
+    [:id, :attributes])
+
   @moduledoc """
   Top level API for Replays.
   """
