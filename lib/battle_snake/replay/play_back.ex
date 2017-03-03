@@ -22,8 +22,8 @@ defmodule BattleSnake.Replay.PlayBack do
     attributes = Row.row(row, :attributes)
     recorder = Keyword.fetch!(attributes, :recorder)
     frames = recorder.frames
-    topic = game_id
-    replay_speed = 5
+    topic = "replay:#{game_id}"
+    replay_speed = 50
     init(topic, frames, self(), replay_speed)
   end
 
@@ -50,27 +50,26 @@ defmodule BattleSnake.Replay.PlayBack do
   # Handle Info Callbacks #
   #########################
 
-  def handle_info(:broadcast, %{frames: []} = s) do
-    require Logger
-    Logger.debug "End of replay"
-    {:stop, :normal, s}
+  def handle_info(:broadcast, %{frames: []} = state) do
+    {:stop, :normal, state}
   end
 
-  def handle_info(:broadcast, s) do
-    %PlayBack{
-      frames: [frame | rest],
-      replay_speed: time,
-    } = s
+  def handle_info(:broadcast, state) do
+    [frame | rest] = state.frames
+    time = state.replay_speed
+    topic = state.topic
 
     Process.send_after(self(), :broadcast, time)
 
     frame = %Frame{data: frame}
-    topic = "test"
-    PubSub.broadcast(topic, frame)
+    topic = topic
+
     require Logger
     Logger.debug "broadcasting to #{topic}"
 
-    new_state = struct(s, frames: rest)
+    PubSub.broadcast(topic, frame)
+
+    new_state = put_in state.frames, rest
     {:noreply, new_state}
   end
 end

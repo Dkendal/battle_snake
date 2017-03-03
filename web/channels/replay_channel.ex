@@ -15,7 +15,8 @@ defmodule BattleSnake.ReplayChannel do
   defp do_join(game_id, payload, socket) do
     if authorized?(payload) do
       {:ok, pid} = GenServer.start_link(PlayBack, game_id, name: :playback)
-      :ok = PubSub.subscribe("test")
+      topic = "replay:#{game_id}"
+      :ok = PubSub.subscribe(topic)
       {:ok, socket}
     else
       {:error, %{reason: "unauthorized"}}
