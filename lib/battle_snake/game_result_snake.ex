@@ -2,6 +2,8 @@ defmodule BattleSnake.GameResultSnake do
   alias __MODULE__
   require Record
 
+  @enforce_keys [:id]
+
   @encoded_fields [
     :created_at,
     :game_id,
