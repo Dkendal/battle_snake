@@ -8,11 +8,12 @@ import * as BS from "./battle_snake"
 
   const BattleSnake = Object.assign(window.BattleSnake, BS);
   window.BattleSnake = BattleSnake;
+  const gameId = window.BattleSnake.gameId;
 
   if (window.BattleSnake.isReplay) {
+    window.BattleSnake.Replay.init(gameId);
   }
   else{
-    const gameId = window.BattleSnake.gameId;
     window.BattleSnake.Spectator.init(gameId);
   }
 })();
