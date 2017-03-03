@@ -22,7 +22,6 @@ defmodule BattleSnake.Replay do
   def start_play_back(game_id) do
     name = play_back_name(game_id)
 
-    # case GenServer.start_link(Replay.PlayBack, game_id, name: name) do
     case PlayBack.Supervisor.start_child([game_id, [name: name]]) do
       {:error, {:already_started, pid}} -> {:ok, pid}
       {:ok, pid} -> {:ok, pid}
