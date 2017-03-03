@@ -216,7 +216,7 @@ defmodule BattleSnake.GameServer.Server do
 
     state = GameState.step(state)
 
-    if GameState.done?(state) do
+    if state.done? do
       halted!(state)
     else
       cont!(state)
@@ -225,7 +225,14 @@ defmodule BattleSnake.GameServer.Server do
 
   defp broadcast(state) do
     topic = state.game_form_id
-    PubSub.broadcast(topic, tick_event(state))
+
+    ignored_fields = [
+      :hist,
+      :objective,
+    ]
+
+    broadcast_state = Map.drop(state, ignored_fields)
+    PubSub.broadcast(topic, tick_event(broadcast_state))
     state
   end
 
