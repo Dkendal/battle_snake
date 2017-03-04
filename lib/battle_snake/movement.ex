@@ -91,7 +91,7 @@ defmodule BattleSnake.Movement do
     #{inspect e, pretty: true}
     """
 
-    move = Move.default_move()
+    move = Move.default_move(snake)
 
     {move, snake}
   end
