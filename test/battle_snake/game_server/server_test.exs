@@ -235,4 +235,8 @@ defmodule BattleSnake.GameServer.ServerTest do
       assert_receive :tick, 10
     end
   end
+
+  ##########
+  # Replay #
+  ##########
 end

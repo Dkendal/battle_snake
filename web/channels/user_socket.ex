@@ -6,6 +6,8 @@ defmodule BattleSnake.UserSocket do
   channel "spectator:json:*", BattleSnake.SpectatorChannel
   channel "spectator:html:*", BattleSnake.SpectatorChannel
   channel "game_admin:*", BattleSnake.GameAdminChannel
+  channel "replay:html:*", BattleSnake.ReplayChannel
+  channel "replay:json:*", BattleSnake.ReplayChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket

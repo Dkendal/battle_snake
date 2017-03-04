@@ -38,6 +38,7 @@ defmodule BattleSnake.GameServer do
   def find!(name), do: name |> find |> find!
 
   defdelegate find(name), to: GameServer.Registry, as: :lookup_or_create
+  defdelegate name(id), to: GameServer.Registry, as: :via
 
   defdelegate subscribe(name), to: GameServer.PubSub
 end
