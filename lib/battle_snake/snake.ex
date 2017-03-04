@@ -48,6 +48,7 @@ end
 defmodule BattleSnake.Snake do
   alias __MODULE__
   alias BattleSnake.{Point}
+  alias BattleSnake.Move
 
   @max_health_points 100
 
@@ -173,15 +174,20 @@ defmodule BattleSnake.Snake do
     end) |> Enum.reject(& &1 == nil)
   end
 
+  def move(snake, %Move{} = move) do
+    snake = put_in(snake.taunt, move.taunt)
+    move(snake, Move.to_point(move))
+  end
+
   @doc """
   Update the snake by moving the snake's cooridinates by the vector "move".
   """
   @spec move(t, Point.t) :: t
-  def move(snake, move) do
+  def move(snake, %Point{} = point) do
     body = body snake
     head = head snake
     body = List.delete_at(body, -1)
-    body = [Point.add(head, move) | body]
+    body = [Point.add(head, point) | body]
     put_in(snake.coords, body)
   end
 

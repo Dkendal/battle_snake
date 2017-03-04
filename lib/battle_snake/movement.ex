@@ -20,9 +20,8 @@ defmodule BattleSnake.Movement do
     @spec run(BattleSnake.World.t, BattleSnake.Snake.t, timeout) :: BattleSnake.Point.t
     def run(%Snake{} = snake, %World{} = world, recv_timeout) do
       response = @api.request_move(snake, world, [recv_timeout: recv_timeout])
-      response
-      |> process_response
-      |> Move.to_point
+
+      process_response(response)
     end
 
     def process_response(val, acc \\ [])
@@ -78,8 +77,8 @@ defmodule BattleSnake.Movement do
     put_in(world.snakes, snakes)
   end
 
-  defp move_snake({%Point{} = point, %Snake{} = snake}) do
-    Snake.move(snake, point)
+  defp move_snake({%Move{} = move, %Snake{} = snake}) do
+    Snake.move(snake, move)
   end
 
   defp get_move_for_snake({{:ok, point}, snake}) do
@@ -93,8 +92,8 @@ defmodule BattleSnake.Movement do
     """
 
     move = Move.default_move()
-    point = Move.to_point(move)
-    {point, snake}
+
+    {move, snake}
   end
 end
 
