@@ -20,6 +20,10 @@ defmodule BattleSnake.Replay do
     "replay:#{game_id}"
   end
 
+  #################
+  # Recording Api #
+  #################
+
   def start_recording(game_id) do
     name = recorder_name(game_id)
 
@@ -29,6 +33,10 @@ defmodule BattleSnake.Replay do
     end
   end
 
+  #################
+  # Play Back Api #
+  #################
+
   def start_play_back(game_id) do
     name = play_back_name(game_id)
 
@@ -36,5 +44,35 @@ defmodule BattleSnake.Replay do
       {:error, {:already_started, pid}} -> {:ok, pid}
       {:ok, pid} -> {:ok, pid}
     end
+  end
+
+  def play_back_resume(game_id) do
+    play_back_name(game_id)
+    |> GenServer.cast(:resume)
+  end
+
+  def play_back_stop(game_id) do
+    play_back_name(game_id)
+    |> GenServer.cast(:stop)
+  end
+
+  def play_back_prev(game_id) do
+    play_back_name(game_id)
+    |> GenServer.cast(:prev)
+  end
+
+  def play_back_next(game_id) do
+    play_back_name(game_id)
+    |> GenServer.cast(:next)
+  end
+
+  def play_back_pause(game_id) do
+    play_back_name(game_id)
+    |> GenServer.cast(:pause)
+  end
+
+  def play_back_rewind(game_id) do
+    play_back_name(game_id)
+    |> GenServer.cast(:rewind)
   end
 end

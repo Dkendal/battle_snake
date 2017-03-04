@@ -44,14 +44,37 @@ defmodule BattleSnake.ReplayChannel do
     {:noreply, socket}
   end
 
-  ##########
-  # Resume #
-  ##########
+  ###################
+  # Replay Controls #
+  ###################
 
   def handle_in("resume", _from, socket) do
-    game_id = socket.assigns.game_id
-    name = Replay.play_back_name(game_id)
-    GenServer.cast(name, :resume)
+    Replay.play_back_resume(socket.assigns.game_id)
+    {:noreply, socket}
+  end
+
+  def handle_in("stop", _from, socket) do
+    Replay.play_back_stop(socket.assigns.game_id)
+    {:noreply, socket}
+  end
+
+  def handle_in("prev", _from, socket) do
+    Replay.play_back_prev(socket.assigns.game_id)
+    {:noreply, socket}
+  end
+
+  def handle_in("next", _from, socket) do
+    Replay.play_back_next(socket.assigns.game_id)
+    {:noreply, socket}
+  end
+
+  def handle_in("pause", _from, socket) do
+    Replay.play_back_pause(socket.assigns.game_id)
+    {:noreply, socket}
+  end
+
+  def handle_in("rewind", _from, socket) do
+    Replay.play_back_rewind(socket.assigns.game_id)
     {:noreply, socket}
   end
 
