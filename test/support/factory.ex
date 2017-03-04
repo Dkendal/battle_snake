@@ -74,4 +74,21 @@ defmodule BattleSnake.Factory do
       objective: (fn _ -> false end)
     }
   end
+
+  def recorder_factory do
+    %BattleSnake.Replay.Recorder{
+      topic: "game-0",
+      frames: [build(:state)]
+    }
+  end
+
+  def replay_factory do
+    %BattleSnake.Replay{
+      id: "game-0",
+      attributes: [
+        bin: :recorder |> build |> :erlang.term_to_binary,
+        created_at: DateTime.utc_now()
+      ]
+    }
+  end
 end
