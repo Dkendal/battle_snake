@@ -92,7 +92,7 @@ defmodule BattleSnake.Replay.Recorder do
     |> Replay.struct2record
     |> Mnesia.dirty_write
 
-    {:noreply, state, :hibernate}
+    {:stop, :normal, state}
   end
 
   def terminate(reason, state) do
