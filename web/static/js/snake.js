@@ -210,6 +210,9 @@ function interpolateWithArcs(pts) {
     /*
       return a function(t) that interpolates pts with straight lines and arcs, 0<=t<=1
     */
+
+    var EPSILON = 1e-6; // Number.EPSILON is too small for roundoff errors
+    
     function interp_arc(pt0, pt1, pt2) {
         // return a function(t) that interpolates from the
         // midpoints m0 and m1 between pt0,pt1 and p1,pt2 with a
@@ -217,7 +220,7 @@ function interpolateWithArcs(pts) {
         var c =  (new THREE.Vector3()).addVectors(pt0, pt2).multiplyScalar(0.5);
         var m0 = (new THREE.Vector3()).addVectors(pt0, pt1).multiplyScalar(0.5);
         var m1 = (new THREE.Vector3()).addVectors(pt1, pt2).multiplyScalar(0.5);
-        if( c.distanceTo(pt1) < Number.EPSILON ) {
+        if( c.distanceTo(pt1) < EPSILON ) {
             // m0, m1, and c are colinear, interpolate a line
             var v = new THREE.Vector3();
             return function(t) {
@@ -231,12 +234,14 @@ function interpolateWithArcs(pts) {
             var angle = m0.angleTo(m1);
             var cross = (new THREE.Vector3()).crossVectors(m0, m1).normalize();
             // correct angleTo's sign so applyAxisAngle(cross, angle) == m1
-            if( m0.clone().applyAxisAngle(cross, angle).distanceTo(m1) > Number.EPSILON ) {
+            var err;
+            err = (new THREE.Vector3()).copy(m0).applyAxisAngle(cross, angle).distanceTo(m1);
+            if( Math.abs(err) > EPSILON ) {
                 angle *= -1;
             }
             // assertion: m0.applyAxisAngle(cross, angle) == m1
-            var err = (new THREE.Vector3()).copy(m0).applyAxisAngle(cross, angle).distanceTo(m1);
-            if( err > Number.EPSILON ) {
+            err = (new THREE.Vector3()).copy(m0).applyAxisAngle(cross, angle).distanceTo(m1);
+            if( Math.abs(err) > EPSILON ) {
                 console.error("ERROR: m0=" + m0 + " can't rotate to m1=" + m1 + " angle=" + angle + " error=" + err);
             }
 
