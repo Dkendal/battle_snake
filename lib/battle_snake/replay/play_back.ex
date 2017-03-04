@@ -138,6 +138,23 @@ defmodule BattleSnake.Replay.PlayBack do
     end
   end
 
+  ########
+  # Seek #
+  ########
+
+  def handle_cast({:seek, :start}, state) do
+    state = put_in(state.pos, 0)
+    broadcast_current_frame(state)
+    {:noreply, state}
+  end
+
+  def handle_cast({:seek, :end}, state) do
+    pos = state.size - 1
+    state = put_in(state.pos, pos)
+    broadcast_current_frame(state)
+    {:noreply, state}
+  end
+
   #########################
   # Handle Info Callbacks #
   #########################
@@ -185,13 +202,10 @@ defmodule BattleSnake.Replay.PlayBack do
 
   defp broadcast_prev_frame(state) do
     time = state.replay_speed
-    topic = state.topic
-
-    {pos, new_state} = get_and_update_in(state.pos, &{&1, &1 - 1})
-    frame = :array.get(pos, state.buffer)
+    new_state = update_in(state.pos, & &1 - 1)
+    broadcast_current_frame(new_state)
 
     Process.send_after(self(), {:broadcast_prev_frame, :auto}, time)
-    PubSub.broadcast(topic, %Frame{data: frame})
 
     new_state
   end
@@ -203,14 +217,17 @@ defmodule BattleSnake.Replay.PlayBack do
 
   defp broadcast_next_frame(state) do
     time = state.replay_speed
-    topic = state.topic
-
-    {pos, new_state} = get_and_update_in(state.pos, &{&1, &1 + 1})
-    frame = :array.get(pos, state.buffer)
+    new_state = update_in(state.pos, & &1 + 1)
+    broadcast_current_frame(new_state)
 
     Process.send_after(self(), {:broadcast_next_frame, :auto}, time)
-    PubSub.broadcast(topic, %Frame{data: frame})
 
     new_state
+  end
+
+  defp broadcast_current_frame(state) do
+    topic = state.topic
+    frame = :array.get(state.pos, state.buffer)
+    PubSub.broadcast(topic, %Frame{data: frame})
   end
 end
