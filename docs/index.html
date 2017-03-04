@@ -423,11 +423,14 @@ use the <a href="#post-move">move callback</a> for any and all game play logic.
 <div class="org-src-container">
 
 <pre class="src src-js"><span class="org-rainbow-delimiters-depth-1">{</span>
-      <span class="org-string">"color"</span>: <span class="org-string">"#FF0000"</span>,
-      <span class="org-string">"head_url"</span>: <span class="org-string">"http://placecage.com/c/100/100"</span>,
-      <span class="org-string">"name"</span>: <span class="org-string">"Cage Snake"</span>,
-      <span class="org-string">"taunt"</span>: <span class="org-string">"OH GOD NOT THE BEES"</span>
-  <span class="org-rainbow-delimiters-depth-1">}</span>
+    <span class="org-string">"color"</span>: <span class="org-string">"#FF0000"</span>,
+    <span class="org-string">"secondary_color"</span>: <span class="org-string">"#00FF00"</span>,
+    <span class="org-string">"head_url"</span>: <span class="org-string">"http://placecage.com/c/100/100"</span>,
+    <span class="org-string">"name"</span>: <span class="org-string">"Cage Snake"</span>,
+    <span class="org-string">"taunt"</span>: <span class="org-string">"OH GOD NOT THE BEES"</span>
+    <span class="org-string">"head_type"</span>: <span class="org-string">"pixel"</span>,
+    <span class="org-string">"tail_type"</span>: <span class="org-string">"pixel"</span>
+<span class="org-rainbow-delimiters-depth-1">}</span>
 </pre>
 </div>
 </div>
@@ -542,6 +545,12 @@ This callback should be used for all game logic.
 </tr>
 
 <tr>
+<td class="text-left"><b>dead_snake</b></td>
+<td class="text-left">Array&lt;<a href="#type-snake">Snake</a>&gt;</td>
+<td class="text-left">Array of all dead snakes in the game</td>
+</tr>
+
+<tr>
 <td class="text-left"><b>turn</b></td>
 <td class="text-left">integer</td>
 <td class="text-left">The current turn.</td>
@@ -569,14 +578,14 @@ This callback should be used for all game logic.
 <div class="org-src-container">
 
 <pre class="src src-js"><span class="org-rainbow-delimiters-depth-1">{</span>
-  <span class="org-string">"you"</span>: <span class="org-string">"25229082-f0d7-4315-8c52-6b0ff23fb1fb"</span>,
+  <span class="org-string">"you"</span>: <span class="org-string">"2c4d4d70-8cca-48e0-ac9d-03ecafca0c98"</span>,
   <span class="org-string">"width"</span>: <span class="org-highlight-numbers-number">2</span>,
   <span class="org-string">"turn"</span>: <span class="org-highlight-numbers-number">0</span>,
   <span class="org-string">"snakes"</span>: <span class="org-rainbow-delimiters-depth-2">[</span>
     <span class="org-rainbow-delimiters-depth-3">{</span>
       <span class="org-string">"taunt"</span>: <span class="org-string">"git gud"</span>,
       <span class="org-string">"name"</span>: <span class="org-string">"my-snake"</span>,
-      <span class="org-string">"id"</span>: <span class="org-string">"25229082-f0d7-4315-8c52-6b0ff23fb1fb"</span>,
+      <span class="org-string">"id"</span>: <span class="org-string">"2c4d4d70-8cca-48e0-ac9d-03ecafca0c98"</span>,
       <span class="org-string">"health_points"</span>: <span class="org-highlight-numbers-number">93</span>,
       <span class="org-string">"coords"</span>: <span class="org-rainbow-delimiters-depth-4">[</span>
         <span class="org-rainbow-delimiters-depth-5">[</span>
@@ -596,7 +605,7 @@ This callback should be used for all game logic.
     <span class="org-rainbow-delimiters-depth-3">{</span>
       <span class="org-string">"taunt"</span>: <span class="org-string">"gotta go fast"</span>,
       <span class="org-string">"name"</span>: <span class="org-string">"other-snake"</span>,
-      <span class="org-string">"id"</span>: <span class="org-string">"0fd33b05-37dd-419e-b44f-af9936a0a00c"</span>,
+      <span class="org-string">"id"</span>: <span class="org-string">"c35dcf26-7f48-492c-b7b5-94ae78fbc713"</span>,
       <span class="org-string">"health_points"</span>: <span class="org-highlight-numbers-number">50</span>,
       <span class="org-string">"coords"</span>: <span class="org-rainbow-delimiters-depth-4">[</span>
         <span class="org-rainbow-delimiters-depth-5">[</span>
@@ -615,7 +624,7 @@ This callback should be used for all game logic.
     <span class="org-rainbow-delimiters-depth-3">}</span>
   <span class="org-rainbow-delimiters-depth-2">]</span>,
   <span class="org-string">"height"</span>: <span class="org-highlight-numbers-number">2</span>,
-  <span class="org-string">"game_id"</span>: <span class="org-string">"870d6d79-93bf-4941-8d9e-944bee131167"</span>,
+  <span class="org-string">"game_id"</span>: <span class="org-string">"a2facef2-b031-44ba-a36c-0859c389ef96"</span>,
   <span class="org-string">"food"</span>: <span class="org-rainbow-delimiters-depth-2">[</span>
     <span class="org-rainbow-delimiters-depth-3">[</span>
       <span class="org-highlight-numbers-number">1</span>,
@@ -626,7 +635,7 @@ This callback should be used for all game logic.
     <span class="org-rainbow-delimiters-depth-3">{</span>
       <span class="org-string">"taunt"</span>: <span class="org-string">"gotta go fast"</span>,
       <span class="org-string">"name"</span>: <span class="org-string">"other-snake"</span>,
-      <span class="org-string">"id"</span>: <span class="org-string">"c4e48602-197e-40b2-80af-8f89ba005ee9"</span>,
+      <span class="org-string">"id"</span>: <span class="org-string">"83fdf2b9-c8d0-44f4-acb2-0c506139079e"</span>,
       <span class="org-string">"health_points"</span>: <span class="org-highlight-numbers-number">50</span>,
       <span class="org-string">"coords"</span>: <span class="org-rainbow-delimiters-depth-4">[</span>
         <span class="org-rainbow-delimiters-depth-5">[</span>
