@@ -4,6 +4,12 @@ defmodule BattleSnake.MovementTest do
   use BattleSnake.Point
   import BattleSnake.Point
 
+  def request_move(%{name: :taunt_snake}, _world, _) do
+    json = %{move: "down", taunt: "sup"}
+    body = Poison.encode!(json)
+    {:ok, %HTTPoison.Response{body: body}}
+  end
+
   def request_move(%{name: :good_snake}, _world, _) do
     json = %{move: "down"}
     body = Poison.encode!(json)
@@ -31,6 +37,22 @@ defmodule BattleSnake.MovementTest do
   end
 
   describe "Movement.next/1" do
+    test "updates the taunt of snakes" do
+      snake = build(:snake,
+        name: :taunt_snake,
+        url: "http://example.com",
+        coords: [p(0, 0)])
+
+      world = build(:world, snakes: [snake])
+
+      assert %BattleSnake.World{} = Movement.next(world)
+
+      [snake] = Movement.next(world).snakes
+
+      assert snake.coords == [p(0, 1)]
+      assert snake.taunt == "sup"
+    end
+
     test "updates the location of snakes" do
       snake = build(:snake,
         name: :good_snake,
