@@ -5,12 +5,14 @@ defmodule BattleSnake.Replay.PlayBack do
   require BattleSnake.Replay
   require Record
 
+  @enforce_keys [:size, :buffer]
+
   defstruct([
-    :frame_buffer,
-    :watched_frame_buffer,
-    :receiver,
+    :buffer,
+    :size,
     :replay_speed,
     :topic,
+    pos: 0,
     state: :suspend
   ])
 
@@ -41,21 +43,24 @@ defmodule BattleSnake.Replay.PlayBack do
     attributes = Replay.row(row, :attributes)
     bin = Keyword.fetch!(attributes, :bin)
     recorder = :erlang.binary_to_term(bin)
-    frame_buffer = recorder.frames
+    frames = recorder.frames
     topic = "replay:#{game_id}"
-    replay_speed = 50
-    init(topic, frame_buffer, self(), replay_speed)
+    replay_speed = 20
+    init(topic, frames, replay_speed)
   end
 
-  def init(topic, frame_buffer, receiver, replay_speed) do
+  def init(topic, frames, replay_speed) do
+    buffer = frames
+    |> :array.from_list
+    |> :array.fix
+
     new_state = struct(__MODULE__,
       topic: topic,
       replay_speed: replay_speed,
-      receiver: receiver,
-      watched_frame_buffer: [],
-      frame_buffer: frame_buffer)
+      size: :array.size(buffer),
+      buffer: buffer
+    )
 
-    Dbg.trace self(), [:r]
     {:ok, new_state}
   end
 
@@ -173,8 +178,8 @@ defmodule BattleSnake.Replay.PlayBack do
     end
   end
 
-
-  defp broadcast_prev_frame(%{watched_frame_buffer: []} = state) do
+  defp broadcast_prev_frame(%{pos: pos} = state)
+  when pos <= 0 do
     state
   end
 
@@ -182,15 +187,8 @@ defmodule BattleSnake.Replay.PlayBack do
     time = state.replay_speed
     topic = state.topic
 
-    {frame, new_state} =
-      get_and_update_in(state.watched_frame_buffer, fn [frame | buffer] ->
-        {frame, buffer}
-      end)
-
-    new_state =
-      update_in(new_state.frame_buffer, fn buffer ->
-        [frame | buffer]
-      end)
+    {pos, new_state} = get_and_update_in(state.pos, &{&1, &1 - 1})
+    frame = :array.get(pos, state.buffer)
 
     Process.send_after(self(), {:broadcast_prev_frame, :auto}, time)
     PubSub.broadcast(topic, %Frame{data: frame})
@@ -198,7 +196,8 @@ defmodule BattleSnake.Replay.PlayBack do
     new_state
   end
 
-  defp broadcast_next_frame(%{frame_buffer: []} = state) do
+  defp broadcast_next_frame(%{pos: pos, size: size} = state)
+  when pos >= (size - 1) do
     state
   end
 
@@ -206,15 +205,8 @@ defmodule BattleSnake.Replay.PlayBack do
     time = state.replay_speed
     topic = state.topic
 
-    {frame, new_state} =
-      get_and_update_in(state.frame_buffer, fn [frame | buffer] ->
-        {frame, buffer}
-      end)
-
-    new_state =
-      update_in(new_state.watched_frame_buffer, fn buffer ->
-        [frame | buffer]
-      end)
+    {pos, new_state} = get_and_update_in(state.pos, &{&1, &1 + 1})
+    frame = :array.get(pos, state.buffer)
 
     Process.send_after(self(), {:broadcast_next_frame, :auto}, time)
     PubSub.broadcast(topic, %Frame{data: frame})
