@@ -73,7 +73,10 @@
     color: $scoreboard-font-color;
     font-size: ms(0);
     line-height: ms(4);
+    height: ms(4);
+    text-overflow: ellipsis;
     margin-left: ms(-3);
+    overflow: hidden;
     position: absolute;
   }
   &-name {
