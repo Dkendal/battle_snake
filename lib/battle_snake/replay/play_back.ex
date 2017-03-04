@@ -46,7 +46,7 @@ defmodule BattleSnake.Replay.PlayBack do
     recorder = :erlang.binary_to_term(bin)
     frames = recorder.frames
     topic = "replay:#{game_id}"
-    replay_speed = 20
+    replay_speed = 80
     init(topic, frames, replay_speed)
   end
 
