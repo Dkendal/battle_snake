@@ -2,6 +2,7 @@ defmodule BattleSnake.Replay.PlayBack do
   use GenServer
   alias BattleSnake.GameServer.PubSub
   alias BattleSnake.Replay
+  alias BattleSnake.Replay.PlayBack
   require BattleSnake.Replay
   require Record
 
@@ -159,8 +160,10 @@ defmodule BattleSnake.Replay.PlayBack do
   # Handle Info Callbacks #
   #########################
 
-  def handle_info({:broadcast_next_frame, _}, %{frame_buffer: []} = state) do
-    {:noreply, state, :hibernate}
+  def handle_info({:broadcast_next_frame, _},
+    %PlayBack{pos: i, size: j} = state)
+    when i == (j - 1) do
+    {:stop, :normal, state}
   end
 
   def handle_info({:broadcast_next_frame, :auto}, state) do
@@ -193,6 +196,12 @@ defmodule BattleSnake.Replay.PlayBack do
       _ ->
         {:noreply, broadcast_prev_frame(state)}
     end
+  end
+
+  def terminate(reason, state) do
+    require Logger
+    Logger.debug "PlayBack terminated with reason #{reason}"
+    super(reason, state)
   end
 
   defp broadcast_prev_frame(%{pos: pos} = state)
