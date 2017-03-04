@@ -33,6 +33,8 @@ const init = (gameId) => {
   Mousetrap.bind(["k", "down"], () => cmd("pause"));
   Mousetrap.bind(["l", "right"], () => cmd("next"));
   Mousetrap.bind(["r"], () => cmd("rewind"));
+  Mousetrap.bind(["0"], () => cmd("seek:start"));
+  Mousetrap.bind(["9"], () => cmd("seek:end"));
 };
 
 export default {

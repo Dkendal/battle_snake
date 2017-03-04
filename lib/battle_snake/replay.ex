@@ -75,4 +75,9 @@ defmodule BattleSnake.Replay do
     play_back_name(game_id)
     |> GenServer.cast(:rewind)
   end
+
+  def play_back_seek(game_id, pos) do
+    play_back_name(game_id)
+    |> GenServer.cast({:seek, pos})
+  end
 end

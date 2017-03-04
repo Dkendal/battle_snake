@@ -78,6 +78,20 @@ defmodule BattleSnake.ReplayChannel do
     {:noreply, socket}
   end
 
+  def handle_in("seek:start", _from, socket) do
+    Replay.play_back_seek(
+      socket.assigns.game_id,
+      :start)
+    {:noreply, socket}
+  end
+
+  def handle_in("seek:end", _from, socket) do
+    Replay.play_back_seek(
+      socket.assigns.game_id,
+      :end)
+    {:noreply, socket}
+  end
+
   ###########################
   # Process Frame Broadcast #
   ###########################
