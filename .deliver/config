@@ -1,6 +1,6 @@
 APP="battle_snake"
 
-BUILD_HOST="callisto.local"
+BUILD_HOST="callisto"
 BUILD_USER="dylan"
 BUILD_AT="/tmp/battle_snake/builds"
 
