@@ -11,6 +11,8 @@ defmodule BattleSnake.Api do
 
   require Logger
 
+  @start_timeout Application.get_env(:battle_snake, :start_timeout)
+
   @callback load(%SnakeForm{}, %GameForm{}) :: Response.t
   @callback move(%Snake{}, %World{}) :: Response.t
   @callback request_move(%Snake{}, %World{}) :: HTTPoison.Response.t
@@ -27,7 +29,7 @@ defmodule BattleSnake.Api do
     data = Poison.encode!(data)
 
     response = request_url
-    |> request.(data, ["content-type": "application/json"], [])
+    |> request.(data, ["content-type": "application/json"], [recv_timeout: @start_timeout])
     |> Response.new(as: %{})
 
     response = put_in(response.url, url)

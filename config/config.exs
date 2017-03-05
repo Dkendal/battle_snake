@@ -13,6 +13,9 @@ config :battle_snake, BattleSnake.Endpoint,
   pubsub: [name: BattleSnake.PubSub,
            adapter: Phoenix.PubSub.PG2]
 
+
+config :battle_snake, start_timeout: 10_000
+
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
