@@ -128,7 +128,7 @@ defmodule BattleSnake.ApiTest do
           raw_response},
         parsed_response: {
           :error,
-          {:invalid, "<"}}}
+          {:invalid, "<", 0}}}
     end
 
     test "on error returns the error" do
