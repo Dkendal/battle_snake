@@ -19,15 +19,11 @@ defmodule BattleSnake.GameAdminChannelTest do
   end
 
   describe "GameAdminChannel.join/3" do
-    setup [:create_game_form]
+    setup [:create_game_form, :join_topic]
 
     test "connects to the channel", c do
-      {:ok, _, %Socket{}} = join_topic c.game_form.id
+      %Socket{} = c.socket
     end
-  end
-
-  describe "GameAdminChannel.join/3" do
-    setup [:create_game_form, :join_topic]
 
     test "assigns the game id", c do
       assert %{game_id: _} = c.socket.assigns

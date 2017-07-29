@@ -87,9 +87,11 @@ defmodule BattleSnake.GameForm.Reset do
       |> set_url(snake_form)
     end
 
+    timeout = 10_000
+
     update_in(game_form.world.snakes, fn _ ->
       game_form.snakes
-      |> Task.async_stream(task, [timeout: :infinity])
+      |> Task.async_stream(task, [timeout: timeout])
       |> Enum.map(fn {:ok, snake} -> snake end)
     end)
   end
