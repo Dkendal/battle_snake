@@ -8,7 +8,7 @@ defmodule BattleSnake.Movement do
 
   require Logger
 
-  @sup_timeout :infinity
+  @sup_timeout 10_000
 
   @moduledoc """
   Updates the positions of all snakes on the board.
@@ -56,7 +56,7 @@ defmodule BattleSnake.Movement do
   Fetch and update the position of all snakes
   """
   @spec next(World.t, timeout) :: World.t
-  def next(world, recv_timeout \\ :infinity)
+  def next(world, recv_timeout \\ 10_000)
   def next(%World{} = world, recv_timeout) do
     options = [timeout: @sup_timeout]
 

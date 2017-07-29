@@ -37,12 +37,6 @@ defmodule Mnesia.RepoTest do
 
   setup [:create_table]
 
-  describe "Mnesia.Repo.save/1" do
-    test "saves the record" do
-      Mnesia.Repo.save(%Dummy{})
-    end
-  end
-
   describe "Mnesia.Repo.fields/0" do
     test "returns fields defined as a module attribute" do
       assert Dummy.fields == [

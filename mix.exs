@@ -6,7 +6,7 @@ defmodule BattleSnake.Mixfile do
   def project do
     [app: :battle_snake,
      version: @version,
-     elixir: "~> 1.4",
+     elixir: "~> 1.5",
      elixirc_paths: elixirc_paths(Mix.env),
      compilers: [:phoenix, :gettext] ++ Mix.compilers,
      build_embedded: Mix.env == :prod,
