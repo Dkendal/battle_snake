@@ -226,6 +226,15 @@ defmodule BattleSnake.World do
       end
     end
   end
+
+  def changeset(world, params) do
+    import Ecto.Changeset
+
+    permitted = []
+
+    world
+    |> cast(params, permitted)
+  end
 end
 
 defimpl Poison.Encoder, for: BattleSnake.World do

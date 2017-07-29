@@ -85,7 +85,11 @@ defmodule Property do
 
   defmacro __using__(_) do
     quote do
-      import :proper
+      import :proper, only: [
+        on_output: 2,
+        quickcheck: 1,
+        forall: 2,
+      ]
       import :proper_types
       import Property
       require Property

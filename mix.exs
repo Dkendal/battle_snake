@@ -72,7 +72,7 @@ defmodule BattleSnake.Mixfile do
       {:edeliver, "~> 1.4"},
       {:ex_machina, "~> 1.0", only: :test},
       {:excoveralls, "~> 0.6", only: :test},
-      {:exvcr, "~> 0.8", only: :test},
+      {:exvcr, "~> 0.8", only: :test, runtime: false},
       {:gettext, "~> 0.11"},
       {:httpoison, "~> 0.11"},
       {:phoenix, "~> 1.2"},

@@ -83,7 +83,7 @@ defmodule BattleSnake.ApiTest do
         raw_response: {:ok, ^raw_response},
         parsed_response: {:error, changeset}} = move
 
-      assert changeset.errors == [move: {"is invalid", []}]
+      assert changeset.errors == [move: {"is invalid", [validation: :inclusion]}]
 
       assert_receive {:ok, %{"you" => "1234"}}
     end
