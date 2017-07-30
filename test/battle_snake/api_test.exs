@@ -8,11 +8,11 @@ defmodule BattleSnake.ApiTest do
   @move_url "http://example.snake/move"
   @start_url "http://example.snake/start"
 
-  @snake_form %BattleSnake.SnakeForm{
+  @snake_form %BattleSnakeWeb.SnakeForm{
     url: "http://example.snake"
   }
 
-  @game_form %BattleSnake.GameForm{}
+  @game_form %BattleSnakeWeb.GameForm{}
 
   @snake %BattleSnake.Snake{
     id: "1234",

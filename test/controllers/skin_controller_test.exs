@@ -1,6 +1,6 @@
-defmodule BattleSnake.SkinControllerTest do
-  alias BattleSnake.{GameForm}
-  use BattleSnake.ConnCase
+defmodule BattleSnakeWeb.SkinControllerTest do
+  alias BattleSnakeWeb.GameForm
+  use BattleSnakeWeb.ConnCase
 
   describe "GET show" do
     test "it is OK", %{conn: conn} do

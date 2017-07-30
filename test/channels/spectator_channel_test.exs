@@ -1,11 +1,9 @@
-defmodule BattleSnake.SpectatorChannelTest do
-  use BattleSnake.ChannelCase
+defmodule BattleSnakeWeb.SpectatorChannelTest do
+  use BattleSnakeWeb.ChannelCase
 
-  alias BattleSnake.{
-    SpectatorChannel,
-    GameServer,
-    GameStateEvent
-  }
+  alias BattleSnake.GameServer
+  alias BattleSnake.GameStateEvent
+  alias BattleSnakeWeb.SpectatorChannel
 
   describe "SpectatorChannel" do
     setup [:sub, :broadcast_state]

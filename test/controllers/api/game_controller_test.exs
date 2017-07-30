@@ -1,10 +1,8 @@
-defmodule BattleSnake.Api.GameControllerTest do
-  alias BattleSnake.{
-    GameForm,
-    SnakeForm,
-  }
+defmodule BattleSnakeWeb.Api.GameControllerTest do
+  alias BattleSnakeWeb.GameForm
+  alias BattleSnakeWeb.SnakeForm
 
-  use BattleSnake.ConnCase, async: false
+  use BattleSnakeWeb.ConnCase, async: false
 
   describe "GET index" do
     test "lists all games", %{conn: conn} do

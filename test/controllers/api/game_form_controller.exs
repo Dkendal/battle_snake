@@ -1,11 +1,11 @@
-defmodule BattleSnake.Api.GameFormControllerTest do
+defmodule BattleSnakeWeb.Api.GameFormControllerTest do
   alias BattleSnake.{
     GameForm,
     GameServer,
     SnakeForm,
   }
 
-  use BattleSnake.ConnCase, async: false
+  use BattleSnakeWeb.ConnCase, async: false
 
   setup do
     MnesiaTesting.teardown

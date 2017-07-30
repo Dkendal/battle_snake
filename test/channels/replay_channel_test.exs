@@ -1,9 +1,9 @@
-defmodule BattleSnake.ReplayChannelTest do
-  alias BattleSnake.ReplayChannel
+defmodule BattleSnakeWeb.ReplayChannelTest do
+  alias BattleSnakeWeb.ReplayChannel
   alias BattleSnake.Replay.PlayBack.Frame
-  use BattleSnake.ChannelCase
+  use BattleSnakeWeb.ChannelCase
 
-  alias BattleSnake.ReplayChannel
+  alias BattleSnakeWeb.ReplayChannel
 
   describe "ReplayChannel.handle_info(:after_join, socket)" do
     test "subscribes the caller to the topic" do

@@ -69,7 +69,7 @@ defmodule Mnesia do
 
     :rpc.multicall(nodes, :application, :start, [:mnesia])
 
-    BattleSnake.GameForm.create_table(disc_copies: nodes)
+    BattleSnakeWeb.GameForm.create_table(disc_copies: nodes)
 
     BattleSnake.World.create_table(disc_copies: nodes)
 

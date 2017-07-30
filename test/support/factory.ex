@@ -20,13 +20,13 @@ defmodule BattleSnake.Factory do
   end
 
   def snake_form_factory do
-    %BattleSnake.SnakeForm{
+    %BattleSnakeWeb.SnakeForm{
       url: "example.com"
     }
   end
 
   def game_form_factory do
-    %BattleSnake.GameForm{
+    %BattleSnakeWeb.GameForm{
       id: Ecto.UUID.generate(),
       delay: 0,
     }

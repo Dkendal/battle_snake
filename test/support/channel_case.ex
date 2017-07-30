@@ -1,4 +1,4 @@
-defmodule BattleSnake.ChannelCase do
+defmodule BattleSnakeWeb.ChannelCase do
   @moduledoc """
   This module defines the test case to be used by
   channel tests.
@@ -23,7 +23,7 @@ defmodule BattleSnake.ChannelCase do
 
 
       # The default endpoint for testing
-      @endpoint BattleSnake.Endpoint
+      @endpoint BattleSnakeWeb.Endpoint
     end
   end
 

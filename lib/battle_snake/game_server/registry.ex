@@ -1,7 +1,7 @@
 defmodule BattleSnake.GameServer.Registry do
   alias BattleSnake.GameServer
   alias BattleSnake.GameState
-  alias BattleSnake.GameForm
+  alias BattleSnakeWeb.GameForm
   @name __MODULE__
 
   @type name :: binary | atom
