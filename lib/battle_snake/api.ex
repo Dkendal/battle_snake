@@ -1,13 +1,12 @@
 defmodule BattleSnake.Api do
-  alias Ecto.Changeset
 
-  alias BattleSnake.{
-    Api.Response,
-    GameForm,
-    Move,
-    Snake,
-    SnakeForm,
-    World}
+  alias BattleSnake.Api.Response
+  alias BattleSnake.Move
+  alias BattleSnake.Snake
+  alias BattleSnake.World
+  alias BattleSnakeWeb.GameForm
+  alias BattleSnakeWeb.SnakeForm
+  alias Ecto.Changeset
 
   require Logger
 

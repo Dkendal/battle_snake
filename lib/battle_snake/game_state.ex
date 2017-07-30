@@ -43,7 +43,7 @@ defmodule BattleSnake.GameState do
     objective: objective_fun,
     delay: non_neg_integer,
     hist: [World.t],
-    game_form: BattleSnake.GameForm.t,
+    game_form: BattleSnakeWeb.GameForm.t,
     winners: [snake_id]
   }
 

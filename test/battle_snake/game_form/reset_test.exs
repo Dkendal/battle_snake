@@ -1,9 +1,9 @@
-defmodule BattleSnake.GameForm.ResetTest do
-  alias BattleSnake.GameForm.Reset
+defmodule BattleSnakeWeb.GameForm.ResetTest do
+  alias BattleSnakeWeb.GameForm.Reset
 
   use BattleSnake.Case, async: false
 
-  @game_form %BattleSnake.GameForm{
+  @game_form %BattleSnakeWeb.GameForm{
     delay: 100,
     max_food: 1,
     height: 10,
@@ -15,7 +15,7 @@ defmodule BattleSnake.GameForm.ResetTest do
     height: 10
   }
 
-  @snake_form %BattleSnake.SnakeForm{
+  @snake_form %BattleSnakeWeb.SnakeForm{
     url: "http://example.com"
   }
 
@@ -30,8 +30,8 @@ defmodule BattleSnake.GameForm.ResetTest do
   describe "Reset.init_world/1" do
     @init_world Reset.init_world(@game_form)
 
-    test "returns a BattleSnake.GameForm struct" do
-      assert(match?(%BattleSnake.GameForm{}, @init_world))
+    test "returns a BattleSnakeWeb.GameForm struct" do
+      assert(match?(%BattleSnakeWeb.GameForm{}, @init_world))
     end
 
     test "sets game_form.world.width based on config" do

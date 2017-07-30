@@ -1,6 +1,7 @@
 *.DCD
 *.DCL
 *.LOG
+.deliver/releases
 .env
 .iex.exs
 /*.ez
@@ -8,11 +9,11 @@
 /config/prod.secret.exs
 /db
 /deps
-/node_modules
 /priv/static/
 Mnesia.*
 TODOs.org
 TODOs.org_archive
+assets/.sass-cache
+assets/node_modules
 databases/
 erl_crash.dump
-.deliver/releases

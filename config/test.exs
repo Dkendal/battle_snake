@@ -3,7 +3,7 @@ config :battle_snake, snake_api: BattleSnake.MockApi
 
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
-config :battle_snake, BattleSnake.Endpoint,
+config :battle_snake, BattleSnakeWeb.Endpoint,
   http: [port: 4001],
   server: false
 

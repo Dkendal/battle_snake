@@ -1,5 +1,5 @@
 defmodule BattleSnake.GameServer.Server do
-  alias BattleSnake.GameForm
+  alias BattleSnakeWeb.GameForm
   alias BattleSnake.GameState
   alias BattleSnake.GameStateEvent
   alias BattleSnake.GameServer.PubSub

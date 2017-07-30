@@ -1,4 +1,4 @@
-defmodule BattleSnake.GameForm.Reset do
+defmodule BattleSnakeWeb.GameForm.Reset do
   alias BattleSnake.{
     GameForm,
     Snake,

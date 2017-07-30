@@ -1,9 +1,9 @@
-defmodule BattleSnake.Api.GameServerControllerTest do
+defmodule BattleSnakeWeb.Api.GameServerControllerTest do
   alias BattleSnake.{
     GameServer.Registry,
   }
 
-  use BattleSnake.ConnCase, async: false
+  use BattleSnakeWeb.ConnCase, async: false
 
   defmodule G do
     use GenServer

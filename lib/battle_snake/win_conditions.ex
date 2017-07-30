@@ -1,12 +1,12 @@
 defmodule BattleSnake.WinConditions do
-  require BattleSnake.GameForm
+  require BattleSnakeWeb.GameForm
 
   @spec game_mode(binary) :: (BattleSnake.World.t -> boolean)
   def game_mode(game_mode) do
     case game_mode do
-      BattleSnake.GameForm.singleplayer() ->
+      BattleSnakeWeb.GameForm.singleplayer() ->
         &singleplayer/1
-      BattleSnake.GameForm.multiplayer() ->
+      BattleSnakeWeb.GameForm.multiplayer() ->
         &multiplayer/1
     end
   end

@@ -9,7 +9,7 @@ defmodule BattleSnake do
     # Define workers and child supervisors to be supervised
     children = [
       # Start the endpoint when the application starts
-      supervisor(BattleSnake.Endpoint, []),
+      supervisor(BattleSnakeWeb.Endpoint, []),
       supervisor(BattleSnake.GameServer.Supervisor, []),
       supervisor(BattleSnake.Replay.Supervisor, []),
       supervisor(Task.Supervisor, [[name: BattleSnake.MoveSupervisor]]),
@@ -21,12 +21,5 @@ defmodule BattleSnake do
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: BattleSnake.Supervisor]
     Supervisor.start_link(children, opts)
-  end
-
-  # Tell Phoenix to update the endpoint configuration
-  # whenever the application is updated.
-  def config_change(changed, _new, removed) do
-    BattleSnake.Endpoint.config_change(changed, removed)
-    :ok
   end
 end

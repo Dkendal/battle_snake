@@ -6,10 +6,10 @@
 use Mix.Config
 
 # Configures the endpoint
-config :battle_snake, BattleSnake.Endpoint,
+config :battle_snake, BattleSnakeWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "lYYgnflsbniY0f9RgALnSmr0nGSwGWkm+rMqgDHhrywKUolAqni+7zdTKAumE5R/",
-  render_errors: [view: BattleSnake.ErrorView, accepts: ~w(html json)],
+  render_errors: [view: BattleSnakeWeb.ErrorView, accepts: ~w(html json)],
   pubsub: [name: BattleSnake.PubSub,
            adapter: Phoenix.PubSub.PG2]
 

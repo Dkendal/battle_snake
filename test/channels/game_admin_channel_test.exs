@@ -1,8 +1,8 @@
-defmodule BattleSnake.GameAdminChannelTest do
-  use BattleSnake.ChannelCase
+defmodule BattleSnakeWeb.GameAdminChannelTest do
+  use BattleSnakeWeb.ChannelCase
 
   alias Phoenix.Socket
-  alias BattleSnake.GameAdminChannel
+  alias BattleSnakeWeb.GameAdminChannel
 
   defmodule G do
     use GenServer
