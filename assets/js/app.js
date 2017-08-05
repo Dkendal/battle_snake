@@ -1,6 +1,8 @@
+import "css/app.scss"
 import "phoenix_html"
 import $ from "jquery";
 import * as BS from "./battle_snake"
+
 (() => {
   if (!$("#board-viewer").length) {
     return;
