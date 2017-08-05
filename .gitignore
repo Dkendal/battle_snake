@@ -13,6 +13,7 @@
 Mnesia.*
 TODOs.org
 TODOs.org_archive
+assets/.awcache
 assets/.sass-cache
 assets/node_modules
 databases/
