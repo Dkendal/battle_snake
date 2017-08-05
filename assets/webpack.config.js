@@ -14,7 +14,11 @@ config.output = {
 
 const tsRule = {
   test: /\.tsx?$/,
-  loader: "awesome-typescript-loader"
+  loader: "awesome-typescript-loader",
+  options: {
+    useBabel: true,
+    useCache: true
+  }
 };
 
 const scssRule = {

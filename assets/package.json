@@ -17,6 +17,9 @@
     "yarn": "^0.27.5"
   },
   "devDependencies": {
+    "@types/jquery": "^3.2.11",
+    "@types/mousetrap": "^1.5.34",
+    "@types/webpack": "^3.0.5",
     "awesome-typescript-loader": "^3.2.2",
     "babel-core": "^6.25.0",
     "babel-loader": "^7.1.1",
@@ -34,6 +37,7 @@
     "prettier": "^1.5.3",
     "sass-loader": "^6.0.6",
     "style-loader": "^0.18.2",
+    "ts-node": "^3.3.0",
     "typescript": "^2.4.2",
     "webpack": "^3.4.1",
     "webpack-dev-server": "^2.6.1"
