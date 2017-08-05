@@ -1,4 +1,4 @@
-import "css/app.scss"
+import "css/app"
 import "phoenix_html"
 import $ from "jquery";
 import * as BS from "./battle_snake"

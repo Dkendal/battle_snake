@@ -43,7 +43,14 @@ config.module = {
 config.resolve = {
   alias: {
     css: relativePath('css'),
-  }
+  },
+  extensions: [
+    '.css',
+    '.js',
+    '.json',
+    '.scss',
+    '.ts',
+  ]
 }
 
 config.devtool = "#source-map";
