@@ -7,6 +7,7 @@
     "build": "webpack --verbose"
   },
   "dependencies": {
+    "copy-webpack-plugin": "^4.0.1",
     "jquery": "^3.1.1",
     "mousetrap": "^1.6.0",
     "phoenix": "file:../deps/phoenix",
@@ -19,6 +20,7 @@
   "devDependencies": {
     "@types/jquery": "^3.2.11",
     "@types/mousetrap": "^1.5.34",
+    "@types/phoenix": "^0.0.4",
     "@types/webpack": "^3.0.5",
     "awesome-typescript-loader": "^3.2.2",
     "babel-core": "^6.25.0",

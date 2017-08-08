@@ -1,15 +1,16 @@
 const path = require("path");
 const relativePath = path.resolve.bind(path, __dirname);
 const { CheckerPlugin } = require("awesome-typescript-loader");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 const config = {};
 
 module.exports = config;
 
-config.entry = "./js/app.js";
+config.entry = "./js/app";
 
 config.output = {
-  path: relativePath("../priv/static/js"),
-  filename: "app.js"
+  path: relativePath("../priv/static"),
+  filename: "js/app.js"
 };
 
 const tsRule = {
@@ -58,4 +59,7 @@ config.resolve = {
 
 config.devtool = "#source-map";
 
-config.plugins = [new CheckerPlugin()];
+config.plugins = [
+  new CheckerPlugin(),
+  new CopyWebpackPlugin([{from: "./static"}]),
+];
