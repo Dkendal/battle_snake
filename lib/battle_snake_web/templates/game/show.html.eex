@@ -5,6 +5,5 @@
 <%= inspect @game %>
 
 <%= link "Play", to: play_path(@conn, :show, @game) %>
-<%= link "Finals", to: skin_path(@conn, :show, @game) %>
 <%= link "Edit", to: game_path(@conn, :edit, @game) %>
 <%= link "Back", to: game_path(@conn, :index) %>

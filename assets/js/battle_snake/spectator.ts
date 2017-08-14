@@ -31,9 +31,8 @@ const init = (gameId: string) => {
   gameAdminChannel.join().receive("error", logError);
 
   const cmd = (request: string) => {
-    console.log(request);
     gameAdminChannel
-      .push(request)
+      .push(request, {})
       .receive("error", (e: Error) =>
         console.error(`push "${request}" failed`, e)
       );
