@@ -1,44 +1,6 @@
 defimpl Poison.Encoder, for: BattleSnake.Snake do
   def encode(snake, opts) do
-    case Keyword.pop(opts, :mode) do
-      {:consumer, opts} ->
-        consumer_encode(snake, opts)
-
-      {_, opts} ->
-        do_encode(snake, opts)
-    end
-  end
-
-  def do_encode(snake, opts) do
     keys = [:coords, :id, :taunt, :health_points, :name]
-    snake
-    |> Map.take(keys)
-    |> Poison.encode!(opts)
-  end
-
-  def consumer_encode(snake, opts) do
-    alias BattleSnake.Death
-    keys = [:coords, :id, :taunt, :health_points, :name, :head_url, :color, :cause_of_death]
-
-    # get the cause_of_death text, from the struct
-    cause_of_death =
-      case snake.cause_of_death do
-        %Death.StarvationCause{} ->
-          "Starved to death"
-        %Death.WallCollisionCause{} ->
-          "Crashed into a wall"
-        %Death.SelfCollisionCause{} ->
-          "Collided with itself"
-        %Death.BodyCollisionCause{} ->
-          "Collided with another snake's body"
-        %Death.HeadCollisionCause{} ->
-          "Consumed by another snake"
-        _ ->
-          ""
-      end
-
-    snake = Map.put(snake, :cause_of_death, cause_of_death)
-
     snake
     |> Map.take(keys)
     |> Poison.encode!(opts)

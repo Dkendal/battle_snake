@@ -24,9 +24,9 @@ defmodule BattleSnakeWeb.PlayView do
   def snake_img_tags(conn) do
     snake_assets()
     |> Enum.map(fn asset ->
-      content_tag(:script, "",
+      content_tag(:object, "",
                   id: asset[:id],
-                  src: static_path(conn, "/#{asset[:src]}"),
+                  data: static_path(conn, "/#{asset[:src]}"),
                   charset: "utf-8",
                   type: "image/svg+xml")
     end)

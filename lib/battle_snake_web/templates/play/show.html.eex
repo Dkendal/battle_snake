@@ -1,2 +1,17 @@
-<%= render "_modal_keybinds.html" %>
-<div id="board-viewer" class="play-show"></div>
+<%= for asset <- snake_assets do %>
+  <link
+  id="<%= asset[:id] %>"
+  href="<%= static_path(@conn, "/#{asset[:src]}") %>"
+  charset="utf-8"
+  rel="prefetch"
+  type="image/svg+xml"
+  ></link>
+<% end %>
+
+<script id="battle-snake-config" type="application/json">
+  <%= raw battle_snake_js_object(assigns) %>
+</script>
+
+<div class="play-show">
+  <div id="game-board" style="flex:1;"></div>
+</div>

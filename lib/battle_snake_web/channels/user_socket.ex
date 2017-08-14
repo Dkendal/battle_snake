@@ -3,8 +3,8 @@ defmodule BattleSnakeWeb.UserSocket do
 
   ## Channels
   # channel "room:*", BattleSnake.RoomChannel
-  channel "spectator:json:*", BattleSnakeWeb.SpectatorChannel
-  channel "spectator:html:*", BattleSnakeWeb.SpectatorChannel
+  channel "spectator:*", BattleSnakeWeb.SpectatorChannel
+  channel "spectator:*", BattleSnakeWeb.SpectatorChannel
   channel "game_admin:*", BattleSnakeWeb.GameAdminChannel
   channel "replay:html:*", BattleSnakeWeb.ReplayChannel
   channel "replay:json:*", BattleSnakeWeb.ReplayChannel
