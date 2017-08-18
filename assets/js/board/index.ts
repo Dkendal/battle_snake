@@ -1,4 +1,4 @@
-const bg = "black";
+import { add, div, sub, uniq, smooth } from '../point';
 
 type Ctx = CanvasRenderingContext2D;
 type Image = HTMLImageElement;
@@ -7,38 +7,9 @@ function noop() { }
 
 const gutter = 0.1;
 const unit = 1 - gutter * 2;
-const foodColor = "red";
+const halfUnit = unit / 2;
+const offset = unit / 2 * -1;
 const coordCache: WeakMap<bs.Snake, Array<bs.Point>> = new WeakMap();
-
-function add([x0, x1]: bs.Point, [y0, y1]: bs.Point): bs.Point {
-  return [x0 + y0, x1 + y1];
-}
-
-function mul([x0, x1]: bs.Point, s: number): bs.Point {
-  return [x0 * s, x1 * s];
-}
-
-function div(a: bs.Point, s: number): bs.Point {
-  return mul(a, 1 / s)
-}
-
-function sub(a: bs.Point, b: bs.Point): bs.Point {
-  return add(a, mul(b, -1))
-}
-
-function eq(a: bs.Point, b: bs.Point): boolean {
-  return a[0] === b[0] && a[1] === b[1];
-}
-
-function uniq(s: bs.Point[]): bs.Point[] {
-  return s.reduce(([y, ...s], x) => {
-    if (!eq(y, x)) {
-      return [x, y, ...s];
-    }
-    return [y, ...s];
-  }, [s[0]])
-    .reverse();
-}
 
 function coords(snake: bs.Snake): bs.Point[] {
   const coords = coordCache.get(snake)
@@ -52,16 +23,6 @@ function coords(snake: bs.Snake): bs.Point[] {
   coordCache.set(snake, arr);
 
   return arr;
-}
-
-// Add an interpolated point between every point in points.
-function smooth(points: bs.Point[]) {
-  return points.reduce(
-    ([b, ...s], a) => {
-      const mean = div(add(a, b), 2);
-      return [a, mean, b, ...s];
-    },
-    [points[0]]);
 }
 
 function get(href: string): Promise<SVGSVGElement> {
@@ -120,18 +81,30 @@ export class Board {
   private readonly height: number;
   private readonly width: number;
   private readonly images = new Map();
+  private readonly colorPallet: Map<string, string>;
 
-  constructor(fgctx: Ctx, bgctx: Ctx, width: number, height: number) {
+  constructor(
+    fgctx: Ctx,
+    bgctx: Ctx,
+    width: number,
+    height: number,
+    colorPallet: Map<string, string>
+  ) {
     this.bgctx = bgctx;
     this.fgctx = fgctx;
     this.width = width;
     this.height = height;
+    this.colorPallet = colorPallet;
+  }
+
+  color(name: string): string {
+    return this.colorPallet.get(name) || 'pink';
   }
 
   drawGrid(width: number, height: number) {
     this.clear(this.bgctx);
 
-    this.bgctx.fillStyle = bg;
+    this.bgctx.fillStyle = this.color('background');
 
     for (let i = 0; i < width; i++) {
       for (let j = 0; j < height; j++) {
@@ -139,7 +112,9 @@ export class Board {
       }
     }
 
+    // The grid only needs to be drawn once per board instance
     delete this.drawGrid;
+
     this.drawGrid = noop;
   }
 
@@ -220,17 +195,16 @@ export class Board {
   drawImage(image: Image, h0: bs.Point, h1: bs.Point) {
     const ctx = this.fgctx;
 
-    const offset = unit / 2 * -1;
-
     const v = sub(h0, h1);
 
-    const [a0, a1] = add([0.5, 0.5], // translate to centre of point
-      sub(h0, // move to coordinate
-        div(v, 10))); // move to border of path
+    const a =
+      add([0.5, 0.5], // translate to centre of point
+        sub(h0, // move to coordinate
+          div(v, 10))); // move to border of path
 
     ctx.save();
 
-    ctx.translate(a0, a1);
+    ctx.translate(a[0], a[1]);
 
     switch (v.join(' ')) {
       case '0 -1':
@@ -253,9 +227,9 @@ export class Board {
 
   drawFood([x, y]: bs.Food) {
     const ctx = this.fgctx;
+    ctx.fillStyle = this.color('food');
     ctx.beginPath();
-    ctx.fillStyle = foodColor;
-    ctx.arc(x, y, unit / 2, 0, 2 * Math.PI);
+    ctx.arc(x, y, halfUnit, 0, 2 * Math.PI);
     ctx.fill();
   }
 

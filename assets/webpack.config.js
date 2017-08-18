@@ -51,6 +51,10 @@ config.module = {
 };
 
 config.resolve = {
+  modules: [
+    'node_modules',
+    'js',
+  ],
   alias: {
     css: relativePath("css")
   },
