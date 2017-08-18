@@ -6,6 +6,13 @@ import { Spectator } from "./channels";
 import { Board } from "./board";
 
 const logger = console.error.bind(console);
+const width = 1920;
+const height = 1920;
+
+const colorPallet = new Map<string, string>([
+  ['background', '#999'],
+  ['food', '#f06a53'],
+]);
 
 class Config {
   isReplay: boolean = false;
@@ -47,15 +54,13 @@ function joinAdminChannel(gameId: string) {
     return;
   }
 
-  const width = 1000;
-  const height = 1000;
   const fg = document.createElement("canvas");
   const bg = document.createElement("canvas");
 
   [bg, fg].forEach(canvas => {
     canvas.width = width;
     canvas.height = height;
-    canvas.setAttribute("style", "position:absolute;z-index:1;");
+    canvas.setAttribute("style", "position:absolute;z-index:1;width:100vh;");
     container.appendChild(canvas);
   });
 
@@ -67,14 +72,14 @@ function joinAdminChannel(gameId: string) {
 
   const config = loadConfig();
   const gameId = config.gameId;
-  const board = new Board(fgctx, bgctx, width, height);
+  const board = new Board(fgctx, bgctx, width, height, colorPallet);
   const spectator = new Spectator(gameId);
 
   spectator.onTick = (state: bs.Board) => {
     requestAnimationFrame(() => board.draw(state));
   };
 
-  spectator.join();
+  spectator.join()
 
   joinAdminChannel(gameId);
 })();
