@@ -3,7 +3,7 @@ import "phoenix_html";
 import socket from "./socket";
 import Mousetrap from "mousetrap";
 import { Spectator } from "./channels";
-import { Board } from "./board";
+import { GameBoard } from "./game_board";
 
 const logger = console.error.bind(console);
 const width = 1920;
@@ -48,9 +48,9 @@ function joinAdminChannel(gameId: string) {
 }
 
 (() => {
-  const container = document.getElementById("game-board");
+  const gameboardContainer = document.getElementById("game-board");
 
-  if (!container) {
+  if (!gameboardContainer) {
     return;
   }
 
@@ -60,8 +60,7 @@ function joinAdminChannel(gameId: string) {
   [bg, fg].forEach(canvas => {
     canvas.width = width;
     canvas.height = height;
-    canvas.setAttribute("style", "position:absolute;z-index:1;width:100vh;");
-    container.appendChild(canvas);
+    gameboardContainer.appendChild(canvas);
   });
 
   const [fgctx, bgctx] = [fg, bg].map(x => x.getContext("2d"));
@@ -72,11 +71,13 @@ function joinAdminChannel(gameId: string) {
 
   const config = loadConfig();
   const gameId = config.gameId;
-  const board = new Board(fgctx, bgctx, width, height, colorPallet);
+  const board = new GameBoard(fgctx, bgctx, width, height, colorPallet);
   const spectator = new Spectator(gameId);
 
   spectator.onTick = (state: bs.Board) => {
-    requestAnimationFrame(() => board.draw(state));
+    requestAnimationFrame(() => {
+      board.draw(state);
+    });
   };
 
   spectator.join()

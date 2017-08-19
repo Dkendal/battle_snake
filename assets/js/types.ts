@@ -3,6 +3,10 @@ declare module bs {
 
   export type Food = Point;
 
+  export type Ctx = CanvasRenderingContext2D;
+
+  export type Image = HTMLImageElement;
+
   export interface Snake {
     taunt?: any;
     name: string;
