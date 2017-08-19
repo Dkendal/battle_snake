@@ -12,6 +12,5 @@
   <%= raw battle_snake_js_object(assigns) %>
 </script>
 
-<div class="play-show">
-  <div id="game-board" style="flex:1;"></div>
-</div>
+<div id="game-board" class="gameboard"></div>
+<div id="game-scoreboard" class="scoreboard"></div>
