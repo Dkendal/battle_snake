@@ -1,12 +1,19 @@
 .scoreboard {
 }
 
+.gameapp {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .gameboard {
-  width: 100vh;
+  width: 50vh;
   position: relative;
 
   canvas {
-    width: 100vh;
+    width: inherit;
   }
 
   canvas ~ canvas {

@@ -12,5 +12,7 @@
   <%= raw battle_snake_js_object(assigns) %>
 </script>
 
-<div id="game-board" class="gameboard"></div>
-<div id="game-scoreboard" class="scoreboard"></div>
+<%= content_tag :GameApp, "", [
+    gameid: @game.id,
+    class: "gameapp",
+  ] %>

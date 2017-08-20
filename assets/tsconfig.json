@@ -7,7 +7,6 @@
       "esnext"
     ],
     "allowJs": true,
-    "checkJs": true,
     "jsx": "preserve",
     "sourceMap": true,
     "removeComments": true,
