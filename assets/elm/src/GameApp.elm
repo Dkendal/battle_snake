@@ -87,7 +87,7 @@ update msg model =
                     ( model, emit StopGame )
 
                 _ ->
-                    ( model, Cmd.none )
+                    noOp model
 
         PhxMsg msg ->
             Socket.update msg model.socket
@@ -150,14 +150,14 @@ subscriptions model =
 -- FUNCTIONS
 
 
-adminChannel : Model -> String
-adminChannel model =
-    "game_admin:" ++ model.gameid
+adminChannel : { a | gameid : String } -> String
+adminChannel { gameid } =
+    "game_admin:" ++ gameid
 
 
-spectatorChannel : Model -> String
-spectatorChannel model =
-    "spectator:" ++ model.gameid
+spectatorChannel : { a | gameid : String } -> String
+spectatorChannel { gameid } =
+    "spectator:" ++ gameid
 
 
 bgId : Model -> String
@@ -201,8 +201,15 @@ joinChannel channel model =
 
 socket : String -> String -> PhxSock
 socket url gameid =
-    Socket.init url
-        |> Socket.on "tick" ("spectator:" ++ gameid) Tick
+    let
+        model =
+            { gameid = gameid }
+
+        spectator =
+            spectatorChannel model
+    in
+        Socket.init url
+            |> Socket.on "tick" spectator Tick
 
 
 adminCmd : String -> Model -> ( Model, Cmd Msg )
