@@ -1,3 +1,31 @@
+declare module "elm/GameApp" {
+  interface Ports {
+    mount: Elm.Port<(args: {fgId: string, bgId: string}) => void>
+    draw: Elm.Port<(response: bs.TickResponse) => void>
+  }
+
+  export const GameApp: Elm.App<Ports>;
+}
+
+declare module Elm {
+  export interface Port<T> {
+    subscribe(callback: T): void;
+  }
+
+  export interface Program<T> {
+    ports: T;
+  }
+
+  export interface App<T>  {
+    fullscreen(): void;
+    embed(node: Element, options?: MetaData): Program<T>;
+  }
+
+  export interface MetaData {
+    [key: string]: any
+  }
+}
+
 declare module bs {
   export type Point = [number, number];
 
@@ -6,6 +34,8 @@ declare module bs {
   export type Ctx = CanvasRenderingContext2D;
 
   export type Image = HTMLImageElement;
+
+  export type List<T> = {length: number, item: (i: number) => T}
 
   export interface Snake {
     taunt?: any;

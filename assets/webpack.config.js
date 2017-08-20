@@ -46,8 +46,19 @@ const scssRule = {
   ]
 };
 
+const elmRule = {
+  test: /\.elm$/,
+  exclude: [/elm-stuff/, /node_modules/],
+  use: {
+    loader: 'elm-webpack-loader',
+    options: {
+      cwd: relativePath("elm")
+    }
+  }
+};
+
 config.module = {
-  rules: [tsRule, scssRule]
+  rules: [tsRule, scssRule, elmRule]
 };
 
 config.resolve = {
@@ -56,9 +67,11 @@ config.resolve = {
     'js',
   ],
   alias: {
-    css: relativePath("css")
+    css: relativePath("css"),
+    js: relativePath("js"),
+    elm: relativePath("elm/src"),
   },
-  extensions: [".css", ".js", ".json", ".scss", ".ts"]
+  extensions: [".css", ".js", ".json", ".scss", ".ts", ".elm"]
 };
 
 config.devtool = "#source-map";

@@ -15,6 +15,7 @@ TODOs.org
 TODOs.org_archive
 assets/.sass-cache
 assets/node_modules
+assets/elm/elm-stuff
 databases/
 erl_crash.dump
 assets/.awcache
