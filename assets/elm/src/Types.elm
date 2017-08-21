@@ -21,6 +21,7 @@ type alias Flags =
 type alias Model =
     { socket : Socket.Socket Msg
     , gameid : String
+    , board : Maybe Board
     }
 
 
@@ -50,3 +51,31 @@ type alias PhxSock =
 
 type alias PhxSockMsg =
     Socket.Msg Msg
+
+
+type alias TickMsg =
+    { content : Board }
+
+
+type alias Board =
+    { turn : Int
+    , snakes : List Snake
+    , deadSnakes : List Snake
+    , gameid : String
+    , food : List Point
+    }
+
+
+type alias Snake =
+    { causeOfDeath : Maybe String
+    , color : String
+    , coords : List Point
+    , health : Int
+    , id : String
+    , name : String
+    , taunt : Maybe String
+    }
+
+
+type Point
+    = Point Int Int

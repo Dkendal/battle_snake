@@ -1,16 +1,17 @@
 module GameApp exposing (..)
 
 import Char
+import Decode exposing (..)
 import GameBoard
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Json.Decode as JD
+import Json.Decode exposing (decodeValue)
 import Json.Encode as JE
 import Keyboard
 import Phoenix.Channel as Channel
-import Phoenix.Socket as Socket
 import Phoenix.Push as Push
+import Phoenix.Socket as Socket
 import Task exposing (..)
 import Tuple exposing (..)
 import Types exposing (..)
@@ -53,6 +54,7 @@ init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( { socket = socket flags.websocket flags.gameid
       , gameid = flags.gameid
+      , board = Nothing
       }
     , Cmd.batch
         [ emit JoinSpectatorChannel
@@ -68,7 +70,7 @@ init flags =
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case Debug.log "Update" msg of
+    case msg of
         KeyDown keyCode ->
             case Char.fromCode keyCode of
                 'H' ->
@@ -123,7 +125,12 @@ update msg model =
             adminCmd "prev" model
 
         Tick raw ->
-            ( model, GameBoard.draw raw )
+            case decodeValue tick raw of
+                Ok board ->
+                    ( model, GameBoard.draw raw )
+
+                _ ->
+                    noOp model
 
         MountCanvasApp ->
             ( model
