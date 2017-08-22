@@ -75,22 +75,17 @@ function loadImage(id: string, color: string): Promise<bs.Image> {
 export class GameBoard {
   private readonly bgctx: bs.Ctx;
   private readonly fgctx: bs.Ctx;
-  private readonly height: number;
-  private readonly width: number;
   private readonly images = new Map();
   private readonly colorPallet: Map<string, string>;
+  private lastDim : {width: number, height: number} = {width: -1, height: -1};
 
   constructor(
     fgctx: bs.Ctx,
     bgctx: bs.Ctx,
-    width: number,
-    height: number,
     colorPallet: Map<string, string>
   ) {
     this.bgctx = bgctx;
     this.fgctx = fgctx;
-    this.width = width;
-    this.height = height;
     this.colorPallet = colorPallet;
   }
 
@@ -99,7 +94,7 @@ export class GameBoard {
   }
 
   drawGrid(width: number, height: number) {
-    this.clear(this.bgctx);
+    this.clear(this.bgctx, width, height);
 
     this.bgctx.fillStyle = this.color('background');
 
@@ -108,11 +103,6 @@ export class GameBoard {
         this.bgctx.fillRect(i + gutter, j + gutter, unit, unit);
       }
     }
-
-    // The grid only needs to be drawn once per board instance
-    delete this.drawGrid;
-
-    this.drawGrid = noop;
   }
 
   getImage(id: string, color: string): bs.Image {
@@ -231,18 +221,36 @@ export class GameBoard {
   }
 
   clear(ctx: bs.Ctx) {
-    ctx.clearRect(0, 0, this.width, this.height);
+    const {width, height} = ctx.canvas;
+    ctx.clearRect(0, 0, width, height);
+  }
+
+  hasDimChanged({width, height}: bs.Board) {
+    return {width, height} != this.lastDim;
   }
 
   draw(board: bs.Board) {
     const ctxs = [this.bgctx, this.fgctx];
 
-    const width = Math.floor(this.width / board.width);
-    const height = Math.floor(this.height / board.height);
+    const clientWidth = this.bgctx.canvas.width;
+    const clientHeight = this.bgctx.canvas.height;
+    const {width, height} = board;
+
+    const h = clientHeight / height;
+    const w = clientWidth / width;
+    const sign = (clientWidth / clientHeight) > ( width / height )
+    const scaler = sign ? h : w
+
+    const xT = sign ? (clientWidth - h * width) / 2 : 0;
+    const yT = sign ? 0 : (clientHeight - w * height) / 2;
 
     this.clear(this.fgctx);
+    this.clear(this.bgctx)
 
-    ctxs.forEach(x => x.scale(width, height));
+    ctxs.forEach(ctx => {
+      ctx.translate(xT, yT);
+      ctx.scale(scaler, scaler)
+    });
 
     this.drawGrid(width, height);
 
