@@ -36,14 +36,49 @@ main =
 
 view : Model -> Html Msg
 view model =
-    div [ class "gameboard" ]
-        [ canvas
-            [ id (bgId model), width 1920, height 1920 ]
-            []
-        , canvas
-            [ id (fgId model), width 1920, height 1920 ]
-            []
-        ]
+    let
+        turn =
+            model.board
+                |> Maybe.andThen (.turn >> toString >> Just)
+                |> Maybe.withDefault ""
+
+        snakes =
+            model.board
+                |> Maybe.andThen (.snakes >> List.map snakeView >> Just)
+                |> Maybe.withDefault []
+    in
+        div [ class "gameapp" ]
+            [ div [] [ text turn ]
+            , div [ class "col" ]
+                [ div
+                    [ class "gameboard" ]
+                    [ canvas [ id (bgId model) ] []
+                    , canvas [ id (fgId model) ] []
+                    ]
+                , div [ class "snakes" ] snakes
+                ]
+            ]
+
+
+snakeView snake =
+    let
+        healthRemaining =
+            (toString (100 - snake.health)) ++ "%"
+    in
+        div [ class "snake" ]
+            [ div
+                [ style
+                    [ ( "background-color", snake.color )
+                    , ( "left", healthRemaining )
+                    ]
+                , class "snake-healthbar"
+                ]
+                []
+            , div [ class "snake-label" ]
+                [ span [ class "snake-name" ] [ text snake.name ]
+                , span [ class "snake-health" ] [ text (toString snake.health) ]
+                ]
+            ]
 
 
 
@@ -126,8 +161,8 @@ update msg model =
 
         Tick raw ->
             case decodeValue tick raw of
-                Ok board ->
-                    ( model, GameBoard.draw raw )
+                Ok { content } ->
+                    ( { model | board = Just content }, GameBoard.draw raw )
 
                 _ ->
                     noOp model

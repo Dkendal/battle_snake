@@ -25,10 +25,16 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      const board = new GameBoard(fgctx, bgctx, fg.width, fg.height, colorPallet);
+      const board = new GameBoard(fgctx, bgctx, colorPallet);
 
       program.ports.draw.subscribe(({ content }) => {
-        requestAnimationFrame(() => board.draw(content));
+        requestAnimationFrame(() => {
+          fg.width = fg.clientWidth;
+          fg.height = fg.clientHeight;
+          bg.width = fg.clientWidth;
+          bg.height = fg.clientHeight;
+          board.draw(content)
+        });
       })
     })
   });

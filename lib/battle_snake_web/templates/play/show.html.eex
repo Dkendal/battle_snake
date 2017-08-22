@@ -14,5 +14,4 @@
 
 <%= content_tag :GameApp, "", [
     gameid: @game.id,
-    class: "gameapp",
   ] %>
