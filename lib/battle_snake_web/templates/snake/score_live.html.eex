@@ -6,8 +6,7 @@
 <% css_class = if GameState.winner?(@state, @snake), do: "scoreboard-snake-winner" %>
 
 <div class="scoreboard-snake <%= css_class %>">
-  <div style="border-color: <%= color %>;background-image:url(<%= img_src %>);"
-       class="scoreboard-avatar"></div>
+  <div class="scoreboard-avatar" style="border-color: <%= color %>;background-image:url(<%= img_src %>);" ></div>
   <div class="scoreboard-snake-info">
     <div class="scoreboard-name"><%= name %></div>
     <div class="scoreboard-healthbar">

@@ -4,19 +4,15 @@ body {
   padding: 0;
 }
 
-.snake {
-  position: relative;
-}
-
 .snakes {
   width: 20vh
 }
 
-.col {
-  width: 100%;
-  flex: 1;
+.viewing-area {
   display: flex;
-  flex-direction: column;
+  flex: 1;
+  width: 100%;
+  padding: 1em;
 }
 
 .row {
@@ -51,6 +47,7 @@ body {
 .gameboard {
   flex: 1;
   position: relative;
+  margin:1em;
 
   canvas {
     height: 100%;

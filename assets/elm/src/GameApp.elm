@@ -34,49 +34,96 @@ main =
 -- VIEW
 
 
-view : Model -> Html Msg
-view model =
-    let
-        turn =
-            model.board
-                |> Maybe.andThen (.turn >> toString >> Just)
-                |> Maybe.withDefault ""
+turn model =
+    model.board
+        |> Maybe.andThen (.turn >> toString >> Just)
+        |> Maybe.withDefault ""
 
-        snakes =
-            model.board
-                |> Maybe.andThen (.snakes >> List.map snakeView >> Just)
-                |> Maybe.withDefault []
-    in
-        div [ class "gameapp" ]
-            [ div [] [ text turn ]
-            , div [ class "col" ]
-                [ div
-                    [ class "gameboard" ]
-                    [ canvas [ id (bgId model) ] []
-                    , canvas [ id (fgId model) ] []
+
+logo =
+    img [ src "/images/bs-logo-light.svg", class "scoreboard-logo" ] []
+
+
+snakesView model =
+    List.concat
+        [ model.board
+            |> Maybe.andThen (.snakes >> List.map (snakeView True) >> Just)
+            |> Maybe.withDefault []
+        , model.board
+            |> Maybe.andThen (.deadSnakes >> List.map (snakeView False) >> Just)
+            |> Maybe.withDefault []
+        ]
+
+
+gameboard model =
+    div
+        [ class "gameboard" ]
+        [ canvas [ id (bgId model) ] []
+        , canvas [ id (fgId model) ] []
+        ]
+
+
+scoreboardHeader model =
+    div [ class "scoreboard-flag-container" ]
+        [ div [ class "scoreboard-flag" ]
+            [ img [ class "scoreboard-division-img", src "/images/division-advanced.svg" ] []
+            , div []
+                [ div [ class "scoreboard-game-name" ]
+                    [ span [] [ text model.gameid ] ]
+                , div [ class "scoreboard-game-turn" ]
+                    [ span [] [ text ("Turn" ++ " " ++ (turn model)) ]
                     ]
-                , div [ class "snakes" ] snakes
                 ]
             ]
+        ]
 
 
-snakeView snake =
+scoreboard : Model -> Html Msg
+scoreboard model =
+    div []
+        ((scoreboardHeader model) :: (snakesView model))
+
+
+view : Model -> Html Msg
+view model =
+    div [ class "gameapp" ]
+        [ div [ class "viewing-area" ]
+            [ gameboard model
+            , scoreboard model
+            ]
+        ]
+
+
+snakeView alive snake =
     let
         healthRemaining =
             (toString (100 - snake.health)) ++ "%"
     in
-        div [ class "snake" ]
-            [ div
-                [ style
-                    [ ( "background-color", snake.color )
-                    , ( "left", healthRemaining )
-                    ]
-                , class "snake-healthbar"
+        div
+            [ classList
+                [ ( "scoreboard-snake", True )
+                , ( "scoreboard-snake-dead", not alive )
+                , ( "scoreboard-snake-alive", alive )
                 ]
-                []
-            , div [ class "snake-label" ]
-                [ span [ class "snake-name" ] [ text snake.name ]
-                , span [ class "snake-health" ] [ text (toString snake.health) ]
+            ]
+            [ div [ class "scoreboard-avatar" ] []
+            , div [ class "scoreboard-snake-info" ]
+                [ div [ class "snake-label" ]
+                    [ span [ class "snake-name" ]
+                        [ text snake.name ]
+                    , span [ class "snake-health" ]
+                        [ text (toString snake.health) ]
+                    ]
+                , div []
+                    [ div
+                        [ class "scoreboard-healthbar"
+                        , style
+                            [ ( "background-color", snake.color )
+                            , ( "left", healthRemaining )
+                            ]
+                        ]
+                        []
+                    ]
                 ]
             ]
 
