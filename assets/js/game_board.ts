@@ -1,6 +1,4 @@
-import { add, div, sub, uniq, smooth } from 'point';
-
-function noop() { }
+import { add, div, sub, uniq, smooth, round, mul, map } from 'point';
 
 const gutter = 0.1;
 const unit = 1 - gutter * 2;
@@ -77,7 +75,6 @@ export class GameBoard {
   private readonly fgctx: bs.Ctx;
   private readonly images = new Map();
   private readonly colorPallet: Map<string, string>;
-  private lastDim : {width: number, height: number} = {width: -1, height: -1};
 
   constructor(
     fgctx: bs.Ctx,
@@ -94,7 +91,7 @@ export class GameBoard {
   }
 
   drawGrid(width: number, height: number) {
-    this.clear(this.bgctx, width, height);
+    this.clear(this.bgctx);
 
     this.bgctx.fillStyle = this.color('background');
 
@@ -184,10 +181,7 @@ export class GameBoard {
 
     const v = sub(h0, h1);
 
-    const a =
-      add([0.5, 0.5], // translate to centre of point
-        sub(h0, // move to coordinate
-          div(v, 10))); // move to border of path
+    let a = add([0.5, 0.5], h0)
 
     ctx.save();
 
@@ -221,12 +215,8 @@ export class GameBoard {
   }
 
   clear(ctx: bs.Ctx) {
-    const {width, height} = ctx.canvas;
+    const { width, height } = ctx.canvas;
     ctx.clearRect(0, 0, width, height);
-  }
-
-  hasDimChanged({width, height}: bs.Board) {
-    return {width, height} != this.lastDim;
   }
 
   draw(board: bs.Board) {
@@ -234,11 +224,11 @@ export class GameBoard {
 
     const clientWidth = this.bgctx.canvas.width;
     const clientHeight = this.bgctx.canvas.height;
-    const {width, height} = board;
+    const { width, height } = board;
 
     const h = clientHeight / height;
     const w = clientWidth / width;
-    const sign = (clientWidth / clientHeight) > ( width / height )
+    const sign = (clientWidth / clientHeight) > (width / height)
     const scaler = sign ? h : w
 
     const xT = sign ? (clientWidth - h * width) / 2 : 0;

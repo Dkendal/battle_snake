@@ -9,6 +9,7 @@ const colorPallet = new Map<string, string>([
   ['food', '#f06a53'],
 ]);
 
+
 document.addEventListener("DOMContentLoaded", () => {
   const gameAppConfig = {
     websocket: `ws://${window.location.host}/socket/websocket`

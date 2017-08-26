@@ -23,6 +23,12 @@
     align-items: flex-start;
     display: flex;
     min-height: ms(10);
+    position: relative;
+  }
+  &-snake-alive {
+  }
+  &-snake-dead {
+    opacity: $dead-snake-opacity;
   }
   &-snake-info {
     width: 100%;
@@ -44,14 +50,10 @@
   &-logo {
     margin-bottom: ms(4);
   }
-  &-dead-snake {
-    opacity: $dead-snake-opacity;
-  }
   &-flag {
     align-items: center;
     background-color: $scoreboard-flag-color;
     display: flex;
-    flex: 1;
     padding-bottom: ms(-3);
     padding-left: ms(-3);
     padding-right: ms(-3);
@@ -59,6 +61,7 @@
   }
   &-flag-container {
     display: flex;
+    flex-direction: column;
     margin-bottom: ms(2);
   }
   &-flag-end {
@@ -66,6 +69,7 @@
     width: 35px;
   }
   &-healthbar {
+    position: relative;
     line-height: ms(4);
     height: ms(4);
   }
