@@ -20,7 +20,7 @@ export function get(href: string): Promise<SVGSVGElement> {
   });
 }
 
-export function svg2image(svg: SVGSVGElement, color: string) {
+export function svg2image(svg: SVGSVGElement, color: string): bs.Image {
   svg.setAttribute('fill', color)
 
   const DOMURL = window.URL || window;

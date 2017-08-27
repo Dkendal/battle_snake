@@ -1,4 +1,5 @@
 import { add, sub, uniq, smooth } from './point';
+import * as P from './point';
 import { loadImage } from './images';
 
 const gutter = 0.1;
@@ -80,32 +81,31 @@ export class GameBoard {
   }
 
   drawSnakeBody(snake: bs.Snake) {
-    const coordinates = smooth(coords(snake)).slice(1, -2);
-
-    if (coordinates.length < 4) {
-      return;
-    }
-
-    const [head, ...rest] = coordinates;
+    const points = P.shrink(P.smooth(snake.coords), 0.12);
 
     const ctx = this.fgctx;
 
     ctx.save();
 
-    ctx.translate(0.5, 0.5);
-
-    ctx.beginPath();
-
     ctx.strokeStyle = snake.color;
 
     ctx.lineWidth = unit;
 
-    ctx.moveTo(head[0], head[1]);
+    ctx.lineJoin = "round";
 
-    for (let i = 0; i < (rest.length - 1); i += 2) {
-      const c = rest[i];
-      const x = rest[i + 1];
-      ctx.quadraticCurveTo(c[0], c[1], x[0], x[1]);
+    ctx.translate(0.5, 0.5);
+
+    ctx.beginPath();
+
+    ctx.moveTo(points[0][0], points[0][1]);
+
+    for (let i = 1; i < points.length;) {
+      // const x1 = points[i - 1];
+      const x0 = points[i];
+
+      // ctx.quadraticCurveTo(c[0], c[1], x[0], x[1]);
+      ctx.lineTo(x0[0], x0[1]);
+      i += 1;
     }
 
     ctx.stroke();
@@ -195,13 +195,13 @@ export class GameBoard {
 
     this.drawGrid(width, height);
 
-    board.snakes.forEach((snake: bs.Snake) => this.drawSnakeBody(snake));
-
     this.fgctx.translate(0.5, 0.5);
 
     board.food.forEach((food: bs.Point) => this.drawFood(food));
 
     this.fgctx.translate(-0.5, -0.5);
+
+    board.snakes.forEach((snake: bs.Snake) => this.drawSnakeBody(snake));
 
     board.snakes.forEach((snake: bs.Snake) => this.drawImages(snake));
 
