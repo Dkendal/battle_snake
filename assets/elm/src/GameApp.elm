@@ -34,16 +34,19 @@ main =
 -- VIEW
 
 
+turn : Model -> String
 turn model =
     model.board
         |> Maybe.andThen (.turn >> toString >> Just)
         |> Maybe.withDefault ""
 
 
+logo : Html msg
 logo =
     img [ src "/images/bs-logo-light.svg", class "scoreboard-logo" ] []
 
 
+snakesView : Model -> List (Html msg)
 snakesView model =
     List.concat
         [ model.board
@@ -55,6 +58,7 @@ snakesView model =
         ]
 
 
+gameboard : Model -> Html msg
 gameboard model =
     div
         [ class "gameboard" ]
@@ -63,6 +67,7 @@ gameboard model =
         ]
 
 
+scoreboardHeader : Model -> Html msg
 scoreboardHeader model =
     div [ class "scoreboard-flag-container" ]
         [ div [ class "scoreboard-flag" ]
@@ -94,10 +99,11 @@ view model =
         ]
 
 
+snakeView : Bool -> Snake -> Html msg
 snakeView alive snake =
     let
         healthRemaining =
-            (toString (100 - snake.health)) ++ "%"
+            (toString snake.health) ++ "%"
     in
         div
             [ classList
@@ -119,7 +125,7 @@ snakeView alive snake =
                         [ class "scoreboard-healthbar"
                         , style
                             [ ( "background-color", snake.color )
-                            , ( "left", healthRemaining )
+                            , ( "width", healthRemaining )
                             ]
                         ]
                         []
