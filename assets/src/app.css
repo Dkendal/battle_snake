@@ -11,6 +11,10 @@ html, body {
   margin: 0;
 }
 
+a {
+  color: var(--link-color);
+}
+
 .gameapp {
   display: flex;
   flex-direction: row;
@@ -31,10 +35,22 @@ html, body {
   left: 0;
 }
 
+.controls {
+  display: flex;
+  justify-content: space-evenly;
+}
+
 .scoreboard {
   background: var(--bg-accent-color);
   color: var(--font-accent-color);
   padding: 1lh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.scoreboard-snakes {
+  flex: 1;
 }
 
 .scoreboard-header {

@@ -12,6 +12,7 @@ const variables = {
   'font-accent-color': white,
   'tile-color': lightgrey,
   'food-color': pink,
+  'link-color': blue,
 };
 
 module.exports = variables;
