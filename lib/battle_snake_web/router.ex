@@ -27,6 +27,8 @@ defmodule BattleSnakeWeb.Router do
     get "/example/move", ExampleController, :move
     post "/example/start", ExampleController, :start
     post "/example/move", ExampleController, :move
+
+    resources "/snake", SnakeTestController, only: [:index]
   end
 
   scope "/api", BattleSnakeWeb.Api, as: :api do
