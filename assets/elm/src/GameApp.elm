@@ -13,6 +13,7 @@ import Phoenix.Socket as Socket
 import Task exposing (..)
 import Tuple exposing (..)
 import Types exposing (..)
+import Route exposing (..)
 
 
 -- MAIN
@@ -30,6 +31,25 @@ main =
 
 
 -- VIEW
+
+
+view : Model -> Html Msg
+view model =
+    div []
+        [ div [ class "gameapp" ]
+            [ gameboard model
+            , scoreboard model
+            ]
+        ]
+
+
+gameboard : Model -> Html msg
+gameboard model =
+    div
+        [ class "gameboard" ]
+        [ canvas [ id (fgId model), class "gameboard-canvas", style fgCanvas ] []
+        , canvas [ id (bgId model), class "gameboard-canvas" ] []
+        ]
 
 
 logoAdvanced : String
@@ -54,30 +74,17 @@ turn model =
         |> Maybe.withDefault ""
 
 
-logo : Html msg
-logo =
-    img [ src logoLight ] []
-
-
-snakesView : Model -> List (Html msg)
+snakesView : Model -> Html msg
 snakesView model =
-    List.concat
-        [ model.board
-            |> Maybe.andThen (.snakes >> List.map (snakeView True) >> Just)
-            |> Maybe.withDefault []
-        , model.board
-            |> Maybe.andThen (.deadSnakes >> List.map (snakeView False) >> Just)
-            |> Maybe.withDefault []
-        ]
-
-
-gameboard : Model -> Html msg
-gameboard model =
-    div
-        [ class "gameboard" ]
-        [ canvas [ id (fgId model), class "gameboard-canvas", style fgCanvas ] []
-        , canvas [ id (bgId model), class "gameboard-canvas" ] []
-        ]
+    div [ class "scoreboard-snakes" ] <|
+        List.concat
+            [ model.board
+                |> Maybe.andThen (.snakes >> List.map (snakeView True) >> Just)
+                |> Maybe.withDefault []
+            , model.board
+                |> Maybe.andThen (.deadSnakes >> List.map (snakeView False) >> Just)
+                |> Maybe.withDefault []
+            ]
 
 
 scoreboardHeader : Model -> Html msg
@@ -103,18 +110,18 @@ scoreboardHeader model =
 
 scoreboard : Model -> Html Msg
 scoreboard model =
-    div [ class "scoreboard" ] <|
-        (scoreboardHeader model)
-            :: (snakesView model)
+    div [ class "scoreboard" ]
+        [ scoreboardHeader model
+        , snakesView model
+        , controls model
+        ]
 
 
-view : Model -> Html Msg
-view model =
-    div []
-        [ div [ class "gameapp" ]
-            [ gameboard model
-            , scoreboard model
-            ]
+controls : Model -> Html Msg
+controls model =
+    div [ class "controls" ]
+        [ a [ href <| route EditGame model ] [ text "Edit" ]
+        , a [ href <| route Games model ] [ text "Games" ]
         ]
 
 
