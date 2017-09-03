@@ -1,22 +1,16 @@
 module Route exposing (..)
 
-import Types exposing (..)
 import List
 
 
-type Route
-    = EditGame
-    | Games
+gamesPath : String
+gamesPath =
+    "/"
 
 
-route : Route -> Model -> String
-route name { gameid } =
-    case name of
-        Games ->
-            "/"
-
-        EditGame ->
-            path [ gameid, "edit" ]
+editGamePath : String -> String
+editGamePath id =
+    path [ id, "edit" ]
 
 
 path : List String -> String

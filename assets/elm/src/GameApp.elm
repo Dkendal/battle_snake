@@ -1,19 +1,18 @@
 module GameApp exposing (..)
 
 import Char
-import Decode exposing (..)
 import GameBoard
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Json.Decode exposing (decodeValue)
+import Json.Decode as JD
 import Keyboard
 import Phoenix.Channel as Channel
 import Phoenix.Push as Push
 import Phoenix.Socket as Socket
 import Task exposing (..)
 import Tuple exposing (..)
-import Types exposing (..)
 import Route exposing (..)
+import Json.Encode as JE
 
 
 -- MAIN
@@ -27,6 +26,122 @@ main =
         , update = update
         , subscriptions = subscriptions
         }
+
+
+
+-- FLAGS
+
+
+type alias Flags =
+    { websocket : String
+    , gameid : String
+    }
+
+
+
+-- MODEL
+
+
+type alias Model =
+    { socket : Socket.Socket Msg
+    , gameid : String
+    , board : Maybe Board
+    }
+
+
+
+-- MSG
+
+
+type Msg
+    = KeyDown Keyboard.KeyCode
+    | JoinAdminChannel
+    | JoinSpectatorChannel
+    | JoinChannelFailed JE.Value
+    | JoinChannelSuccess JE.Value
+    | MountCanvasApp
+    | NextStep
+    | PauseGame
+    | PhxMsg PhxSockMsg
+    | PrevStep
+    | ResumeGame
+    | StopGame
+    | Tick JE.Value
+
+
+type alias PhxSock =
+    Socket.Socket Msg
+
+
+type alias PhxSockMsg =
+    Socket.Msg Msg
+
+
+type alias TickMsg =
+    { content : Board }
+
+
+type alias Board =
+    { turn : Int
+    , snakes : List Snake
+    , deadSnakes : List Snake
+    , gameid : String
+    , food : List Point
+    }
+
+
+type alias Snake =
+    { causeOfDeath : Maybe String
+    , color : String
+    , coords : List Point
+    , health : Int
+    , id : String
+    , name : String
+    , taunt : Maybe String
+    }
+
+
+type Point
+    = Point Int Int
+
+
+
+-- Decoder
+
+
+decodeTick : JD.Decoder TickMsg
+decodeTick =
+    JD.map TickMsg
+        (JD.field "content" decodeBoard)
+
+
+decodeBoard : JD.Decoder Board
+decodeBoard =
+    JD.map5 Board
+        (JD.field "turn" JD.int)
+        (JD.field "snakes" (JD.list decodeSnake))
+        (JD.field "deadSnakes" (JD.list decodeSnake))
+        (JD.field "gameId" JD.string)
+        (JD.field "food" (JD.list decodePoint))
+
+
+decodePoint : JD.Decoder Point
+decodePoint =
+    JD.map2 Point
+        (JD.index 0 JD.int)
+        (JD.index 1 JD.int)
+
+
+decodeSnake : JD.Decoder Snake
+decodeSnake =
+    JD.map7 Snake
+        (JD.maybe (JD.field "causeOfDeath" JD.string))
+        (JD.field "color" JD.string)
+        (JD.field "coords" (JD.list decodePoint))
+        (JD.field "health" JD.int)
+        (JD.field "id" JD.string)
+        (JD.field "name" JD.string)
+        (JD.field "taunt" (JD.maybe JD.string))
 
 
 
@@ -120,8 +235,8 @@ scoreboard model =
 controls : Model -> Html Msg
 controls model =
     div [ class "controls" ]
-        [ a [ href <| route EditGame model ] [ text "Edit" ]
-        , a [ href <| route Games model ] [ text "Games" ]
+        [ a [ href <| editGamePath model.gameid ] [ text "Edit" ]
+        , a [ href <| gamesPath ] [ text "Games" ]
         ]
 
 
@@ -230,7 +345,7 @@ update msg model =
             adminCmd "prev" model
 
         Tick raw ->
-            case decodeValue tick raw of
+            case JD.decodeValue decodeTick raw of
                 Ok { content } ->
                     ( { model | board = Just content }, GameBoard.draw raw )
 
