@@ -32,10 +32,12 @@ main =
 -- VIEW
 
 
+logoAdvanced : String
 logoAdvanced =
     "/images/division-advanced.svg"
 
 
+logoLight : String
 logoLight =
     "/images/bs-logo-light.svg"
 
