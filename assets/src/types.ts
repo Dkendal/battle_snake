@@ -1,10 +1,16 @@
 declare module "elm/GameApp" {
   interface Ports {
-    mount: Elm.Port<(args: {fgId: string, bgId: string}) => void>
+    mount: Elm.Port<(args: { fgId: string, bgId: string }) => void>
     draw: Elm.Port<(response: bs.TickResponse) => void>
   }
 
   export const GameApp: Elm.App<Ports>;
+}
+
+declare module "elm/SnakeTest" {
+  interface Ports { }
+
+  export const SnakeTest: Elm.App<Ports>;
 }
 
 declare module Elm {
@@ -16,7 +22,7 @@ declare module Elm {
     ports: T;
   }
 
-  export interface App<T>  {
+  export interface App<T> {
     fullscreen(): void;
     embed(node: Element, options?: MetaData): Program<T>;
   }
@@ -35,7 +41,7 @@ declare module bs {
 
   export type Image = HTMLImageElement;
 
-  export type List<T> = {length: number, item: (i: number) => T}
+  export type List<T> = { length: number, item: (i: number) => T }
 
   export interface Snake {
     taunt?: any;
