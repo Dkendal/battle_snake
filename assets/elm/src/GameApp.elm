@@ -5,9 +5,7 @@ import Decode exposing (..)
 import GameBoard
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Html.Events exposing (..)
 import Json.Decode exposing (decodeValue)
-import Json.Encode as JE
 import Keyboard
 import Phoenix.Channel as Channel
 import Phoenix.Push as Push
@@ -34,6 +32,19 @@ main =
 -- VIEW
 
 
+logoAdvanced =
+    "/images/division-advanced.svg"
+
+
+logoLight =
+    "/images/bs-logo-light.svg"
+
+
+fgCanvas : List ( String, String )
+fgCanvas =
+    ( "z-index", "1" ) :: []
+
+
 turn : Model -> String
 turn model =
     model.board
@@ -43,7 +54,7 @@ turn model =
 
 logo : Html msg
 logo =
-    img [ src "/images/bs-logo-light.svg", class "scoreboard-logo" ] []
+    img [ src logoLight ] []
 
 
 snakesView : Model -> List (Html msg)
@@ -62,37 +73,43 @@ gameboard : Model -> Html msg
 gameboard model =
     div
         [ class "gameboard" ]
-        [ canvas [ id (bgId model) ] []
-        , canvas [ id (fgId model) ] []
+        [ canvas [ id (fgId model), class "gameboard-canvas", style fgCanvas ] []
+        , canvas [ id (bgId model), class "gameboard-canvas" ] []
         ]
 
 
 scoreboardHeader : Model -> Html msg
 scoreboardHeader model =
-    div [ class "scoreboard-flag-container" ]
-        [ div [ class "scoreboard-flag" ]
-            [ img [ class "scoreboard-division-img", src "/images/division-advanced.svg" ] []
-            , div []
-                [ div [ class "scoreboard-game-name" ]
-                    [ span [] [ text model.gameid ] ]
-                , div [ class "scoreboard-game-turn" ]
-                    [ span [] [ text ("Turn" ++ " " ++ (turn model)) ]
+    let
+        turnText =
+            ("Turn" ++ " " ++ (turn model))
+    in
+        div [ class "scoreboard-header" ]
+            [ div []
+                [ img [ src logoLight ] []
+                , img [ src logoAdvanced, class "division-logo" ] []
+                , div []
+                    [ div []
+                        [ span [] [ text model.gameid ] ]
+                    , div []
+                        [ span [] [ text turnText ]
+                        ]
                     ]
                 ]
             ]
-        ]
 
 
 scoreboard : Model -> Html Msg
 scoreboard model =
-    div []
-        ((scoreboardHeader model) :: (snakesView model))
+    div [ class "scoreboard" ] <|
+        (scoreboardHeader model)
+            :: (snakesView model)
 
 
 view : Model -> Html Msg
 view model =
-    div [ class "gameapp" ]
-        [ div [ class "viewing-area" ]
+    div []
+        [ div [ class "gameapp" ]
             [ gameboard model
             , scoreboard model
             ]
@@ -104,6 +121,11 @@ snakeView alive snake =
     let
         healthRemaining =
             (toString snake.health) ++ "%"
+
+        snakeStyle =
+            ( "background-color", snake.color )
+                :: ( "width", healthRemaining )
+                :: []
     in
         div
             [ classList
@@ -112,25 +134,11 @@ snakeView alive snake =
                 , ( "scoreboard-snake-alive", alive )
                 ]
             ]
-            [ div [ class "scoreboard-avatar" ] []
-            , div [ class "scoreboard-snake-info" ]
-                [ div [ class "snake-label" ]
-                    [ span [ class "snake-name" ]
-                        [ text snake.name ]
-                    , span [ class "snake-health" ]
-                        [ text (toString snake.health) ]
-                    ]
-                , div []
-                    [ div
-                        [ class "scoreboard-healthbar"
-                        , style
-                            [ ( "background-color", snake.color )
-                            , ( "width", healthRemaining )
-                            ]
-                        ]
-                        []
-                    ]
+            [ div [ class "healthbar-text" ]
+                [ span [] [ text snake.name ]
+                , span [] [ text <| toString snake.health ]
                 ]
+            , div [ style snakeStyle, class "healthbar" ] []
             ]
 
 

@@ -1,9 +1,0 @@
-html,
-body,
-main {
-  background-color: $base-background-color;
-
-  @include media($tablet) {
-    font-size: ms(-1);
-  }
-}

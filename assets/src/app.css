@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat');
+
+:root {
+  font: 16px / 1.3 'Montserrat', sans-serif;
+  color: var(--font-primary-color);
+  background: var(--bg-primary-color);
+}
+
+html, body {
+  padding: 0;
+  margin: 0;
+}
+
+.gameapp {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  width: 100vw;
+}
+
+.gameboard {
+  flex: 1;
+  position: relative;
+  margin: 1lh;
+}
+
+.gameboard-canvas {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  left: 0;
+}
+
+.scoreboard {
+  background: var(--bg-accent-color);
+  color: var(--font-accent-color);
+  padding: 1lh;
+}
+
+.scoreboard-header {
+  margin-bottom: 2lh;
+}
+
+.scoreboard-snake ~ .scoreboard-snake {
+  margin-top: 1lh;
+}
+
+.scoreboard-snake-dead {
+  opacity: 0.5;
+}
+
+.healthbar-text {
+  display: flex;
+  justify-content: space-between;
+}
+
+.healthbar {
+  height: 0.2lh;
+}
+
+.division-logo {
+  margin: 0 2lh;
+}
