@@ -1,6 +1,7 @@
 import "./app.css";
 import "phoenix_html";
 import { GameApp } from "elm/GameApp";
+import { SnakeTest } from "elm/SnakeTest";
 import { embedApp } from "./utils";
 import { GameBoard } from "./game_board";
 import css from './css-variables'
@@ -11,6 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const gameAppConfig = {
     websocket: `ws://${window.location.host}/socket/websocket`
   };
+
+  embedApp('SnakeTest', SnakeTest, {});
 
   embedApp('GameApp', GameApp, gameAppConfig).map((program) => {
     program.ports.mount.subscribe(({ fgId, bgId }) => {
