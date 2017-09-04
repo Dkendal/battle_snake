@@ -1,6 +1,6 @@
 import "./app.css";
 import "phoenix_html";
-import { GameApp } from "elm/GameApp";
+import { Game } from "elm/Game";
 import { SnakeTest } from "elm/SnakeTest";
 import { embedApp } from "./utils";
 import { GameBoard } from "./game_board";
@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   embedApp('SnakeTest', SnakeTest, {});
 
-  embedApp('GameApp', GameApp, gameAppConfig).map((program) => {
+  embedApp('Game', Game, gameAppConfig).map((program) => {
     program.ports.mount.subscribe(({ fgId, bgId }) => {
       const fg = <HTMLCanvasElement>document.getElementById(fgId);
       const bg = <HTMLCanvasElement>document.getElementById(bgId);

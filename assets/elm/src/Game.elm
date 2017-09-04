@@ -1,4 +1,4 @@
-module GameApp exposing (..)
+module Game exposing (..)
 
 import Char
 import GameBoard
