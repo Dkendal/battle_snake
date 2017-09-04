@@ -12,6 +12,6 @@
   <%= raw battle_snake_js_object(assigns) %>
 </script>
 
-<%= content_tag :GameApp, "", [
+<%= content_tag :Game, "", [
     gameid: @game.id,
   ] %>
