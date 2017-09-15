@@ -19,6 +19,9 @@ const tsRule = {
   options: {
     useBabel: true,
     useCache: true,
+    reportFiles: [
+      'src/**/*.{ts,tsx}',
+    ],
   },
 };
 
