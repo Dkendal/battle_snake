@@ -1,7 +1,7 @@
 defmodule BattleSnake.Mixfile do
   use Mix.Project
 
-  @version String.strip(File.read!("VERSION"))
+  @version String.trim(File.read!("VERSION"))
 
   def project do
     [app: :battle_snake,
