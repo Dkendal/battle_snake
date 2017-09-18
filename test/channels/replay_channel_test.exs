@@ -1,6 +1,5 @@
 defmodule BattleSnakeWeb.ReplayChannelTest do
   alias BattleSnakeWeb.ReplayChannel
-  alias BattleSnake.Replay.PlayBack.Frame
   use BattleSnakeWeb.ChannelCase
 
   alias BattleSnakeWeb.ReplayChannel

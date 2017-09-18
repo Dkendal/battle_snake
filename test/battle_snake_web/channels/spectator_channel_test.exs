@@ -9,7 +9,7 @@ defmodule BattleSnakeWeb.SpectatorChannelTest do
     setup [:sub, :broadcast_state]
 
     test "renders content" do
-      assert_broadcast "tick", %{content: content}
+      assert_broadcast "tick", %{content: _content}
     end
   end
 
@@ -18,7 +18,7 @@ defmodule BattleSnakeWeb.SpectatorChannelTest do
     GameServer.PubSub.broadcast(c.id, %GameStateEvent{name: "test", data: state})
   end
 
-  def sub c do
+  def sub _ do
     id = create(:game_form).id
     {:ok, _, socket} =
       socket("user_id", %{})
