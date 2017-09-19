@@ -73,12 +73,6 @@ defmodule Mnesia do
 
     BattleSnake.World.create_table(disc_copies: nodes)
 
-    attributes = BattleSnake.Replay.attributes()
-    :mnesia.create_table(
-      BattleSnake.Replay, [
-        attributes: attributes,
-        disc_copies: nodes])
-
     import BattleSnake.GameResultSnake
     attributes = game_result_snake()
     |> game_result_snake()

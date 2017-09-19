@@ -8,10 +8,6 @@ import BattleSnake.GameResultSnake, only: :macros
     attributes: Keyword.keys(game_result_snake(game_result_snake())),
     index: [:game_id]])
 
-{:atomic, :ok} = :mnesia.create_table(
-  BattleSnake.Replay,
-  [attributes: BattleSnake.Replay.attributes()])
-
 {:ok, _} = Application.ensure_all_started(:ex_machina)
 
 ExUnit.start
