@@ -35,10 +35,8 @@ defmodule BattleSnake.GameServer.Server do
     |> GameForm.reload_game_server_state
 
     stream = Stream.concat(
-      get_in(state, [Access.key(:world, %{}),
-                     Access.key(:snakes, [])]),
-      get_in(state, [Access.key(:world, %{}),
-                     Access.key(:dead_snakes, [])]))
+      get_in(state, [Access.key(:world, %{}), Access.key(:snakes, [])]),
+      get_in(state, [Access.key(:world, %{}), Access.key(:dead_snakes, [])]))
 
     snakes = stream
     |> Stream.map(& {&1.id, &1})
@@ -186,10 +184,7 @@ defmodule BattleSnake.GameServer.Server do
     game_form_id = state.game_form_id
 
     {:atomic, _} = Mnesia.transaction fn ->
-      records = Mnesia.index_read(
-      GameResultSnake,
-      game_form_id,
-      :game_id)
+      records = Mnesia.index_read(GameResultSnake, game_form_id, :game_id)
 
       for s <- records,
         do: {GameResultSnake, game_result_snake(s, :id)}

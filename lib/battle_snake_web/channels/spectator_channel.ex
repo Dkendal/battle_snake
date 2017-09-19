@@ -1,5 +1,4 @@
 defmodule BattleSnakeWeb.SpectatorChannel do
-  alias BattleSnake.Replay
   alias BattleSnake.GameServer
   alias BattleSnake.GameStateEvent
 
@@ -13,8 +12,6 @@ defmodule BattleSnakeWeb.SpectatorChannel do
 
   defp do_join(game_id, payload, socket) do
     if authorized?(payload) do
-      {:ok, _pid} = Replay.start_recording(game_id)
-
       GameServer.PubSub.subscribe(game_id)
       send(self(), :after_join)
       socket = assign(socket, :game_id, game_id)

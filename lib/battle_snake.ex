@@ -11,7 +11,6 @@ defmodule BattleSnake do
       # Start the endpoint when the application starts
       supervisor(BattleSnakeWeb.Endpoint, []),
       supervisor(BattleSnake.GameServer.Supervisor, []),
-      supervisor(BattleSnake.Replay.Supervisor, []),
       supervisor(Task.Supervisor, [[name: BattleSnake.MoveSupervisor]]),
       supervisor(Registry, [:unique, BattleSnake.GameServer.Registry]),
       supervisor(Phoenix.PubSub.PG2, [BattleSnake.GameServer.PubSub, []]),
