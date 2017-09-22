@@ -95,16 +95,6 @@ defmodule BsWeb.GameForm.ResetTest do
     end
   end
 
-  describe "Reset.erase_replay/1" do
-    test "erases all World records for this game before starting" do
-      create(:world, game_form_id: 1)
-      create(:world, game_form_id: 2)
-      game_form = create(:game_form, id: 1)
-      Reset.erase_replay(game_form)
-      assert :mnesia.table_info(Bs.World, :size) == 1
-    end
-  end
-
   describe "Reset.position_snakes/1" do
     @position_snakes Reset.position_snakes(@world_with_snakes)
 
