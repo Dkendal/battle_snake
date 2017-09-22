@@ -81,7 +81,7 @@ defmodule Bs.Mixfile do
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:phoenix_pubsub, "~> 1.0"},
       {:poison, "~> 3.0"},
-      {:proper, github: "manopapad/proper", only: :test},
+      {:proper, github: "manopapad/proper", tag: "v1.2", only: :test},
       {:reprise, "~> 0.5.0", only: :dev},
     ]
   end
