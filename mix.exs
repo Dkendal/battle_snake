@@ -66,7 +66,6 @@ defmodule Bs.Mixfile do
       {:apex, "~> 0.7"},
       {:cowboy, "~> 1.0"},
       {:credo, "~> 0.8", only: [:dev, :text], runtime: false},
-      {:dbg, github: "fishcakez/dbg"},
       {:dialyxir, "~> 0.4", only: [:dev], runtime: false},
       {:distillery, "~> 1.1"},
       {:ecto, "~> 2.0"},
