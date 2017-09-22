@@ -1,5 +1,5 @@
-defmodule BsWeb.GameForm.ResetTest do
-  alias BsWeb.GameForm.Reset
+defmodule Bs.GameForm.ResetTest do
+  alias Bs.GameForm.Reset
 
   use Bs.Case, async: false
 

@@ -1,4 +1,4 @@
-defmodule BsWeb.GameForm.Reset do
+defmodule Bs.GameForm.Reset do
   alias Bs.Api
   alias Bs.GameForm
   alias Bs.Snake
