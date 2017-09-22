@@ -1,10 +1,9 @@
 defmodule BsWeb.GameForm.Reset do
-  alias Bs.{
-    GameForm,
-    Snake,
-    World,
-    Api,
-  }
+  alias Bs.Api
+  alias Bs.GameForm
+  alias Bs.Snake
+  alias Bs.World
+  alias Ecto.UUID
 
   @type load_fun :: ((SnakeForm.t, GameForm.t) -> Snake.t)
 
@@ -134,6 +133,6 @@ defmodule BsWeb.GameForm.Reset do
   end
 
   def set_id(snake) do
-    put_in(snake.id, Ecto.UUID.generate())
+    put_in(snake.id, UUID.generate())
   end
 end
