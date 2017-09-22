@@ -1,9 +1,11 @@
 defmodule BsWeb.GameForm do
-  alias __MODULE__
+  alias Bs.GameForm.Reset
   alias Bs.GameState
-  alias BsWeb.SnakeForm
   alias Bs.WinConditions
   alias Bs.World
+  alias BsWeb.SnakeForm
+  alias Ecto.UUID
+  alias __MODULE__
 
   use BsWeb, :model
   use Mnesia.Repo
@@ -88,7 +90,7 @@ defmodule BsWeb.GameForm do
   end
 
   def set_id(changeset, nil) do
-    id = Ecto.UUID.generate()
+    id = UUID.generate()
     put_change(changeset, :id, id)
   end
 
@@ -97,7 +99,7 @@ defmodule BsWeb.GameForm do
   @spec reload_game_server_state(t) :: game_state
   def reload_game_server_state(%GameForm{} = game_form) do
     game_form
-    |> GameForm.Reset.reset_game_form
+    |> Reset.reset_game_form
     |> to_game_server_state
   end
 
