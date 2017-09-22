@@ -66,7 +66,7 @@ defmodule Bs.Mixfile do
       {:apex, "~> 0.7"},
       {:cowboy, "~> 1.0"},
       {:credo, "~> 0.8", only: [:dev, :text], runtime: false},
-      {:dialyxir, "~> 0.4", only: [:dev], runtime: false},
+      {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
       {:distillery, "~> 1.1"},
       {:ecto, "~> 2.0"},
       {:edeliver, "~> 1.4"},
@@ -87,15 +87,9 @@ defmodule Bs.Mixfile do
   end
 
   defp dialyzer do
-    [plt_add_deps: :apps_direct,
-     plt_add_apps: [
-       :mnesia,
-       :plug],
-     flags: [
-       "-Wunmatched_returns",
-       "-Werror_handling",
-       "-Wrace_conditions",
-       "-Wunderspecs"]]
+    [plt_add_deps: :transitive,
+     plt_add_apps: [:mnesia],
+    ]
   end
 
   defp aliases do
