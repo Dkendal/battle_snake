@@ -1,4 +1,4 @@
-defmodule BattleSnake.Case do
+defmodule Bs.Case do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting up a connection.
@@ -17,12 +17,12 @@ defmodule BattleSnake.Case do
 
   using do
     quote do
-      import BattleSnake.Factory
+      import Bs.Factory
 
       def named_mock_game_server(id) do
         {:ok, pid} = Agent.start_link(
           fn -> 0 end,
-          BattleSnake.Game.Registry.options(id))
+          Bs.Game.Registry.options(id))
         pid
       end
     end
@@ -30,7 +30,7 @@ defmodule BattleSnake.Case do
 
   setup(_tags) do
     on_exit fn ->
-      BattleSnake.GameServerTesting.teardown()
+      Bs.GameServerTesting.teardown()
       MnesiaTesting.teardown()
     end
 

@@ -1,5 +1,5 @@
 use Mix.Config
-config :battle_snake, snake_api: BattleSnake.Api
+config :bs, snake_api: Bs.Api
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
@@ -7,7 +7,7 @@ config :battle_snake, snake_api: BattleSnake.Api
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we use it
 # with brunch.io to recompile .js and .css sources.
-config :battle_snake, BattleSnakeWeb.Endpoint,
+config :bs, BsWeb.Endpoint,
   http: [port: {:system, "PORT"}],
   debug_errors: true,
   code_reloader: true,
@@ -23,13 +23,13 @@ config :battle_snake, BattleSnakeWeb.Endpoint,
 
 
 # Watch static and templates for browser reloading.
-config :battle_snake, BattleSnakeWeb.Endpoint,
+config :bs, BsWeb.Endpoint,
   live_reload: [
     patterns: [
       ~r{priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$},
       ~r{priv/gettext/.*(po)$},
-      ~r{lib/battle_snake_web/views/.*(ex)$},
-      ~r{lib/battle_snake_web/templates/.*(eex)$}
+      ~r{lib/bs_web/views/.*(ex)$},
+      ~r{lib/bs_web/templates/.*(eex)$}
     ]
   ]
 

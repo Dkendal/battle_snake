@@ -2,7 +2,7 @@
 #+OPTIONS: broken-links:nil c:nil creator:nil d:(not "LOGBOOK") date:nil e:t
 #+OPTIONS: email:nil f:t inline:t num:t p:nil pri:nil prop:nil stat:t tags:t
 #+OPTIONS: tasks:nil tex:t timestamp:nil title:nil toc:3 todo:nil |:t
-#+TITLE: BattleSnake 2017 API
+#+TITLE: Bs 2017 API
 #+LANGUAGE: en
 #+SELECT_TAGS: export
 #+EXCLUDE_TAGS: noexport
@@ -84,7 +84,7 @@ All responses are expected to have a =200 OK= status code.
     |-----------+---------|
 *** Example Request
     #+BEGIN_SRC elixir :remsh org-server@localhost :sname org-console :wrap "SRC js" :eval no-export :exports results :cache yes
-      alias BattleSnake.{GameForm}
+      alias Bs.{GameForm}
 
       %GameForm{
         id: Ecto.UUID.generate()
@@ -174,12 +174,12 @@ All responses are expected to have a =200 OK= status code.
 
 *** Example Request
     #+BEGIN_SRC elixir :remsh org-server@localhost :sname org-console :wrap "SRC js" :eval no-export :exports results :results value
-      alias BattleSnake.{
+      alias Bs.{
         Snake,
         World,
       }
 
-      use BattleSnake.Point
+      use Bs.Point
 
       my_snake = %Snake{
         coords: [p(0, 0), p(0, 0), p(0, 0)],
@@ -206,10 +206,10 @@ All responses are expected to have a =200 OK= status code.
         name: "other-snake",
         taunt: "gotta go fast",
         url: "localhost:4001",
-        cause_of_death: %BattleSnake.Death{
+        cause_of_death: %Bs.Death{
           turn: 0,
           causes: [
-            %BattleSnake.Death.StarvationCause{}
+            %Bs.Death.StarvationCause{}
           ]
         }
       }
@@ -536,13 +536,13 @@ All responses are expected to have a =200 OK= status code.
 * Game Rules
 ** Objective
 
-   BattleSnake is an adaptation of the classic video game "Snake", where the player
+   Bs is an adaptation of the classic video game "Snake", where the player
    maneuvers a snake around the play field to collect food pellets, which makes
    the snake grow longer. The main objective is to collect as much food as
    as possible, while avoiding hitting obstacles, such as walls and most
    importantly - your own snake.
 
-   In BattleSnake, each round X number of snakes is pitted against each other,
+   In Bs, each round X number of snakes is pitted against each other,
    and the goal is to be the last snake left alive at the end of the round.
 
 ** You lose if your snake...
@@ -571,7 +571,7 @@ All responses are expected to have a =200 OK= status code.
 * Example Snakes
   more coming soon...
 ** Ruby Snake
-   [[https://github.com/Stembolthq/battle_snake/blob/v2.0.0/examples/ruby_snake/ruby_snake.rb][Ruby Snake]]
+   [[https://github.com/Stembolthq/bs/blob/v2.0.0/examples/ruby_snake/ruby_snake.rb][Ruby Snake]]
 
 * Footnotes
 

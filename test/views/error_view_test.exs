@@ -1,21 +1,21 @@
-defmodule BattleSnakeWeb.ErrorViewTest do
-  use BattleSnakeWeb.ConnCase, async: true
+defmodule BsWeb.ErrorViewTest do
+  use BsWeb.ConnCase, async: true
 
   # Bring render/3 and render_to_string/3 for testing custom views
   import Phoenix.View
 
   test "renders 404.html" do
-    assert render_to_string(BattleSnakeWeb.ErrorView, "404.html", []) ==
+    assert render_to_string(BsWeb.ErrorView, "404.html", []) ==
            "Page not found"
   end
 
   test "render 500.html" do
-    assert render_to_string(BattleSnakeWeb.ErrorView, "500.html", []) ==
+    assert render_to_string(BsWeb.ErrorView, "500.html", []) ==
            "Internal server error"
   end
 
   test "render any other" do
-    assert render_to_string(BattleSnakeWeb.ErrorView, "505.html", []) ==
+    assert render_to_string(BsWeb.ErrorView, "505.html", []) ==
            "Internal server error"
   end
 end

@@ -1,10 +1,10 @@
-defmodule BattleSnake.Mixfile do
+defmodule Bs.Mixfile do
   use Mix.Project
 
   @version String.trim(File.read!("VERSION"))
 
   def project do
-    [app: :battle_snake,
+    [app: :bs,
      version: @version,
      elixir: "~> 1.5",
      elixirc_paths: elixirc_paths(Mix.env),
@@ -23,7 +23,7 @@ defmodule BattleSnake.Mixfile do
   #
   # Type `mix help compile.app` for more information.
   def application do
-    [mod: {BattleSnake, []},
+    [mod: {Bs, []},
      extra_applications: extra_applications(Mix.env)]
   end
 
@@ -105,12 +105,12 @@ defmodule BattleSnake.Mixfile do
         &npm_install/1,
         "deps.get",
         "compile",
-        "battle_snake.schema",
+        "bs.schema",
         &test/1],
 
-     "battle_snake.schema": [
-       "battle_snake.schema.drop",
-       "battle_snake.schema.install"]]
+     "bs.schema": [
+       "bs.schema.drop",
+       "bs.schema.install"]]
   end
 
   defp npm_install(_) do
