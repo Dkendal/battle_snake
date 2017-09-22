@@ -1,4 +1,4 @@
-defmodule BattleSnake.GameServer.Supervisor do
+defmodule BattleSnake.Game.Supervisor do
   use Supervisor
 
   @name __MODULE__
@@ -13,7 +13,7 @@ defmodule BattleSnake.GameServer.Supervisor do
 
   def init(:ok) do
     children = [
-      worker(BattleSnake.GameServer, [], restart: :temporary)
+      worker(BattleSnake.Game, [], restart: :temporary)
     ]
 
     supervise(children, strategy: :simple_one_for_one)

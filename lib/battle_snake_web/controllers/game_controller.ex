@@ -7,8 +7,8 @@ defmodule BattleSnakeWeb.GameController do
     games = Mnesia.Repo.all(GameForm)
 
     game_servers = for game <- games do
-      status = with [{pid, _}] <- BattleSnake.GameServer.Registry.lookup(game.id) do
-        {pid, BattleSnake.GameServer.get_status(pid)}
+      status = with [{pid, _}] <- BattleSnake.Game.Registry.lookup(game.id) do
+        {pid, BattleSnake.Game.get_status(pid)}
       else
         [] -> :dead
       end

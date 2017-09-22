@@ -1,7 +1,7 @@
 defmodule BattleSnakeWeb.SpectatorChannelTest do
   use BattleSnakeWeb.ChannelCase
 
-  alias BattleSnake.GameServer
+  alias BattleSnake.Game
   alias BattleSnake.GameStateEvent
   alias BattleSnakeWeb.SpectatorChannel
 
@@ -15,7 +15,7 @@ defmodule BattleSnakeWeb.SpectatorChannelTest do
 
   def broadcast_state(c) do
     state = build(:state)
-    GameServer.PubSub.broadcast(c.id, %GameStateEvent{name: "test", data: state})
+    Game.PubSub.broadcast(c.id, %GameStateEvent{name: "test", data: state})
   end
 
   def sub _ do

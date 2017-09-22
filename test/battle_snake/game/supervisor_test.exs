@@ -1,5 +1,5 @@
-defmodule BattleSnake.GameServer.SupervisorTest do
-  alias BattleSnake.GameServer.Supervisor
+defmodule BattleSnake.Game.SupervisorTest do
+  alias BattleSnake.Game.Supervisor
 
   use BattleSnake.Case, async: false
 

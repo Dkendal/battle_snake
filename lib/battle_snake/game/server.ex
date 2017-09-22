@@ -1,8 +1,8 @@
-defmodule BattleSnake.GameServer.Server do
+defmodule BattleSnake.Game.Server do
   alias BattleSnakeWeb.GameForm
   alias BattleSnake.GameState
   alias BattleSnake.GameStateEvent
-  alias BattleSnake.GameServer.PubSub
+  alias BattleSnake.Game.PubSub
 
   import GameState
   use GenServer

@@ -1,5 +1,5 @@
-defmodule BattleSnake.GameServer.ServerTest do
-  alias BattleSnake.GameServer.Server
+defmodule BattleSnake.Game.ServerTest do
+  alias BattleSnake.Game.Server
   alias BattleSnake.GameState
   use BattleSnake.Case, async: false
 

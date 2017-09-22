@@ -22,7 +22,7 @@ defmodule BattleSnake.Case do
       def named_mock_game_server(id) do
         {:ok, pid} = Agent.start_link(
           fn -> 0 end,
-          BattleSnake.GameServer.Registry.options(id))
+          BattleSnake.Game.Registry.options(id))
         pid
       end
     end

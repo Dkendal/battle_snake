@@ -1,6 +1,6 @@
 defmodule BattleSnakeWeb.GameAdminChannel do
   alias Phoenix.Socket
-  alias BattleSnake.GameServer
+  alias BattleSnake.Game
   use BattleSnakeWeb, :channel
 
   @requests ~w(resume next prev replay pause)
@@ -19,13 +19,13 @@ defmodule BattleSnakeWeb.GameAdminChannel do
   def available_requests, do: @requests
 
   def handle_in("stop", _from, socket) do
-    {:ok, pid}= GameServer.find(game_id(socket))
+    {:ok, pid}= Game.find(game_id(socket))
     ref = Process.monitor(pid)
     GenServer.stop(pid)
 
     receive do
       {:DOWN, ^ref, _, _, _} ->
-        {:ok, _pid}= GameServer.find(game_id(socket))
+        {:ok, _pid}= Game.find(game_id(socket))
     end
 
     {:noreply, socket}
@@ -37,7 +37,7 @@ defmodule BattleSnakeWeb.GameAdminChannel do
   end
 
   def handle_in(request, _from, socket) when is_atom(request) do
-    pid = GameServer.find!(game_id(socket))
+    pid = Game.find!(game_id(socket))
     GenServer.call(pid, request)
     {:noreply, socket}
   end
@@ -63,6 +63,6 @@ defmodule BattleSnakeWeb.GameAdminChannel do
   end
 
   defp game_server(game_id) when is_binary(game_id) do
-    GameServer.find!(game_id)
+    Game.find!(game_id)
   end
 end
