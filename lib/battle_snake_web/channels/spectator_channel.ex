@@ -1,5 +1,5 @@
 defmodule BattleSnakeWeb.SpectatorChannel do
-  alias BattleSnake.GameServer
+  alias BattleSnake.Game
   alias BattleSnake.GameStateEvent
 
   use BattleSnakeWeb, :channel
@@ -12,7 +12,7 @@ defmodule BattleSnakeWeb.SpectatorChannel do
 
   defp do_join(game_id, payload, socket) do
     if authorized?(payload) do
-      GameServer.PubSub.subscribe(game_id)
+      Game.PubSub.subscribe(game_id)
       send(self(), :after_join)
       socket = assign(socket, :game_id, game_id)
       {:ok, socket}
@@ -37,8 +37,8 @@ defmodule BattleSnakeWeb.SpectatorChannel do
 
   def handle_info(:after_join, socket) do
     state = socket.assigns.game_id
-    |> GameServer.find!
-    |> GameServer.get_game_state
+    |> Game.find!
+    |> Game.get_game_state
 
     push(socket, "tick", %{content: render(state.world)})
 

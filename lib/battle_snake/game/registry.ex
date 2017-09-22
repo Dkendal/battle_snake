@@ -1,5 +1,5 @@
-defmodule BattleSnake.GameServer.Registry do
-  alias BattleSnake.GameServer
+defmodule BattleSnake.Game.Registry do
+  alias BattleSnake.Game
   alias BattleSnake.GameState
   alias BattleSnakeWeb.GameForm
   @name __MODULE__
@@ -20,7 +20,7 @@ defmodule BattleSnake.GameServer.Registry do
 
   @spec create(initializer, name) :: {:ok, pid} | :error
   def create(state, id) when is_binary(id) do
-    GameServer.Supervisor.start_game_server([state, options(id)])
+    Game.Supervisor.start_game_server([state, options(id)])
   end
 
   def create(_state, id) do

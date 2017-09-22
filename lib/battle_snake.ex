@@ -10,10 +10,10 @@ defmodule BattleSnake do
     children = [
       # Start the endpoint when the application starts
       supervisor(BattleSnakeWeb.Endpoint, []),
-      supervisor(BattleSnake.GameServer.Supervisor, []),
+      supervisor(BattleSnake.Game.Supervisor, []),
       supervisor(Task.Supervisor, [[name: BattleSnake.MoveSupervisor]]),
-      supervisor(Registry, [:unique, BattleSnake.GameServer.Registry]),
-      supervisor(Phoenix.PubSub.PG2, [BattleSnake.GameServer.PubSub, []]),
+      supervisor(Registry, [:unique, BattleSnake.Game.Registry]),
+      supervisor(Phoenix.PubSub.PG2, [BattleSnake.Game.PubSub, []]),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

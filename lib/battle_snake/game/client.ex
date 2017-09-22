@@ -1,5 +1,5 @@
-defmodule BattleSnake.GameServer.Client do
-  alias BattleSnake.GameServer
+defmodule BattleSnake.Game.Client do
+  alias BattleSnake.Game
 
   def get_state(pid) do
     GenServer.call(pid, :get_state)
@@ -30,7 +30,7 @@ defmodule BattleSnake.GameServer.Client do
   end
 
   @doc "Replay the current game."
-  @spec replay(GameServer.server) :: term
+  @spec replay(Game.server) :: term
   def replay(pid) do
     GenServer.call(pid, :replay)
   end

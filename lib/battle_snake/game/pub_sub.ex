@@ -1,4 +1,4 @@
-defmodule BattleSnake.GameServer.PubSub do
+defmodule BattleSnake.Game.PubSub do
   def broadcast(topic, message) do
     Phoenix.PubSub.broadcast(__MODULE__, topic, message)
   end
