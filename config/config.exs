@@ -6,15 +6,15 @@
 use Mix.Config
 
 # Configures the endpoint
-config :battle_snake, BattleSnakeWeb.Endpoint,
+config :bs, BsWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "lYYgnflsbniY0f9RgALnSmr0nGSwGWkm+rMqgDHhrywKUolAqni+7zdTKAumE5R/",
-  render_errors: [view: BattleSnakeWeb.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: BattleSnake.PubSub,
+  render_errors: [view: BsWeb.ErrorView, accepts: ~w(html json)],
+  pubsub: [name: Bs.PubSub,
            adapter: Phoenix.PubSub.PG2]
 
 
-config :battle_snake, start_timeout: 10_000
+config :bs, start_timeout: 10_000
 
 # Configures Elixir's Logger
 config :logger, :console,

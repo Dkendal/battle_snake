@@ -1,21 +1,21 @@
-defmodule BattleSnake.GameServerTesting do
+defmodule Bs.GameServerTesting do
   def teardown do
-    ref = Process.monitor(BattleSnake.Game.Supervisor)
+    ref = Process.monitor(Bs.Game.Supervisor)
 
     :ok = Supervisor.terminate_child(
-      BattleSnake.Supervisor,
-      BattleSnake.Game.Supervisor)
+      Bs.Supervisor,
+      Bs.Game.Supervisor)
 
     receive do
       {:DOWN, ^ref, _, _, _} ->
         :ok
     after 100 ->
-        raise "Killing BattleSnake.Supervisor failed"
+        raise "Killing Bs.Supervisor failed"
     end
 
     Supervisor.restart_child(
-      BattleSnake.Supervisor,
-      BattleSnake.Game.Supervisor)
+      Bs.Supervisor,
+      Bs.Game.Supervisor)
 
     :ok
   end

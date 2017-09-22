@@ -8,7 +8,7 @@ defmodule Types do
     w = suchthat pos_integer(), & &1 < world.width
 
     let {w, h}, fn {x, y} ->
-      %BattleSnake.Point{x: x, y: y}
+      %Bs.Point{x: x, y: y}
     end
   end
 
@@ -19,7 +19,7 @@ defmodule Types do
     coords = suchthat(list(point(world)), & length(&1) > 0)
 
     let coords, fn coords ->
-      %BattleSnake.Snake{
+      %Bs.Snake{
         coords: coords
       }
     end
@@ -27,7 +27,7 @@ defmodule Types do
 
   def world() do
     let {pos_integer(), pos_integer(), pos_integer()}, fn {h, w, z} ->
-      ws = %BattleSnake.World{height: h, width: w, max_food: z}
+      ws = %Bs.World{height: h, width: w, max_food: z}
 
       let list(snake(ws)), fn s ->
         %{ws| snakes: s}

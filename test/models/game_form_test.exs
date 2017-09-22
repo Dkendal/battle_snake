@@ -1,6 +1,6 @@
-defmodule BattleSnake.GameTest do
-  alias BattleSnakeWeb.GameForm
-  use BattleSnake.Case, async: true
+defmodule Bs.GameTest do
+  alias BsWeb.GameForm
+  use Bs.Case, async: true
   import Ecto.Changeset
 
   describe "#set_id" do
@@ -30,7 +30,7 @@ defmodule BattleSnake.GameTest do
     end
 
     test "sets the world", %{state: state} do
-      assert %BattleSnake.World{} = state.world
+      assert %Bs.World{} = state.world
     end
 
     test "sets the objective", %{state: state} do
@@ -38,7 +38,7 @@ defmodule BattleSnake.GameTest do
     end
   end
 
-  describe "Poison.Encoder.encode(%BattleSnakeWeb.GameForm{}, [])" do
+  describe "Poison.Encoder.encode(%BsWeb.GameForm{}, [])" do
     @game_form %GameForm{id: 1,
                          height: 2,
                          width: 3}

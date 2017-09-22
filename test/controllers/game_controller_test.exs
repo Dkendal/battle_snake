@@ -1,7 +1,7 @@
-defmodule BattleSnakeWeb.GameControllerTest do
-  use BattleSnakeWeb.ConnCase
+defmodule BsWeb.GameControllerTest do
+  use BsWeb.ConnCase
 
-  alias BattleSnakeWeb.GameForm
+  alias BsWeb.GameForm
 
   describe "GET index" do
     test "lists all entries on index", %{conn: conn} do

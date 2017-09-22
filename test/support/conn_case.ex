@@ -1,4 +1,4 @@
-defmodule BattleSnakeWeb.ConnCase do
+defmodule BsWeb.ConnCase do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting up a connection.
@@ -20,11 +20,11 @@ defmodule BattleSnakeWeb.ConnCase do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
 
-      import BattleSnakeWeb.Router.Helpers
-      import BattleSnake.Factory
+      import BsWeb.Router.Helpers
+      import Bs.Factory
 
       # The default endpoint for testing
-      @endpoint BattleSnakeWeb.Endpoint
+      @endpoint BsWeb.Endpoint
     end
   end
 

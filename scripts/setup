@@ -1,2 +1,2 @@
 #!/bin/bash
-elixir --sname battle-snake-dev@localhost -S mix setup
+elixir --sname bs-dev@localhost -S mix setup

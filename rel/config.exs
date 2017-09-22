@@ -37,6 +37,6 @@ end
 # when running `mix release`, the first release in the file
 # will be used by default
 
-release :battle_snake do
-  set version: current_version(:battle_snake)
+release :bs do
+  set version: current_version(:bs)
 end

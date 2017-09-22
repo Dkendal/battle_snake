@@ -1,3 +1,3 @@
-defmodule BattleSnakeWeb.LayoutViewTest do
-  use BattleSnakeWeb.ConnCase, async: true
+defmodule BsWeb.LayoutViewTest do
+  use BsWeb.ConnCase, async: true
 end

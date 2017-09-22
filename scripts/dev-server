@@ -1,4 +1,4 @@
 #!/bin/bash
 PORT=3000 iex \
-    --sname battle-snake-dev@localhost \
+    --sname bs-dev@localhost \
     -S mix phoenix.server

@@ -1,8 +1,8 @@
-import BattleSnake.GameResultSnake, only: :macros
+import Bs.GameResultSnake, only: :macros
 
-{:atomic, :ok} = BattleSnakeWeb.GameForm.create_table(ram_copies: [node()])
-{:atomic, :ok} = BattleSnake.World.create_table(ram_copies: [node()])
-{:atomic, :ok} = :mnesia.add_table_index(BattleSnake.World, :game_form_id)
+{:atomic, :ok} = BsWeb.GameForm.create_table(ram_copies: [node()])
+{:atomic, :ok} = Bs.World.create_table(ram_copies: [node()])
+{:atomic, :ok} = :mnesia.add_table_index(Bs.World, :game_form_id)
 {:atomic, :ok} = :mnesia.create_table(
   elem(game_result_snake(), 0), [
     attributes: Keyword.keys(game_result_snake(game_result_snake())),

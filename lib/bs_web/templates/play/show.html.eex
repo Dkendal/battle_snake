@@ -1,0 +1,17 @@
+<%= for asset <- snake_assets do %>
+  <link
+  id="<%= asset[:id] %>"
+  href="<%= static_path(@conn, "/#{asset[:src]}") %>"
+  charset="utf-8"
+  rel="prefetch"
+  type="image/svg+xml"
+  ></link>
+<% end %>
+
+<script id="bs-config" type="application/json">
+  <%= raw bs_js_object(assigns) %>
+</script>
+
+<%= content_tag :Game, "", [
+    gameid: @game.id,
+  ] %>

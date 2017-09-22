@@ -5,7 +5,7 @@ defmodule Dummy do
 end
 
 defmodule Mnesia.UtilTest do
-  use BattleSnake.Case, async: false
+  use Bs.Case, async: false
 
   describe "Mnesia.Util.record/1" do
     test "converts the struct to a record" do
@@ -30,7 +30,7 @@ defmodule Mnesia.UtilTest do
 end
 
 defmodule Mnesia.RepoTest do
-  use BattleSnake.Case, async: false
+  use Bs.Case, async: false
 
   @struct struct(Dummy, id: 0, x: 1, y: 2)
   @record {Dummy, 0, 1, 2}

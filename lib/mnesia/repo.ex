@@ -69,21 +69,21 @@ defmodule Mnesia do
 
     :rpc.multicall(nodes, :application, :start, [:mnesia])
 
-    BattleSnakeWeb.GameForm.create_table(disc_copies: nodes)
+    BsWeb.GameForm.create_table(disc_copies: nodes)
 
-    BattleSnake.World.create_table(disc_copies: nodes)
+    Bs.World.create_table(disc_copies: nodes)
 
-    import BattleSnake.GameResultSnake
+    import Bs.GameResultSnake
     attributes = game_result_snake()
     |> game_result_snake()
     |> Keyword.keys()
     :mnesia.create_table(
-      BattleSnake.GameResultSnake, [
+      Bs.GameResultSnake, [
         attributes: attributes,
         index: [:game_id],
         disc_copies: nodes])
 
-    :mnesia.add_table_index(BattleSnake.World, :game_form_id)
+    :mnesia.add_table_index(Bs.World, :game_form_id)
 
     :rpc.multicall(nodes, :application, :stop, [:mnesia])
   end

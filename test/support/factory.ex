@@ -1,4 +1,4 @@
-defmodule BattleSnake.MnesiaStrategy do
+defmodule Bs.MnesiaStrategy do
   use ExMachina.Strategy, function_name: :create
 
   def handle_create(record, _opts) do
@@ -6,27 +6,27 @@ defmodule BattleSnake.MnesiaStrategy do
   end
 end
 
-defmodule BattleSnake.Factory do
+defmodule Bs.Factory do
   use ExMachina
-  use BattleSnake.MnesiaStrategy
-  use BattleSnake.Point
+  use Bs.MnesiaStrategy
+  use Bs.Point
 
   defdelegate sequence(name), to: ExMachina
 
   def world_factory do
-    %BattleSnake.World{
+    %Bs.World{
       id: Ecto.UUID.generate(),
     }
   end
 
   def snake_form_factory do
-    %BattleSnakeWeb.SnakeForm{
+    %BsWeb.SnakeForm{
       url: "example.com"
     }
   end
 
   def game_form_factory do
-    %BattleSnakeWeb.GameForm{
+    %BsWeb.GameForm{
       id: Ecto.UUID.generate(),
       delay: 0,
     }
@@ -40,14 +40,14 @@ defmodule BattleSnake.Factory do
   end
 
   def death_factory do
-     %BattleSnake.Death{
+     %Bs.Death{
       turn: 0,
-      causes: [%BattleSnake.Death.StarvationCause{}]
+      causes: [%Bs.Death.StarvationCause{}]
     }
   end
 
   def snake_factory do
-    %BattleSnake.Snake{
+    %Bs.Snake{
       coords: [p(0, 0)]
     }
   end
@@ -57,7 +57,7 @@ defmodule BattleSnake.Factory do
   end
 
   def with_snake_in_world(snake: snake, world: world, length: length) do
-    {:ok, point} = BattleSnake.World.rand_unoccupied_space(world)
+    {:ok, point} = Bs.World.rand_unoccupied_space(world)
     snake = put_in(snake.coords, List.duplicate(point, length))
     world = update_in(world.snakes, & [snake|&1])
     [snake: snake, world: world]
@@ -68,7 +68,7 @@ defmodule BattleSnake.Factory do
   end
 
   def state_factory do
-    %BattleSnake.GameState{
+    %Bs.GameState{
       world: build(:world),
       game_form: build(:game_form),
       objective: (fn _ -> false end)
