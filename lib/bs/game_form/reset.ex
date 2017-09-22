@@ -36,16 +36,6 @@ defmodule BsWeb.GameForm.Reset do
     |> Map.update!(:world, &position_snakes/1)
   end
 
-  def erase_replay(game_form) do
-    :mnesia.activity(:transaction, fn ->
-      World
-      |> :mnesia.index_read(game_form.id, :game_form_id)
-      |> Stream.map(&:mnesia.delete_object/1)
-      |> Stream.run
-    end)
-    game_form
-  end
-
   @doc """
   Finds locations for and places snakes in the word.
 
@@ -68,7 +58,6 @@ defmodule BsWeb.GameForm.Reset do
   @spec reset_game_form(GameForm.t) :: GameForm.t
   def reset_game_form(game_form) do
     game_form
-    |> erase_replay()
     |> init_world()
     |> load_snakes()
     |> setup_world()
