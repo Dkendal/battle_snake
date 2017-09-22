@@ -3,7 +3,6 @@ defmodule Bs.Movement do
   alias Bs.Snake
   alias Bs.Api
   alias Bs.Move
-  alias Bs.Point
   alias Bs.GameState
 
   require Logger
