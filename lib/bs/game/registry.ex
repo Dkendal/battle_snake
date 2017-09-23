@@ -1,7 +1,8 @@
 defmodule Bs.Game.Registry do
-  alias Bs.Game
+  alias Bs.Game.Supervisor
   alias Bs.GameState
   alias BsWeb.GameForm
+
   @name __MODULE__
 
   @type name :: binary | atom
@@ -20,7 +21,7 @@ defmodule Bs.Game.Registry do
 
   @spec create(initializer, name) :: {:ok, pid} | :error
   def create(state, id) when is_binary(id) do
-    Game.Supervisor.start_game_server([state, options(id)])
+    Supervisor.start_game_server([state, options(id)])
   end
 
   def create(_state, id) do
