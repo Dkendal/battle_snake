@@ -1,6 +1,9 @@
 defmodule Bs.Game do
-  alias __MODULE__
+  alias Bs.Game.PubSub
+  alias Bs.Game.Registry
+  alias Bs.Game.Server
   alias Bs.GameState
+  alias __MODULE__
   use GenServer
 
   defmodule Command, do: defstruct [:name, :data]
@@ -52,18 +55,18 @@ defmodule Bs.Game do
     GenServer.call(pid, :replay)
   end
 
-  defdelegate handle_call(request, from, state), to: Game.Server
-  defdelegate handle_cast(request, state), to: Game.Server
-  defdelegate handle_info(request, state), to: Game.Server
-  defdelegate init(args), to: Game.Server
+  defdelegate handle_call(request, from, state), to: Server
+  defdelegate handle_cast(request, state), to: Server
+  defdelegate handle_info(request, state), to: Server
+  defdelegate init(args), to: Server
 
   def find!({:ok, pid}), do: pid
   def find!({:error, {:already_started, pid}}), do: pid
   def find!({:error, e}), do: raise(e)
   def find!(name), do: name |> find |> find!
 
-  defdelegate find(name), to: Game.Registry, as: :lookup_or_create
-  defdelegate name(id), to: Game.Registry, as: :via
+  defdelegate find(name), to: Registry, as: :lookup_or_create
+  defdelegate name(id), to: Registry, as: :via
 
-  defdelegate subscribe(name), to: Game.PubSub
+  defdelegate subscribe(name), to: PubSub
 end
