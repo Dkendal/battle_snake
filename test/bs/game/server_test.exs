@@ -1,6 +1,11 @@
 defmodule Bs.Game.ServerTest do
+  alias Bs.Case
   alias Bs.Game.Server
   alias Bs.GameState
+  alias Bs.Snake
+  alias Bs.World
+  alias Mnesia.RecordNotFoundError
+
   use Bs.Case, async: false
 
   def create_game_form(_) do
@@ -27,7 +32,7 @@ defmodule Bs.Game.ServerTest do
     end
 
     test "stops when the game form does not exist" do
-      assert {:stop, %Mnesia.RecordNotFoundError{}} = Server.init("fake")
+      assert {:stop, %RecordNotFoundError{}} = Server.init("fake")
     end
   end
 
@@ -46,12 +51,12 @@ defmodule Bs.Game.ServerTest do
 
     test "sets .world", c do
       assert {:ok, state} = Server.init(c.game_form)
-      assert state.world.__struct__ == Bs.World
+      assert state.world.__struct__ == World
     end
 
     test "sets .world.snakes", c do
       assert {:ok, state} = Server.init(c.game_form)
-      assert assert [%Bs.Snake{}] = state.world.snakes
+      assert assert [%Snake{}] = state.world.snakes
     end
 
     test "sets .snakes", c do
@@ -59,7 +64,7 @@ defmodule Bs.Game.ServerTest do
       assert is_map state.snakes
       assert [id] = Map.keys(state.snakes)
       assert [
-        %Bs.Snake{
+        %Snake{
           id: ^id,
           coords: [_, _, _]}
       ] = Map.values(state.snakes)
@@ -115,60 +120,6 @@ defmodule Bs.Game.ServerTest do
 
       Server.handle_info(:tick, state)
       assert_receive :tick, 10
-    end
-  end
-
-  #############
-  # Game Done #
-  #############
-
-  describe "Server.handle_info(:game_done, state)" do
-    test "deletes any previous records for this game" do
-      import Bs.GameResultSnake
-
-      snake = build(:snake, id: "snake-1")
-
-      snakes = %{"snake-1" => snake}
-
-      state = build(:state,
-        game_form_id: "game-1",
-        winners: ["snake-1"],
-        snakes: snakes)
-
-      :ok = game_result_snake(id: "0", game_id: "game-0", snake_id: "snake-0")
-      |> Mnesia.dirty_write
-
-      :ok = game_result_snake(id: "1", game_id: "game-1", snake_id: "snake-1")
-      |> Mnesia.dirty_write
-
-      Server.handle_info(:game_done, state)
-
-      actual = Bs.GameResultSnake
-      |> Mnesia.dirty_all
-      |> Enum.sort_by(&elem(&1, game_result_snake(:game_id)))
-
-      assert [
-        game_result_snake(id: "0", game_id: "game-0", snake_id: "snake-0"),
-        game_result_snake(game_id: "game-1", snake_id: "snake-1"),
-      ] = actual
-    end
-
-    test "writes the winner to disk" do
-      import Bs.GameResultSnake
-
-      snake = build(:snake, id: "snake-1")
-
-      snakes = %{"snake-1" => snake}
-
-      state = build(:state,
-        game_form_id: "game-1",
-        winners: ["snake-1"],
-        snakes: snakes)
-
-      Server.handle_info(:game_done, state)
-
-      assert [game_result_snake(snake_id: "snake-1")] =
-        Mnesia.dirty_all(Bs.GameResultSnake)
     end
   end
 

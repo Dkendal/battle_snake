@@ -1,7 +1,9 @@
 defmodule Bs.Game.Server do
-  alias BsWeb.GameForm
-  alias Bs.GameState
   alias Bs.Game.PubSub
+  alias Bs.GameResultSnake
+  alias Bs.GameState
+  alias BsWeb.GameForm
+  alias Mnesia.Repo
 
   import GameState
   use GenServer
@@ -25,7 +27,7 @@ defmodule Bs.Game.Server do
 
   def init(game_form_id) when is_binary(game_form_id) do
     GameForm
-    |> Mnesia.Repo.dirty_find(game_form_id)
+    |> Repo.dirty_find(game_form_id)
     |> init
   end
 
@@ -173,25 +175,13 @@ defmodule Bs.Game.Server do
   # Game Done #
   #############
 
+  @doc """
+  When the game is complete the result should be completed.
+
+  TODO save the result.
+  """
   @spec handle_info(:game_done, state) :: noreply
   def handle_info(:game_done, state) do
-    alias Bs.GameResultSnake
-    import Bs.GameResultSnake
-
-    game_results_snakes = GameState.get_game_result_snakes(state)
-
-    game_form_id = state.game_form_id
-
-    {:atomic, _} = Mnesia.transaction fn ->
-      records = Mnesia.index_read(GameResultSnake, game_form_id, :game_id)
-
-      for s <- records,
-        do: {GameResultSnake, game_result_snake(s, :id)}
-        |> Mnesia.delete
-
-      for s <- game_results_snakes, do: Mnesia.write(s)
-    end
-
     {:noreply, state}
   end
 
