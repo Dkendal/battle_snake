@@ -103,7 +103,11 @@ defmodule Bs.Mixfile do
 
      "bs.schema": [
        "bs.schema.drop",
-       "bs.schema.install"]]
+       "bs.schema.install",
+     ],
+
+     "bs.dot2svg": [&dot2svg/1]
+    ]
   end
 
   defp npm_install(_) do
@@ -117,6 +121,10 @@ defmodule Bs.Mixfile do
   def check_prereqs(_) do
     prereq("sass")
     prereq("npm")
+  end
+
+  def dot2svg(_) do
+    Mix.shell.cmd("dot -Ksfdp xref_graph.dot -Tsvg -o xref_graph.svg")
   end
 
   def prereq(cmd) do
