@@ -1,7 +1,11 @@
 defmodule Bs.GameState do
-  alias __MODULE__
+  alias Bs.Death
+  alias Bs.Movement
   alias Bs.Snake
   alias Bs.World
+  alias BsWeb.GameForm
+  alias Mnesia.Repo
+  alias __MODULE__
 
   @max_history 20
 
@@ -42,7 +46,7 @@ defmodule Bs.GameState do
     objective: objective_fun,
     delay: non_neg_integer,
     hist: [World.t],
-    game_form: BsWeb.GameForm.t,
+    game_form: GameForm.t,
     winners: [snake_id]
   }
 
@@ -116,8 +120,8 @@ defmodule Bs.GameState do
   def step(state) do
     state = state
     |> save_history
-    |> Bs.Movement.next
-    |> Bs.Death.reap
+    |> Movement.next
+    |> Death.reap
     |> Map.update!(:world, &World.step/1)
 
     if done?(state), do: step_done(state), else: state
@@ -141,7 +145,7 @@ defmodule Bs.GameState do
     hist =
       World
       |> :mnesia.dirty_index_read(state.game_form_id, :game_form_id)
-      |> Enum.map(&Mnesia.Repo.load/1)
+      |> Enum.map(&Repo.load/1)
       |> Enum.sort_by((& Map.get &1, :turn))
     put_in(state.hist, hist)
   end
