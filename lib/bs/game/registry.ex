@@ -30,12 +30,12 @@ defmodule Bs.Game.Registry do
     """
   end
 
-  @spec lookup(name) :: [{pid, Registry.value}]
+  @spec lookup(key()) :: [{pid(), value()}]
   def lookup(id) do
     Registry.lookup(@name, id)
   end
 
-  @spec lookup(name) :: {:ok, pid} | :error
+  @spec find(name) :: {:ok, pid} | :error
   def find(id) do
     with [{pid, _}] <- Registry.lookup(@name, id) do
       {:ok, pid}
