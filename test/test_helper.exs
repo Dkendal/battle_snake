@@ -1,13 +1,6 @@
-import Bs.GameResultSnake, only: :macros
-
 {:atomic, :ok} = BsWeb.GameForm.create_table(ram_copies: [node()])
 {:atomic, :ok} = Bs.World.create_table(ram_copies: [node()])
 {:atomic, :ok} = :mnesia.add_table_index(Bs.World, :game_form_id)
-{:atomic, :ok} = :mnesia.create_table(
-  elem(game_result_snake(), 0), [
-    attributes: Keyword.keys(game_result_snake(game_result_snake())),
-    index: [:game_id]])
-
 {:ok, _} = Application.ensure_all_started(:ex_machina)
 
 ExUnit.start
