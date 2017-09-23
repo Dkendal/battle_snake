@@ -68,7 +68,8 @@ defmodule Bs.Mixfile do
       {:credo, "~> 0.8", only: [:dev, :text], runtime: false},
       {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
       {:distillery, "~> 1.1"},
-      {:ecto, "~> 2.0"},
+      {:ecto, "~> 2.1"},
+      {:ecto_mnesia, "~> 0.9.0"},
       {:edeliver, "~> 1.4"},
       {:ex_machina, "~> 1.0", only: :test},
       {:excoveralls, "~> 0.6", only: :test},
@@ -81,6 +82,7 @@ defmodule Bs.Mixfile do
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:phoenix_pubsub, "~> 1.0"},
       {:poison, "~> 3.0"},
+      {:postgrex, ">= 0.0.0"},
       {:proper, github: "manopapad/proper", tag: "v1.2", only: :test},
       {:reprise, "~> 0.5.0", only: :dev},
     ]
