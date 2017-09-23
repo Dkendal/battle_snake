@@ -1,6 +1,5 @@
 defmodule BsWeb.GameController do
   alias Bs.Game
-  alias Bs.Game.Registry
   alias BsWeb.GameForm
   alias Ecto.Changeset
   alias Mnesia.Repo
@@ -11,11 +10,7 @@ defmodule BsWeb.GameController do
     games = Repo.all(GameForm)
 
     game_servers = for game <- games do
-      status = with [{pid, _}] <- Registry.lookup(game.id) do
-        {pid, Game.get_status(pid)}
-      else
-        [] -> :dead
-      end
+      status = if Game.alive?(game.id), do: :alive, else: :dead
       {game, status}
     end
 
