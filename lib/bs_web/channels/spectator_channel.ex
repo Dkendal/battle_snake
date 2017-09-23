@@ -1,6 +1,5 @@
 defmodule BsWeb.SpectatorChannel do
   alias Bs.Game
-  alias Bs.GameStateEvent
 
   use BsWeb, :channel
 
@@ -25,7 +24,7 @@ defmodule BsWeb.SpectatorChannel do
   # Game State Event #
   ####################
 
-  def handle_info(%GameStateEvent{name: _name, data: state}, socket) do
+  def handle_info({:tick, state}, socket) do
     broadcast(socket, "tick", %{content: render(state.world)})
 
     {:noreply, socket}

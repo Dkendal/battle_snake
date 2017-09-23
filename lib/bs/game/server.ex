@@ -1,7 +1,6 @@
 defmodule Bs.Game.Server do
   alias BsWeb.GameForm
   alias Bs.GameState
-  alias Bs.GameStateEvent
   alias Bs.Game.PubSub
 
   import GameState
@@ -227,12 +226,10 @@ defmodule Bs.Game.Server do
     ]
 
     broadcast_state = Map.drop(state, ignored_fields)
-    PubSub.broadcast(topic, tick_event(broadcast_state))
-    state
-  end
 
-  defp tick_event(state) do
-    %GameStateEvent{name: :tick, data: state}
+    PubSub.broadcast(topic, {:tick, broadcast_state})
+
+    state
   end
 
   defp do_reply({_, state} = reply) do
