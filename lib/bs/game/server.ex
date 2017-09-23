@@ -1,6 +1,5 @@
 defmodule Bs.Game.Server do
   alias Bs.Game.PubSub
-  alias Bs.GameResultSnake
   alias Bs.GameState
   alias BsWeb.GameForm
   alias Mnesia.Repo
