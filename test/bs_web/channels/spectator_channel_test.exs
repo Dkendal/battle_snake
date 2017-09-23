@@ -2,7 +2,6 @@ defmodule BsWeb.SpectatorChannelTest do
   use BsWeb.ChannelCase
 
   alias Bs.Game
-  alias Bs.GameStateEvent
   alias BsWeb.SpectatorChannel
 
   describe "SpectatorChannel" do
@@ -15,7 +14,7 @@ defmodule BsWeb.SpectatorChannelTest do
 
   def broadcast_state(c) do
     state = build(:state)
-    Game.PubSub.broadcast(c.id, %GameStateEvent{name: "test", data: state})
+    Game.PubSub.broadcast(c.id, {:tick, state})
   end
 
   def sub _ do
