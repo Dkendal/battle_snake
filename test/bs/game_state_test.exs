@@ -1,7 +1,10 @@
 defmodule Bs.GameStateTest do
+  alias Bs.Case
   alias Bs.GameState
+  alias Bs.MockApi
+  alias HTTPoison.Response
 
-  use Bs.Case, async: false
+  use Case, async: false
 
   @state %GameState{world: 10, hist: [9, 8, 7]}
   @prev %GameState{world: 9, hist: [8, 7]}
@@ -72,12 +75,12 @@ defmodule Bs.GameStateTest do
   describe "GameState.step(t)" do
     setup do
       request_move = fn(_, _, _) ->
-        {:ok, %HTTPoison.Response{body: "{\"move\":\"up\"}"}}
+        {:ok, %Response{body: "{\"move\":\"up\"}"}}
       end
 
       mocks = %{request_move: request_move}
 
-      Bs.MockApi.start_link(mocks)
+      MockApi.start_link(mocks)
       :ok
     end
 
@@ -93,12 +96,12 @@ defmodule Bs.GameStateTest do
   describe "GameState.step(t) when the game is done" do
     setup do
       request_move = fn(_, _, _) ->
-        {:ok, %HTTPoison.Response{body: "{\"move\":\"up\"}"}}
+        {:ok, %Response{body: "{\"move\":\"up\"}"}}
       end
 
       mocks = %{request_move: request_move}
 
-      Bs.MockApi.start_link(mocks)
+      MockApi.start_link(mocks)
 
       snake = build(:snake)
       world = build(:world, snakes: [snake])

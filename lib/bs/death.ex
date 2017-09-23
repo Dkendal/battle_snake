@@ -1,16 +1,17 @@
 defmodule Bs.Death do
-  alias __MODULE__
-  alias Bs.Snake
   alias Bs.GameState
-
-  use Bs.Point
+  alias Bs.Death.Collision
+  alias Bs.Point
+  alias Bs.Snake
+  alias __MODULE__
+  use Point
 
   @type width :: pos_integer
   @type height :: pos_integer
   @type dim :: {width, height}
   @type state :: GameState.t
   @type snake :: Snake.t
-  @type point :: Bs.Point.t
+  @type point :: Point.t
   @type live :: [snake]
   @type dead :: [snake]
   @type turn :: non_neg_integer
@@ -145,7 +146,7 @@ defmodule Bs.Death do
   def collision(snakes) do
     tasks = Task.async_stream(
       snakes,
-      Bs.Death.Collision,
+      Collision,
       :run,
       [snakes])
 

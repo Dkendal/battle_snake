@@ -1,8 +1,15 @@
-defmodule Bs.DeathTest do
+defmodule DeathTest do
+  alias Bs.Case
   alias Bs.Death
+  alias Bs.Point
+  alias Death.BodyCollisionCause
+  alias Death.HeadCollisionCause
+  alias Death.SelfCollisionCause
+  alias Death.StarvationCause
+  alias Death.WallCollisionCause
 
-  use Bs.Case, async: true
-  use Bs.Point
+  use Case, async: true
+  use Point
 
   describe "Death.reap/1" do
     setup do
@@ -39,24 +46,24 @@ defmodule Bs.DeathTest do
 
       assert [{1,
                %Death{turn: 0,
-                      causes: [%Death.StarvationCause{}]}},
+                      causes: [%StarvationCause{}]}},
               {2,
                %Death{turn: 0,
-                      causes: [%Death.HeadCollisionCause{with: 1},
-                               %Death.HeadCollisionCause{with: 5}]}},
+                      causes: [%HeadCollisionCause{with: 1},
+                               %HeadCollisionCause{with: 5}]}},
               {3,
                %Death{turn: 0,
-                      causes: [%Death.BodyCollisionCause{with: 1}]}},
+                      causes: [%BodyCollisionCause{with: 1}]}},
               {4,
                %Death{turn: 0,
-                      causes: [%Death.WallCollisionCause{}]}},
+                      causes: [%WallCollisionCause{}]}},
               {5,
                %Death{turn: 0,
-                      causes: [%Death.HeadCollisionCause{with: 1},
-                               %Death.HeadCollisionCause{with: 2}]}},
+                      causes: [%HeadCollisionCause{with: 1},
+                               %HeadCollisionCause{with: 2}]}},
               {6,
                %Death{turn: 0,
-                      causes: [%Death.SelfCollisionCause{}]}}] == causes
+                      causes: [%SelfCollisionCause{}]}}] == causes
     end
   end
 
@@ -76,7 +83,7 @@ defmodule Bs.DeathTest do
     end
 
     test "sets the cause of death", %{result: {_live, dead}} do
-      assert [%Death.StarvationCause{}] == hd(dead).cause_of_death
+      assert [%StarvationCause{}] == hd(dead).cause_of_death
     end
   end
 
@@ -102,7 +109,7 @@ defmodule Bs.DeathTest do
     end
 
     test "sets the cause of death", %{result: {_live, dead}} do
-      assert [%Death.WallCollisionCause{}] == hd(dead).cause_of_death
+      assert [%WallCollisionCause{}] == hd(dead).cause_of_death
     end
   end
 
@@ -130,8 +137,8 @@ defmodule Bs.DeathTest do
     end
 
     test "sets the cause of death", %{result: {_live, dead}} do
-      assert [%Death.HeadCollisionCause{with: 1},
-              %Death.HeadCollisionCause{with: 3}] == hd(dead).cause_of_death
+      assert [%HeadCollisionCause{with: 1},
+              %HeadCollisionCause{with: 3}] == hd(dead).cause_of_death
     end
   end
 
