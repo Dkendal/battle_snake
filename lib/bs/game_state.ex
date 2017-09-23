@@ -4,7 +4,6 @@ defmodule Bs.GameState do
   alias Bs.Snake
   alias Bs.World
   alias BsWeb.GameForm
-  alias Mnesia.Repo
   alias __MODULE__
 
   @max_history 20
@@ -136,18 +135,6 @@ defmodule Bs.GameState do
     winners = if length(winners) != 0, do: winners, else: who_died_last(state)
     winners = MapSet.new(winners)
     put_in(state.winners, winners)
-  end
-
-  @doc "Loads the game history for a game matching this id"
-  @spec load_history(t) :: t
-  def load_history(state) do
-    # TODO use qlc or something more efficient rather than sorting results here.
-    hist =
-      World
-      |> :mnesia.dirty_index_read(state.game_form_id, :game_form_id)
-      |> Enum.map(&Repo.load/1)
-      |> Enum.sort_by((& Map.get &1, :turn))
-    put_in(state.hist, hist)
   end
 
   def statuses, do: @statuses

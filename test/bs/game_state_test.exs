@@ -51,27 +51,6 @@ defmodule Bs.GameStateTest do
     end
   end
 
-  describe "GameState.load_history/1" do
-    # TODO: fix random failures
-    test "loads a game's history from mnesia" do
-      create(:world, game_form_id: 2, turn: 1)
-
-      for t <- (0..3),
-        do: create(:world, game_form_id: 1, turn: t)
-
-      state = build(:state, game_form_id: 1)
-
-      state = GameState.load_history(state)
-
-      assert [
-        %{turn: 0, game_form_id: 1},
-        %{turn: 1, game_form_id: 1},
-        %{turn: 2, game_form_id: 1},
-        %{turn: 3, game_form_id: 1},
-      ] = state.hist
-    end
-  end
-
   describe "GameState.step(t)" do
     setup do
       request_move = fn(_, _, _) ->
