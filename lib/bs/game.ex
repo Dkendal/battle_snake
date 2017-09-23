@@ -2,13 +2,11 @@ defmodule Bs.Game do
   alias Bs.Game.PubSub
   alias Bs.Game.Registry
   alias Bs.Game.Server
-  alias Bs.GameState
   alias __MODULE__
   use GenServer
 
   defmodule Command, do: defstruct [:name, :data]
 
-  @type state :: GameState.t
   @type server :: GenServer.server
 
   @moduledoc """
