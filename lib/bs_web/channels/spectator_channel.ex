@@ -11,7 +11,7 @@ defmodule BsWeb.SpectatorChannel do
 
   defp do_join(game_id, payload, socket) do
     if authorized?(payload) do
-      Game.PubSub.subscribe(game_id)
+      Game.subscribe(game_id)
       send(self(), :after_join)
       socket = assign(socket, :game_id, game_id)
       {:ok, socket}
