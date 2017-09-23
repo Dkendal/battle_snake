@@ -6,7 +6,7 @@ defmodule Bs.Game.ServerTest do
   alias Bs.World
   alias Mnesia.RecordNotFoundError
 
-  use Bs.Case, async: false
+  use Case, async: false
 
   def create_game_form(_) do
     [game_form: create(:game_form)]
