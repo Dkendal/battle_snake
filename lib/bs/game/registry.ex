@@ -5,21 +5,22 @@ defmodule Bs.Game.Registry do
 
   @name __MODULE__
 
-  @type name :: binary | atom
-  @type initializer :: name | GameState.t | GameForm.t
+  @type key :: Registry.key
+  @type value :: Registry.value
+  @type initializer :: key | GameState.t | GameForm.t
 
-  @spec via(name) :: GenServer.name
+  @spec via(key) :: GenServer.name
   def via(id), do: {:via, Registry, {@name, id}}
 
-  @spec options(name) :: GenServer.options
+  @spec options(key) :: GenServer.options
   def options(id), do: [name: via(id)]
 
-  @spec create(name) :: {:ok, pid} | :error
+  @spec create(key) :: {:ok, pid} | :error
   def create(id) when is_binary(id) do
     create(id, id)
   end
 
-  @spec create(initializer, name) :: {:ok, pid} | :error
+  @spec create(initializer, key) :: {:ok, pid} | :error
   def create(state, id) when is_binary(id) do
     Supervisor.start_game_server([state, options(id)])
   end
@@ -30,31 +31,33 @@ defmodule Bs.Game.Registry do
     """
   end
 
-  @spec lookup(key()) :: [{pid(), value()}]
+  @spec lookup(key) :: [{pid(), value}]
   def lookup(id) do
     Registry.lookup(@name, id)
   end
 
-  @spec find(name) :: {:ok, pid} | :error
+  @spec find(key) :: {:ok, pid} | :error
   def find(id) do
-    with [{pid, _}] <- Registry.lookup(@name, id) do
-      {:ok, pid}
-    else
-      [] ->
+    case Registry.lookup(@name, id) do
+      [{pid, _}] ->
+        {:ok, pid}
+      _ ->
         :error
     end
   end
 
-  @spec lookup_or_create(name) :: {:ok, pid} | :error
+  @spec lookup_or_create(key) :: {:ok, pid} | :error
   def lookup_or_create(id) when is_binary(id) do
     lookup_or_create(id, id)
   end
 
-  @spec lookup_or_create(initializer, name) :: {:ok, pid} | :error
+  @spec lookup_or_create(initializer, key) :: {:ok, pid} | :error
   def lookup_or_create(state, id) when is_binary(id) do
     case lookup(id) do
-      [{pid, _}] -> {:ok , pid}
-      [] -> create(state, id)
+      [{pid, _}] ->
+        {:ok , pid}
+      _ ->
+        create(state, id)
     end
   end
 end
