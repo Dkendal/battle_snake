@@ -1,5 +1,4 @@
 defmodule Bs.Api do
-
   alias Bs.Api.Response
   alias Bs.Move
   alias Bs.Snake

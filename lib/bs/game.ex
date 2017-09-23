@@ -21,16 +21,8 @@ defmodule Bs.Game do
     GenServer.start_link(__MODULE__, args, opts)
   end
 
-  def get_state(pid) do
-    GenServer.call(pid, :get_state)
-  end
-
   def get_game_state(pid) do
     GenServer.call(pid, :get_game_state)
-  end
-
-  def get_status(pid) do
-    GenServer.call(pid, :get_status)
   end
 
   def next(pid) do
@@ -47,6 +39,17 @@ defmodule Bs.Game do
 
   def resume(pid) do
     GenServer.call(pid, :resume)
+  end
+
+  @spec alive?(number) :: boolean
+  def alive?(id) do
+    case Registry.lookup(id) do
+      [_] ->
+        true
+
+      _ ->
+        false
+    end
   end
 
   @doc "Replay the current game."
