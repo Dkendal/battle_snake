@@ -1,12 +1,17 @@
-const path = require('path');
+import webpack from 'webpack';
+import path from 'path';
+import {CheckerPlugin} from 'awesome-typescript-loader';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
+
 const relativePath = path.resolve.bind(path, __dirname);
-const {CheckerPlugin} = require('awesome-typescript-loader');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const config = {};
+
+const config: webpack.Configuration = {};
 
 module.exports = config;
 
-config.entry = './src/app.ts';
+config.entry = {
+  app: './src/app.ts',
+}
 
 config.output = {
   path: relativePath('../priv/static/js'),
