@@ -76,6 +76,7 @@ defmodule Bs.Mixfile do
       {:exvcr, "~> 0.8", only: :test, runtime: false},
       {:gettext, "~> 0.11"},
       {:httpoison, "~> 0.11"},
+      {:meck, "~> 0.8.8", only: :test},
       {:phoenix, "~> 1.3"},
       {:phoenix_ecto, "~> 3.0"},
       {:phoenix_html, "~> 2.9"},
