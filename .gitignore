@@ -13,9 +13,10 @@
 Mnesia.*
 TODOs.org
 TODOs.org_archive
+assets/.awcache
 assets/.sass-cache
-assets/node_modules
 assets/elm/elm-stuff
+assets/node_modules
 databases/
 erl_crash.dump
-assets/.awcache
+priv/data/mnesia

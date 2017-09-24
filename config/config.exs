@@ -5,6 +5,14 @@
 # is restricted to this project.
 use Mix.Config
 
+config :bs, BsRepo,
+  adapter: Ecto.Adapters.Postgres,
+  database: "bs_repo",
+  username: "user",
+  password: "pass",
+  hostname: "localhost"
+
+
 # Configures the endpoint
 config :bs, BsWeb.Endpoint,
   url: [host: "localhost"],
@@ -13,8 +21,19 @@ config :bs, BsWeb.Endpoint,
   pubsub: [name: Bs.PubSub,
            adapter: Phoenix.PubSub.PG2]
 
-
 config :bs, start_timeout: 10_000
+
+config :bs, ecto_repos: [BsRepo]
+
+config :bs, BsRepo,
+  adapter: EctoMnesia.Adapter
+
+config :ecto_mnesia,
+  host: {:system, :atom, "MNESIA_HOST", Kernel.node()},
+  storage_type: {:system, :atom, "MNESIA_STORAGE_TYPE", :disc_copies}
+
+config :mnesia,
+  dir: 'priv/data/mnesia'
 
 # Configures Elixir's Logger
 config :logger, :console,

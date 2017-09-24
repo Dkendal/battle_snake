@@ -1,4 +1,5 @@
 use Mix.Config
+
 config :bs, snake_api: Bs.Api
 
 # For development, we disable any cache and enable
@@ -32,10 +33,6 @@ config :bs, BsWeb.Endpoint,
       ~r{lib/bs_web/templates/.*(eex)$}
     ]
   ]
-
-config(:mnesia,
-  dir: './databases/dev',
-  debug: true)
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"

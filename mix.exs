@@ -23,8 +23,10 @@ defmodule Bs.Mixfile do
   #
   # Type `mix help compile.app` for more information.
   def application do
-    [mod: {Bs, []},
-     extra_applications: extra_applications(Mix.env)]
+    [
+      mod: {Bs, []},
+      extra_applications: extra_applications(Mix.env)
+    ]
   end
 
   def erlc_options(_all) do
@@ -32,13 +34,11 @@ defmodule Bs.Mixfile do
   end
 
   def extra_applications(:dev) do
-    [:mix|
-     extra_applications(:all)]
+    [:mix| extra_applications(:all)]
   end
 
   def extra_applications(_all) do
-    [:logger,
-     :mnesia]
+    [:logger, :ecto_mnesia]
   end
 
   # Specifies which paths to compile per environment.

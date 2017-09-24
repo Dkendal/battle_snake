@@ -10,6 +10,7 @@ defmodule Bs do
     children = [
       # Start the endpoint when the application starts
       supervisor(BsWeb.Endpoint, []),
+      supervisor(BsRepo, []),
       supervisor(Bs.Game.Supervisor, []),
       supervisor(Task.Supervisor, [[name: Bs.MoveSupervisor]]),
       supervisor(Registry, [:unique, Bs.Game.Registry]),
