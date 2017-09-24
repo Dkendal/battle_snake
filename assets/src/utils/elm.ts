@@ -1,16 +1,4 @@
-export function* entries<T>(list: bs.List<T>) {
-  for (let i = 0; i < list.length; i++) {
-    yield list.item(i);
-  }
-}
-
-export function map<T, K>(iter: IterableIterator<T>, mapper: (x: T) => K): K[] {
-  return Array.from(iter, mapper);
-}
-
-export function array<T>(iter: IterableIterator<T>): T[] {
-  return map(iter, x => x);
-}
+import {entries, map} from './collections';
 
 export function embedApp<T>(tag: string, App: Elm.App<T>, config?: Elm.MetaData): Elm.Program<T>[] {
   const elements = entries(document.querySelectorAll(tag))
