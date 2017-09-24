@@ -1,32 +1,45 @@
-import webpack from 'webpack';
-import path from 'path';
-import {CheckerPlugin} from 'awesome-typescript-loader';
-import CopyWebpackPlugin from 'copy-webpack-plugin';
+import {Configuration} from "webpack";
+
+const webpack = require("webpack");
+const {CheckerPlugin} = require("awesome-typescript-loader");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
+const path = require("path");
 
 const relativePath = path.resolve.bind(path, __dirname);
-
-const config: webpack.Configuration = {};
+const config: Configuration = {};
 
 module.exports = config;
 
 config.entry = {
-  app: './src/app.ts',
-}
+  app: "./src/app.ts",
+  index: "./src/index.ts",
+  vendor: ["phoenix", "phoenix_html"],
+};
 
 config.output = {
-  path: relativePath('../priv/static/js'),
-  filename: 'app.js',
+  path: relativePath("../priv/static/js"),
+  filename: "[name].js",
 };
+
+config.plugins = [
+  new CheckerPlugin(),
+  new webpack.HashedModuleIdsPlugin(),
+  new webpack.optimize.CommonsChunkPlugin({
+    name: "vendor",
+  }),
+  new webpack.optimize.CommonsChunkPlugin({
+    name: "runtime",
+  }),
+  new CopyWebpackPlugin([{from: "./static"}]),
+];
 
 const tsRule = {
   test: /\.tsx?$/,
-  loader: 'awesome-typescript-loader',
+  loader: "awesome-typescript-loader",
   options: {
     useBabel: true,
     useCache: true,
-    reportFiles: [
-      'src/**/*.{ts,tsx}',
-    ],
+    reportFiles: ["src/**/*.{ts,tsx}"],
   },
 };
 
@@ -34,20 +47,20 @@ const cssRule = {
   test: /\.css$/,
   use: [
     {
-      loader: 'style-loader',
+      loader: "style-loader",
       options: {
         sourceMap: true,
       },
     },
     {
-      loader: 'css-loader',
+      loader: "css-loader",
       options: {
         sourceMap: true,
         importLoaders: 1,
       },
     },
     {
-      loader: 'postcss-loader',
+      loader: "postcss-loader",
     },
   ],
 };
@@ -56,9 +69,9 @@ const elmRule = {
   test: /\.elm$/,
   exclude: [/elm-stuff/, /node_modules/],
   use: {
-    loader: 'elm-webpack-loader',
+    loader: "elm-webpack-loader",
     options: {
-      cwd: relativePath('elm'),
+      cwd: relativePath("elm"),
     },
   },
 };
@@ -68,16 +81,11 @@ config.module = {
 };
 
 config.resolve = {
-  modules: ['node_modules', 'js'],
+  modules: ["node_modules", "js"],
   alias: {
-    elm: relativePath('elm/src'),
+    elm: relativePath("elm/src"),
   },
-  extensions: ['.js', '.json', '.ts', '.elm'],
+  extensions: [".js", ".jsx", ".ts", ".tsx", ".elm", ".json"],
 };
 
-config.devtool = '#source-map';
-
-config.plugins = [
-  new CheckerPlugin(),
-  new CopyWebpackPlugin([{from: './static'}]),
-];
+config.devtool = "#source-map";
