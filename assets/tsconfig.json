@@ -4,7 +4,9 @@
     "module": "ESNext",
     "lib": [
       "dom",
-      "esnext"
+      "dom.iterable",
+      "esnext",
+      "es2017"
     ],
     "allowJs": true,
     "jsx": "preserve",
