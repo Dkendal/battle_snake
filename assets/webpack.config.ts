@@ -12,13 +12,14 @@ module.exports = config;
 
 config.entry = {
   app: "./src/app.ts",
+  "game-form": "./src/apps/GameForm.ts",
   index: "./src/index.ts",
   vendor: ["phoenix", "phoenix_html"],
 };
 
 config.output = {
-  path: relativePath("../priv/static/js"),
-  filename: "[name].js",
+  path: relativePath("../priv/static"),
+  filename: "js/[name].js",
 };
 
 config.plugins = [
@@ -30,7 +31,10 @@ config.plugins = [
   new webpack.optimize.CommonsChunkPlugin({
     name: "runtime",
   }),
-  new CopyWebpackPlugin([{from: "./static"}]),
+  new CopyWebpackPlugin([{
+    context: "static",
+    from: "**/*",
+  }]),
 ];
 
 const tsRule = {
@@ -81,7 +85,7 @@ config.module = {
 };
 
 config.resolve = {
-  modules: ["node_modules", "js"],
+  modules: ["node_modules", "src"],
   alias: {
     elm: relativePath("elm/src"),
   },
