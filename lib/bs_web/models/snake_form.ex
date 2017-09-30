@@ -3,12 +3,7 @@ defmodule BsWeb.SnakeForm do
 
   use BsWeb, :model
 
-  @type t :: %__MODULE__{
-    url: String.t,
-    delete: boolean,
-  }
-
-  schema "snake" do
+  embedded_schema do
     field :url
     field :delete, :boolean, virtual: true
   end
