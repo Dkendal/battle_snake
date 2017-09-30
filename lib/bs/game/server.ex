@@ -23,23 +23,6 @@ defmodule Bs.Game.Server do
   def init({:error, reason}),
     do: {:stop, reason}
 
-  def init(id) when is_binary(id) do
-    String.to_integer(id)
-    |> init
-  end
-
-  def init(id) when is_integer(id) do
-    case BsRepo.get(GameForm, id) do
-      nil ->
-        {:stop,
-          %Mnesia.RecordNotFoundError{
-            id: id,
-            table: GameForm.__schema__(:source)}}
-      x ->
-        init x
-    end
-  end
-
   def init(%GameForm{} = game_form) do
     state = game_form
     |> GameForm.reload_game_server_state

@@ -61,12 +61,26 @@ defmodule Bs.Game do
   defdelegate handle_info(request, state), to: Server
   defdelegate init(args), to: Server
 
-  def find!({:ok, pid}), do: pid
-  def find!({:error, {:already_started, pid}}), do: pid
-  def find!({:error, e}), do: raise(e)
-  def find!(name), do: name |> find |> find!
+  def find! name do
+    case find name do
+      {:ok, pid} when is_pid pid ->
+        pid
 
-  defdelegate find(name), to: Registry, as: :lookup_or_create
+      {:error, {:already_started, pid}} when is_pid pid ->
+        pid
+
+      {:error, err} ->
+        raise err
+    end
+  end
+
+  def find name do
+    fn ->
+      BsWeb.GameForm |> BsRepo.get(name)
+    end
+    |> Registry.lookup_or_create(name)
+  end
+
   defdelegate name(id), to: Registry, as: :via
 
   defdelegate subscribe(name), to: PubSub

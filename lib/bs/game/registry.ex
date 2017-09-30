@@ -21,8 +21,15 @@ defmodule Bs.Game.Registry do
   end
 
   @spec create(initializer, key) :: {:ok, pid} | :error
-  def create(state, id) when is_binary(id) do
+  def create(state, id)
+  when is_binary(id)
+  and is_map(state)
+  do
     Supervisor.start_game_server([state, options(id)])
+  end
+
+  def create(fun, id) when is_function(fun) do
+    create(fun.(), id)
   end
 
   def create(_state, id) do
