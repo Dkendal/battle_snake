@@ -1,16 +1,12 @@
 defmodule Bs.GameTest do
   alias BsWeb.GameForm
   use Bs.Case, async: true
-  import Ecto.Changeset
 
-  describe "#set_id" do
-    test "adds an id if the id is missing" do
-      game = GameForm.changeset %GameForm{id: nil}, %{}
-      assert get_field(GameForm.set_id(game), :id) != nil
-
-      game = GameForm.changeset %GameForm{id: 1}, %{}
-      assert get_field(GameForm.set_id(game), :id) == 1
-    end
+  test "creating a new record" do
+    assert {:ok, _} = BsRepo.insert %GameForm{
+      world: %Bs.World{},
+      snakes: [%BsWeb.SnakeForm{}]
+    }
   end
 
   describe "GameForm.to_game_server_state/1" do
