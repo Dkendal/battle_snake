@@ -200,10 +200,6 @@ defmodule Mnesia.Repo do
         __schema__(:fields)
       end
 
-      def get(id) do
-        {:ok, BsRepo.get(__MODULE__, id)}
-      end
-
       @spec create_table(Keyword.t) :: {:atomic, :ok} | {:aborted, any}
       def create_table(opts \\ []) do
         :mnesia.create_table(__MODULE__, opts ++ table())
