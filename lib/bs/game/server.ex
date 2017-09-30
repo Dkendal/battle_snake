@@ -2,7 +2,6 @@ defmodule Bs.Game.Server do
   alias Bs.Game.PubSub
   alias Bs.GameState
   alias BsWeb.GameForm
-  alias Mnesia.Repo
 
   import GameState
   use GenServer

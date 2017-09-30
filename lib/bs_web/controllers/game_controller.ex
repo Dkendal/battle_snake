@@ -1,13 +1,11 @@
 defmodule BsWeb.GameController do
   alias Bs.Game
   alias BsWeb.GameForm
-  alias Ecto.Changeset
-  alias Mnesia.Repo
 
   use BsWeb, :controller
 
   def index(conn, _params) do
-    games = Repo.all(GameForm)
+    games = BsRepo.all GameForm
 
     game_servers = for game <- games do
       status = if Game.alive?(game.id), do: :alive, else: :dead
@@ -32,28 +30,31 @@ defmodule BsWeb.GameController do
   end
 
   def show(conn, %{"id" => id}) do
-    {:ok, game_form} = GameForm.get(id)
+    game_form = BsRepo.get!(GameForm, id)
     render(conn, "show.html", game: game_form)
   end
 
   def edit(conn, %{"id" => id}) do
-    {:ok, game_form} = GameForm.get(id)
+    game_form = BsRepo.get!(GameForm, id)
     changeset = GameForm.changeset game_form
     render(conn, "edit.html", game: game_form, changeset: changeset)
   end
 
   def update(conn, %{"id" => id, "game_form" => params}) do
-    {:ok, game_form} = GameForm.get(id)
+    game_form = BsRepo.get!(GameForm, id)
+
     game_form
     |> GameForm.changeset(params)
-    |> Changeset.apply_changes
-    |> Repo.save
+    |> BsRepo.update
 
     redirect(conn, to: game_path(conn, :edit, game_form))
   end
 
   def delete(conn, %{"id" => id}) do
-    GameForm |> Repo.delete(id)
+    case BsRepo.get(GameForm, id) do
+      nil -> :ok
+      x -> BsRepo.delete x
+    end
     index(conn, {})
   end
 
