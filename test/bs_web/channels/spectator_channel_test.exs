@@ -18,7 +18,7 @@ defmodule BsWeb.SpectatorChannelTest do
   end
 
   def sub _ do
-    id = create(:game_form).id
+    id = insert(:game_form).id
     {:ok, _, socket} =
       socket("user_id", %{})
       |> subscribe_and_join(SpectatorChannel, "spectator:#{id}")

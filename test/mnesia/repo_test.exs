@@ -78,19 +78,6 @@ defmodule Mnesia.RepoTest do
     end
   end
 
-  describe "Mnesia.Repo.get/1" do
-    setup [:create_table, :delete_table, :create_dummy]
-
-    test "returns the record", %{dummy: dummy} do
-      assert {:ok, @struct} == Dummy.get(dummy.id)
-    end
-
-    test "returns an error when the record doesn't exist" do
-      assert {:error, %Mnesia.RecordNotFoundError{table: Dummy, id: "fake-record"}} ==
-        Dummy.get("fake-record")
-    end
-  end
-
   describe "Mnesia.Repo.create_table/0" do
     test "creates the mnesia table" do
       :mnesia.delete_table Dummy

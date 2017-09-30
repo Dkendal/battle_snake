@@ -4,7 +4,6 @@ defmodule BsWeb.GameForm do
   alias Bs.WinConditions
   alias Bs.World
   alias BsWeb.SnakeForm
-  alias Ecto.UUID
   alias __MODULE__
 
   use BsWeb, :model
@@ -33,7 +32,7 @@ defmodule BsWeb.GameForm do
 
   schema "Elixir.BsWeb.GameForm" do
     embeds_many :snakes, SnakeForm
-    embeds_one :world, World
+    field :world, :any, virtual: true
     field :width, :integer, default: 20
     field :height, :integer, default: 20
     field :delay, :integer, default: 300
@@ -61,13 +60,11 @@ defmodule BsWeb.GameForm do
   def changeset(game, params \\ %{}) do
     game
     |> cast(params, @permitted)
-    |> cast_embed(:world)
     |> cast_embed(:snakes)
     |> validate_inclusion(:game_mode, @game_modes)
     |> validate_number(:recv_timeout, greater_than_or_equal_to: 0)
     |> validate_number(:delay, greater_than_or_equal_to: 0)
     |> validate_required(@required)
-    |> set_id()
     |> remove_empty_snakes()
   end
 
@@ -84,17 +81,6 @@ defmodule BsWeb.GameForm do
 
     Enum.reject(changeset, delete)
   end
-
-  def set_id(changeset) do
-    set_id(changeset, get_field(changeset, :id))
-  end
-
-  def set_id(changeset, nil) do
-    id = UUID.generate()
-    put_change(changeset, :id, id)
-  end
-
-  def set_id(changeset, _id), do: changeset
 
   @spec reload_game_server_state(t) :: game_state
   def reload_game_server_state(%GameForm{} = game_form) do

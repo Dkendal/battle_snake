@@ -25,7 +25,7 @@ defmodule BsWeb.GameAdminChannel do
 
     receive do
       {:DOWN, ^ref, _, _, _} ->
-        {:ok, _pid}= Game.find(game_id(socket))
+        {:ok, _pid} = Game.find(game_id(socket))
     end
 
     {:noreply, socket}

@@ -1,33 +1,21 @@
-defmodule Bs.MnesiaStrategy do
-  use ExMachina.Strategy, function_name: :create
-
-  def handle_create(record, _opts) do
-    Mnesia.Repo.save(record)
-  end
-end
-
 defmodule Bs.Factory do
-  use ExMachina
-  use Bs.MnesiaStrategy
+  use ExMachina.Ecto, repo: BsRepo
   use Bs.Point
 
   defdelegate sequence(name), to: ExMachina
 
   def world_factory do
     %Bs.World{
-      id: Ecto.UUID.generate(),
     }
   end
 
   def snake_form_factory do
     %BsWeb.SnakeForm{
-      url: "example.com"
     }
   end
 
   def game_form_factory do
     %BsWeb.GameForm{
-      id: Ecto.UUID.generate(),
       delay: 0,
     }
   end
@@ -68,9 +56,11 @@ defmodule Bs.Factory do
   end
 
   def state_factory do
+    game = insert(:game_form)
     %Bs.GameState{
+      game_form_id: game.id,
       world: build(:world),
-      game_form: build(:game_form),
+      game_form: game,
       objective: (fn _ -> false end)
     }
   end

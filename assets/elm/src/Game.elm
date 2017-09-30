@@ -85,7 +85,7 @@ type alias Board =
     { turn : Int
     , snakes : List Snake
     , deadSnakes : List Snake
-    , gameid : String
+    , gameid : Int
     , food : List Point
     }
 
@@ -121,7 +121,7 @@ decodeBoard =
         (JD.field "turn" JD.int)
         (JD.field "snakes" (JD.list decodeSnake))
         (JD.field "deadSnakes" (JD.list decodeSnake))
-        (JD.field "gameId" JD.string)
+        (JD.field "gameId" JD.int)
         (JD.field "food" (JD.list decodePoint))
 
 
@@ -349,8 +349,8 @@ update msg model =
                 Ok { content } ->
                     ( { model | board = Just content }, GameBoard.draw raw )
 
-                _ ->
-                    noOp model
+                Err e ->
+                    Debug.crash e
 
         MountCanvasApp ->
             ( model

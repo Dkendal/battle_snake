@@ -9,7 +9,7 @@ defmodule Bs.Game.ServerTest do
   use Case, async: false
 
   def create_game_form(_) do
-    [game_form: create(:game_form)]
+    [game_form: insert(:game_form)]
   end
 
   ########
@@ -18,7 +18,7 @@ defmodule Bs.Game.ServerTest do
 
   describe "Server.init(GameState.t)" do
     test "returns ok" do
-      assert {:ok, %GameState{}} == Server.init(%GameState{})
+      assert {:ok, %GameState{}} = Server.init(build(:state))
     end
   end
 
@@ -32,7 +32,7 @@ defmodule Bs.Game.ServerTest do
     end
 
     test "stops when the game form does not exist" do
-      assert {:stop, %RecordNotFoundError{}} = Server.init("fake")
+      assert {:stop, %RecordNotFoundError{}} = Server.init(-1)
     end
   end
 

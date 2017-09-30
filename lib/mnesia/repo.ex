@@ -201,16 +201,7 @@ defmodule Mnesia.Repo do
       end
 
       def get(id) do
-        read = fn ->
-          :mnesia.read(__MODULE__, id)
-        end
-
-        with {:atomic, [record]} <- :mnesia.transaction(read) do
-          {:ok, Mnesia.Repo.load(record)}
-        else
-          {:atomic, []} ->
-            {:error, %Mnesia.RecordNotFoundError{id: id, table: __MODULE__}}
-        end
+        {:ok, BsRepo.get(__MODULE__, id)}
       end
 
       @spec create_table(Keyword.t) :: {:atomic, :ok} | {:aborted, any}
