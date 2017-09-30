@@ -10,6 +10,7 @@
     <script src="<%= static_path(@conn, "/js/runtime.js") %>"></script>
     <script src="<%= static_path(@conn, "/js/vendor.js") %>"></script>
     <script src="<%= static_path(@conn, "/js/index.js") %>"></script>
+    <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
 
     <title>BattleSnake 2018</title>
   </head>
