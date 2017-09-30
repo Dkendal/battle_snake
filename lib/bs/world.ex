@@ -1,5 +1,5 @@
 defmodule Bs.World do
-  use Mnesia.Repo
+  use Ecto.Schema
 
   alias Bs.Move
   alias Bs.Point
