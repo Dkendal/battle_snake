@@ -31,7 +31,7 @@ defmodule BsWeb.GameForm do
 
   @type game_state :: GameState.t
 
-  schema "game" do
+  schema "Elixir.BsWeb.GameForm" do
     embeds_many :snakes, SnakeForm
     embeds_one :world, World
     field :width, :integer, default: 20
