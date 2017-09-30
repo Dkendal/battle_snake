@@ -40,7 +40,7 @@ defmodule BsWeb.GameAdminChannelTest do
   describe "GameAdminChannel.handle_in(request, state)" do
     setup do
       {:ok, pid} = GenServer.start_link G, self(), name: :"fake-game-server"
-      id =  create(:game_form).id
+      id =  insert(:game_form).id
       assigns = %{game_server_pid: pid, game_id: id}
       socket = socket("user_id", assigns)
       reply = GameAdminChannel.handle_in("resume", self(), socket)
@@ -56,7 +56,7 @@ defmodule BsWeb.GameAdminChannelTest do
   end
 
   def create_game_form(c) when is_map(c) do
-    Map.put(c, :game_form, create(:game_form))
+    Map.put(c, :game_form, insert(:game_form))
   end
 
   def join_topic(c) when is_map(c) do
@@ -64,9 +64,9 @@ defmodule BsWeb.GameAdminChannelTest do
     Map.put(c, :socket, socket)
   end
 
-  def join_topic(id) when is_binary(id) do
+  def join_topic(id) when is_integer(id) do
     "user_id"
     |> socket(%{})
-    |> subscribe_and_join(GameAdminChannel, "game_admin:" <> id)
+    |> subscribe_and_join(GameAdminChannel, "game_admin:#{id}")
   end
 end

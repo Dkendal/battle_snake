@@ -25,21 +25,20 @@ defmodule Bs.World do
     game_id: pos_integer,
   }
 
-  defstruct [
-    :id,
-    :game_form_id,
-    :created_at,
-    food: [],
-    snakes: [],
-    dead_snakes: [],
-    max_food: 2,
-    height: 10,
-    width: 10,
-    turn: 0,
-    moves: %{},
-    deaths: [],
-    game_id: 0,
-  ]
+  embedded_schema do
+    field :game_form_id, :any, virtual: true
+    field :created_at, :any, virtual: true
+    field :food, :any, default: [], virtual: true
+    field :snakes, :any, default: [], virtual: true
+    field :dead_snakes, :any, default: [], virtual: true
+    field :max_food, :any, default: 2, virtual: true
+    field :height, :any, default: 10, virtual: true
+    field :width, :any, default: 10, virtual: true
+    field :turn, :any, default: 0, virtual: true
+    field :moves, :any, default: %{}, virtual: true
+    field :deaths, :any, default: [], virtual: true
+    field :game_id, :any, default: 0, virtual: true
+  end
 
   def fields,
     do: [:id,

@@ -5,7 +5,8 @@ defmodule Bs.Game.SupervisorTest do
 
   describe "Supervisor.start_game_server/1" do
     test "starts a game server process" do
-      {:ok, game_server} = Supervisor.start_game_server([build(:state)])
+      state = build(:state)
+      assert {:ok, game_server} = Supervisor.start_game_server([state])
       assert is_pid game_server
     end
   end

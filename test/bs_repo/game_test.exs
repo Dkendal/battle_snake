@@ -1,6 +1,5 @@
 defmodule Bs.Repo.GameTest do
   alias BsRepo.Game
-  alias BsRepo.Game.Snake
   use Bs.DataCase, async: false
 
   setup do

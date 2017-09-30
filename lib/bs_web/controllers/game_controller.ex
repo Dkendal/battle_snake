@@ -24,10 +24,9 @@ defmodule BsWeb.GameController do
   end
 
   def create(conn, %{"game_form" => params}) do
-    game_form = %GameForm{}
+    {:ok, game_form} = %GameForm{}
     |> GameForm.changeset(params)
-    |> Changeset.apply_changes
-    |> Repo.save
+    |> BsRepo.insert
 
     redirect(conn, to: game_path(conn, :edit, game_form))
   end

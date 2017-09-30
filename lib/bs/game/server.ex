@@ -24,10 +24,21 @@ defmodule Bs.Game.Server do
   def init({:error, reason}),
     do: {:stop, reason}
 
-  def init(game_form_id) when is_binary(game_form_id) do
-    GameForm
-    |> Repo.dirty_find(game_form_id)
+  def init(id) when is_binary(id) do
+    String.to_integer(id)
     |> init
+  end
+
+  def init(id) when is_integer(id) do
+    case BsRepo.get(GameForm, id) do
+      nil ->
+        {:stop,
+          %Mnesia.RecordNotFoundError{
+            id: id,
+            table: GameForm.__schema__(:source)}}
+      x ->
+        init x
+    end
   end
 
   def init(%GameForm{} = game_form) do
@@ -47,7 +58,9 @@ defmodule Bs.Game.Server do
     init(state)
   end
 
-  def init(%GameState{} = state) do
+  def init(%GameState{game_form_id: game_form_id} = state)
+  when is_integer(game_form_id)
+  do
     do_reply({:ok, state})
   end
 
@@ -206,9 +219,7 @@ defmodule Bs.Game.Server do
     end
   end
 
-  defp broadcast(state) do
-    topic = state.game_form_id
-
+  defp broadcast(%{game_form_id: topic} = state) when is_integer(topic) do
     ignored_fields = [
       :hist,
       :objective,

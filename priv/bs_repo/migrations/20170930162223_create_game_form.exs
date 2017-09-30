@@ -4,7 +4,6 @@ defmodule BsRepo.Migrations.CreateGameForm do
   def change do
     create_if_not_exists table(BsWeb.GameForm, engine: :set) do
       add :snakes, :any
-      add :world, :any
       add :width, :any
       add :height, :any
       add :delay, :any
