@@ -4,7 +4,6 @@ defmodule Bs.Game.ServerTest do
   alias Bs.GameState
   alias Bs.Snake
   alias Bs.World
-  alias Mnesia.RecordNotFoundError
 
   use Case, async: false
 
@@ -19,20 +18,6 @@ defmodule Bs.Game.ServerTest do
   describe "Server.init(GameState.t)" do
     test "returns ok" do
       assert {:ok, %GameState{}} = Server.init(build(:state))
-    end
-  end
-
-  describe "Server.init(integer)" do
-    setup [:create_game_form]
-
-    test "initializes the game state with the id", c do
-      assert {:ok, state} = Server.init(c.game_form.id)
-      assert state.game_form_id == c.game_form.id
-      assert state.game_form.id == c.game_form.id
-    end
-
-    test "stops when the game form does not exist" do
-      assert {:stop, %RecordNotFoundError{}} = Server.init(-1)
     end
   end
 

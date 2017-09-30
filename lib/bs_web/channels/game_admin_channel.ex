@@ -19,7 +19,8 @@ defmodule BsWeb.GameAdminChannel do
   def available_requests, do: @requests
 
   def handle_in("stop", _from, socket) do
-    {:ok, pid}= Game.find(game_id(socket))
+    {:ok, pid} = Game.find(game_id(socket))
+
     ref = Process.monitor(pid)
     GenServer.stop(pid)
 
