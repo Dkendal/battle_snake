@@ -12,7 +12,6 @@ module.exports = config;
 
 config.entry = {
   app: "./src/app.ts",
-  "game-form": "./src/apps/GameForm.ts",
   index: "./src/index.ts",
   vendor: ["phoenix", "phoenix_html"],
 };
