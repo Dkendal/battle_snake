@@ -63,20 +63,6 @@ defmodule Mnesia do
 
   def dirty_all(table),
     do: dirty_select(table, [{:"$1", [], [:"$1"]}])
-
-  def install(nodes) do
-    :ok = :mnesia.create_schema(nodes)
-
-    :rpc.multicall(nodes, :application, :start, [:mnesia])
-
-    BsWeb.GameForm.create_table(disc_copies: nodes)
-
-    Bs.World.create_table(disc_copies: nodes)
-
-    :mnesia.add_table_index(Bs.World, :game_form_id)
-
-    :rpc.multicall(nodes, :application, :stop, [:mnesia])
-  end
 end
 
 defmodule Mnesia.Util do
