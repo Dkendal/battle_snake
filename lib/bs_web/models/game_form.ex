@@ -7,7 +7,7 @@ defmodule BsWeb.GameForm do
   alias __MODULE__
 
   use BsWeb, :model
-  use Mnesia.Repo
+  use Ecto.Schema
 
   @singleplayer "singleplayer"
   @multiplayer "multiplayer"
