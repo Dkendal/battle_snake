@@ -3,6 +3,12 @@ defmodule BsWeb.GameControllerTest do
 
   alias BsWeb.GameForm
 
+  setup do
+    {:atomic, :ok} = :mnesia.clear_table BsWeb.GameForm
+    {:atomic, :ok} = :mnesia.clear_table :id_seq
+    :ok
+  end
+
   describe "GET index" do
     test "lists all entries on index", %{conn: conn} do
       conn = get conn, game_path(conn, :index)
@@ -19,18 +25,13 @@ defmodule BsWeb.GameControllerTest do
 
       conn = post conn, game_path(conn, :create), game_form: game_form
 
-
-      id = :mnesia.activity :transaction, fn ->
-        :mnesia.last(GameForm)
-      end
+      [%{id: id}] = BsRepo.all GameForm
 
       assert redirected_to(conn, 302) == game_path(conn, :edit, id)
 
-      [game] = :mnesia.activity :transaction, fn ->
-        Mnesia.Repo.load(:mnesia.read(GameForm, id))
-      end
+      [game] = BsRepo.all GameForm
 
-      assert %GameForm{width: 100, height: 100,} = game
+      assert %GameForm{width: 100, height: 100} = game
     end
   end
 end
