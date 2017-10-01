@@ -1,18 +1,12 @@
 defmodule Bs.ApiTest do
-  alias Bs.{Snake, Point, Move, Api}
+  alias Bs.Point
+  alias Bs.Move
+  alias Bs.Api
 
   use Bs.Case, async: true
-  use ExVCR.Mock, adapter: ExVCR.Adapter.Hackney
 
   @http_error %HTTPoison.Error{}
   @move_url "http://example.snake/move"
-  @start_url "http://example.snake/start"
-
-  @snake_form %BsWeb.SnakeForm{
-    url: "http://example.snake"
-  }
-
-  @game_form %BsWeb.GameForm{}
 
   @snake %Bs.Snake{
     id: "1234",
@@ -24,48 +18,6 @@ defmodule Bs.ApiTest do
   @world %Bs.World{
     snakes: [@snake]
   }
-
-  describe "Api.load/3" do
-    test "on success produces a snake" do
-      body = %{
-        name: "example-snake",
-        color: "#123123"
-      }
-
-      http_response = %HTTPoison.Response{body: Poison.encode!(body)}
-
-      mock = fn (@start_url, _, _, _) ->
-        {:ok, http_response}
-      end
-
-      response = Api.load(@snake_form, @game_form, mock)
-
-      assert(match? %Api.Response{}, response)
-
-      assert({:ok, http_response} == response.raw_response)
-
-      assert(response.parsed_response == {
-        :ok,
-        %Snake{
-          name: "example-snake",
-          color: "#123123",
-          url: "http://example.snake"}})
-    end
-
-    test "on error returns the error" do
-      mock = fn (@start_url, _, _, _) ->
-        {:error, @http_error}
-      end
-
-      response =  Api.load(@snake_form, @game_form, mock)
-
-      assert(match? %Api.Response{}, response)
-
-      assert({:error, @http_error} == response.raw_response)
-
-      assert(response.parsed_response == {:error, :no_response})
-    end
-  end
 
   describe "Api.move/3" do
     test "sets an error when the move is invalid" do

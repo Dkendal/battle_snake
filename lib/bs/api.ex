@@ -3,76 +3,12 @@ defmodule Bs.Api do
   alias Bs.Move
   alias Bs.Snake
   alias Bs.World
-  alias BsWeb.GameForm
-  alias BsWeb.SnakeForm
   alias Ecto.Changeset
 
   require Logger
 
-  @start_timeout Application.get_env(:bs, :start_timeout)
-
-  @callback load(%SnakeForm{}, %GameForm{}) :: Response.t
   @callback move(%Snake{}, %World{}) :: Response.t
   @callback request_move(%Snake{}, %World{}) :: HTTPoison.Response.t
-
-  def load(url, data, request \\ &HTTPoison.post/4)
-
-  def load(%{url: url}, data, request) do
-    load url, data, request
-  end
-
-  def load(url, data, request)
-  when is_binary(url)
-  do
-    request_url = url <> "/start"
-    data = Poison.encode!(data)
-
-    response = request_url
-    |> request.(data, ["content-type": "application/json"], [recv_timeout: @start_timeout])
-    |> Response.new(as: %{})
-
-    response = put_in(response.url, url)
-
-    update_in(response.parsed_response, fn
-      {:ok, map} ->
-      (
-        {:ok, map}
-      )
-      error ->
-      (
-        log_error(url, error, response)
-        error
-      )
-    end)
-
-    response = update_in(response.parsed_response, fn
-      {:ok, snake} ->
-      (
-        snake = put_in(snake["url"], url)
-        {:ok, snake}
-      )
-      error ->
-      (
-        log_error(request_url, error, response)
-        error
-      )
-    end)
-
-    response = update_in response.parsed_response, fn
-      {:ok, map} ->
-        changeset = Snake.changeset(%Snake{}, map)
-
-        if changeset.valid? do
-          {:ok, Changeset.apply_changes(changeset)}
-        else
-          {:error, changeset}
-        end
-      response ->
-        response
-    end
-
-    do_log(response)
-  end
 
   def do_log(response) do
     with {:error, e} <- response.raw_response,
