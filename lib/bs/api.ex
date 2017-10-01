@@ -15,14 +15,15 @@ defmodule Bs.Api do
   @callback move(%Snake{}, %World{}) :: Response.t
   @callback request_move(%Snake{}, %World{}) :: HTTPoison.Response.t
 
-  @doc """
-  Load the Snake struct based on the configuration_form data for both the world
-  and snake.
+  def load(url, data, request \\ &HTTPoison.post/4)
 
-  POST /start
-  """
-  @spec load(%SnakeForm{}, %GameForm{}) :: Response.t
-  def load(%{url: url}, data, request \\ &HTTPoison.post/4) do
+  def load(%{url: url}, data, request) do
+    load url, data, request
+  end
+
+  def load(url, data, request)
+  when is_binary(url)
+  do
     request_url = url <> "/start"
     data = Poison.encode!(data)
 

@@ -19,6 +19,7 @@ defmodule Bs.Case do
     quote do
       import Bs.Factory
       import :meck
+      import Poison, only: [encode!: 1]
       defdelegate mock(mod), as: :new, to: :meck
       defdelegate mock(mod, opts), as: :new, to: :meck
 

@@ -34,7 +34,6 @@ defmodule Bs.Snake do
     :id,
     :cause_of_death,
     :head_url,
-    :color,
     :secondary_color,
     head_type: "regular",
     tail_type: "regular",
@@ -44,6 +43,7 @@ defmodule Bs.Snake do
     url: "",
     health: {:error, :init},
     health_points: @max_health_points,
+    color: "black",
   ]
 
   @doc """
