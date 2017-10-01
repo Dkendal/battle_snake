@@ -94,23 +94,13 @@ defmodule Bs.Game do
         "multiplayer" -> multiplayer
       end
 
-      state = %Bs.GameState{
+      %Bs.GameState{
         delay: delay,
         game_form: game_form,
         game_form_id: id,
         objective: objective,
         world: world,
       }
-
-      stream = Stream.concat(
-        get_in(state, [Access.key(:world, %{}), Access.key(:snakes, [])]),
-        get_in(state, [Access.key(:world, %{}), Access.key(:dead_snakes, [])]))
-
-      snakes = stream
-      |> Stream.map(& {&1.id, &1})
-      |> Enum.into(%{})
-
-      put_in(state.snakes, snakes)
     end
 
     Registry.lookup_or_create(fun, id)
