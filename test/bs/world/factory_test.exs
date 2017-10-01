@@ -26,7 +26,7 @@ defmodule Bs.World.FactoryTest do
     on_exit &unload/0
   end
 
-  test "#build" do
+  test "#build when snakes respond" do
     world = Factory.build build(
       :game_form,
       height: 10,

@@ -8,8 +8,8 @@ defimpl Poison.Encoder, for: Bs.Snake do
 end
 
 defmodule Bs.Snake do
-  alias __MODULE__
-  alias Bs.{Point}
+  use Ecto.Schema
+  alias Bs.Point
   alias Bs.Move
 
   @max_health_points 100
@@ -17,34 +17,21 @@ defmodule Bs.Snake do
   @type health :: :ok | {:error, any}
   @type cause_of_death :: {atom, any}
 
-  @type t :: %Snake{
-    id: reference,
-    color: String.t,
-    secondary_color: String.t,
-    coords: [Point.t],
-    head_url: String.t,
-    name: String.t,
-    taunt: String.t,
-    url: String.t,
-    health: health,
-    cause_of_death: cause_of_death,
-  }
+  embedded_schema do
+    field :cause_of_death, :string
+    field :head_url, :string
+    field :secondary_color, :string
+    field :head_type, :string, default: "regular"
+    field :tail_type, :string, default: "regular"
+    field :name, :string, default: ""
+    field :taunt, :string, default: ""
+    field :url, :string, default: ""
+    field :health_points, :string, default: @max_health_points
+    field :color, :string, default: "black"
+    field :health, :any, default: {:error, :init}, virtual: true
 
-  defstruct [
-    :id,
-    :cause_of_death,
-    :head_url,
-    :secondary_color,
-    head_type: "regular",
-    tail_type: "regular",
-    coords: [],
-    name: "",
-    taunt: "",
-    url: "",
-    health: {:error, :init},
-    health_points: @max_health_points,
-    color: "black",
-  ]
+    embeds_many :coords, Point
+  end
 
   @doc """
   Checks if the snake has collided with a wall or is outside the walls.
@@ -80,7 +67,6 @@ defmodule Bs.Snake do
   end
 
   @doc "Reduce health points."
-  @spec dec_health_points(t, pos_integer) :: t
   def dec_health_points(snake, amount \\ 1) do
     update_in(snake.health_points, & &1 - amount)
   end
@@ -102,7 +88,6 @@ defmodule Bs.Snake do
   end
 
   @doc "Set this snake's health_points to #{@max_health_points}"
-  @spec reset_health_points(t) :: t
   def reset_health_points(snake) do
     put_in(snake.health_points, @max_health_points)
   end
@@ -144,7 +129,6 @@ defmodule Bs.Snake do
   @doc """
   Update the snake by moving the snake's cooridinates by the vector "move".
   """
-  @spec move(t, Point.t) :: t
   def move(snake, %Point{} = point) do
     body = body snake
     head = head snake
@@ -153,7 +137,6 @@ defmodule Bs.Snake do
     put_in(snake.coords, body)
   end
 
-  @spec died_on(t) :: pos_integer
   def died_on(snake) do
     case snake.cause_of_death do
       nil -> {:error, :alive}
@@ -161,7 +144,6 @@ defmodule Bs.Snake do
     end
   end
 
-  @spec dead?(t) :: boolean
   def dead?(snake) do
     case snake.cause_of_death do
       nil -> false
@@ -169,7 +151,6 @@ defmodule Bs.Snake do
     end
   end
 
-  @spec alive?(t) :: boolean
   def alive?(snake) do
     !dead?(snake)
   end
