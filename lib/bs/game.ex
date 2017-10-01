@@ -2,6 +2,8 @@ defmodule Bs.Game do
   alias Bs.Game.PubSub
   alias Bs.Game.Registry
   alias Bs.Game.Server
+  alias Bs.World.Factory
+
   use GenServer
 
   defmodule Command, do: defstruct [:name, :data]
@@ -71,8 +73,6 @@ defmodule Bs.Game do
 
   def find(id) when is_binary(id) do
     fun = fn ->
-      alias Bs.World.Factory
-
       id = String.to_integer id
 
       game_form = BsRepo.get! BsWeb.GameForm, id

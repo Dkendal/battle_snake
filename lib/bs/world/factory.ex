@@ -15,10 +15,19 @@ defmodule Bs.World.Factory do
         game_id: game_form.id
       }
 
-    snakes =
-      game_form.snakes
-      |> Task.async_stream(&(task &1, game_form), [timeout: @timeout])
-      |> Enum.map(fn {:ok, snake} -> snake end)
+    snakes = game_form.snakes
+
+    data = Poison.encode! %{
+      game_id: game_form.id,
+      height: game_form.height,
+      width: game_form.width
+    }
+
+    stream = Task.async_stream(snakes,
+                               &task(&1, data),
+                               [timeout: @timeout])
+
+    snakes = for {:ok, snake} <- stream, do: snake
 
     world = put_in world.snakes, snakes
 
@@ -35,13 +44,13 @@ defmodule Bs.World.Factory do
     end
   end
 
-  def task snake_form, game_form do
+  def task snake_form, data do
     url = snake_form.url
     url = "#{url}/start"
 
     response = HTTPoison.post!(
       url,
-      Poison.encode!(game_form),
+      data,
       ["content-type": "application/json"],
       [recv_timeout: @timeout]
     )
