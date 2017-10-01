@@ -9,18 +9,14 @@ defmodule Bs.Game.Registry do
   @type value :: Registry.value
   @type initializer :: key | GameState.t | GameForm.t
 
-  @spec via(key) :: GenServer.name
   def via(id), do: {:via, Registry, {@name, id}}
 
-  @spec options(key) :: GenServer.options
   def options(id), do: [name: via(id)]
 
-  @spec create(key) :: {:ok, pid} | :error
   def create(id) when is_binary(id) do
     create(id, id)
   end
 
-  @spec create(initializer, key) :: {:ok, pid} | :error
   def create(state, id)
   when is_binary(id)
   and is_map(state)
@@ -38,12 +34,10 @@ defmodule Bs.Game.Registry do
     """
   end
 
-  @spec lookup(key) :: [{pid(), value}]
   def lookup(id) do
     Registry.lookup(@name, id)
   end
 
-  @spec find(key) :: {:ok, pid} | :error
   def find(id) do
     case Registry.lookup(@name, id) do
       [{pid, _}] ->
@@ -53,18 +47,15 @@ defmodule Bs.Game.Registry do
     end
   end
 
-  @spec lookup_or_create(key) :: {:ok, pid} | :error
-  def lookup_or_create(id) when is_binary(id) do
-    lookup_or_create(id, id)
-  end
-
-  @spec lookup_or_create(initializer, key) :: {:ok, pid} | :error
-  def lookup_or_create(state, id) when is_binary(id) do
+  def lookup_or_create(fun, id)
+  when is_binary(id)
+  and is_function(fun)
+  do
     case lookup(id) do
       [{pid, _}] ->
         {:ok , pid}
       _ ->
-        create(state, id)
+        create(fun, id)
     end
   end
 end
