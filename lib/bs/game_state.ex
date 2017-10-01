@@ -3,8 +3,6 @@ defmodule Bs.GameState do
   alias Bs.Movement
   alias Bs.Snake
   alias Bs.World
-  alias BsWeb.GameForm
-  alias __MODULE__
 
   @max_history 20
 
@@ -27,64 +25,34 @@ defmodule Bs.GameState do
   # Type Definitions #
   ####################
 
-  @typedoc """
-  Any function that takes a GameState, and returns a new GameState.
-  """
-  @type state_fun :: (t -> t)
-  @type state_predicate :: (t -> boolean)
-  @type uuid :: binary
-  @type snake_id :: uuid
-
-  @typedoc """
-  A function that, when true, indicates that the game is over.
-  """
-  @type objective_fun :: state_predicate
-
-  @type t :: %GameState{
-    world: World.t,
-    objective: objective_fun,
-    delay: non_neg_integer,
-    hist: [World.t],
-    game_form: GameForm.t,
-    winners: [snake_id]
-  }
-
-  @spec cont!(t) :: t
   def cont!(state) do
     put_in(state.status, :cont)
   end
 
-  @spec cont?(t) :: t
   def cont?(state) do
     state.status == :cont
   end
 
-  @spec suspend!(t) :: t
   def suspend!(state) do
     put_in(state.status, :suspend)
   end
 
-  @spec suspend?(t) :: t
   def suspend?(state) do
     state.status == :suspend
   end
 
-  @spec halted!(t) :: t
   def halted!(state) do
     put_in(state.status, :halted)
   end
 
-  @spec halted?(t) :: t
   def halted?(state) do
     state.status == :halted
   end
 
-  @spec replay!(t) :: t
   def replay!(state) do
     put_in(state.status, :replay)
   end
 
-  @spec replay?(t) :: t
   def replay?(state) do
     state.status == :replay
   end
@@ -95,7 +63,6 @@ defmodule Bs.GameState do
     end
   end
 
-  @spec done?(t) :: boolean
   def done?(state) do
     state.objective.(state.world)
   end
@@ -129,7 +96,6 @@ defmodule Bs.GameState do
   @doc """
   Sets the winners to be anyone that is still alive, or whoever died last.
   """
-  @spec set_winners(t) :: t
   def set_winners(state) do
     winners = for s <- state.world.snakes, do: s.id
     winners = if length(winners) != 0, do: winners, else: who_died_last(state)
@@ -149,12 +115,10 @@ defmodule Bs.GameState do
     state.delay
   end
 
-  @spec winner?(t, Snake.t) :: boolean
   def winner?(state, %Snake{} = snake) do
     winner?(state, snake.id)
   end
 
-  @spec winner?(t, snake_id) :: boolean
   def winner?(state, snake_id) do
     Enum.member?(state.winners, snake_id)
   end
