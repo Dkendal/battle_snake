@@ -7,15 +7,13 @@ defmodule Bs.World.Factory do
 
   def build(game_form) do
     world = %World{
-        game_form_id: game_form.id,
-        height: game_form.height,
-        max_food: game_form.max_food,
-        snakes: [],
-        width: game_form.width,
-        game_id: game_form.id
-      }
-
-    snakes = game_form.snakes
+      game_form_id: game_form.id,
+      height: game_form.height,
+      max_food: game_form.max_food,
+      snakes: [],
+      width: game_form.width,
+      game_id: game_form.id
+    }
 
     data = Poison.encode! %{
       game_id: game_form.id,
@@ -23,9 +21,36 @@ defmodule Bs.World.Factory do
       width: game_form.width
     }
 
-    stream = Task.async_stream(snakes,
-                               &task(&1, data),
-                               [timeout: @timeout])
+    snakes = game_form.snakes
+
+    task = fn snake_form ->
+      url = snake_form.url
+      url = "#{url}/start"
+
+      response = HTTPoison.post!(
+        url,
+        data,
+        ["content-type": "application/json"],
+        [recv_timeout: @timeout]
+      )
+
+      json = Poison.decode! response.body
+
+      model = %Snake{
+        url: snake_form.url,
+        id: snake_form.id,
+      }
+
+      changeset = Snake.changeset(model, json)
+
+      if changeset.valid? do
+        Ecto.Changeset.apply_changes changeset
+      else
+        raise changeset.errors
+      end
+    end
+
+    stream = Task.async_stream(snakes, task, [timeout: @timeout])
 
     snakes = for {:ok, snake} <- stream, do: snake
 
@@ -41,33 +66,6 @@ defmodule Bs.World.Factory do
 
         put_in snake.coords, coords
       end
-    end
-  end
-
-  def task snake_form, data do
-    url = snake_form.url
-    url = "#{url}/start"
-
-    response = HTTPoison.post!(
-      url,
-      data,
-      ["content-type": "application/json"],
-      [recv_timeout: @timeout]
-    )
-
-    json = Poison.decode! response.body
-
-    model = %Snake{
-      url: snake_form.url,
-      id: snake_form.id,
-    }
-
-    changeset = Snake.changeset(model, json)
-
-    if changeset.valid? do
-      Ecto.Changeset.apply_changes changeset
-    else
-      raise changeset.errors
     end
   end
 end
