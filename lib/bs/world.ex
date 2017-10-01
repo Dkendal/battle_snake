@@ -1,7 +1,6 @@
 defmodule Bs.World do
   use Ecto.Schema
 
-  alias Bs.Move
   alias Bs.Point
   alias Bs.Snake
   alias Bs.Point
@@ -11,19 +10,6 @@ defmodule Bs.World do
   defmodule DeathEvent do
     defstruct [:turn, :snake]
   end
-
-  @type t :: %__MODULE__{
-    id: any,
-    food: [Point.t],
-    snakes: [Snake.t],
-    dead_snakes: [any],
-    max_food: pos_integer,
-    height: pos_integer,
-    width: pos_integer,
-    turn: pos_integer,
-    moves: %{String.t => Move.t},
-    game_id: pos_integer,
-  }
 
   embedded_schema do
     field :game_form_id, :any, virtual: true
@@ -40,24 +26,9 @@ defmodule Bs.World do
     field :game_id, :any, default: 0, virtual: true
   end
 
-  def fields,
-    do: [:id,
-         :created_at,
-         :food,
-         :snakes,
-         :dead_snakes,
-         :game_form_id,
-         :max_food,
-         :height,
-         :width,
-         :turn,
-         :deaths]
-
-
   @doc """
   Restock food on the board.
   """
-  @spec stock_food(t) :: t
   def stock_food(world) do
     i = world.max_food - length(world.food)
     i = max(i, 0)
@@ -82,7 +53,6 @@ defmodule Bs.World do
     world
   end
 
-  @spec rand_unoccupied_space(t) :: {:ok, Point.t} | {:error, any}
   def rand_unoccupied_space(%{width: w, height: h} = world)
   when w > 0
   and h > 0 do
@@ -127,7 +97,6 @@ defmodule Bs.World do
 
 
   @doc "Reduce all snakes health points by 1"
-  @spec dec_health_points(t) :: t
   def dec_health_points(world) do
     update_in world.snakes, fn snakes ->
       Enum.map(snakes, &Snake.dec_health_points/1)
@@ -137,7 +106,6 @@ defmodule Bs.World do
   @doc """
   Move any snakes from .snakes that died this turn into .dead_snakes.
   """
-  @spec clean_up_dead(t) :: t
   def clean_up_dead world do
     snakes = world.snakes
 
@@ -168,7 +136,6 @@ defmodule Bs.World do
     put_in(world.snakes, living_snakes)
   end
 
-  @spec grow_snakes(t) :: t
   def grow_snakes(world) do
     update_in world.snakes, fn snakes ->
       for snake <- snakes do

@@ -28,12 +28,6 @@ defmodule Bs.Game.Registry do
     create(fun.(), id)
   end
 
-  def create(_state, id) do
-    raise """
-    Expected id to a be a binary. id: #{inspect id}
-    """
-  end
-
   def lookup(id) do
     Registry.lookup(@name, id)
   end
