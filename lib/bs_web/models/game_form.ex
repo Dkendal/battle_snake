@@ -1,7 +1,6 @@
 defmodule BsWeb.GameForm do
   alias Bs.GameForm.Reset
   alias Bs.GameState
-  alias Bs.World
   alias BsWeb.SnakeForm
   alias __MODULE__
 
@@ -13,19 +12,6 @@ defmodule BsWeb.GameForm do
   @game_modes [@singleplayer, @multiplayer]
 
   defmacro game_modes, do: @game_modes
-
-  @type t :: %GameForm{
-    snakes: [SnakeForm],
-    world: World,
-    width: pos_integer,
-    height: pos_integer,
-    delay: non_neg_integer,
-    recv_timeout: integer,
-    max_food: non_neg_integer,
-    game_mode: binary,
-  }
-
-  @type game_state :: GameState.t
 
   schema "Elixir.BsWeb.GameForm" do
     embeds_many :snakes, SnakeForm
@@ -79,14 +65,12 @@ defmodule BsWeb.GameForm do
     Enum.reject(changeset, delete)
   end
 
-  @spec reload_game_server_state(t) :: game_state
   def reload_game_server_state(%GameForm{} = game_form) do
     game_form
     |> Reset.reset_game_form
     |> to_game_server_state
   end
 
-  @spec to_game_server_state(t) :: game_state
   def to_game_server_state(%GameForm{} = game_form) do
     delay = game_form.delay
     game_form_id = game_form.id
