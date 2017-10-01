@@ -6,7 +6,6 @@ defmodule Bs.MockApi do
 
   @behaviour Bs.Api
 
-  @snake {:ok, %HTTPoison.Response{body: Poison.encode!(%{name: "mock-snake"})}}
   @move {:ok, %HTTPoison.Response{body: Poison.encode!(%{move: "up"})}}
 
   def start(state) do
@@ -15,10 +14,6 @@ defmodule Bs.MockApi do
 
   def start_link(state) do
     GenServer.start_link(__MODULE__, state, name: __MODULE__)
-  end
-
-  def load(x, y) do
-    Bs.Api.load(x, y, mock_post(@snake))
   end
 
   def move(x, y) do

@@ -8,13 +8,6 @@ defmodule Bs.MockApiTest do
     [game_form: game_form, snake_form: snake_form]
   end
 
-  describe "MockApi.load/2" do
-    test "has the same response as Bs.Api", c do
-      assert {:ok, %Bs.Snake{name: "mock-snake"}} =
-        MockApi.load(c.snake_form, c.game_form).parsed_response
-    end
-  end
-
   describe "MockApi.move/2" do
     test "has the same response as Bs.Api", c do
       assert {:ok, %Bs.Move{move: "up"}} =
