@@ -1,22 +1,25 @@
 defmodule Bs.World.Factory do
   alias Bs.Snake
   alias Bs.World
+  alias Bs.Game
 
   @timeout 200
   @new_snake_length 3
 
   def build(game_form) do
+    id = game_form.id
+
     world = %World{
-      game_form_id: game_form.id,
+      game_form_id: id,
       height: game_form.height,
       max_food: game_form.max_food,
       snakes: [],
       width: game_form.width,
-      game_id: game_form.id
+      game_id: id,
     }
 
     data = Poison.encode! %{
-      game_id: game_form.id,
+      game_id: id,
       height: game_form.height,
       width: game_form.width
     }
