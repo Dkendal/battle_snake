@@ -1,7 +1,6 @@
 defmodule BsWeb.GameForm do
   alias Bs.GameForm.Reset
   alias Bs.GameState
-  alias Bs.WinConditions
   alias Bs.World
   alias BsWeb.SnakeForm
   alias __MODULE__
@@ -14,8 +13,6 @@ defmodule BsWeb.GameForm do
   @game_modes [@singleplayer, @multiplayer]
 
   defmacro game_modes, do: @game_modes
-  defmacro multiplayer, do: @multiplayer
-  defmacro singleplayer, do: @singleplayer
 
   @type t :: %GameForm{
     snakes: [SnakeForm],
@@ -95,7 +92,18 @@ defmodule BsWeb.GameForm do
     game_form_id = game_form.id
     world = game_form.world
 
-    objective = WinConditions.game_mode(game_form.game_mode)
+    singleplayer = fn (world) ->
+      length(world.snakes) <= 0
+    end
+
+    multiplayer = fn (world) ->
+      length(world.snakes) <= 1
+    end
+
+    objective = case game_form.game_mode do
+      @singleplayer -> singleplayer
+      @multiplayer -> multiplayer
+    end
 
     %GameState{
       delay: delay,

@@ -21,13 +21,16 @@ defmodule Bs.Game.RegistryTest do
   describe "Registry.lookup_or_create/2" do
     test "starts the process if it isn't already registered" do
       assert {:ok, _game_server} =
-        Game.Registry.lookup_or_create(build(:state), @id)
+        Game.Registry.lookup_or_create(fn ->
+          build(:state)
+        end, @id)
     end
 
     test "returns the registered process if it already exists" do
       pid = named_mock_game_server(@id)
+
       assert {:ok, ^pid} =
-        Game.Registry.lookup_or_create(@id)
+        Game.Registry.lookup_or_create(fn -> :ok end, @id)
     end
   end
 end
