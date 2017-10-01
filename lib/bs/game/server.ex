@@ -1,7 +1,6 @@
 defmodule Bs.Game.Server do
   alias Bs.Game.PubSub
   alias Bs.GameState
-  alias BsWeb.GameForm
 
   import GameState
   use GenServer
@@ -22,23 +21,6 @@ defmodule Bs.Game.Server do
 
   def init({:error, reason}),
     do: {:stop, reason}
-
-  def init(%GameForm{} = game_form) do
-    state = game_form
-    |> GameForm.reload_game_server_state
-
-    stream = Stream.concat(
-      get_in(state, [Access.key(:world, %{}), Access.key(:snakes, [])]),
-      get_in(state, [Access.key(:world, %{}), Access.key(:dead_snakes, [])]))
-
-    snakes = stream
-    |> Stream.map(& {&1.id, &1})
-    |> Enum.into(%{})
-
-    state = put_in(state.snakes, snakes)
-
-    init(state)
-  end
 
   def init(%GameState{game_form_id: game_form_id} = state)
   when is_integer(game_form_id)
