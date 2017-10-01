@@ -1,5 +1,4 @@
 defmodule Bs.GameServerTest do
-  alias Bs.Game
   use Bs.Case, async: false
 
   setup do

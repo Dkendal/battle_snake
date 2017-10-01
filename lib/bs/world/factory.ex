@@ -3,7 +3,7 @@ defmodule Bs.World.Factory do
   alias Bs.Snake
   alias Bs.World
 
-  @timeout 5_000
+  @timeout 200
   @new_snake_length 3
 
   def build(game_form) do
