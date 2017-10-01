@@ -1,8 +1,5 @@
 defmodule BsWeb.GameForm do
-  alias Bs.GameForm.Reset
-  alias Bs.GameState
   alias BsWeb.SnakeForm
-  alias __MODULE__
 
   use BsWeb, :model
   use Ecto.Schema
@@ -63,39 +60,6 @@ defmodule BsWeb.GameForm do
     end
 
     Enum.reject(changeset, delete)
-  end
-
-  def reload_game_server_state(%GameForm{} = game_form) do
-    game_form
-    |> Reset.reset_game_form
-    |> to_game_server_state
-  end
-
-  def to_game_server_state(%GameForm{} = game_form) do
-    delay = game_form.delay
-    game_form_id = game_form.id
-    world = game_form.world
-
-    singleplayer = fn (world) ->
-      length(world.snakes) <= 0
-    end
-
-    multiplayer = fn (world) ->
-      length(world.snakes) <= 1
-    end
-
-    objective = case game_form.game_mode do
-      @singleplayer -> singleplayer
-      @multiplayer -> multiplayer
-    end
-
-    %GameState{
-      delay: delay,
-      game_form: game_form,
-      game_form_id: game_form_id,
-      objective: objective,
-      world: world,
-    }
   end
 end
 

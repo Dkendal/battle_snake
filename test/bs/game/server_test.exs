@@ -2,8 +2,6 @@ defmodule Bs.Game.ServerTest do
   alias Bs.Case
   alias Bs.Game.Server
   alias Bs.GameState
-  alias Bs.Snake
-  alias Bs.World
 
   use Case, async: false
 
@@ -18,41 +16,6 @@ defmodule Bs.Game.ServerTest do
   describe "Server.init(GameState.t)" do
     test "returns ok" do
       assert {:ok, %GameState{}} = Server.init(build(:state))
-    end
-  end
-
-  describe "Server.init(GameForm.t)" do
-    setup do
-      snake = build(:snake_form, url: "url")
-      game_form = build(:game_form, id: 1, snakes: [snake])
-      [game_form: game_form]
-    end
-
-    test "initializes the game state with the id", c do
-      assert {:ok, state} = Server.init(c.game_form)
-      assert state.game_form_id == c.game_form.id
-      assert state.game_form.id == c.game_form.id
-    end
-
-    test "sets .world", c do
-      assert {:ok, state} = Server.init(c.game_form)
-      assert state.world.__struct__ == World
-    end
-
-    test "sets .world.snakes", c do
-      assert {:ok, state} = Server.init(c.game_form)
-      assert assert [%Snake{}] = state.world.snakes
-    end
-
-    test "sets .snakes", c do
-      assert {:ok, state} = Server.init(c.game_form)
-      assert is_map state.snakes
-      assert [id] = Map.keys(state.snakes)
-      assert [
-        %Snake{
-          id: ^id,
-          coords: [_, _, _]}
-      ] = Map.values(state.snakes)
     end
   end
 
