@@ -1,13 +1,7 @@
 defmodule Bs.Game.Registry do
   alias Bs.Game.Supervisor
-  alias Bs.GameState
-  alias BsWeb.GameForm
 
   @name __MODULE__
-
-  @type key :: Registry.key
-  @type value :: Registry.value
-  @type initializer :: key | GameState.t | GameForm.t
 
   def via(id), do: {:via, Registry, {@name, id}}
 

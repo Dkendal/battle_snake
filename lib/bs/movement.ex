@@ -16,7 +16,6 @@ defmodule Bs.Movement do
   defmodule Worker do
     @api Application.get_env(:bs, :snake_api)
 
-    @spec run(Bs.World.t, Bs.Snake.t, timeout) :: Bs.Point.t
     def run(%Snake{} = snake, %World{} = world, recv_timeout) do
       response = @api.request_move(snake, world, [recv_timeout: recv_timeout])
 
@@ -44,7 +43,6 @@ defmodule Bs.Movement do
     end
   end
 
-  @spec next(GameState.t) :: GameState.t
   def next(%GameState{} = state) do
     recv_timeout = state.game_form.recv_timeout
 
@@ -54,7 +52,6 @@ defmodule Bs.Movement do
   @doc """
   Fetch and update the position of all snakes
   """
-  @spec next(World.t, timeout) :: World.t
   def next(world, recv_timeout \\ 10_000)
   def next(%World{} = world, recv_timeout) do
     options = [timeout: @sup_timeout]

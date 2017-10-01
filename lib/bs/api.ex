@@ -25,7 +25,6 @@ defmodule Bs.Api do
 
   POST /move
   """
-  @spec move(%Snake{}, %World{}) :: Response.t
   def move(%{url: url, id: id}, world, request \\ &HTTPoison.post/4) do
     data = Poison.encode!(world, me: id)
     url = (url <> "/move")

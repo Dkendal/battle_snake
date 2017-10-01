@@ -2,12 +2,9 @@ defmodule Bs.Game do
   alias Bs.Game.PubSub
   alias Bs.Game.Registry
   alias Bs.Game.Server
-  alias __MODULE__
   use GenServer
 
   defmodule Command, do: defstruct [:name, :data]
-
-  @type server :: GenServer.server
 
   @moduledoc """
   The Game is a GenServer that handles running a single Bs match.
@@ -39,7 +36,6 @@ defmodule Bs.Game do
     GenServer.call(pid, :resume)
   end
 
-  @spec alive?(number) :: boolean
   def alive?(id) do
     case Registry.lookup(id) do
       [_] ->
@@ -51,7 +47,6 @@ defmodule Bs.Game do
   end
 
   @doc "Replay the current game."
-  @spec replay(Game.server) :: term
   def replay(pid) do
     GenServer.call(pid, :replay)
   end
