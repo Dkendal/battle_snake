@@ -23,10 +23,8 @@ defmodule Bs.World.FactoryTest do
     end
 
     on_exit &unload/0
-  end
 
-  test "#build when snakes respond" do
-    world = Factory.build build(
+    game_form = build(
       :game_form,
       height: 10,
       width: 10,
@@ -34,6 +32,12 @@ defmodule Bs.World.FactoryTest do
       snakes: [
         build(:snake_form)
       ])
+
+    [game_form: game_form]
+  end
+
+  test "#build when snakes respond", c do
+    world = Factory.build c.game_form
 
     assert [%{coords: coords}] = world.snakes
 
