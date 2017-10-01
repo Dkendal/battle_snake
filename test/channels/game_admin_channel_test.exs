@@ -39,13 +39,17 @@ defmodule BsWeb.GameAdminChannelTest do
   @tag :skip
   describe "GameAdminChannel.handle_in(request, state)" do
     setup do
-      {:ok, pid} = GenServer.start_link G, self(), name: :"fake-game-server"
+      {:ok, pid} = GenServer.start_link G, self(), name: :"1"
+
       id =  insert(:game_form).id
-      assigns = %{game_server_pid: pid, game_id: id}
+
+      assigns = %{game_server_pid: pid, game_id: to_string(id)}
+
       socket = socket("user_id", assigns)
+
       reply = GameAdminChannel.handle_in("resume", self(), socket)
-      [reply: reply,
-       socket: socket]
+
+      [reply: reply, socket: socket]
     end
 
     test "pushes the command to the gen server", c do
