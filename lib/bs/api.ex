@@ -60,7 +60,13 @@ defmodule Bs.Api do
 
     response = update_in response.parsed_response, fn
       {:ok, map} ->
-        cast_load(map)
+        changeset = Snake.changeset(%Snake{}, map)
+
+        if changeset.valid? do
+          {:ok, Changeset.apply_changes(changeset)}
+        else
+          {:error, changeset}
+        end
       response ->
         response
     end
@@ -77,33 +83,6 @@ defmodule Bs.Api do
 
     response
   end
-
-  def cast_load(map) do
-    data = %Snake{}
-    types = %{
-      color: :string,
-      head_type: :string,
-      head_url: :string,
-      name: :string,
-      secondary_color: :string,
-      tail_type: :string,
-      taunt: :string,
-      url: :string,
-    }
-
-    changeset = {data, types}
-    |> Changeset.cast(map, Map.keys(types))
-    |> Changeset.validate_required([:name])
-    |> Changeset.validate_inclusion(:head_type, Bs.SnakeHeads.list())
-    |> Changeset.validate_inclusion(:tail_type, Bs.SnakeTails.list())
-
-    if changeset.valid? do
-      {:ok, Changeset.apply_changes(changeset)}
-    else
-      {:error, changeset}
-    end
-  end
-
 
   @doc """
   Get the move for a single snake.
