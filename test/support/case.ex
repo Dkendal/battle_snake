@@ -18,6 +18,9 @@ defmodule Bs.Case do
   using do
     quote do
       import Bs.Factory
+      import :meck
+      defdelegate mock(mod), as: :new, to: :meck
+      defdelegate mock(mod, opts), as: :new, to: :meck
 
       def named_mock_game_server(id) do
         {:ok, pid} = Agent.start_link(

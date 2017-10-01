@@ -74,11 +74,52 @@ defmodule Bs.Game do
     end
   end
 
-  def find name do
-    fn ->
-      BsWeb.GameForm |> BsRepo.get(name)
+  def find(id) when is_binary(id) do
+    fun = fn ->
+      alias Bs.GameForm.Reset
+
+      id = String.to_integer id
+
+      game_form = BsRepo.get! BsWeb.GameForm, id
+
+      game_form =  Reset.reset_game_form game_form
+
+      delay = game_form.delay
+      world = game_form.world
+
+      singleplayer = fn (world) ->
+        length(world.snakes) <= 0
+      end
+
+      multiplayer = fn (world) ->
+        length(world.snakes) <= 1
+      end
+
+      objective = case game_form.game_mode do
+        "singleplayer" -> singleplayer
+        "multiplayer" -> multiplayer
+      end
+
+      state = %Bs.GameState{
+        delay: delay,
+        game_form: game_form,
+        game_form_id: id,
+        objective: objective,
+        world: world,
+      }
+
+      stream = Stream.concat(
+        get_in(state, [Access.key(:world, %{}), Access.key(:snakes, [])]),
+        get_in(state, [Access.key(:world, %{}), Access.key(:dead_snakes, [])]))
+
+      snakes = stream
+      |> Stream.map(& {&1.id, &1})
+      |> Enum.into(%{})
+
+      put_in(state.snakes, snakes)
     end
-    |> Registry.lookup_or_create(name)
+
+    Registry.lookup_or_create(fun, id)
   end
 
   defdelegate name(id), to: Registry, as: :via
