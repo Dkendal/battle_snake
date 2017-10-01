@@ -8,9 +8,6 @@ defmodule Bs.Snake do
 
   @max_health_points 100
 
-  @type health :: :ok | {:error, any}
-  @type cause_of_death :: {atom, any}
-
   embedded_schema do
     field :cause_of_death, :string
     field :head_url, :string

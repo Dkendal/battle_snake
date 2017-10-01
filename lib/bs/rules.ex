@@ -1,7 +1,4 @@
 defmodule Bs.Rules do
-  alias Bs.GameState
-
-  @spec last_standing(GameState.t) :: GameState.t
   def last_standing(state) do
     world = state.world
     live = world.snakes

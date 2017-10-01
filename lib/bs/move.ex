@@ -8,30 +8,18 @@ defmodule Bs.Move do
     :snake_id,
   ]
 
-  @type direction :: String.t
-  @type t :: %__MODULE__{
-    move: direction,
-    taunt: String.t,
-    snake_id: reference
-  }
-
   @up %Point{x: 0, y: -1}
-  @spec up() :: Point.t
   def up, do: @up
 
   @down %Point{x: 0, y: 1}
-  @spec down() :: Point.t
   def down, do: @down
 
   @right %Point{x: 1, y: 0}
-  @spec right() :: Point.t
   def right, do: @right
 
   @left %Point{x: -1, y: 0}
-  @spec left() :: Point.t
   def left, do: @left
 
-  @spec default_move() :: Point.t
   def default_move(), do: %Move{move: "up"}
 
   def default_move(snake) do
@@ -52,7 +40,6 @@ defmodule Bs.Move do
   defp do_default_move(_),
     do: do_default_move(:error)
 
-  @spec moves() :: [Point.t]
   def moves do
     [
       up(),
@@ -62,11 +49,9 @@ defmodule Bs.Move do
     ]
   end
 
-  @spec to_point(t) :: Point.t
   def to_point(%Move{move: move}),
     do: to_point(move)
 
-  @spec to_point(binary) :: Point.t
   def to_point(move) when is_binary(move) do
     case move do
       "up" -> up()

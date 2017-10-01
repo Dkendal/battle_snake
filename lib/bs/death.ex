@@ -6,19 +6,6 @@ defmodule Bs.Death do
   alias __MODULE__
   use Point
 
-  @type width :: pos_integer
-  @type height :: pos_integer
-  @type dim :: {width, height}
-  @type state :: GameState.t
-  @type snake :: Snake.t
-  @type point :: Point.t
-  @type live :: [snake]
-  @type dead :: [snake]
-  @type turn :: non_neg_integer
-  @type cause :: %{}
-  @type death :: %Death{turn: turn, causes: [cause]}
-  @type t :: death
-
   defstruct [:turn, :causes]
   defmodule(Kill, do: defstruct([:turn, :with, :cause]))
 
@@ -29,7 +16,6 @@ defmodule Bs.Death do
   defmodule(StarvationCause, do: defstruct([]))
   defmodule(WallCollisionCause, do: defstruct([]))
 
-  @spec combine_live([[snake]]) :: [snake]
   def combine_live(l) do
     l
     |> Stream.map(&MapSet.new/1)
@@ -37,7 +23,6 @@ defmodule Bs.Death do
     |> MapSet.to_list
   end
 
-  @spec combine_dead([[snake]], turn) :: [snake]
   def combine_dead(l, turn) do
     l
     |> Enum.flat_map(&(&1))
@@ -73,7 +58,6 @@ defmodule Bs.Death do
     Map.update(acc, snake.id, snake, update_snake)
   end
 
-  @spec reap(GameState.t) :: GameState.t
   def reap(%GameState{} = state) do
     world = state.world
     turn = world.turn
@@ -94,7 +78,6 @@ defmodule Bs.Death do
   end
 
   @doc "Kill all snakes that starved this turn"
-  @spec starvation([snake]) :: {live, dead}
   def starvation(snakes) do
     {live, dead} = do_starvation(snakes)
     {live, dead}
@@ -118,7 +101,6 @@ defmodule Bs.Death do
   end
 
   @doc "Kills all snakes that hit a wall"
-  @spec wall_collision([snake], dim) :: {live, dead}
   def wall_collision(snakes, dim) do
     do_wall_collision(snakes, dim)
   end
@@ -142,7 +124,6 @@ defmodule Bs.Death do
   end
 
   @doc "Kill all snakes that crashed into another snake"
-  @spec collision([snake]) :: {live, dead}
   def collision(snakes) do
     tasks = Task.async_stream(
       snakes,

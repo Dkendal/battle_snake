@@ -4,14 +4,7 @@ defmodule Bs.Game.Server do
 
   import GameState
   use GenServer
-
-  ####################
-  # Type Definitions #
-  ####################
-
-  @type noreply :: {:noreply, state}
-  @type state :: GameState.t
-
+  #
   ########
   # Init #
   ########
@@ -36,7 +29,6 @@ defmodule Bs.Game.Server do
   # Get Game State #
   ##################
 
-  @spec handle_call(:get_game_state, pid, GameState.t) :: {:reply, GameState.t, GameState.t}
   def handle_call(:get_game_state, _from, state) do
     {:reply, state, state}
   end
@@ -156,7 +148,6 @@ defmodule Bs.Game.Server do
 
   TODO save the result.
   """
-  @spec handle_info(:game_done, state) :: noreply
   def handle_info(:game_done, state) do
     {:noreply, state}
   end

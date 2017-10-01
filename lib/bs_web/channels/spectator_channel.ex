@@ -1,13 +1,10 @@
 defmodule BsWeb.SpectatorChannel do
   alias Bs.Game
   alias BsWeb.BoardView
-  alias Phoenix.Socket
   alias Phoenix.View
 
   use BsWeb, :channel
 
-  @type join_payload :: %{optional(binary) => binary}
-  @spec join(binary, join_payload, Socket.t) :: {:ok, Phoenix.Socket} | {:error, any}
   def join("spectator:" <> game_id, payload, socket) do
     do_join(game_id, payload, socket)
   end
