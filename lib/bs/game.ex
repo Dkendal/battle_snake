@@ -59,7 +59,7 @@ defmodule Bs.Game do
   defdelegate init(args), to: Server
 
   def find! name do
-    case find name do
+    case lookup_or_create name do
       {:ok, pid} when is_pid pid ->
         pid
 
@@ -71,7 +71,7 @@ defmodule Bs.Game do
     end
   end
 
-  def find(id) when is_binary(id) do
+  def lookup_or_create(id) when is_binary(id) do
     fun = fn ->
       id = String.to_integer id
 

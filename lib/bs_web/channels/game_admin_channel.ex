@@ -36,7 +36,7 @@ defmodule BsWeb.GameAdminChannel do
         :ok
     end
 
-    {:ok, _pid} = Game.find id
+    {:ok, _pid} = Game.lookup_or_create id
 
     {:noreply, socket}
   end
