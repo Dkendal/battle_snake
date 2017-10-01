@@ -1,16 +1,10 @@
-defimpl Poison.Encoder, for: Bs.Snake do
-  def encode(snake, opts) do
-    keys = [:coords, :id, :taunt, :health_points, :name]
-    snake
-    |> Map.take(keys)
-    |> Poison.encode!(opts)
-  end
-end
-
 defmodule Bs.Snake do
-  use Ecto.Schema
   alias Bs.Point
   alias Bs.Move
+
+  use Ecto.Schema
+
+  import Ecto.Changeset
 
   @max_health_points 100
 
@@ -31,6 +25,29 @@ defmodule Bs.Snake do
     field :health, :any, default: {:error, :init}, virtual: true
 
     embeds_many :coords, Point
+  end
+
+  def changeset model, params \\ %{}
+
+  def changeset model, params do
+    permitted = [
+      :color,
+      :head_type,
+      :head_url,
+      :name,
+      :secondary_color,
+      :tail_type,
+      :taunt,
+      :url,
+    ]
+
+    required = [:name]
+
+    model
+    |> cast(params, permitted)
+    |> validate_required(required)
+    |> validate_inclusion(:head_type, Bs.SnakeHeads.list())
+    |> validate_inclusion(:tail_type, Bs.SnakeTails.list())
   end
 
   @doc """
@@ -157,3 +174,13 @@ defmodule Bs.Snake do
 
   defdelegate fetch(snake, key), to: Map
 end
+
+defimpl Poison.Encoder, for: Bs.Snake do
+  def encode(snake, opts) do
+    keys = [:coords, :id, :taunt, :health_points, :name]
+    snake
+    |> Map.take(keys)
+    |> Poison.encode!(opts)
+  end
+end
+
