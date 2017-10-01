@@ -1,5 +1,4 @@
 defmodule Bs.World.Factory do
-  alias Bs.Api
   alias Bs.Snake
   alias Bs.World
 
@@ -37,16 +36,29 @@ defmodule Bs.World.Factory do
   end
 
   def task snake_form, game_form do
-    snake_form
-    |> Api.load(game_form)
-    |> Api.Response.val
-    |> case do
-      {:ok, snake} ->
-        Snake.Health.ok(snake)
+    url = snake_form.url
+    url = "#{url}/start"
 
-      {:error, reason} ->
-        Snake.Health.unhealthy(%Snake{}, reason)
+    response = HTTPoison.post!(
+      url,
+      Poison.encode!(game_form),
+      ["content-type": "application/json"],
+      [recv_timeout: @timeout]
+    )
+
+    json = Poison.decode! response.body
+
+    model = %Snake{
+      url: snake_form.url,
+      id: snake_form.id,
+    }
+
+    changeset = Snake.changeset(model, json)
+
+    if changeset.valid? do
+      Ecto.Changeset.apply_changes changeset
+    else
+      raise changeset.errors
     end
-    |> Map.merge(%{url: snake_form.url, id: snake_form.id})
   end
 end
