@@ -1,10 +1,12 @@
 defmodule Bs.Point do
-  @type t :: %__MODULE__{
-    x: integer,
-    y: integer,
-  }
+  use Ecto.Schema
 
-  defstruct [:x, :y]
+  @primary_key false
+
+  embedded_schema do
+    field :x, :integer
+    field :y, :integer
+  end
 
   defmacro __using__(_) do
     quote do
@@ -18,7 +20,6 @@ defmodule Bs.Point do
           x: unquote(x),
           y: unquote(y)}
 
-  @spec sub(t, t) :: t
   def sub(a, b) do
     %__MODULE__{
       y: a.y - b.y,
@@ -27,13 +28,11 @@ defmodule Bs.Point do
   end
 
   @doc "Scalar addition of a vector"
-  @spec add(t, number) :: t
   def add(a, b) when is_number(b) do
     add(a, p(b, b))
   end
 
   @doc "Add two vectors"
-  @spec add(t, t) :: t
   def add(a, b) do
     %__MODULE__{
       y: a.y + b.y,
@@ -42,21 +41,17 @@ defmodule Bs.Point do
   end
 
   @doc "Scalar multiplication of a vector"
-  @spec mul(t, number) :: t
   def mul(v, s) when is_number(s) do
     p(v.x * s, v.y * s)
   end
 
   @doc "Scalar division of a vector"
-  @spec mul(t, number) :: t
   def div(v, s) when is_number(s) do
     p(v.x / s, v.y / s)
   end
 
-  @spec mag(t) :: non_neg_integer
   def mag(p), do: magnitude(p)
 
-  @spec magnitude(t) :: non_neg_integer
   def magnitude(p(0, y)) do
     abs y
   end
@@ -69,7 +64,6 @@ defmodule Bs.Point do
     :math.sqrt(x * x + y * y)
   end
 
-  @spec line(t, t, pos_integer) :: [t]
   def line(from, dir, magnitude) do
     Stream.iterate(from, &add(&1, dir))
     |> Enum.take(magnitude)
