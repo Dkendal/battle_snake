@@ -76,16 +76,15 @@ defmodule Bs.Game do
 
   def find(id) when is_binary(id) do
     fun = fn ->
-      alias Bs.GameForm.Reset
+      alias Bs.World.Factory
 
       id = String.to_integer id
 
       game_form = BsRepo.get! BsWeb.GameForm, id
 
-      game_form =  Reset.reset_game_form game_form
-
       delay = game_form.delay
-      world = game_form.world
+
+      world =  Factory.build game_form
 
       singleplayer = fn (world) ->
         length(world.snakes) <= 0
