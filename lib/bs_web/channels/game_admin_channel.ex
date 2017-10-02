@@ -47,8 +47,10 @@ defmodule BsWeb.GameAdminChannel do
   end
 
   def handle_in(request, _from, socket) when is_atom(request) do
-    pid = Game.find!(game_id(socket))
-    GenServer.call(pid, request)
+    socket
+    |> game_id
+    |> Game.find!
+    |> GenServer.call(request)
     {:noreply, socket}
   end
 

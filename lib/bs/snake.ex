@@ -7,6 +7,8 @@ defmodule Bs.Snake do
   import Ecto.Changeset
 
   @max_health_points 100
+  @heads Bs.Const.heads
+  @tails Bs.Const.tails
 
   embedded_schema do
     field :cause_of_death, :string
@@ -43,8 +45,8 @@ defmodule Bs.Snake do
     model
     |> cast(params, permitted)
     |> validate_required(required)
-    |> validate_inclusion(:head_type, Bs.SnakeHeads.list())
-    |> validate_inclusion(:tail_type, Bs.SnakeTails.list())
+    |> validate_inclusion(:head_type, @heads)
+    |> validate_inclusion(:tail_type, @tails)
   end
 
   @doc """

@@ -12,7 +12,6 @@ config :bs, BsRepo,
   password: "pass",
   hostname: "localhost"
 
-
 # Configures the endpoint
 config :bs, BsWeb.Endpoint,
   url: [host: "localhost"],
