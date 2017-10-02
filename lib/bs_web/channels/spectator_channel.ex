@@ -11,10 +11,12 @@ defmodule BsWeb.SpectatorChannel do
 
   defp do_join(game_id, payload, socket) do
     if authorized?(payload) do
-      :ok = Game.subscribe(String.to_integer(game_id))
+      :ok = Game.subscribe(game_id)
 
       send(self(), :after_join)
+
       socket = assign(socket, :game_id, game_id)
+
       {:ok, socket}
     else
       {:error, %{reason: "unauthorized"}}
@@ -36,9 +38,7 @@ defmodule BsWeb.SpectatorChannel do
   ##############
 
   def handle_info(:after_join, socket) do
-    state = socket.assigns.game_id
-    |> Game.find!
-    |> Game.get_game_state
+    state = Game.get_game_state socket.assigns.game_id
 
     push(socket, "tick", %{content: render(state.world)})
 

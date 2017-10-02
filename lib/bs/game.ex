@@ -1,12 +1,19 @@
 defmodule Bs.Game do
   alias Bs.Game.PubSub
   alias Bs.Game.Registry
+  alias Bs.Game.Supervisor
   alias Bs.Game.Server
-  alias Bs.World.Factory
 
   use GenServer
 
-  defmodule Command, do: defstruct [:name, :data]
+  import GenServer, only: [call: 2, cast: 2]
+
+  defdelegate handle_call(request, from, state), to: Server
+  defdelegate handle_cast(request, state), to: Server
+  defdelegate handle_info(request, state), to: Server
+  defdelegate init(args), to: Server
+  defdelegate name(id), to: Registry, as: :via
+  defdelegate subscribe(name), to: PubSub
 
   @moduledoc """
   The Game is a GenServer that handles running a single Bs match.
@@ -18,24 +25,47 @@ defmodule Bs.Game do
     GenServer.start_link(__MODULE__, args, opts)
   end
 
-  def get_game_state(pid) do
-    GenServer.call(pid, :get_game_state)
+  def get_game_state(id) when is_binary(id) do
+    id |> do_ensure_started |> call(:get_game_state)
   end
 
-  def next(pid) do
-    GenServer.call(pid, :next)
+  def next(id) when is_binary(id) do
+    id |> do_ensure_started |> call(:next)
   end
 
-  def pause(pid) do
-    GenServer.call(pid, :pause)
+  def pause(id) when is_binary(id) do
+    id |> dispatch(&call &1, :pause)
   end
 
-  def prev(pid) do
-    GenServer.call(pid, :prev)
+  def prev(id) when is_binary(id) do
+    id |> dispatch(&call &1, :prev)
   end
 
-  def resume(pid) do
-    GenServer.call(pid, :resume)
+  def stop(id, reason \\ :normal)
+  def stop(id, reason) when is_binary(id) do
+    id |> dispatch(&GenServer.stop &1, reason)
+  end
+
+  def restart(id) when is_binary(id) do
+    case ensure_started id do
+      {:ok, pid, :already_started} ->
+        ref = Process.monitor pid
+
+        GenServer.stop pid
+
+        receive do
+          {:DOWN, ^ref, _, ^pid, :normal} -> :ok
+        end
+
+        ensure_started id
+
+      {:ok, pid, :started} ->
+        :ok
+    end
+  end
+
+  def resume(id) when is_binary id do
+    id |> do_ensure_started |> call(:resume)
   end
 
   def alive?(id) do
@@ -48,16 +78,6 @@ defmodule Bs.Game do
     end
   end
 
-  @doc "Replay the current game."
-  def replay(pid) do
-    GenServer.call(pid, :replay)
-  end
-
-  defdelegate handle_call(request, from, state), to: Server
-  defdelegate handle_cast(request, state), to: Server
-  defdelegate handle_info(request, state), to: Server
-  defdelegate init(args), to: Server
-
   def find! name do
     case lookup_or_create name do
       {:ok, pid} when is_pid pid ->
@@ -67,46 +87,43 @@ defmodule Bs.Game do
         pid
 
       {:error, err} ->
-        raise err
+        {:error, err}
     end
   end
 
   def lookup_or_create(id) when is_binary(id) do
-    fun = fn ->
-      id = String.to_integer id
-
-      game_form = BsRepo.get! BsRepo.GameForm, id
-
-      delay = game_form.delay
-
-      world =  Factory.build game_form
-
-      singleplayer = fn (world) ->
-        length(world.snakes) <= 0
-      end
-
-      multiplayer = fn (world) ->
-        length(world.snakes) <= 1
-      end
-
-      objective = case game_form.game_mode do
-        "singleplayer" -> singleplayer
-        "multiplayer" -> multiplayer
-      end
-
-      %Bs.GameState{
-        delay: delay,
-        game_form: game_form,
-        game_form_id: id,
-        objective: objective,
-        world: world,
-      }
+    case Registry.lookup(id) do
+      [{pid, _}] ->
+        {:ok , pid}
+      _ ->
+        opts = Registry.options id
+        Supervisor.start_game_server [id, opts]
     end
-
-    Registry.lookup_or_create(fun, id)
   end
 
-  defdelegate name(id), to: Registry, as: :via
+  def ensure_started id do
+    with [] <- Registry.lookup(id),
+         opts = Registry.options(id),
+         {:ok, pid} <- Supervisor.start_game_server([id, opts])
+    do
+      {:ok, pid, :started}
+    else
+      [{pid, _}]->
+        {:ok, pid, :already_started}
 
-  defdelegate subscribe(name), to: PubSub
+      {:error, {:already_started, pid}} ->
+        {:ok, pid, :already_started}
+    end
+  end
+
+  defp do_ensure_started id do
+    {:ok, pid, _} = ensure_started(id)
+    pid
+  end
+
+  defp dispatch(id, fun) when is_binary id and is_function fun  do
+    Registry.dispatch id, fn [{pid, _}] ->
+      apply fun, [pid]
+    end
+  end
 end

@@ -1,6 +1,9 @@
 defmodule Bs.Game.Server do
+  require Logger
+
   alias Bs.Game.PubSub
   alias Bs.GameState
+  alias Bs.World.Factory
 
   import GameState
   use GenServer
@@ -9,11 +12,38 @@ defmodule Bs.Game.Server do
   # Init #
   ########
 
-  def init({:ok, value}),
-    do: init(value)
+  def init(id) when is_binary id do
+    id = String.to_integer id
 
-  def init({:error, reason}),
-    do: {:stop, reason}
+    game_form = BsRepo.get! BsRepo.GameForm, id
+
+    delay = game_form.delay
+
+    world = Factory.build game_form
+
+    singleplayer = fn (world) ->
+      length(world.snakes) <= 0
+    end
+
+    multiplayer = fn (world) ->
+      length(world.snakes) <= 1
+    end
+
+    objective = case game_form.game_mode do
+      "singleplayer" -> singleplayer
+      "multiplayer" -> multiplayer
+    end
+
+    state = %Bs.GameState{
+      delay: delay,
+      game_form: game_form,
+      game_form_id: id,
+      objective: objective,
+      world: world,
+    }
+
+    do_reply {:ok, state}
+  end
 
   def init(%GameState{game_form_id: game_form_id} = state)
   when is_integer(game_form_id)
@@ -103,6 +133,12 @@ defmodule Bs.Game.Server do
   end
 
   def handle_call(request, from, state) do
+    Logger.error Exception.format(
+      "unmatched call to Bs.Game.Server",
+      request,
+      System.stacktrace
+    )
+
     super(request, from, state)
   end
 
@@ -111,6 +147,12 @@ defmodule Bs.Game.Server do
   #########################
 
   def handle_cast(request, state) do
+    Logger.error Exception.format(
+      "unmatched cast to Bs.Game.Server",
+      request,
+      System.stacktrace
+    )
+
     super(request, state)
   end
 
