@@ -1,7 +1,6 @@
 defmodule Bs.World.Factory do
   alias Bs.Snake
   alias Bs.World
-  alias Bs.Game
 
   @timeout 200
   @new_snake_length 3

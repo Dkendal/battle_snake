@@ -16,7 +16,7 @@ defmodule Bs.Factory do
   end
 
   def game_form_factory do
-    %BsWeb.GameForm{
+    %BsRepo.GameForm{
       delay: 0,
     }
   end

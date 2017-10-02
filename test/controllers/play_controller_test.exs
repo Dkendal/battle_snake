@@ -1,5 +1,5 @@
 defmodule BsWeb.PlayControllerTest do
-  alias BsWeb.GameForm
+  alias BsRepo.GameForm
   use BsWeb.ConnCase
 
   describe "GET show" do

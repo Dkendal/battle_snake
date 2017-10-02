@@ -4,7 +4,7 @@ defmodule Bs.GameServerTest do
   setup do
     mock BsRepo
 
-    expect BsRepo, :get!, fn BsWeb.GameForm, "1" ->
+    expect BsRepo, :get!, fn BsRepo.GameForm, "1" ->
       build :game_form
     end
 
