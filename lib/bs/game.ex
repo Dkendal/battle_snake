@@ -75,7 +75,7 @@ defmodule Bs.Game do
     fun = fn ->
       id = String.to_integer id
 
-      game_form = BsRepo.get! BsWeb.GameForm, id
+      game_form = BsRepo.get! BsRepo.GameForm, id
 
       delay = game_form.delay
 

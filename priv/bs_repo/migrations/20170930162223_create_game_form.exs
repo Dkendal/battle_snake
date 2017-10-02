@@ -2,7 +2,7 @@ defmodule BsRepo.Migrations.CreateGameForm do
   use Ecto.Migration
 
   def change do
-    create_if_not_exists table(BsWeb.GameForm, engine: :set) do
+    create_if_not_exists table(BsRepo.GameForm, engine: :set) do
       add :snakes, :any
       add :width, :any
       add :height, :any

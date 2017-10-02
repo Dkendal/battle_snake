@@ -1,10 +1,10 @@
 defmodule BsWeb.GameControllerTest do
   use BsWeb.ConnCase
 
-  alias BsWeb.GameForm
+  alias BsRepo.GameForm
 
   setup do
-    {:atomic, :ok} = :mnesia.clear_table BsWeb.GameForm
+    {:atomic, :ok} = :mnesia.clear_table BsRepo.GameForm
     {:atomic, :ok} = :mnesia.clear_table :id_seq
     :ok
   end

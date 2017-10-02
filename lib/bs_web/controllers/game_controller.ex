@@ -1,6 +1,6 @@
 defmodule BsWeb.GameController do
   alias Bs.Game
-  alias BsWeb.GameForm
+  alias BsRepo.GameForm
 
   use BsWeb, :controller
 

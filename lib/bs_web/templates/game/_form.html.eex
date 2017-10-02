@@ -32,7 +32,7 @@
 
   <div>
     <%= label @form, :game_mode %>
-    <%= select @form, :game_mode, BsWeb.GameForm.game_modes(), required: true %>
+    <%= select @form, :game_mode, BsRepo.GameForm.game_modes(), required: true %>
   </div>
 </fieldset>
 
