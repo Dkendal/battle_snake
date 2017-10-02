@@ -4,9 +4,6 @@ defmodule BsWeb.BoardConfigView do
   use BsWeb, :view
 
   def render("show.json", %{game: game}) do
-    %{
-      gameId: game.id,
-      gameAdminAvailableRequests: GameAdminChannel.available_requests()
-    }
+    %{gameId: game.id}
   end
 end

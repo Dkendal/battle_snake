@@ -21,7 +21,15 @@ defmodule Bs.Game.PubSub do
     Phoenix.PubSub.subscribe(__MODULE__, to_string(topic), opts)
   end
 
+  def subscribe(topic, opts) when is_binary(topic) do
+    Phoenix.PubSub.subscribe(__MODULE__, topic, opts)
+  end
+
   def unsubscribe(pid, topic) when is_integer(topic) do
     Phoenix.PubSub.unsubscribe(__MODULE__, pid, to_string(topic))
+  end
+
+  def unsubscribe(pid, topic) when is_binary(topic) do
+    Phoenix.PubSub.unsubscribe(__MODULE__, pid, topic)
   end
 end
