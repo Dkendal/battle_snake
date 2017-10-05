@@ -67,6 +67,7 @@ type Msg
     | ResumeGame
     | StopGame
     | Tick JE.Value
+    | SnakeLoaded JE.Value
 
 
 type alias PhxSock =
@@ -350,6 +351,9 @@ update msg model =
                 Err e ->
                     Debug.crash e
 
+        SnakeLoaded raw ->
+            Debug.log (toString raw) noOp model
+
         MountCanvasApp ->
             ( model
             , GameBoard.mount
@@ -422,6 +426,7 @@ socket url gameid =
     in
         Socket.init url
             |> Socket.on "tick" "spectator" Tick
+            |> Socket.on "snake:loaded" "spectator" SnakeLoaded
 
 
 adminCmd : String -> Model -> ( Model, Cmd Msg )

@@ -29,7 +29,7 @@ defmodule Bs.World.Factory do
       snakes,
       Worker,
       :run,
-      [data]
+      [id, data]
     )
 
     snakes = for {:ok, snake} <- stream, do: snake
@@ -53,16 +53,28 @@ end
 defmodule Bs.World.Factory.Worker do
   @timeout 1000
 
-  def run(permalink, opts \\ [])
-  def run(%{id: id, url: url}, data) do
-    start_url = url <> "/start"
+  def run(permalink, gameid, opts \\ [])
+  def run(%{id: id, url: url}, gameid, data) do
+    start_url = "#{url}/start"
 
-    response = HTTPoison.post!(
+    {tc, response} = :timer.tc HTTPoison, :post!, [
       start_url,
       data,
       ["content-type": "application/json"],
       [recv_timeout: @timeout]
-    )
+    ]
+
+    event = %Bs.Event{
+      name: :loaded,
+      rel: %{game_id: gameid, snake_id: id},
+      data: %{
+        tc: tc,
+        status_code: response.status_code,
+        body: response.body
+      }
+    }
+
+    Bs.Game.PubSub.broadcast!(gameid, event)
 
     json = Poison.decode! response.body
 
