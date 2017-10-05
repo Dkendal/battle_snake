@@ -5,22 +5,14 @@ defmodule BsWeb.SpectatorChannel do
 
   use BsWeb, :channel
 
-  def join("spectator:" <> game_id, payload, socket) do
-    do_join(game_id, payload, socket)
-  end
+  def join("spectator", %{"id" => id}, socket) do
+    :ok = Game.subscribe(id)
 
-  defp do_join(game_id, payload, socket) do
-    if authorized?(payload) do
-      :ok = Game.subscribe(game_id)
+    send(self(), :after_join)
 
-      send(self(), :after_join)
+    socket = assign(socket, :id, id)
 
-      socket = assign(socket, :game_id, game_id)
-
-      {:ok, socket}
-    else
-      {:error, %{reason: "unauthorized"}}
-    end
+    {:ok, socket}
   end
 
   ####################
@@ -38,7 +30,7 @@ defmodule BsWeb.SpectatorChannel do
   ##############
 
   def handle_info(:after_join, socket) do
-    state = Game.get_game_state socket.assigns.game_id
+    state = Game.get_game_state socket.assigns.id
 
     push(socket, "tick", %{content: render(state.world)})
 
@@ -48,11 +40,6 @@ defmodule BsWeb.SpectatorChannel do
   ###################
   # Private Methods #
   ###################
-
-  # Add authorization logic here as required.
-  defp authorized?(_payload) do
-    true
-  end
 
   defp render(board) do
     View.render(

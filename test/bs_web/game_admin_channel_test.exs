@@ -4,8 +4,12 @@ defmodule BsWeb.GameAdminChannelTest do
   use BsWeb.ChannelCase
 
   setup do
-    {:ok, _, socket} =
-      subscribe_and_join(socket(), GameAdminChannel, "game_admin:1")
+    {:ok, _, socket} = subscribe_and_join(
+      socket(),
+      GameAdminChannel,
+      "admin",
+      %{"id" => "1"}
+    )
 
     [socket: socket]
   end
