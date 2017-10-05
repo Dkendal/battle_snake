@@ -108,7 +108,7 @@ defmodule Bs.Mixfile do
        "bs.schema.drop",
        "bs.schema.install",
      ],
-
+     "watch": &watch/1,
      "bs.dot2svg": [&dot2svg/1]
     ]
   end
@@ -128,6 +128,10 @@ defmodule Bs.Mixfile do
 
   def dot2svg(_) do
     Mix.shell.cmd("dot -Ksfdp xref_graph.dot -Tsvg -o xref_graph.svg")
+  end
+
+  def watch(_) do
+    Mix.shell.cmd "watchman-make -p 'lib/**/*.ex' 'test/**/*.ex' 'test/**/*.exs' --run 'mix test --stale'"
   end
 
   def prereq(cmd) do
