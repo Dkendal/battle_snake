@@ -25,6 +25,12 @@ defmodule BsWeb.SpectatorChannel do
     {:noreply, socket}
   end
 
+  def handle_info(%Bs.Event{rel: %{game_id: _, snake_id: _}} = event, socket)
+  do
+    broadcast(socket, "snake:#{event.name}", event)
+    {:noreply, socket}
+  end
+
   ##############
   # After Join #
   ##############
