@@ -59,7 +59,7 @@ defmodule Bs.Game do
 
         ensure_started id
 
-      {:ok, pid, :started} ->
+      {:ok, _pid, :started} ->
         :ok
     end
   end
