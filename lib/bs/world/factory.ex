@@ -1,8 +1,8 @@
-defmodule Bs.World.Factory do
-  alias Bs.Snake
-  alias Bs.World
+alias Bs.Snake
+alias Bs.World
+alias Bs.World.Factory.Worker
 
-  @timeout 200
+defmodule Bs.World.Factory do
   @new_snake_length 3
 
   def build(game_form) do
@@ -25,34 +25,12 @@ defmodule Bs.World.Factory do
 
     snakes = game_form.snakes
 
-    task = fn snake_form ->
-      url = snake_form.url
-      url = "#{url}/start"
-
-      response = HTTPoison.post!(
-        url,
-        data,
-        ["content-type": "application/json"],
-        [recv_timeout: @timeout]
-      )
-
-      json = Poison.decode! response.body
-
-      model = %Snake{
-        url: snake_form.url,
-        id: snake_form.id,
-      }
-
-      changeset = Snake.changeset(model, json)
-
-      if changeset.valid? do
-        Ecto.Changeset.apply_changes changeset
-      else
-        raise changeset.errors
-      end
-    end
-
-    stream = Task.async_stream(snakes, task, [timeout: @timeout])
+    stream = Task.async_stream(
+      snakes,
+      Worker,
+      :run,
+      [data]
+    )
 
     snakes = for {:ok, snake} <- stream, do: snake
 
@@ -68,6 +46,37 @@ defmodule Bs.World.Factory do
 
         put_in snake.coords, coords
       end
+    end
+  end
+end
+
+defmodule Bs.World.Factory.Worker do
+  @timeout 1000
+
+  def run(permalink, opts \\ [])
+  def run(%{id: id, url: url}, data) do
+    start_url = url <> "/start"
+
+    response = HTTPoison.post!(
+      start_url,
+      data,
+      ["content-type": "application/json"],
+      [recv_timeout: @timeout]
+    )
+
+    json = Poison.decode! response.body
+
+    model = %Snake{
+      url: url,
+      id: id,
+    }
+
+    changeset = Snake.changeset(model, json)
+
+    if changeset.valid? do
+      Ecto.Changeset.apply_changes changeset
+    else
+      raise changeset.errors
     end
   end
 end
