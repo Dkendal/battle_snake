@@ -3,11 +3,8 @@ defmodule BsWeb.UserSocket do
 
   ## Channels
   # channel "room:*", Bs.RoomChannel
-  channel "spectator:*", BsWeb.SpectatorChannel
-  channel "spectator:*", BsWeb.SpectatorChannel
-  channel "game_admin:*", BsWeb.GameAdminChannel
-  channel "replay:html:*", BsWeb.ReplayChannel
-  channel "replay:json:*", BsWeb.ReplayChannel
+  channel "spectator", BsWeb.SpectatorChannel
+  channel "admin", BsWeb.GameAdminChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket

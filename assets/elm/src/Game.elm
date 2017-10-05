@@ -316,18 +316,16 @@ update msg model =
                 |> pushCmd model
 
         JoinSpectatorChannel ->
-            spectatorChannel model
-                |> flip joinChannel model
+            joinChannel "spectator" model
 
         JoinAdminChannel ->
-            adminChannel model
-                |> flip joinChannel model
+            joinChannel "admin" model
 
         JoinChannelSuccess _ ->
             noOp model
 
-        JoinChannelFailed _ ->
-            noOp model
+        JoinChannelFailed error ->
+            Debug.crash (toString error)
 
         ResumeGame ->
             adminCmd "resume" model
@@ -377,16 +375,6 @@ subscriptions model =
 -- FUNCTIONS
 
 
-adminChannel : { a | gameid : String } -> String
-adminChannel { gameid } =
-    "game_admin:" ++ gameid
-
-
-spectatorChannel : { a | gameid : String } -> String
-spectatorChannel { gameid } =
-    "spectator:" ++ gameid
-
-
 bgId : Model -> String
 bgId { gameid } =
     "bg-" ++ gameid
@@ -418,8 +406,8 @@ pushCmd model ( socket, msg ) =
 
 joinChannel : String -> Model -> ( Model, Cmd Msg )
 joinChannel channel model =
-    channel
-        |> Channel.init
+    Channel.init channel
+        |> Channel.withPayload (JE.object [ ( "id", JE.string model.gameid ) ])
         |> Channel.onJoin JoinChannelSuccess
         |> Channel.onJoinError JoinChannelFailed
         |> flip Socket.join model.socket
@@ -431,18 +419,14 @@ socket url gameid =
     let
         model =
             { gameid = gameid }
-
-        spectator =
-            spectatorChannel model
     in
         Socket.init url
-            |> Socket.on "tick" spectator Tick
+            |> Socket.on "tick" "spectator" Tick
 
 
 adminCmd : String -> Model -> ( Model, Cmd Msg )
 adminCmd cmd model =
-    adminChannel model
-        |> Push.init cmd
+    Push.init cmd "admin"
         |> flip Socket.push model.socket
         |> pushCmd model
 

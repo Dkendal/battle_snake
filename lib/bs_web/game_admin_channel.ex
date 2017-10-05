@@ -5,14 +5,9 @@ defmodule BsWeb.GameAdminChannel do
 
   use BsWeb, :channel
 
-  def join("game_admin:" <> game_id, payload, socket) do
-    if authorized?(payload) do
-      socket = assign socket, :id, game_id
-
-      {:ok, socket}
-    else
-      {:error, %{reason: "unauthorized"}}
-    end
+  def join("admin", %{"id" => id}, socket) do
+    socket = assign socket, :id, id
+    {:ok, socket}
   end
 
   def handle_in("stop", _params, socket) do
@@ -46,10 +41,5 @@ defmodule BsWeb.GameAdminChannel do
 
   def handle_info(_info, socket) do
     {:reply, :error, socket}
-  end
-
-  # Add authorization logic here as required.
-  defp authorized?(_payload) do
-    true
   end
 end
