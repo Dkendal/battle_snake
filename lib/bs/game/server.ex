@@ -7,12 +7,96 @@ defmodule Bs.Game.Server do
 
   import GameState
   use GenServer
-  #
-  ########
-  # Init #
-  ########
 
   def init(id) when is_binary id do
+    send self(), {:after_init, id}
+    {:ok, :no_state}
+  end
+
+  def init(%GameState{game_form_id: game_form_id} = state)
+  when is_integer(game_form_id)
+  do
+    do_reply({:ok, state})
+  end
+
+  def handle_call(:get_game_state, _from, state) do
+    {:reply, state, state}
+  end
+
+  def handle_call(:get_status, _from, state) do
+    {:reply, state.status, state}
+  end
+
+  def handle_call(:next, _from, state) do
+    state =
+      case state.status do
+        :halted ->
+          state
+
+        _status ->
+          state
+          |> GameState.step
+          |> GameState.suspend!
+      end
+
+    do_reply({:reply, :ok, state})
+  end
+
+  def handle_call(:pause, _from, state) do
+    state =
+      case state.status do
+        :cont ->
+          suspend!(state)
+        _status ->
+          state
+      end
+
+    do_reply({:reply, :ok, state})
+  end
+
+  def handle_call(:prev, _from, state) do
+    state = state
+    |> GameState.step_back
+    |> suspend!
+
+    do_reply({:reply, :ok, state})
+  end
+
+  def handle_call(:resume, _from, state) do
+    state =
+      case state.status do
+        :suspend ->
+          send(self(), :tick)
+          cont!(state)
+
+        _status ->
+          state
+      end
+
+    do_reply({:reply, :ok, state})
+  end
+
+  def handle_call(request, from, state) do
+    Logger.error Exception.format(
+      "unmatched call to Bs.Game.Server",
+      request,
+      System.stacktrace
+    )
+
+    super(request, from, state)
+  end
+
+  def handle_cast(request, state) do
+    Logger.error Exception.format(
+      "unmatched cast to Bs.Game.Server",
+      request,
+      System.stacktrace
+    )
+
+    super(request, state)
+  end
+
+  def handle_info({:after_init, id}, :no_state) do
     id = String.to_integer id
 
     game_form = BsRepo.get! BsRepo.GameForm, id
@@ -42,135 +126,12 @@ defmodule Bs.Game.Server do
       world: world,
     }
 
-    do_reply {:ok, state}
+    do_reply {:noreply, state}
   end
-
-  def init(%GameState{game_form_id: game_form_id} = state)
-  when is_integer(game_form_id)
-  do
-    do_reply({:ok, state})
-  end
-
-  #########################
-  # Handle Call Callbacks #
-  #########################
-
-  ##################
-  # Get Game State #
-  ##################
-
-  def handle_call(:get_game_state, _from, state) do
-    {:reply, state, state}
-  end
-
-  ##############
-  # Get Status #
-  ##############
-
-  def handle_call(:get_status, _from, state) do
-    {:reply, state.status, state}
-  end
-
-  ########
-  # Next #
-  ########
-
-  def handle_call(:next, _from, state) do
-    state =
-      case state.status do
-        :halted ->
-          state
-
-        _status ->
-          state
-          |> GameState.step
-          |> GameState.suspend!
-      end
-
-    do_reply({:reply, :ok, state})
-  end
-
-  def handle_call(:pause, _from, state) do
-    state =
-      case state.status do
-        :cont ->
-          suspend!(state)
-        _status ->
-          state
-      end
-
-    do_reply({:reply, :ok, state})
-  end
-
-  ########
-  # Prev #
-  ########
-
-  def handle_call(:prev, _from, state) do
-    state = state
-    |> GameState.step_back
-    |> suspend!
-
-    do_reply({:reply, :ok, state})
-  end
-
-  ##########
-  # Resume #
-  ##########
-
-  def handle_call(:resume, _from, state) do
-    state =
-      case state.status do
-        :suspend ->
-          send(self(), :tick)
-          cont!(state)
-
-        _status ->
-          state
-      end
-
-    do_reply({:reply, :ok, state})
-  end
-
-  def handle_call(request, from, state) do
-    Logger.error Exception.format(
-      "unmatched call to Bs.Game.Server",
-      request,
-      System.stacktrace
-    )
-
-    super(request, from, state)
-  end
-
-  #########################
-  # Handle Cast Callbacks #
-  #########################
-
-  def handle_cast(request, state) do
-    Logger.error Exception.format(
-      "unmatched cast to Bs.Game.Server",
-      request,
-      System.stacktrace
-    )
-
-    super(request, state)
-  end
-
-  #########################
-  # Handle Info Callbacks #
-  #########################
-
-  #################
-  # Get GameState #
-  #################
 
   def handle_info(:get_state, state) do
     {:reply, state, state.status}
   end
-
-  ########
-  # Tick #
-  ########
 
   def handle_info(:tick, state) do
     state =
@@ -180,10 +141,6 @@ defmodule Bs.Game.Server do
       end
     do_reply({:noreply, state})
   end
-
-  #############
-  # Game Done #
-  #############
 
   @doc """
   When the game is complete the result should be completed.
@@ -197,10 +154,6 @@ defmodule Bs.Game.Server do
   def handle_info(request, state) do
     super(request, state)
   end
-
-  ###################
-  # Private Methods #
-  ###################
 
   defp tick_cont(state) do
     delay = GameState.delay(state)
