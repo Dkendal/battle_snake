@@ -1,3 +1,5 @@
+alias Bs.Event
+alias Bs.Game.PubSub
 alias Bs.Snake
 alias Bs.World
 alias Bs.World.Factory.Worker
@@ -5,25 +7,31 @@ alias Bs.World.Factory.Worker
 defmodule Bs.World.Factory do
   @new_snake_length 3
 
-  def build(game_form) do
-    id = game_form.id
-
+  def build(%{id: id} = game) when not is_nil(id) do
     world = %World{
-      game_form_id: id,
-      height: game_form.height,
-      max_food: game_form.max_food,
-      snakes: [],
-      width: game_form.width,
       game_id: id,
+      height: game.height,
+      max_food: game.max_food,
+      snakes: [],
+      width: game.width,
+      game_form_id: id,
     }
 
     data = Poison.encode! %{
       game_id: id,
-      height: game_form.height,
-      width: game_form.width
+      height: game.height,
+      width: game.width
     }
 
-    snakes = game_form.snakes
+    snakes = game.snakes
+
+    PubSub.broadcast!(id, %Event{
+      name: :restarting,
+      rel: %{game_id: id},
+      data: %{
+        snake_ids: (for x <- snakes, do: x.id)
+      }
+    })
 
     stream = Task.async_stream(
       snakes,
@@ -64,7 +72,7 @@ defmodule Bs.World.Factory.Worker do
       [recv_timeout: @timeout]
     ]
 
-    event = %Bs.Event{
+    PubSub.broadcast!(gameid, %Event{
       name: :loaded,
       rel: %{game_id: gameid, snake_id: id},
       data: %{
@@ -72,9 +80,7 @@ defmodule Bs.World.Factory.Worker do
         status_code: response.status_code,
         body: response.body
       }
-    }
-
-    Bs.Game.PubSub.broadcast!(gameid, event)
+    })
 
     json = Poison.decode! response.body
 
