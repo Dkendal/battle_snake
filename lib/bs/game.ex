@@ -6,7 +6,7 @@ defmodule Bs.Game do
 
   use GenServer
 
-  import GenServer, only: [call: 2, cast: 2]
+  import GenServer, only: [call: 2]
 
   defdelegate handle_call(request, from, state), to: Server
   defdelegate handle_cast(request, state), to: Server
@@ -96,15 +96,13 @@ defmodule Bs.Game do
       [{pid, _}] ->
         {:ok , pid}
       _ ->
-        opts = Registry.options id
-        Supervisor.start_game_server [id, opts]
+        start(id)
     end
   end
 
   def ensure_started id do
     with [] <- Registry.lookup(id),
-         opts = Registry.options(id),
-         {:ok, pid} <- Supervisor.start_game_server([id, opts])
+         {:ok, pid} <- start(id)
     do
       {:ok, pid, :started}
     else
@@ -114,6 +112,13 @@ defmodule Bs.Game do
       {:error, {:already_started, pid}} ->
         {:ok, pid, :already_started}
     end
+  end
+
+  def start(id) when is_binary(id) do
+    Elixir.Supervisor.start_child(
+      Supervisor,
+      [id, [name: {:via, Elixir.Registry, {Registry, id}}]]
+    )
   end
 
   defp do_ensure_started id do
