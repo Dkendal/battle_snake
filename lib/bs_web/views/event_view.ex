@@ -2,11 +2,11 @@ defmodule BsWeb.EventView do
   use BsWeb, :view
 
   def render("snake.json", %{snake: snake}) do
-    snake
+    %{id: snake.id, url: snake.url}
   end
 
   def render("snakes.json", %{snakes: snakes}) do
-    snakes
+    Phoenix.View.render_many snakes, __MODULE__, "snake.json", as: :snake
   end
 
   def render("response.json", %{response: response, tc: tc}) do
@@ -22,8 +22,8 @@ defmodule BsWeb.EventView do
       %HTTPoison.Error{reason: :timeout} ->
         "timeout"
 
-      %RuntimeError{} ->
-        error.message
+      %{message: message} ->
+        message
     end
 
     %{error: msg}

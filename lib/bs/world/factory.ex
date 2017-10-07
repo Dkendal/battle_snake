@@ -6,6 +6,7 @@ alias Bs.World.Factory.Notification
 alias Bs.World.Factory.Worker
 
 defmodule Bs.World.Factory do
+  @timeout 5_000
   @new_snake_length 3
 
   def build(%{id: id} = game) when not is_nil(id) do
@@ -34,7 +35,10 @@ defmodule Bs.World.Factory do
       data: [snakes: snakes]
     )
 
-    {:ok, supervisor} = Task.Supervisor.start_link()
+    {:ok, supervisor} = Task.Supervisor.start_link(
+      on_timeout: :kill_task,
+      timeout: @timeout
+    )
 
     stream = Task.Supervisor.async_stream_nolink(
       supervisor,
@@ -44,29 +48,39 @@ defmodule Bs.World.Factory do
       [id, data]
     )
 
-    snakes = Stream.flat_map stream, fn
-      {:ok, snake} ->
-        Notification.broadcast!(
-          id,
-          name: "restart:request:ok",
-          rel: %{game_id: id},
-          view: "snake.json",
-          data: [snake: snake]
-        )
+    snakes =
+      stream
+      |> Stream.zip(snakes)
+      |> Stream.flat_map(fn
+        {{:ok, snake}, permalink} ->
+          Notification.broadcast!( id,
+            name: "restart:request:ok",
+            rel: %{game_id: id, snake_id: permalink.id},
+            view: "snake.json",
+            data: [snake: snake]
+          )
 
-        [snake]
+          [snake]
 
-      {:exit, {error, _stack}} ->
-        Notification.broadcast!(
-          id,
-          name: "restart:request:error",
-          rel: %{game_id: id},
-          view: "error.json",
-          data: [error: error]
-        )
+        {{:exit, {error, _stack}}, permalink}->
+          Notification.broadcast!(
+            id,
+            name: "restart:request:error",
+            rel: %{game_id: id, snake_id: permalink.id},
+            view: "error.json",
+            data: [error: error]
+          )
 
-        []
-    end
+          []
+      end)
+      |> Enum.to_list
+
+    Notification.broadcast!(
+      id,
+      name: "restart:finished",
+      rel: %{game_id: id},
+      data: %{}
+    )
 
     world = put_in world.snakes, snakes
 
@@ -87,18 +101,24 @@ end
 defmodule Bs.World.Factory.Notification do
   def broadcast! id, opts do
     name = Keyword.fetch! opts, :name
-    view = Keyword.fetch! opts, :view
     rel = Keyword.fetch! opts, :rel
     data = Keyword.fetch! opts, :data
+    view = Keyword.get opts, :view
 
-    PubSub.broadcast!(id, %Event{
-      name: name,
-      rel: rel,
-      data: Phoenix.View.render(
+    data = if view do
+      Phoenix.View.render(
         BsWeb.EventView,
         view,
         data
       )
+    else
+      data
+    end
+
+    PubSub.broadcast!(id, %Event{
+      name: name,
+      rel: rel,
+      data: data
     })
   end
 end
@@ -119,7 +139,7 @@ defmodule Bs.World.Factory.Worker do
 
     Notification.broadcast!(
       id,
-      name: "restart:request:init",
+      name: "restart:request",
       rel: %{game_id: gameid, snake_id: id},
       view: "response.json",
       data: [
@@ -130,10 +150,7 @@ defmodule Bs.World.Factory.Worker do
 
     json = Poison.decode! response.body
 
-    model = %Snake{
-      url: url,
-      id: id,
-    }
+    model = %Snake{url: url, id: id}
 
     changeset = Snake.changeset(model, json)
 
