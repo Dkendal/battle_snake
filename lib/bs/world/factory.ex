@@ -2,6 +2,7 @@ alias Bs.Event
 alias Bs.Game.PubSub
 alias Bs.Snake
 alias Bs.World
+alias Bs.World.Factory.Notification
 alias Bs.World.Factory.Worker
 
 defmodule Bs.World.Factory do
@@ -25,13 +26,13 @@ defmodule Bs.World.Factory do
 
     snakes = game.snakes
 
-    PubSub.broadcast!(id, %Event{
-      name: :restarting,
+    Notification.broadcast!(
+      id,
+      name: "restart:init",
       rel: %{game_id: id},
-      data: %{
-        snake_ids: (for x <- snakes, do: x.id)
-      }
-    })
+      view: "snakes.json",
+      data: [snakes: snakes]
+    )
 
     {:ok, supervisor} = Task.Supervisor.start_link()
 
@@ -45,8 +46,25 @@ defmodule Bs.World.Factory do
 
     snakes = Stream.flat_map stream, fn
       {:ok, snake} ->
+        Notification.broadcast!(
+          id,
+          name: "restart:request:ok",
+          rel: %{game_id: id},
+          view: "snake.json",
+          data: [snake: snake]
+        )
+
         [snake]
-      {:exit, snake} ->
+
+      {:exit, {error, _stack}} ->
+        Notification.broadcast!(
+          id,
+          name: "restart:request:error",
+          rel: %{game_id: id},
+          view: "error.json",
+          data: [error: error]
+        )
+
         []
     end
 
@@ -66,6 +84,25 @@ defmodule Bs.World.Factory do
   end
 end
 
+defmodule Bs.World.Factory.Notification do
+  def broadcast! id, opts do
+    name = Keyword.fetch! opts, :name
+    view = Keyword.fetch! opts, :view
+    rel = Keyword.fetch! opts, :rel
+    data = Keyword.fetch! opts, :data
+
+    PubSub.broadcast!(id, %Event{
+      name: name,
+      rel: rel,
+      data: Phoenix.View.render(
+        BsWeb.EventView,
+        view,
+        data
+      )
+    })
+  end
+end
+
 defmodule Bs.World.Factory.Worker do
   @timeout 1000
 
@@ -80,15 +117,16 @@ defmodule Bs.World.Factory.Worker do
       [recv_timeout: @timeout]
     ]
 
-    PubSub.broadcast!(gameid, %Event{
-      name: :loaded,
+    Notification.broadcast!(
+      id,
+      name: "restart:request:init",
       rel: %{game_id: gameid, snake_id: id},
-      data: %{
-        tc: tc,
-        status_code: response.status_code,
-        body: response.body
-      }
-    })
+      view: "response.json",
+      data: [
+        response: response,
+        tc: tc
+      ]
+    )
 
     json = Poison.decode! response.body
 
