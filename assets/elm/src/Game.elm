@@ -67,7 +67,7 @@ type Msg
     | ResumeGame
     | StopGame
     | Tick JE.Value
-    | SnakeLoaded JE.Value
+    | SpectatorEvent JE.Value
 
 
 type alias PhxSock =
@@ -343,6 +343,13 @@ update msg model =
         PrevStep ->
             adminCmd "prev" model
 
+        SpectatorEvent raw ->
+            let
+                _ =
+                    Debug.log "SpectatorEvent" raw
+            in
+                noOp model
+
         Tick raw ->
             case JD.decodeValue decodeTick raw of
                 Ok { content } ->
@@ -350,9 +357,6 @@ update msg model =
 
                 Err e ->
                     Debug.crash e
-
-        SnakeLoaded raw ->
-            Debug.log (toString raw) noOp model
 
         MountCanvasApp ->
             ( model
@@ -426,7 +430,7 @@ socket url gameid =
     in
         Socket.init url
             |> Socket.on "tick" "spectator" Tick
-            |> Socket.on "snake:loaded" "spectator" SnakeLoaded
+            |> Socket.on "event" "spectator" SpectatorEvent
 
 
 adminCmd : String -> Model -> ( Model, Cmd Msg )
