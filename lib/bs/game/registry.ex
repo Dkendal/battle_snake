@@ -3,8 +3,6 @@ defmodule Bs.Game.Registry do
 
   @k __MODULE__
 
-  def via(id), do: {:via, R, {@k, id}}
-  def options(id), do: [name: via(id)]
   def lookup(id), do: R.lookup(@k, id)
   def register(key, value), do: R.register(@k, key, value)
   def dispatch(id, fun), do: R.dispatch(@k, id, fun)

@@ -42,14 +42,6 @@ defmodule Bs.GameServerTest do
     assert [{^pid, _}] = Registry.lookup "1"
   end
 
-  test "#prev does not start the process" do
-    assert [] == Registry.lookup "1"
-    assert :ok = Game.prev "1"
-
-    assert [] = Registry.lookup "1"
-    assert :ok = Game.prev "1"
-  end
-
   test "#prev calls the gen server" do
     spawn_link fn ->
       Registry.register "1", nil

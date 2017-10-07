@@ -26,7 +26,9 @@ defmodule Bs.Case do
       def named_mock_game_server(id) do
         {:ok, pid} = Agent.start_link(
           fn -> 0 end,
-          Bs.Game.Registry.options(id))
+          [name: {:via, Registry, {Bs.Game.Registry, id}}]
+        )
+
         pid
       end
     end
