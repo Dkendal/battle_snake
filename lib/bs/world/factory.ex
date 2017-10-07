@@ -33,14 +33,22 @@ defmodule Bs.World.Factory do
       }
     })
 
-    stream = Task.async_stream(
+    {:ok, supervisor} = Task.Supervisor.start_link()
+
+    stream = Task.Supervisor.async_stream_nolink(
+      supervisor,
       snakes,
       Worker,
       :run,
       [id, data]
     )
 
-    snakes = for {:ok, snake} <- stream, do: snake
+    snakes = Stream.flat_map stream, fn
+      {:ok, snake} ->
+        [snake]
+      {:exit, snake} ->
+        []
+    end
 
     world = put_in world.snakes, snakes
 

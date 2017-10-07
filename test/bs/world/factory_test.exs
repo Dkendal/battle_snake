@@ -7,20 +7,10 @@ defmodule Bs.World.FactoryTest do
 
   @url "http://example.com/start"
   @json "{\"width\":10,\"height\":10,\"game_id\":1}"
-
+  @moduletag :capture_log
 
   setup do
     mock HTTPoison
-
-    expect HTTPoison, :post!, fn @url, @json, _, _ ->
-      %HTTPoison.Response{
-        status_code: 200,
-        body: encode!(%{
-          name: "example snake",
-          taunt: "example taunt"
-        })
-      }
-    end
 
     on_exit &unload/0
 
@@ -37,6 +27,16 @@ defmodule Bs.World.FactoryTest do
   end
 
   test "#build when snakes respond", c do
+    expect HTTPoison, :post!, fn @url, @json, _, _ ->
+      %HTTPoison.Response{
+        status_code: 200,
+        body: encode!(%{
+          name: "example snake",
+          taunt: "example taunt"
+        })
+      }
+    end
+
     world = Factory.build c.game_form
 
     assert [%{coords: coords}] = world.snakes
@@ -59,5 +59,15 @@ defmodule Bs.World.FactoryTest do
         }
       ]
     } == world
+  end
+
+  test "when a request fails", c do
+    expect HTTPoison, :post!, fn @url, @json, _, _ ->
+      raise "expected failure"
+    end
+
+    world = Factory.build c.game_form
+
+    assert world.snakes == []
   end
 end
