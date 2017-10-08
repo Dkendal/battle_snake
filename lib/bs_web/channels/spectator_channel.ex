@@ -26,8 +26,8 @@ defmodule BsWeb.SpectatorChannel do
     {:noreply, socket}
   end
 
-  def handle_info(%Event{} = event, socket) do
-    broadcast socket, "event", event
+  def handle_info(%Event{name: name} = event, socket) do
+    broadcast socket, name, event
     {:noreply, socket}
   end
 

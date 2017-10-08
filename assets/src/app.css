@@ -5,17 +5,17 @@
   width: 100vw;
 }
 
-.gameboard {
-  flex: 1;
-  position: relative;
-  margin: 1lh;
-}
-
 .gameboard-canvas {
   position: absolute;
   height: 100%;
   width: 100%;
   left: 0;
+}
+
+.main {
+  flex: 1;
+  position: relative;
+  margin: 1lh;
 }
 
 .controls {
