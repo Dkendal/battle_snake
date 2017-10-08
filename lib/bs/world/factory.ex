@@ -6,7 +6,7 @@ alias Bs.World.Factory.Notification
 alias Bs.World.Factory.Worker
 
 defmodule Bs.World.Factory do
-  @timeout 5_000
+  @timeout 5000
   @new_snake_length 3
 
   def build(%{id: id} = game) when not is_nil(id) do
@@ -16,14 +16,15 @@ defmodule Bs.World.Factory do
       max_food: game.max_food,
       snakes: [],
       width: game.width,
-      game_form_id: id,
+      game_form_id: id
     }
 
-    data = Poison.encode! %{
-      game_id: id,
-      height: game.height,
-      width: game.width
-    }
+    data =
+      Poison.encode!(%{
+        game_id: id,
+        height: game.height,
+        width: game.width
+      })
 
     snakes = game.snakes
 
@@ -35,85 +36,69 @@ defmodule Bs.World.Factory do
       data: [snakes: snakes]
     )
 
-    {:ok, supervisor} = Task.Supervisor.start_link(
-      on_timeout: :kill_task,
-      timeout: @timeout
-    )
+    {:ok, supervisor} = Task.Supervisor.start_link(on_timeout: :kill_task, timeout: @timeout)
 
-    stream = Task.Supervisor.async_stream_nolink(
-      supervisor,
-      snakes,
-      Worker,
-      :run,
-      [id, data]
-    )
+    stream = Task.Supervisor.async_stream_nolink(supervisor, snakes, Worker, :run, [id, data])
 
     snakes =
       stream
       |> Stream.zip(snakes)
       |> Stream.flat_map(fn
-        {{:ok, snake}, permalink} ->
-          Notification.broadcast!( id,
-            name: "restart:request:ok",
-            rel: %{game_id: id, snake_id: permalink.id},
-            view: "snake.json",
-            data: [snake: snake]
-          )
+           {{:ok, snake}, permalink} ->
+             Notification.broadcast!(
+               id,
+               name: "restart:request:ok",
+               rel: %{game_id: id, snake_id: permalink.id},
+               view: "snake.json",
+               data: [snake: snake]
+             )
 
-          [snake]
+             [snake]
 
-        {{:exit, {error, _stack}}, permalink}->
-          Notification.broadcast!(
-            id,
-            name: "restart:request:error",
-            rel: %{game_id: id, snake_id: permalink.id},
-            view: "error.json",
-            data: [error: error]
-          )
+           {{:exit, {error, _stack}}, permalink} ->
+             Notification.broadcast!(
+               id,
+               name: "restart:request:error",
+               rel: %{game_id: id, snake_id: permalink.id},
+               view: "error.json",
+               data: [error: error]
+             )
 
-          []
-      end)
-      |> Enum.to_list
+             []
+         end)
+      |> Enum.to_list()
 
-    Notification.broadcast!(
-      id,
-      name: "restart:finished",
-      rel: %{game_id: id},
-      data: %{}
-    )
+    Notification.broadcast!(id, name: "restart:finished", rel: %{game_id: id}, data: %{})
 
-    world = put_in world.snakes, snakes
+    world = put_in(world.snakes, snakes)
 
-    world = World.stock_food world
+    world = World.stock_food(world)
 
-    update_in world.snakes, fn snakes ->
+    update_in(world.snakes, fn snakes ->
       for snake <- snakes do
         {:ok, point} = World.rand_unoccupied_space(world)
 
         coords = List.duplicate(point, @new_snake_length)
 
-        put_in snake.coords, coords
+        put_in(snake.coords, coords)
       end
-    end
+    end)
   end
 end
 
 defmodule Bs.World.Factory.Notification do
-  def broadcast! id, opts do
-    name = Keyword.fetch! opts, :name
-    rel = Keyword.fetch! opts, :rel
-    data = Keyword.fetch! opts, :data
-    view = Keyword.get opts, :view
+  def broadcast!(id, opts) do
+    name = Keyword.fetch!(opts, :name)
+    rel = Keyword.fetch!(opts, :rel)
+    data = Keyword.fetch!(opts, :data)
+    view = Keyword.get(opts, :view)
 
-    data = if view do
-      Phoenix.View.render(
-        BsWeb.EventView,
-        view,
+    data =
+      if view do
+        Phoenix.View.render(BsWeb.EventView, view, data)
+      else
         data
-      )
-    else
-      data
-    end
+      end
 
     PubSub.broadcast!(id, %Event{
       name: name,
@@ -127,15 +112,17 @@ defmodule Bs.World.Factory.Worker do
   @timeout 1000
 
   def run(permalink, gameid, opts \\ [])
+
   def run(%{id: id, url: url}, gameid, data) do
     start_url = "#{url}/start"
 
-    {tc, response} = :timer.tc HTTPoison, :post!, [
-      start_url,
-      data,
-      ["content-type": "application/json"],
-      [recv_timeout: @timeout]
-    ]
+    {tc, response} =
+      :timer.tc(HTTPoison, :post!, [
+        start_url,
+        data,
+        ["content-type": "application/json"],
+        [recv_timeout: @timeout]
+      ])
 
     Notification.broadcast!(
       id,
@@ -148,14 +135,14 @@ defmodule Bs.World.Factory.Worker do
       ]
     )
 
-    json = Poison.decode! response.body
+    json = Poison.decode!(response.body)
 
     model = %Snake{url: url, id: id}
 
     changeset = Snake.changeset(model, json)
 
     if changeset.valid? do
-      Ecto.Changeset.apply_changes changeset
+      Ecto.Changeset.apply_changes(changeset)
     else
       raise changeset.errors
     end

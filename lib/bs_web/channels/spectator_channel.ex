@@ -27,7 +27,7 @@ defmodule BsWeb.SpectatorChannel do
   end
 
   def handle_info(%Event{name: name} = event, socket) do
-    broadcast socket, name, event
+    broadcast(socket, name, event)
     {:noreply, socket}
   end
 
@@ -36,7 +36,7 @@ defmodule BsWeb.SpectatorChannel do
   ##############
 
   def handle_info(:after_join, socket) do
-    state = Game.get_game_state socket.assigns.id
+    state = Game.get_game_state(socket.assigns.id)
 
     push(socket, "tick", %{content: render(state.world)})
 
@@ -48,10 +48,6 @@ defmodule BsWeb.SpectatorChannel do
   ###################
 
   defp render(board) do
-    View.render(
-      BoardView,
-      "show.json",
-      board: board
-    )
+    View.render(BoardView, "show.json", board: board)
   end
 end

@@ -3,8 +3,8 @@ defmodule Bs.Repo.GameTest do
   use Bs.DataCase, async: false
 
   setup do
-    {:atomic, :ok} = :mnesia.clear_table :bs_repo_game
-    {:atomic, :ok} = :mnesia.clear_table :id_seq
+    {:atomic, :ok} = :mnesia.clear_table(:bs_repo_game)
+    {:atomic, :ok} = :mnesia.clear_table(:id_seq)
     :ok
   end
 
@@ -20,7 +20,7 @@ defmodule Bs.Repo.GameTest do
         snakes: ["https://example.com"]
       }
 
-      changeset = Game.changeset %Game{}, params
+      changeset = Game.changeset(%Game{}, params)
 
       assert changeset.valid?, inspect(changeset.errors)
     end
@@ -32,18 +32,16 @@ defmodule Bs.Repo.GameTest do
         height: -1,
         max_food: -1,
         recv_timeout: -1,
-        width: -1,
+        width: -1
       }
 
-      changeset = Game.changeset %Game{}, params
+      changeset = Game.changeset(%Game{}, params)
 
       refute changeset.valid?
 
-      assert changeset.errors[:delay] ==
-        {"is invalid", [type: :integer, validation: :cast]}
+      assert changeset.errors[:delay] == {"is invalid", [type: :integer, validation: :cast]}
 
-      assert changeset.errors[:game_mode] ==
-        {"is invalid", [validation: :inclusion]}
+      assert changeset.errors[:game_mode] == {"is invalid", [validation: :inclusion]}
     end
   end
 end

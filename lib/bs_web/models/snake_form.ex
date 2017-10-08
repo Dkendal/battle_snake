@@ -4,8 +4,8 @@ defmodule BsWeb.SnakeForm do
   use BsWeb, :model
 
   embedded_schema do
-    field :url
-    field :delete, :boolean, virtual: true
+    field(:url)
+    field(:delete, :boolean, virtual: true)
   end
 
   def changeset(snake, params \\ %{}) do

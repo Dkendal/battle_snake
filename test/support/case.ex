@@ -20,25 +20,22 @@ defmodule Bs.Case do
       import Bs.Factory
       import :meck
       import Poison, only: [encode!: 1]
-      defdelegate mock(mod), as: :new, to: :meck
-      defdelegate mock(mod, opts), as: :new, to: :meck
+      defdelegate(mock(mod), as: :new, to: :meck)
+      defdelegate(mock(mod, opts), as: :new, to: :meck)
 
       def named_mock_game_server(id) do
-        {:ok, pid} = Agent.start_link(
-          fn -> 0 end,
-          [name: {:via, Registry, {Bs.Game.Registry, id}}]
-        )
+        {:ok, pid} = Agent.start_link(fn -> 0 end, name: {:via, Registry, {Bs.Game.Registry, id}})
 
         pid
       end
     end
   end
 
-  setup(_tags) do
-    on_exit fn ->
+  setup _tags do
+    on_exit(fn ->
       Bs.GameServerTesting.teardown()
       MnesiaTesting.teardown()
-    end
+    end)
 
     :ok
   end

@@ -11,32 +11,18 @@ defmodule BsRepo.GameForm do
   defmacro game_modes, do: @game_modes
 
   schema "Elixir.BsRepo.GameForm" do
-    embeds_many :snakes, SnakeForm
-    field :world, :any, virtual: true
-    field :width, :integer, default: 20
-    field :height, :integer, default: 20
-    field :delay, :integer, default: 300
-    field :max_food, :integer, default: 1
-    field :game_mode, :string, default: @multiplayer
-    field :recv_timeout, :integer, default: 200
+    embeds_many(:snakes, SnakeForm)
+    field(:world, :any, virtual: true)
+    field(:width, :integer, default: 20)
+    field(:height, :integer, default: 20)
+    field(:delay, :integer, default: 300)
+    field(:max_food, :integer, default: 1)
+    field(:game_mode, :string, default: @multiplayer)
+    field(:recv_timeout, :integer, default: 200)
   end
 
-  @required [
-    :delay,
-    :game_mode,
-    :height,
-    :max_food,
-    :recv_timeout,
-    :width,
-  ]
-  @permitted [
-    :delay,
-    :game_mode,
-    :height,
-    :max_food,
-    :recv_timeout,
-    :width,
-  ]
+  @required [:delay, :game_mode, :height, :max_food, :recv_timeout, :width]
+  @permitted [:delay, :game_mode, :height, :max_food, :recv_timeout, :width]
   def changeset(game, params \\ %{}) do
     game
     |> cast(params, @permitted)
@@ -55,8 +41,7 @@ defmodule BsRepo.GameForm do
 
   def reject_deleted_snakes(changeset) do
     delete = fn changeset ->
-      get_field(changeset, :delete) == true ||
-        get_field(changeset, :url) == nil
+      get_field(changeset, :delete) == true || get_field(changeset, :url) == nil
     end
 
     Enum.reject(changeset, delete)
@@ -65,9 +50,7 @@ end
 
 defimpl Poison.Encoder, for: BsRepo.GameForm do
   def encode(game_form, opts) do
-    %{game_id: game_form.id,
-      height: game_form.height,
-      width: game_form.width}
+    %{game_id: game_form.id, height: game_form.height, width: game_form.width}
     |> Poison.encode!(opts)
   end
 end

@@ -10,17 +10,12 @@ defmodule BsWeb.BoardView do
       name: snake.name,
       taunt: snake.taunt,
       headType: snake.head_type,
-      tailType: snake.tail_type,
+      tailType: snake.tail_type
     }
   end
 
   def render("show.json", %{board: board}) do
-    snakes = &Phoenix.View.render_many(
-      &1,
-      __MODULE__,
-      "snake.json",
-      as: :snake
-    )
+    snakes = &Phoenix.View.render_many(&1, __MODULE__, "snake.json", as: :snake)
 
     %{
       width: board.width,

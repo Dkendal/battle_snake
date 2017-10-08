@@ -5,7 +5,7 @@ defmodule PoisonTesting do
   @spec cast!(struct) :: map
   def cast!(s) do
     s
-    |> Poison.encode!
-    |> Poison.decode!
+    |> Poison.encode!()
+    |> Poison.decode!()
   end
 end

@@ -8,9 +8,9 @@ defmodule BsWeb.PlayViewTest do
       result = BsWeb.PlayView.snake_assets()
 
       assert [
-        id: "snake-head-bendr",
-        src: "images/snake/head/bendr.svg"
-      ] in result
+               id: "snake-head-bendr",
+               src: "images/snake/head/bendr.svg"
+             ] in result
     end
   end
 end

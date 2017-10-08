@@ -23,7 +23,7 @@ defmodule Bs.ApiTest do
     test "sets an error when the move is invalid" do
       raw_response = %HTTPoison.Response{body: ~S({"move":"north"})}
 
-      mock = fn(@move_url, body, _, _) ->
+      mock = fn @move_url, body, _, _ ->
         send(self(), Poison.decode(body))
         {:ok, raw_response}
       end
@@ -31,9 +31,10 @@ defmodule Bs.ApiTest do
       move = Api.move(@snake, @world, mock)
 
       assert %Api.Response{
-        url: "http://example.snake/move",
-        raw_response: {:ok, ^raw_response},
-        parsed_response: {:error, changeset}} = move
+               url: "http://example.snake/move",
+               raw_response: {:ok, ^raw_response},
+               parsed_response: {:error, changeset}
+             } = move
 
       assert changeset.errors == [move: {"is invalid", [validation: :inclusion]}]
 
@@ -43,7 +44,7 @@ defmodule Bs.ApiTest do
     test "on success responds with the move" do
       raw_response = %HTTPoison.Response{body: ~S({"move":"up"})}
 
-      mock = fn(@move_url, body, _, _) ->
+      mock = fn @move_url, body, _, _ ->
         send(self(), Poison.decode(body))
         {:ok, raw_response}
       end
@@ -51,13 +52,10 @@ defmodule Bs.ApiTest do
       move = Api.move(@snake, @world, mock)
 
       assert move == %Api.Response{
-        url: "http://example.snake/move",
-        raw_response: {
-          :ok,
-          raw_response},
-        parsed_response: {
-          :ok,
-          %Move{move: "up"}}}
+               url: "http://example.snake/move",
+               raw_response: {:ok, raw_response},
+               parsed_response: {:ok, %Move{move: "up"}}
+             }
 
       assert_receive {:ok, %{"you" => "1234"}}
     end
@@ -67,37 +65,27 @@ defmodule Bs.ApiTest do
 
       raw_response = %HTTPoison.Response{body: body}
 
-      mock = fn (@move_url, _, _, _) ->
-        {:ok, raw_response}
-      end
+      mock = fn @move_url, _, _, _ -> {:ok, raw_response} end
 
       move = Api.move(@snake, @world, mock)
 
       assert move == %Api.Response{
-        url: "http://example.snake/move",
-        raw_response: {
-          :ok,
-          raw_response},
-        parsed_response: {
-          :error,
-          {:invalid, "<", 0}}}
+               url: "http://example.snake/move",
+               raw_response: {:ok, raw_response},
+               parsed_response: {:error, {:invalid, "<", 0}}
+             }
     end
 
     test "on error returns the error" do
-      mock = fn (@move_url, _, _, _) ->
-        {:error, @http_error}
-      end
+      mock = fn @move_url, _, _, _ -> {:error, @http_error} end
 
       move = Api.move(@snake, @world, mock)
 
       assert move == %Api.Response{
-        url: "http://example.snake/move",
-        raw_response: {
-          :error,
-          @http_error},
-        parsed_response: {
-          :error,
-          :no_response}}
+               url: "http://example.snake/move",
+               raw_response: {:error, @http_error},
+               parsed_response: {:error, :no_response}
+             }
     end
   end
 end

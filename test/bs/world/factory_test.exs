@@ -10,16 +10,12 @@ defmodule Bs.World.FactoryTest do
   @moduletag :capture_log
 
   setup do
-    mock HTTPoison
+    mock(HTTPoison)
 
-    on_exit &unload/0
+    on_exit(&unload/0)
 
-    game_form = build(
-      :game_form,
-      height: 10,
-      width: 10,
-      id: 1,
-      snakes: [
+    game_form =
+      build(:game_form, height: 10, width: 10, id: 1, snakes: [
         build(:snake_form)
       ])
 
@@ -27,7 +23,7 @@ defmodule Bs.World.FactoryTest do
   end
 
   test "#build when snakes respond", c do
-    expect HTTPoison, :post!, fn @url, @json, _, _ ->
+    expect(HTTPoison, :post!, fn @url, @json, _, _ ->
       %HTTPoison.Response{
         status_code: 200,
         body: encode!(%{
@@ -35,38 +31,36 @@ defmodule Bs.World.FactoryTest do
           taunt: "example taunt"
         })
       }
-    end
+    end)
 
-    world = Factory.build c.game_form
+    world = Factory.build(c.game_form)
 
     assert [%{coords: coords}] = world.snakes
 
     assert [_, _, _] = coords
 
     assert %World{
-      game_form_id: 1,
-      height: 10,
-      width: 10,
-      max_food: 1,
-      game_id: 1,
-      food: world.food,
-      snakes: [
-        %Snake{
-          coords: coords,
-          url: "http://example.com",
-          taunt: "example taunt",
-          name: "example snake"
-        }
-      ]
-    } == world
+             game_form_id: 1,
+             height: 10,
+             width: 10,
+             max_food: 1,
+             game_id: 1,
+             food: world.food,
+             snakes: [
+               %Snake{
+                 coords: coords,
+                 url: "http://example.com",
+                 taunt: "example taunt",
+                 name: "example snake"
+               }
+             ]
+           } == world
   end
 
   test "when a request fails", c do
-    expect HTTPoison, :post!, fn @url, @json, _, _ ->
-      raise "expected failure"
-    end
+    expect(HTTPoison, :post!, fn @url, @json, _, _ -> raise "expected failure" end)
 
-    world = Factory.build c.game_form
+    world = Factory.build(c.game_form)
 
     assert world.snakes == []
   end

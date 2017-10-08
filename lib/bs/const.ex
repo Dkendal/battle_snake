@@ -1,7 +1,7 @@
 defmodule Bs.Const do
   import Path
 
-  defmacrop snake name do
+  defmacrop snake(name) do
     values =
       ["assets", "static", "images", "snake", name, "*.svg"]
       |> join
@@ -13,6 +13,6 @@ defmodule Bs.Const do
     end
   end
 
-  def heads, do: snake "head"
-  def tails, do: snake "tail"
+  def heads, do: snake("head")
+  def tails, do: snake("tail")
 end

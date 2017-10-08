@@ -14,9 +14,8 @@ defmodule Bs.Rules do
       snake, [] ->
         {:cont, [snake]}
 
-      %{cause_of_death: %{turn: t}} = s,
-        [%{cause_of_death: %{turn: t}}|_] = acc ->
-        {:cont, [s|acc]}
+      %{cause_of_death: %{turn: t}} = s, [%{cause_of_death: %{turn: t}} | _] = acc ->
+        {:cont, [s | acc]}
 
       _, acc ->
         {:halt, acc}
@@ -31,6 +30,6 @@ defmodule Bs.Rules do
   end
 
   defp do_last_standing(live, _dead) do
-    (for s <- live, do: s.id)
+    for s <- live, do: s.id
   end
 end

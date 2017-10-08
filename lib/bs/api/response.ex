@@ -13,9 +13,9 @@ defmodule Bs.Api.Response do
 
   def parse(response, as: as) do
     parsed_response =
-      with({:ok, %HTTPoison.Response{} = raw} <- response.raw_response,
+      with {:ok, %HTTPoison.Response{} = raw} <- response.raw_response,
            body = raw.body,
-           parsed_result = Poison.decode(body, as: as)) do
+           parsed_result = Poison.decode(body, as: as) do
         parsed_result
       else
         {:error, _} ->

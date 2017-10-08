@@ -5,12 +5,13 @@ defmodule BsWeb.GameController do
   use BsWeb, :controller
 
   def index(conn, _params) do
-    games = BsRepo.all GameForm
+    games = BsRepo.all(GameForm)
 
-    game_servers = for game <- games do
-      status = if Game.alive?(game.id), do: :alive, else: :dead
-      {game, status}
-    end
+    game_servers =
+      for game <- games do
+        status = if Game.alive?(game.id), do: :alive, else: :dead
+        {game, status}
+      end
 
     render(conn, "index.html", games: games, game_servers: game_servers)
   end
@@ -22,9 +23,10 @@ defmodule BsWeb.GameController do
   end
 
   def create(conn, %{"game_form" => params}) do
-    {:ok, game_form} = %GameForm{}
-    |> GameForm.changeset(params)
-    |> BsRepo.insert
+    {:ok, game_form} =
+      %GameForm{}
+      |> GameForm.changeset(params)
+      |> BsRepo.insert()
 
     redirect(conn, to: game_path(conn, :edit, game_form))
   end
@@ -36,7 +38,7 @@ defmodule BsWeb.GameController do
 
   def edit(conn, %{"id" => id}) do
     game_form = BsRepo.get!(GameForm, id)
-    changeset = GameForm.changeset game_form
+    changeset = GameForm.changeset(game_form)
     render(conn, "edit.html", game: game_form, changeset: changeset)
   end
 
@@ -45,7 +47,7 @@ defmodule BsWeb.GameController do
 
     game_form
     |> GameForm.changeset(params)
-    |> BsRepo.update
+    |> BsRepo.update()
 
     redirect(conn, to: game_path(conn, :edit, game_form))
   end
@@ -53,15 +55,16 @@ defmodule BsWeb.GameController do
   def delete(conn, %{"id" => id}) do
     case BsRepo.get(GameForm, id) do
       nil -> :ok
-      x -> BsRepo.delete x
+      x -> BsRepo.delete(x)
     end
+
     index(conn, {})
   end
 
   def create_params(params) do
     %GameForm{
       width: String.to_integer(params["width"]),
-      height: String.to_integer(params["height"]),
+      height: String.to_integer(params["height"])
     }
   end
 

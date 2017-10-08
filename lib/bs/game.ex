@@ -8,11 +8,11 @@ defmodule Bs.Game do
 
   import GenServer, only: [call: 2]
 
-  defdelegate handle_call(request, from, state), to: Server
-  defdelegate handle_cast(request, state), to: Server
-  defdelegate handle_info(request, state), to: Server
-  defdelegate init(args), to: Server
-  defdelegate subscribe(name), to: PubSub
+  defdelegate(handle_call(request, from, state), to: Server)
+  defdelegate(handle_cast(request, state), to: Server)
+  defdelegate(handle_info(request, state), to: Server)
+  defdelegate(init(args), to: Server)
+  defdelegate(subscribe(name), to: PubSub)
 
   @moduledoc """
   The Game is a GenServer that handles running a single Bs match.
@@ -33,37 +33,38 @@ defmodule Bs.Game do
   end
 
   def pause(id) when is_binary(id) do
-    id |> dispatch(&call &1, :pause)
+    id |> dispatch(&call(&1, :pause))
   end
 
   def prev(id) when is_binary(id) do
-    id |> dispatch(&call &1, :prev)
+    id |> dispatch(&call(&1, :prev))
   end
 
   def stop(id, reason \\ :normal)
+
   def stop(id, reason) when is_binary(id) do
-    id |> dispatch(&GenServer.stop &1, reason)
+    id |> dispatch(&GenServer.stop(&1, reason))
   end
 
   def restart(id) when is_binary(id) do
-    case ensure_started id do
+    case ensure_started(id) do
       {:ok, pid, :already_started} ->
-        ref = Process.monitor pid
+        ref = Process.monitor(pid)
 
-        GenServer.stop pid
+        GenServer.stop(pid)
 
         receive do
           {:DOWN, ^ref, _, ^pid, :normal} -> :ok
         end
 
-        ensure_started id
+        ensure_started(id)
 
       {:ok, _pid, :started} ->
         :ok
     end
   end
 
-  def resume(id) when is_binary id do
+  def resume(id) when is_binary(id) do
     id |> do_ensure_started |> call(:resume)
   end
 
@@ -77,12 +78,12 @@ defmodule Bs.Game do
     end
   end
 
-  def find! name do
-    case lookup_or_create name do
-      {:ok, pid} when is_pid pid ->
+  def find!(name) do
+    case lookup_or_create(name) do
+      {:ok, pid} when is_pid(pid) ->
         pid
 
-      {:error, {:already_started, pid}} when is_pid pid ->
+      {:error, {:already_started, pid}} when is_pid(pid) ->
         pid
 
       {:error, err} ->
@@ -93,19 +94,19 @@ defmodule Bs.Game do
   def lookup_or_create(id) when is_binary(id) do
     case Registry.lookup(id) do
       [{pid, _}] ->
-        {:ok , pid}
+        {:ok, pid}
+
       _ ->
         start(id)
     end
   end
 
-  def ensure_started id do
+  def ensure_started(id) do
     with [] <- Registry.lookup(id),
-         {:ok, pid} <- start(id)
-    do
+         {:ok, pid} <- start(id) do
       {:ok, pid, :started}
     else
-      [{pid, _}]->
+      [{pid, _}] ->
         {:ok, pid, :already_started}
 
       {:error, {:already_started, pid}} ->
@@ -114,20 +115,18 @@ defmodule Bs.Game do
   end
 
   def start(id) when is_binary(id) do
-    Elixir.Supervisor.start_child(
-      Supervisor,
-      [id, [name: {:via, Elixir.Registry, {Registry, id}}]]
-    )
+    Elixir.Supervisor.start_child(Supervisor, [
+      id,
+      [name: {:via, Elixir.Registry, {Registry, id}}]
+    ])
   end
 
-  defp do_ensure_started id do
+  defp do_ensure_started(id) do
     {:ok, pid, _} = ensure_started(id)
     pid
   end
 
-  defp dispatch(id, fun) when is_binary id and is_function fun  do
-    Registry.dispatch id, fn [{pid, _}] ->
-      apply fun, [pid]
-    end
+  defp dispatch(id, fun) when is_binary(id and is_function(fun)) do
+    Registry.dispatch(id, fn [{pid, _}] -> apply(fun, [pid]) end)
   end
 end

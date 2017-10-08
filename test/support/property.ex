@@ -37,36 +37,36 @@ defmodule Property do
       case contents do
         [do: block] ->
           quote do
-            property = fn ->
-              unquote(block)
-            end
+            property = fn -> unquote(block) end
 
-            {:ok, pid} = Agent.start_link fn -> [] end
+            {:ok, pid} = Agent.start_link(fn -> [] end)
 
-            output_fn = fn (string, terms) ->
-              Agent.update pid, fn state ->
-                [{string, terms} |state]
-              end
+            output_fn = fn string, terms ->
+              Agent.update(pid, fn state -> [{string, terms} | state] end)
             end
 
             passed = quickcheck(on_output(output_fn, property.()))
 
-            output = Agent.get(pid, &(&1))
+            output = Agent.get(pid, & &1)
 
-            message = Enum.join Enum.map(output, fn
-              {x, [%{__struct__: _} = y]} ->
-                inspect(y)
+            message =
+              Enum.join(
+                Enum.map(output, fn
+                  {x, [%{__struct__: _} = y]} ->
+                    inspect(y)
 
-              {x, y} ->
-                :io_lib.format(x, y)
-            end)
+                  {x, y} ->
+                    :io_lib.format(x, y)
+                end)
+              )
 
-            Agent.stop pid, :normal
+            Agent.stop(pid, :normal)
 
             assert passed, message: message
 
             :ok
           end
+
         _ ->
           quote do
             try(unquote(contents))
@@ -74,7 +74,7 @@ defmodule Property do
           end
       end
 
-    var      = Macro.escape(var)
+    var = Macro.escape(var)
     contents = Macro.escape(contents, unquote: true)
 
     quote bind_quoted: [var: var, contents: contents, message: message] do
@@ -85,11 +85,7 @@ defmodule Property do
 
   defmacro __using__(_) do
     quote do
-      import :proper, only: [
-        on_output: 2,
-        quickcheck: 1,
-        forall: 2,
-      ]
+      import :proper, only: [on_output: 2, quickcheck: 1, forall: 2]
       import :proper_types
       import Property
       require Property

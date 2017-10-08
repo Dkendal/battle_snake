@@ -14,7 +14,7 @@ defmodule Bs do
       supervisor(Bs.Game.Supervisor, []),
       supervisor(Task.Supervisor, [[name: Bs.MoveSupervisor]]),
       supervisor(Registry, [:unique, Bs.Game.Registry]),
-      supervisor(Phoenix.PubSub.PG2, [Bs.Game.PubSub, []]),
+      supervisor(Phoenix.PubSub.PG2, [Bs.Game.PubSub, []])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

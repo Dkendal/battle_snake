@@ -4,8 +4,8 @@ defmodule Bs.Point do
   @primary_key false
 
   embedded_schema do
-    field :x, :integer
-    field :y, :integer
+    field(:x, :integer)
+    field(:y, :integer)
   end
 
   defmacro __using__(_) do
@@ -15,16 +15,10 @@ defmodule Bs.Point do
     end
   end
 
-  defmacro p(x, y),
-    do: quote do: %Bs.Point{
-          x: unquote(x),
-          y: unquote(y)}
+  defmacro p(x, y), do: quote(do: %Bs.Point{x: unquote(x), y: unquote(y)})
 
   def sub(a, b) do
-    %__MODULE__{
-      y: a.y - b.y,
-      x: a.x - b.x,
-    }
+    %__MODULE__{y: a.y - b.y, x: a.x - b.x}
   end
 
   @doc "Scalar addition of a vector"
@@ -34,10 +28,7 @@ defmodule Bs.Point do
 
   @doc "Add two vectors"
   def add(a, b) do
-    %__MODULE__{
-      y: a.y + b.y,
-      x: a.x + b.x,
-    }
+    %__MODULE__{y: a.y + b.y, x: a.x + b.x}
   end
 
   @doc "Scalar multiplication of a vector"
@@ -53,11 +44,11 @@ defmodule Bs.Point do
   def mag(p), do: magnitude(p)
 
   def magnitude(p(0, y)) do
-    abs y
+    abs(y)
   end
 
   def magnitude(p(x, 0)) do
-    abs x
+    abs(x)
   end
 
   def magnitude(p(x, y)) do
