@@ -12,7 +12,6 @@ defmodule Bs.Game do
   defdelegate handle_cast(request, state), to: Server
   defdelegate handle_info(request, state), to: Server
   defdelegate init(args), to: Server
-  defdelegate name(id), to: Registry, as: :via
   defdelegate subscribe(name), to: PubSub
 
   @moduledoc """
