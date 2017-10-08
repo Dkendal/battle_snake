@@ -20,12 +20,12 @@ defmodule Bs.Death do
     l
     |> Stream.map(&MapSet.new/1)
     |> Enum.reduce(&MapSet.intersection/2)
-    |> MapSet.to_list
+    |> MapSet.to_list()
   end
 
   def combine_dead(l, turn) do
     l
-    |> Enum.flat_map(&(&1))
+    |> Enum.flat_map(& &1)
     |> do_combine_dead(turn, %{})
   end
 
@@ -42,11 +42,11 @@ defmodule Bs.Death do
     end
 
     acc
-    |> Map.values
+    |> Map.values()
     |> Enum.map(to_death)
   end
 
-  defp do_combine_dead([snake|rest], turn, acc) do
+  defp do_combine_dead([snake | rest], turn, acc) do
     acc = update_dead_snake(snake, acc)
     do_combine_dead(rest, turn, acc)
   end
@@ -74,7 +74,7 @@ defmodule Bs.Death do
 
     world = put_in(world.snakes, live)
     world = update_in(world.dead_snakes, &(dead ++ &1))
-    put_in state.world, world
+    put_in(state.world, world)
   end
 
   @doc "Kill all snakes that starved this turn"
@@ -89,15 +89,14 @@ defmodule Bs.Death do
     acc
   end
 
-  def do_starvation([%{health_points: hp} = snake|rest], {live, dead})
-  when hp <= 0 do
+  def do_starvation([%{health_points: hp} = snake | rest], {live, dead}) when hp <= 0 do
     reason = [%StarvationCause{}]
     snake = put_in(snake.cause_of_death, reason)
-    do_starvation(rest, {live, [snake|dead]})
+    do_starvation(rest, {live, [snake | dead]})
   end
 
-  def do_starvation([snake|rest], {live, dead}) do
-    do_starvation(rest, {[snake|live], dead})
+  def do_starvation([snake | rest], {live, dead}) do
+    do_starvation(rest, {[snake | live], dead})
   end
 
   @doc "Kills all snakes that hit a wall"
@@ -111,30 +110,26 @@ defmodule Bs.Death do
     acc
   end
 
-  def do_wall_collision([%{coords: [p(x, y)|_]} = snake|rest], {w, h}, {live, dead})
-  when not x in 0..(w-1)
-  or not y in 0..(h-1) do
+  def do_wall_collision([%{coords: [p(x, y) | _]} = snake | rest], {w, h}, {live, dead})
+      when x not in 0..(w - 1) or y not in 0..(h - 1) do
     reason = [%WallCollisionCause{}]
     snake = put_in(snake.cause_of_death, reason)
-    do_wall_collision(rest, {w, h}, {live, [snake|dead]})
+    do_wall_collision(rest, {w, h}, {live, [snake | dead]})
   end
 
-  def do_wall_collision([snake|rest], {w, h}, {live, dead}) do
-    do_wall_collision(rest, {w, h}, {[snake|live], dead})
+  def do_wall_collision([snake | rest], {w, h}, {live, dead}) do
+    do_wall_collision(rest, {w, h}, {[snake | live], dead})
   end
 
   @doc "Kill all snakes that crashed into another snake"
   def collision(snakes) do
-    tasks = Task.async_stream(
-      snakes,
-      Collision,
-      :run,
-      [snakes])
+    tasks = Task.async_stream(snakes, Collision, :run, [snakes])
 
-    results = tasks
-    |> Stream.zip(snakes)
-    |> Stream.map(&unzip_result/1)
-    |> Enum.group_by(&elem(&1, 0), &elem(&1, 1))
+    results =
+      tasks
+      |> Stream.zip(snakes)
+      |> Stream.map(&unzip_result/1)
+      |> Enum.group_by(&elem(&1, 0), &elem(&1, 1))
 
     dead = Map.get(results, :dead, [])
     live = Map.get(results, :live, [])
@@ -157,7 +152,8 @@ defmodule Bs.Death do
 
       Stream.map(snakes, fn other ->
         cond do
-          other.id != snake.id and head == hd(other.coords) and length(snake.coords) <= length(other.coords) ->
+          other.id != snake.id and head == hd(other.coords) and
+              length(snake.coords) <= length(other.coords) ->
             %HeadCollisionCause{with: other.id}
 
           other.id == snake.id and head in tl(other.coords) ->
@@ -171,7 +167,7 @@ defmodule Bs.Death do
         end
       end)
       |> Stream.filter(& &1)
-      |> Enum.to_list
+      |> Enum.to_list()
     end
   end
 end

@@ -38,10 +38,7 @@ defmodule Bs.MovementTest do
 
   describe "Movement.next/1" do
     test "updates the taunt of snakes" do
-      snake = build(:snake,
-        name: :taunt_snake,
-        url: "http://example.com",
-        coords: [p(0, 0)])
+      snake = build(:snake, name: :taunt_snake, url: "http://example.com", coords: [p(0, 0)])
 
       world = build(:world, snakes: [snake])
 
@@ -54,10 +51,7 @@ defmodule Bs.MovementTest do
     end
 
     test "updates the location of snakes" do
-      snake = build(:snake,
-        name: :good_snake,
-        url: "http://example.com",
-        coords: [p(0, 0)])
+      snake = build(:snake, name: :good_snake, url: "http://example.com", coords: [p(0, 0)])
 
       world = build(:world, snakes: [snake])
 
@@ -79,7 +73,7 @@ defmodule Bs.MovementTest do
 
         [snake] = Movement.next(world).snakes
 
-        default_move = Bs.Move.to_point(Bs.Move.default_move)
+        default_move = Bs.Move.to_point(Bs.Move.default_move())
 
         assert snake.coords == [default_move]
       end

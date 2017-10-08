@@ -3,11 +3,11 @@ defmodule BsWeb.UserSocket do
 
   ## Channels
   # channel "room:*", Bs.RoomChannel
-  channel "spectator", BsWeb.SpectatorChannel
-  channel "admin", BsWeb.GameAdminChannel
+  channel("spectator", BsWeb.SpectatorChannel)
+  channel("admin", BsWeb.GameAdminChannel)
 
   ## Transports
-  transport :websocket, Phoenix.Transports.WebSocket
+  transport(:websocket, Phoenix.Transports.WebSocket)
   # transport :longpoll, Phoenix.Transports.LongPoll
 
   # Socket params are passed from the client and can

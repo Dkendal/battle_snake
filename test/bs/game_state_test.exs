@@ -14,12 +14,12 @@ defmodule Bs.GameStateTest do
 
   describe "GameState.set_winners(t) when everyone is dead" do
     test "sets the winner to whoever died last" do
-      world = build(:world,
-        snakes: [],
-        dead_snakes: [
+      world =
+        build(:world, snakes: [], dead_snakes: [
           build(:snake, id: 3) |> kill_snake(1),
           build(:snake, id: 2) |> kill_snake(2),
-          build(:snake, id: 1) |> kill_snake(2)])
+          build(:snake, id: 1) |> kill_snake(2)
+        ])
 
       state = build(:state, world: world)
       state = GameState.set_winners(state)
@@ -29,11 +29,10 @@ defmodule Bs.GameStateTest do
 
   describe "GameState.set_winners(t)" do
     test "sets the winner to anyone that is still alive" do
-      world = build(:world,
-        snakes: [
-          build(:snake, id: 1)],
-        dead_snakes: [
-          build(:snake, id: 2) |> kill_snake(1)])
+      world =
+        build(:world, snakes: [build(:snake, id: 1)], dead_snakes: [
+          build(:snake, id: 2) |> kill_snake(1)
+        ])
 
       state = build(:state, world: world)
       state = GameState.set_winners(state)
@@ -53,9 +52,7 @@ defmodule Bs.GameStateTest do
 
   describe "GameState.step(t)" do
     setup do
-      request_move = fn(_, _, _) ->
-        {:ok, %Response{body: "{\"move\":\"up\"}"}}
-      end
+      request_move = fn _, _, _ -> {:ok, %Response{body: "{\"move\":\"up\"}"}} end
 
       mocks = %{request_move: request_move}
 
@@ -74,9 +71,7 @@ defmodule Bs.GameStateTest do
 
   describe "GameState.step(t) when the game is done" do
     setup do
-      request_move = fn(_, _, _) ->
-        {:ok, %Response{body: "{\"move\":\"up\"}"}}
-      end
+      request_move = fn _, _, _ -> {:ok, %Response{body: "{\"move\":\"up\"}"}} end
 
       mocks = %{request_move: request_move}
 
@@ -107,7 +102,7 @@ defmodule Bs.GameStateTest do
     end
 
     test "steps forwards to the next turn" do
-      hist = for t <- (0..3), do: build(:world, turn: t)
+      hist = for t <- 0..3, do: build(:world, turn: t)
       state = GameState.replay!(build(:state, hist: hist))
       state = GameState.step(state)
 
@@ -120,17 +115,18 @@ defmodule Bs.GameStateTest do
 
   for status <- GameState.statuses() do
     method = "#{status}!"
+
     test "GameState.#{method}/1" do
-      assert GameState.unquote(:"#{method}")(@state).status ==
-        unquote(status)
+      assert GameState.unquote(:"#{method}")(@state).status == unquote(status)
     end
 
     method = "#{status}?"
+
     test "GameState.#{method}/1" do
-      state = put_in @state.status, unquote(status)
+      state = put_in(@state.status, unquote(status))
       assert GameState.unquote(:"#{method}")(state) == true
 
-      state = put_in @state.status, :__fake_state__
+      state = put_in(@state.status, :__fake_state__)
       assert GameState.unquote(:"#{method}")(state) == false
     end
   end

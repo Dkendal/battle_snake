@@ -1,9 +1,5 @@
 defmodule Bs.SnakeTest do
-  alias Bs.{
-    World,
-    Snake,
-    Point
-  }
+  alias Bs.{World, Snake, Point}
 
   use Bs.Case, async: true
   use Property
@@ -21,7 +17,7 @@ defmodule Bs.SnakeTest do
   end
 
   property "wall collision" do
-    xs = suchthat(integer(), & not &1 in 0..9)
+    xs = suchthat(integer(), & &1 not in 0..9)
 
     forall({xs, xs}, fn {x, y} ->
       snake = %Snake{coords: [%Point{x: x, y: y}]}
@@ -33,10 +29,12 @@ defmodule Bs.SnakeTest do
   describe "Snake.dead?" do
     test "detects body collisions" do
       world = %World{width: 10, height: 10}
+
       coords = [
         %Point{y: 5, x: 5},
         %Point{y: 5, x: 5}
       ]
+
       snake = %Snake{coords: coords}
       world = %{world | snakes: [snake]}
 
@@ -75,8 +73,7 @@ defmodule Bs.SnakeTest do
       world = build(:world)
       snake = build(:snake)
 
-      [snake: snake, world: world] =
-        with_snake_in_world(snake: snake, world: world, length: 1)
+      [snake: snake, world: world] = with_snake_in_world(snake: snake, world: world, length: 1)
 
       refute Snake.dead?(snake, world)
 
@@ -104,8 +101,8 @@ defmodule Bs.SnakeTest do
   describe "#resolve_head_to_head" do
     test "kills both snakes in the event of a tie" do
       snakes = [
-        %Snake{coords: [%Point{y: 5, x: 5}, %Point{y: 5, x: 4},]},
-        %Snake{coords: [%Point{y: 5, x: 5}, %Point{y: 4, x: 5},]},
+        %Snake{coords: [%Point{y: 5, x: 5}, %Point{y: 5, x: 4}]},
+        %Snake{coords: [%Point{y: 5, x: 5}, %Point{y: 4, x: 5}]}
       ]
 
       assert Snake.resolve_head_to_head(snakes) == []
@@ -117,38 +114,32 @@ defmodule Bs.SnakeTest do
 
       snakes = [small_snake, big_snake]
 
-      assert(Snake.resolve_head_to_head(snakes) == [big_snake])
+      assert Snake.resolve_head_to_head(snakes) == [big_snake]
     end
 
     test "does nothing to nonoverlapping snakes" do
       snakes = [
         %Snake{coords: [%Point{y: 5, x: 5}, %Point{y: 5, x: 4}]},
         %Snake{coords: [%Point{y: 5, x: 5}, %Point{y: 4, x: 5}]},
-        %Snake{coords: [%Point{y: 6, x: 6}, %Point{y: 6, x: 7}]},
+        %Snake{coords: [%Point{y: 6, x: 6}, %Point{y: 6, x: 7}]}
       ]
 
-      assert(Snake.resolve_head_to_head(snakes) == [
-        %Snake{coords: [%Point{y: 6, x: 6}, %Point{y: 6, x: 7}]}
-      ])
+      assert Snake.resolve_head_to_head(snakes) == [
+               %Snake{coords: [%Point{y: 6, x: 6}, %Point{y: 6, x: 7}]}
+             ]
     end
   end
 
   describe "#move" do
     test "moves a snake in the direction" do
-      coords = [
-        %Point{y: 5, x: 5},
-        %Point{y: 4, x: 5},
-      ]
+      coords = [%Point{y: 5, x: 5}, %Point{y: 4, x: 5}]
 
       snake = %Snake{coords: coords}
       move = %Point{y: 1, x: 0}
 
-      assert(Snake.move(snake, move) == %Snake{
-        coords: [
-          %Point{y: 6, x: 5},
-          %Point{y: 5, x: 5},
-        ]
-      })
+      assert Snake.move(snake, move) == %Snake{
+               coords: [%Point{y: 6, x: 5}, %Point{y: 5, x: 5}]
+             }
     end
   end
 
@@ -162,7 +153,7 @@ defmodule Bs.SnakeTest do
         taunt: "",
         health_points: 100,
         color: "red",
-        head_url: "head.example.com",
+        head_url: "head.example.com"
       }
 
       expected = %{
@@ -170,7 +161,7 @@ defmodule Bs.SnakeTest do
         "coords" => [[0, 1]],
         "health_points" => 100,
         "taunt" => "",
-        "id" => "1",
+        "id" => "1"
       }
 
       actual = PoisonTesting.cast!(snake)

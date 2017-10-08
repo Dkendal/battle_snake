@@ -6,7 +6,7 @@ defmodule BsWeb.EventView do
   end
 
   def render("snakes.json", %{snakes: snakes}) do
-    Phoenix.View.render_many snakes, __MODULE__, "snake.json", as: :snake
+    Phoenix.View.render_many(snakes, __MODULE__, "snake.json", as: :snake)
   end
 
   def render("response.json", %{response: response, tc: tc}) do
@@ -18,13 +18,14 @@ defmodule BsWeb.EventView do
   end
 
   def render("error.json", %{error: error}) do
-    msg = case error do
-      %HTTPoison.Error{reason: :timeout} ->
-        "timeout"
+    msg =
+      case error do
+        %HTTPoison.Error{reason: :timeout} ->
+          "timeout"
 
-      %{message: message} ->
-        message
-    end
+        %{message: message} ->
+          message
+      end
 
     %{error: msg}
   end

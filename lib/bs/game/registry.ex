@@ -11,6 +11,7 @@ defmodule Bs.Game.Registry do
     case R.lookup(@k, id) do
       [{pid, _}] ->
         {:ok, pid}
+
       _ ->
         :error
     end

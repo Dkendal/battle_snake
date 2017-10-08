@@ -27,7 +27,8 @@ defmodule Bs.RulesTest do
       snakes = [
         kill_snake(build(:snake, id: 0), 1),
         kill_snake(build(:snake, id: 1), 2),
-        kill_snake(build(:snake, id: 2), 2)]
+        kill_snake(build(:snake, id: 2), 2)
+      ]
 
       world = build(:world, dead_snakes: snakes)
 

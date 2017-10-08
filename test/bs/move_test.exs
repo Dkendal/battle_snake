@@ -1,16 +1,12 @@
-defmodule Bs.MoveTest  do
+defmodule Bs.MoveTest do
   use Bs.Case, async: true
   use Bs.Point
 
-  alias Bs.{
-    Move,
-    Point,
-  }
+  alias Bs.{Move, Point}
 
   describe "Move.to_point/1" do
     test "converts direction strings to Points" do
-      assert %Point{x: 0, y: -1} ==
-        %Move{move: "up"} |> Move.to_point
+      assert %Point{x: 0, y: -1} == %Move{move: "up"} |> Move.to_point()
     end
   end
 

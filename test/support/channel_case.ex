@@ -21,16 +21,13 @@ defmodule BsWeb.ChannelCase do
       use Phoenix.ChannelTest
       import Bs.Factory
 
-
       # The default endpoint for testing
       @endpoint BsWeb.Endpoint
     end
   end
 
-  setup(_tags) do
-    on_exit fn ->
-      MnesiaTesting.teardown()
-    end
+  setup _tags do
+    on_exit(fn -> MnesiaTesting.teardown() end)
 
     :ok
   end

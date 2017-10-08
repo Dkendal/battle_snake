@@ -28,10 +28,8 @@ defmodule BsWeb.ConnCase do
     end
   end
 
-  setup(_tags) do
-    on_exit fn ->
-      MnesiaTesting.teardown()
-    end
+  setup _tags do
+    on_exit(fn -> MnesiaTesting.teardown() end)
 
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end

@@ -6,7 +6,7 @@ defmodule Bs.DataCase do
     end
   end
 
-  setup(_tags) do
+  setup _tags do
     :ok
   end
 end

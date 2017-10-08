@@ -2,11 +2,7 @@ defmodule Bs.Move do
   alias __MODULE__
   alias Bs.Point
 
-  defstruct [
-    :move,
-    :taunt,
-    :snake_id,
-  ]
+  defstruct [:move, :taunt, :snake_id]
 
   @up %Point{x: 0, y: -1}
   def up, do: @up
@@ -31,26 +27,17 @@ defmodule Bs.Move do
     |> from_point
     |> do_default_move
 
-  defp do_default_move({:ok, move}),
-    do: move
+  defp do_default_move({:ok, move}), do: move
 
-  defp do_default_move(:error),
-    do: default_move()
+  defp do_default_move(:error), do: default_move()
 
-  defp do_default_move(_),
-    do: do_default_move(:error)
+  defp do_default_move(_), do: do_default_move(:error)
 
   def moves do
-    [
-      up(),
-      down(),
-      left(),
-      right(),
-    ]
+    [up(), down(), left(), right()]
   end
 
-  def to_point(%Move{move: move}),
-    do: to_point(move)
+  def to_point(%Move{move: move}), do: to_point(move)
 
   def to_point(move) when is_binary(move) do
     case move do
@@ -65,12 +52,16 @@ defmodule Bs.Move do
     case point do
       @up ->
         {:ok, %Move{move: "up"}}
+
       @down ->
         {:ok, %Move{move: "down"}}
+
       @left ->
         {:ok, %Move{move: "left"}}
+
       @right ->
         {:ok, %Move{move: "right"}}
+
       _ ->
         :error
     end

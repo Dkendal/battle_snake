@@ -8,14 +8,12 @@ defmodule Bs.Game.Server do
   import GameState
   use GenServer
 
-  def init(id) when is_binary id do
-    send self(), {:after_init, id}
+  def init(id) when is_binary(id) do
+    send(self(), {:after_init, id})
     {:ok, :no_state}
   end
 
-  def init(%GameState{game_form_id: game_form_id} = state)
-  when is_integer(game_form_id)
-  do
+  def init(%GameState{game_form_id: game_form_id} = state) when is_integer(game_form_id) do
     do_reply({:ok, state})
   end
 
@@ -35,8 +33,8 @@ defmodule Bs.Game.Server do
 
         _status ->
           state
-          |> GameState.step
-          |> GameState.suspend!
+          |> GameState.step()
+          |> GameState.suspend!()
       end
 
     do_reply({:reply, :ok, state})
@@ -47,6 +45,7 @@ defmodule Bs.Game.Server do
       case state.status do
         :cont ->
           suspend!(state)
+
         _status ->
           state
       end
@@ -55,9 +54,10 @@ defmodule Bs.Game.Server do
   end
 
   def handle_call(:prev, _from, state) do
-    state = state
-    |> GameState.step_back
-    |> suspend!
+    state =
+      state
+      |> GameState.step_back()
+      |> suspend!
 
     do_reply({:reply, :ok, state})
   end
@@ -77,56 +77,49 @@ defmodule Bs.Game.Server do
   end
 
   def handle_call(request, from, state) do
-    Logger.error Exception.format(
-      "unmatched call to Bs.Game.Server",
-      request,
-      System.stacktrace
+    Logger.error(
+      Exception.format("unmatched call to Bs.Game.Server", request, System.stacktrace())
     )
 
     super(request, from, state)
   end
 
   def handle_cast(request, state) do
-    Logger.error Exception.format(
-      "unmatched cast to Bs.Game.Server",
-      request,
-      System.stacktrace
+    Logger.error(
+      Exception.format("unmatched cast to Bs.Game.Server", request, System.stacktrace())
     )
 
     super(request, state)
   end
 
   def handle_info({:after_init, id}, :no_state) do
-    id = String.to_integer id
+    id = String.to_integer(id)
 
-    game_form = BsRepo.get! BsRepo.GameForm, id
+    game_form = BsRepo.get!(BsRepo.GameForm, id)
 
     delay = game_form.delay
 
-    world = Factory.build game_form
+    world = Factory.build(game_form)
 
-    singleplayer = fn (world) ->
-      length(world.snakes) <= 0
-    end
+    singleplayer = fn world -> length(world.snakes) <= 0 end
 
-    multiplayer = fn (world) ->
-      length(world.snakes) <= 1
-    end
+    multiplayer = fn world -> length(world.snakes) <= 1 end
 
-    objective = case game_form.game_mode do
-      "singleplayer" -> singleplayer
-      "multiplayer" -> multiplayer
-    end
+    objective =
+      case game_form.game_mode do
+        "singleplayer" -> singleplayer
+        "multiplayer" -> multiplayer
+      end
 
     state = %Bs.GameState{
       delay: delay,
       game_form: game_form,
       game_form_id: id,
       objective: objective,
-      world: world,
+      world: world
     }
 
-    do_reply {:noreply, state}
+    do_reply({:noreply, state})
   end
 
   def handle_info(:get_state, state) do
@@ -139,6 +132,7 @@ defmodule Bs.Game.Server do
         :cont -> tick_cont(state)
         _ -> state
       end
+
     do_reply({:noreply, state})
   end
 
@@ -170,10 +164,7 @@ defmodule Bs.Game.Server do
   end
 
   defp broadcast(%{game_form_id: topic} = state) when is_integer(topic) do
-    ignored_fields = [
-      :hist,
-      :objective,
-    ]
+    ignored_fields = [:hist, :objective]
 
     broadcast_state = Map.drop(state, ignored_fields)
 

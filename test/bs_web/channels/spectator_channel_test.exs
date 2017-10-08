@@ -8,7 +8,7 @@ defmodule BsWeb.SpectatorChannelTest do
     setup [:sub, :broadcast_state]
 
     test "renders content" do
-      assert_broadcast "tick", %{content: _content}
+      assert_broadcast("tick", %{content: _content})
     end
   end
 
@@ -17,15 +17,11 @@ defmodule BsWeb.SpectatorChannelTest do
     PubSub.broadcast(c.id, {:tick, state})
   end
 
-  def sub _ do
+  def sub(_) do
     id = insert(:game_form).id
 
-    {:ok, _, socket} = subscribe_and_join(
-      socket(),
-      SpectatorChannel,
-      "spectator",
-      %{"id" => to_string(id)}
-    )
+    {:ok, _, socket} =
+      subscribe_and_join(socket(), SpectatorChannel, "spectator", %{"id" => to_string(id)})
 
     [socket: socket, id: id]
   end

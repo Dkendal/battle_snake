@@ -8,7 +8,7 @@ defmodule Bs.GameState do
 
   @statuses [:cont, :replay, :halted, :suspend]
 
-  defstruct([
+  defstruct [
     :world,
     :objective,
     :game_form_id,
@@ -18,8 +18,8 @@ defmodule Bs.GameState do
     hist: [],
     status: :suspend,
     winners: [],
-    done?: false,
-  ])
+    done?: false
+  ]
 
   ####################
   # Type Definitions #
@@ -76,7 +76,7 @@ defmodule Bs.GameState do
       [] ->
         halted!(state)
 
-      [h|t] ->
+      [h | t] ->
         state = put_in(state.world, h)
         state = put_in(state.hist, t)
         state
@@ -84,11 +84,12 @@ defmodule Bs.GameState do
   end
 
   def step(state) do
-    state = state
-    |> save_history
-    |> Movement.next
-    |> Death.reap
-    |> Map.update!(:world, &World.step/1)
+    state =
+      state
+      |> save_history
+      |> Movement.next()
+      |> Death.reap()
+      |> Map.update!(:world, &World.step/1)
 
     if done?(state), do: step_done(state), else: state
   end
@@ -127,31 +128,26 @@ defmodule Bs.GameState do
     state.objective.(state.world)
   end
 
-  defdelegate fetch(state, key), to: Map
+  defdelegate(fetch(state, key), to: Map)
 
   #####################
   # Private Functions #
   #####################
 
   defp prev_turn(state) do
-    [h|t] = state.hist
-    state = put_in state.world, h
+    [h | t] = state.hist
+    state = put_in(state.world, h)
     put_in(state.hist, t)
   end
 
   defp save_history(%{world: h} = state) do
-    update_in state.hist, fn t ->
-      [h |Enum.take(t, @max_history)]
-    end
+    update_in(state.hist, fn t -> [h | Enum.take(t, @max_history)] end)
   end
 
   defp who_died_last(state) do
-    map_fun = &(&1.id)
+    map_fun = & &1.id
 
-    groups = Enum.group_by(
-      state.world.dead_snakes,
-      &Snake.died_on/1,
-      map_fun)
+    groups = Enum.group_by(state.world.dead_snakes, &Snake.died_on/1, map_fun)
 
     if Enum.count(groups) > 0 do
       groups

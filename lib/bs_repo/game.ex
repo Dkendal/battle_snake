@@ -3,34 +3,20 @@ defmodule BsRepo.Game do
   import Ecto.Changeset
 
   schema "bs_repo_game" do
-    field :delay, :integer, default: 300
-    field :game_mode, :string, default: "multiplayer"
-    field :height, :integer, default: 20
-    field :max_food, :integer, default: 1
-    field :recv_timeout, :integer, default: 200
-    field :snakes, {:array, :string}
-    field :width, :integer, default: 20
+    field(:delay, :integer, default: 300)
+    field(:game_mode, :string, default: "multiplayer")
+    field(:height, :integer, default: 20)
+    field(:max_food, :integer, default: 1)
+    field(:recv_timeout, :integer, default: 200)
+    field(:snakes, {:array, :string})
+    field(:width, :integer, default: 20)
 
     timestamps()
   end
 
-  @required [
-    :delay,
-    :game_mode,
-    :height,
-    :max_food,
-    :recv_timeout,
-    :width,
-  ]
+  @required [:delay, :game_mode, :height, :max_food, :recv_timeout, :width]
 
-  @permitted [
-    :delay,
-    :game_mode,
-    :height,
-    :max_food,
-    :recv_timeout,
-    :width,
-  ]
+  @permitted [:delay, :game_mode, :height, :max_food, :recv_timeout, :width]
 
   def changeset(model, params \\ %{}) do
     model

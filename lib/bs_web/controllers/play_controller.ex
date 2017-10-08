@@ -5,7 +5,7 @@ defmodule BsWeb.PlayController do
 
   def show(conn, %{"id" => id} = params) do
     is_replay = params["replay"] == "true"
-    game_form = BsRepo.get GameForm, id
+    game_form = BsRepo.get(GameForm, id)
     render(conn, "show.html", game: game_form, is_replay: is_replay)
   end
 end
