@@ -4,7 +4,6 @@ import Char
 import GameBoard
 import Html exposing (..)
 import Html.Attributes exposing (..)
-import Json.Decode as JD
 import Keyboard
 import Phoenix.Channel as Channel
 import Phoenix.Push as Push
@@ -13,6 +12,9 @@ import Task exposing (..)
 import Tuple exposing (..)
 import Route exposing (..)
 import Json.Encode as JE
+import Json.Decode as JD
+import Decoder
+import Types exposing (..)
 
 
 -- MAIN
@@ -46,6 +48,7 @@ type alias Model =
     { socket : Socket.Socket Msg
     , gameid : String
     , board : Maybe Board
+    , lobby : Maybe Lobby
     }
 
 
@@ -66,8 +69,11 @@ type Msg
     | PrevStep
     | ResumeGame
     | StopGame
-    | Tick JE.Value
-    | SpectatorEvent JE.Value
+    | RecieveTick JE.Value
+    | ReceiveRestartInit JE.Value
+    | ReceiveRestartFinished JE.Value
+    | ReceiveRestartRequestError JE.Value
+    | ReceiveRestartRequestOk JE.Value
 
 
 type alias PhxSock =
@@ -78,73 +84,6 @@ type alias PhxSockMsg =
     Socket.Msg Msg
 
 
-type alias TickMsg =
-    { content : Board }
-
-
-type alias Board =
-    { turn : Int
-    , snakes : List Snake
-    , deadSnakes : List Snake
-    , gameid : Int
-    , food : List Point
-    }
-
-
-type alias Snake =
-    { causeOfDeath : Maybe String
-    , color : String
-    , coords : List Point
-    , health : Int
-    , id : String
-    , name : String
-    , taunt : Maybe String
-    }
-
-
-type Point
-    = Point Int Int
-
-
-
--- Decoder
-
-
-decodeTick : JD.Decoder TickMsg
-decodeTick =
-    JD.map TickMsg
-        (JD.field "content" decodeBoard)
-
-
-decodeBoard : JD.Decoder Board
-decodeBoard =
-    JD.map5 Board
-        (JD.field "turn" JD.int)
-        (JD.field "snakes" (JD.list decodeSnake))
-        (JD.field "deadSnakes" (JD.list decodeSnake))
-        (JD.field "gameId" JD.int)
-        (JD.field "food" (JD.list decodePoint))
-
-
-decodePoint : JD.Decoder Point
-decodePoint =
-    JD.map2 Point
-        (JD.index 0 JD.int)
-        (JD.index 1 JD.int)
-
-
-decodeSnake : JD.Decoder Snake
-decodeSnake =
-    JD.map7 Snake
-        (JD.maybe (JD.field "causeOfDeath" JD.string))
-        (JD.field "color" JD.string)
-        (JD.field "coords" (JD.list decodePoint))
-        (JD.field "health" JD.int)
-        (JD.field "id" JD.string)
-        (JD.field "name" JD.string)
-        (JD.field "taunt" (JD.maybe JD.string))
-
-
 
 -- VIEW
 
@@ -153,16 +92,48 @@ view : Model -> Html Msg
 view model =
     div []
         [ div [ class "gameapp" ]
-            [ gameboard model
+            [ div [ class "main" ] <|
+                [ canvas
+                    [ id (fgId model)
+                    , class "gameboard-canvas"
+                    , style fgCanvas
+                    ]
+                    []
+                , canvas
+                    [ id (bgId model)
+                    , class "gameboard-canvas"
+                    ]
+                    []
+                , div [] <|
+                    case model.lobby of
+                        Just lobby ->
+                            let
+                                item snake =
+                                    text snake.url
+                            in
+                                List.map item lobby.snakes
+
+                        _ ->
+                            []
+                ]
             , scoreboard model
             ]
         ]
 
 
+lobbyView : Lobby -> Html Msg
+lobbyView lobby =
+    let
+        item snake =
+            text (toString snake)
+    in
+        div [ class "main" ] (List.map item lobby.snakes)
+
+
 gameboard : Model -> Html msg
 gameboard model =
     div
-        [ class "gameboard" ]
+        [ class "main" ]
         [ canvas [ id (fgId model), class "gameboard-canvas", style fgCanvas ] []
         , canvas [ id (bgId model), class "gameboard-canvas" ] []
         ]
@@ -276,6 +247,7 @@ init flags =
     ( { socket = socket flags.websocket flags.gameid
       , gameid = flags.gameid
       , board = Nothing
+      , lobby = Nothing
       }
     , Cmd.batch
         [ emit JoinSpectatorChannel
@@ -343,15 +315,30 @@ update msg model =
         PrevStep ->
             adminCmd "prev" model
 
-        SpectatorEvent raw ->
-            let
-                _ =
-                    Debug.log "SpectatorEvent" raw
-            in
-                noOp model
+        ReceiveRestartRequestOk _ ->
+            ( { model | lobby = Nothing }, Cmd.none )
 
-        Tick raw ->
-            case JD.decodeValue decodeTick raw of
+        ReceiveRestartRequestError raw ->
+            case JD.decodeValue Decoder.error raw of
+                Ok error ->
+                    ( model, Cmd.none )
+
+                Err e ->
+                    Debug.crash e
+
+        ReceiveRestartFinished _ ->
+            ( model, Cmd.none )
+
+        ReceiveRestartInit raw ->
+            case JD.decodeValue Decoder.lobby raw of
+                Ok lobby ->
+                    ( { model | lobby = Just lobby }, Cmd.none )
+
+                Err e ->
+                    Debug.crash e
+
+        RecieveTick raw ->
+            case JD.decodeValue Decoder.tick raw of
                 Ok { content } ->
                     ( { model | board = Just content }, GameBoard.draw raw )
 
@@ -429,8 +416,11 @@ socket url gameid =
             { gameid = gameid }
     in
         Socket.init url
-            |> Socket.on "tick" "spectator" Tick
-            |> Socket.on "event" "spectator" SpectatorEvent
+            |> Socket.on "tick" "spectator" RecieveTick
+            |> Socket.on "restart:init" "spectator" ReceiveRestartInit
+            |> Socket.on "restart:finished" "spectator" ReceiveRestartFinished
+            |> Socket.on "restart:request:error" "spectator" ReceiveRestartRequestError
+            |> Socket.on "restart:request:ok" "spectator" ReceiveRestartRequestOk
 
 
 adminCmd : String -> Model -> ( Model, Cmd Msg )
