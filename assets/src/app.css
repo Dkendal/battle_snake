@@ -12,6 +12,13 @@
   left: 0;
 }
 
+.lobby {
+  z-index: 1;
+  position: relative;
+  background: var(--bg-primary-color);
+  box-shadow: var(--shadow-floating);
+}
+
 .main {
   flex: 1;
   position: relative;

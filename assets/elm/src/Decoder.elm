@@ -2,6 +2,7 @@ module Decoder exposing (..)
 
 import Json.Decode exposing (..)
 import Types exposing (..)
+import Dict
 
 
 (:=) : String -> Decoder a -> Decoder a
@@ -46,17 +47,29 @@ snake =
 
 permalink : Decoder Permalink
 permalink =
-    map2 Permalink
+    map3 Permalink
         ("id" := string)
         ("url" := string)
+        (succeed Nothing)
+
+
+database :
+    Decoder { a | id : comparable }
+    -> Decoder (Dict.Dict comparable { a | id : comparable })
+database decoder =
+    list decoder
+        |> map (List.map (\y -> ( y.id, y )))
+        |> map Dict.fromList
 
 
 lobby : Decoder Lobby
 lobby =
     map Lobby
-        ("data" := list permalink)
+        ("data" := database permalink)
 
 
-error : Decoder String
+error : Decoder PermalinkError
 error =
-    at [ "data", "error" ] string
+    map2 PermalinkError
+        (at [ "rel", "snake_id" ] string)
+        (at [ "data", "error" ] string)

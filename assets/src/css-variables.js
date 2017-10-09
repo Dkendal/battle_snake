@@ -6,13 +6,14 @@ const blue = '#99e1d9';
 const grey = '#5d576b';
 
 const variables = {
-  'bg-primary-color': white,
   'bg-accent-color': grey,
-  'font-primary-color': grey,
+  'bg-primary-color': white,
   'font-accent-color': white,
-  'tile-color': lightgrey,
+  'font-primary-color': grey,
   'food-color': pink,
   'link-color': blue,
+  'shadow-floating': '0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);',
+  'tile-color': lightgrey,
 };
 
 module.exports = variables;
