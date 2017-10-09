@@ -4,6 +4,11 @@ import Json.Decode exposing (..)
 import Types exposing (..)
 
 
+(:=) : String -> Decoder a -> Decoder a
+(:=) =
+    field
+
+
 tick : Decoder TickMsg
 tick =
     map TickMsg
@@ -13,11 +18,11 @@ tick =
 board : Decoder Board
 board =
     map5 Board
-        (field "turn" int)
-        (field "snakes" (list snake))
-        (field "deadSnakes" (list snake))
-        (field "gameId" int)
-        (field "food" (list point))
+        ("turn" := int)
+        ("snakes" := list snake)
+        ("deadSnakes" := list snake)
+        ("gameId" := int)
+        ("food" := list point)
 
 
 point : Decoder Point
@@ -30,26 +35,26 @@ point =
 snake : Decoder Snake
 snake =
     map7 Snake
-        (maybe (field "causeOfDeath" string))
-        (field "color" string)
-        (field "coords" (list point))
-        (field "health" int)
-        (field "id" string)
-        (field "name" string)
-        (field "taunt" (maybe string))
+        (maybe <| "causeOfDeath" := string)
+        ("color" := string)
+        ("coords" := list point)
+        ("health" := int)
+        ("id" := string)
+        ("name" := string)
+        ("taunt" := maybe string)
 
 
 permalink : Decoder Permalink
 permalink =
     map2 Permalink
-        (field "id" string)
-        (field "url" string)
+        ("id" := string)
+        ("url" := string)
 
 
 lobby : Decoder Lobby
 lobby =
     map Lobby
-        (field "data" (list permalink))
+        ("data" := list permalink)
 
 
 error : Decoder String

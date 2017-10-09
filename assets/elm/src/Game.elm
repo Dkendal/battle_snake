@@ -125,7 +125,7 @@ lobbyView : Lobby -> Html Msg
 lobbyView lobby =
     let
         item snake =
-            text (toString snake)
+            div [] [ text (toString snake) ]
     in
         div [ class "main" ] (List.map item lobby.snakes)
 
