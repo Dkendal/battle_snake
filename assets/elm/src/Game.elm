@@ -1,19 +1,21 @@
 module Game exposing (..)
 
 import Char
+import Debug exposing (..)
+import Decoder
+import Dict
 import GameBoard
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Json.Decode as JD
+import Json.Encode as JE
 import Keyboard
 import Phoenix.Channel as Channel
 import Phoenix.Push as Push
 import Phoenix.Socket as Socket
+import Route exposing (..)
 import Task exposing (..)
 import Tuple exposing (..)
-import Route exposing (..)
-import Json.Encode as JE
-import Json.Decode as JD
-import Decoder
 import Types exposing (..)
 
 
@@ -104,30 +106,22 @@ view model =
                     , class "gameboard-canvas"
                     ]
                     []
-                , div [] <|
+                , div [ class "lobby" ] <|
                     case model.lobby of
+                        Nothing ->
+                            []
+
                         Just lobby ->
                             let
                                 item snake =
-                                    text snake.url
+                                    p [] [ text snake.url ]
                             in
-                                List.map item lobby.snakes
-
-                        _ ->
-                            []
+                                Dict.values lobby.snakes
+                                    |> List.map item
                 ]
             , scoreboard model
             ]
         ]
-
-
-lobbyView : Lobby -> Html Msg
-lobbyView lobby =
-    let
-        item snake =
-            div [] [ text (toString snake) ]
-    in
-        div [ class "main" ] (List.map item lobby.snakes)
 
 
 gameboard : Model -> Html msg
@@ -219,9 +213,9 @@ snakeView alive snake =
             (toString snake.health) ++ "%"
 
         snakeStyle =
-            ( "background-color", snake.color )
-                :: ( "width", healthRemaining )
-                :: []
+            [ ( "background-color", snake.color )
+            , ( "width", healthRemaining )
+            ]
     in
         div
             [ classList

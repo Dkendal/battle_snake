@@ -1,5 +1,7 @@
 module Types exposing (..)
 
+import Dict exposing (Dict)
+
 
 type alias Board =
     { turn : Int
@@ -10,14 +12,18 @@ type alias Board =
     }
 
 
+type alias Database a =
+    Dict String a
+
+
 type alias Lobby =
-    { snakes : List Permalink
-    }
+    { snakes : Database Permalink }
 
 
 type alias Permalink =
     { id : String
     , url : String
+    , error : Maybe String
     }
 
 
@@ -38,3 +44,9 @@ type alias Snake =
 
 type alias TickMsg =
     { content : Board }
+
+
+type alias PermalinkError =
+    { id : String
+    , error : String
+    }
