@@ -36,8 +36,8 @@ defmodule BsWeb.EventView do
   def render("error.json", %{error: error}) do
     msg =
       case error do
-        %HTTPoison.Error{reason: :timeout} ->
-          "timeout"
+        %HTTPoison.Error{reason: reason} ->
+          to_string reason
 
         %{message: message} ->
           message
