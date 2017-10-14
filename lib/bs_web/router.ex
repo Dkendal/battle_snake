@@ -24,8 +24,6 @@ defmodule BsWeb.Router do
   scope "/test", BsWeb.Test, as: :test do
     pipe_through(:api)
 
-    get("/example/start", ExampleController, :start)
-    get("/example/move", ExampleController, :move)
     post("/example/start", ExampleController, :start)
     post("/example/move", ExampleController, :move)
 

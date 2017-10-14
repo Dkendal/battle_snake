@@ -2,7 +2,7 @@ defmodule BsWeb.Test.ExampleController do
   use BsWeb, :controller
 
   def start(conn, _params) do
-    (:rand.uniform() * 2000)
+    (:rand.uniform() * 1000)
     |> round
     |> Process.sleep()
 

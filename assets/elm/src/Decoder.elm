@@ -10,6 +10,16 @@ import Dict
     field
 
 
+defaultHeadUrl : String
+defaultHeadUrl =
+    ""
+
+
+maybeWithDefault : a -> Decoder a -> Decoder a
+maybeWithDefault value decoder =
+    decoder |> maybe |> map (Maybe.withDefault value)
+
+
 tick : Decoder TickMsg
 tick =
     map TickMsg
@@ -35,14 +45,15 @@ point =
 
 snake : Decoder Snake
 snake =
-    map7 Snake
+    map8 Snake
         (maybe <| "causeOfDeath" := string)
         ("color" := string)
         ("coords" := list point)
         ("health" := int)
         ("id" := string)
         ("name" := string)
-        ("taunt" := maybe string)
+        (maybe <| "taunt" := string)
+        (maybeWithDefault defaultHeadUrl <| "headUrl" := string)
 
 
 permalink : Decoder Permalink
@@ -50,7 +61,7 @@ permalink =
     map3 Permalink
         ("id" := string)
         ("url" := string)
-        (succeed Nothing)
+        (succeed Loading)
 
 
 database :
@@ -68,8 +79,36 @@ lobby =
         ("data" := database permalink)
 
 
-error : Decoder PermalinkError
-error =
-    map2 PermalinkError
+gameEvent : Decoder a -> Decoder (GameEvent a)
+gameEvent decoder =
+    map2 GameEvent
+        (at [ "rel", "game_id" ] int)
+        decoder
+
+
+snakeEvent : Decoder a -> Decoder (SnakeEvent a)
+snakeEvent decoder =
+    map3 SnakeEvent
+        (at [ "rel", "game_id" ] int)
         (at [ "rel", "snake_id" ] string)
-        (at [ "data", "error" ] string)
+        decoder
+
+
+error : Decoder (SnakeEvent String)
+error =
+    snakeEvent (at [ "data", "error" ] string)
+
+
+lobbySnake : Decoder (SnakeEvent LobbySnake)
+lobbySnake =
+    let
+        data =
+            map6 LobbySnake
+                ("color" := string)
+                ("id" := string)
+                ("name" := string)
+                ("taunt" := maybe string)
+                ("url" := string)
+                (maybeWithDefault defaultHeadUrl <| "headUrl" := string)
+    in
+        snakeEvent (field "data" data)
