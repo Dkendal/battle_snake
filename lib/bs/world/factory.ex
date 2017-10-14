@@ -6,7 +6,7 @@ alias Bs.World.Factory.Notification
 alias Bs.World.Factory.Worker
 
 defmodule Bs.World.Factory do
-  @timeout 5000
+  @timeout 4_900
   @new_snake_length 3
 
   def build(%{id: id} = game) when not is_nil(id) do
@@ -26,30 +26,30 @@ defmodule Bs.World.Factory do
         width: game.width
       })
 
-    snakes = game.snakes
+    permalinks = game.snakes
 
     Notification.broadcast!(
       id,
       name: "restart:init",
       rel: %{game_id: id},
-      view: "snakes.json",
-      data: [snakes: snakes]
+      view: "permalinks.json",
+      data: [permalinks: permalinks]
     )
 
     {:ok, supervisor} = Task.Supervisor.start_link(on_timeout: :kill_task, timeout: @timeout)
 
-    stream = Task.Supervisor.async_stream_nolink(supervisor, snakes, Worker, :run, [id, data])
+    stream = Task.Supervisor.async_stream_nolink(supervisor, permalinks, Worker, :run, [id, data])
 
     snakes =
       stream
-      |> Stream.zip(snakes)
+      |> Stream.zip(permalinks)
       |> Stream.flat_map(fn
-           {{:ok, snake}, permalink} ->
+           {{:ok, snake}, _} ->
              Notification.broadcast!(
                id,
                name: "restart:request:ok",
-               rel: %{game_id: id, snake_id: permalink.id},
-               view: "snake.json",
+               rel: %{game_id: id, snake_id: snake.id},
+               view: "snake_loaded.json",
                data: [snake: snake]
              )
 
@@ -109,7 +109,7 @@ defmodule Bs.World.Factory.Notification do
 end
 
 defmodule Bs.World.Factory.Worker do
-  @timeout 1000
+  @timeout 4_500
 
   def run(permalink, gameid, opts \\ [])
 

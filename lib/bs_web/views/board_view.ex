@@ -10,7 +10,8 @@ defmodule BsWeb.BoardView do
       name: snake.name,
       taunt: snake.taunt,
       headType: snake.head_type,
-      tailType: snake.tail_type
+      tailType: snake.tail_type,
+      headUrl: snake.head_url
     }
   end
 
