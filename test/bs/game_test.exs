@@ -1,4 +1,4 @@
-defmodule Bs.GameServerTest do
+defmodule Bs.GameTest do
   alias Bs.Game
   alias Bs.Game.Registry
 
@@ -13,13 +13,6 @@ defmodule Bs.GameServerTest do
     end)
 
     on_exit(&unload/0)
-  end
-
-  test "#find starts new servers" do
-    # assert {:ok, pid} =  Game.find("1")
-  end
-
-  test "#find returns running game servers" do
   end
 
   test "#resume calls resume on the gen server" do
@@ -62,6 +55,7 @@ defmodule Bs.GameServerTest do
     assert_receive {:DOWN, ^ref, _, ^pid, :normal}
   end
 
+  @tag :skip
   test "#restart" do
     {:ok, pid, _} = Game.ensure_started("1")
 
