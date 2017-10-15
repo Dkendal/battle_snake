@@ -8,65 +8,60 @@ defmodule Bs.Movement do
   require Logger
 
   @sup_timeout 10000
+  @recv_timeout 5000
 
   @moduledoc """
   Updates the positions of all snakes on the board.
   """
 
   def next(%GameState{} = state) do
-    recv_timeout = state.game_form.recv_timeout
-
-    %{state | world: next(state.world, recv_timeout)}
+    %{state | world: next(state.world)}
   end
 
   @doc """
   Fetch and update the position of all snakes
   """
-  def next(world, recv_timeout \\ 10000)
-
-  def next(%World{} = world, recv_timeout) do
-    options = [timeout: @sup_timeout]
-
-    snakes = world.snakes
-
-    {:ok, sup} = Task.Supervisor.start_link()
-
-    args = [world, recv_timeout]
-
+  def next(%World{} = world) do
     snakes =
-      sup
-      |> Task.Supervisor.async_stream_nolink(
-           snakes,
-           Worker,
-           :run,
-           args,
-           options
-         )
-      |> Stream.zip(snakes)
-      |> Stream.map(&get_move_for_snake/1)
-      |> Stream.map(&move_snake/1)
+      world
+      |> workers()
+      |> Stream.zip(world.snakes)
+      |> Stream.map(&process/1)
       |> Enum.to_list()
 
     put_in(world.snakes, snakes)
   end
 
-  defp move_snake({%Move{} = move, %Snake{} = snake}) do
+  def workers(world) do
+    {:ok, sup} = Task.Supervisor.start_link()
+
+    Task.Supervisor.async_stream_nolink(
+      sup,
+      world.snakes,
+      Worker,
+      :run,
+      [world, @recv_timeout],
+      timeout: @sup_timeout
+    )
+  end
+
+  def process({result, snake}) do
+    move =
+      case result do
+        {:ok, move} ->
+          move
+
+        {:exit, e} ->
+          """
+          [#{snake.url}] failed to respond to /move
+          #{inspect(e, pretty: true)}
+          """
+          |> Logger.debug()
+
+          Move.default_move(snake)
+      end
+
     Snake.move(snake, move)
-  end
-
-  defp get_move_for_snake({{:ok, point}, snake}) do
-    {point, snake}
-  end
-
-  defp get_move_for_snake({{:exit, e}, snake}) do
-    Logger.debug("""
-    [#{snake.url}] failed to respond to /move
-    #{inspect(e, pretty: true)}
-    """)
-
-    move = Move.default_move(snake)
-
-    {move, snake}
   end
 end
 
