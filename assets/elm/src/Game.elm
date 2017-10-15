@@ -121,6 +121,9 @@ update msg model =
         PrevStep ->
             adminCmd "prev" model
 
+        ReceiveMoveResponse raw ->
+            model ! []
+
         ReceiveRestartRequestOk raw ->
             case JD.decodeValue (Decoder.lobbySnake) raw of
                 Ok { snakeId, data } ->
@@ -233,6 +236,7 @@ socket url gameid =
             |> Socket.on "restart:finished" "spectator" ReceiveRestartFinished
             |> Socket.on "restart:request:error" "spectator" ReceiveRestartRequestError
             |> Socket.on "restart:request:ok" "spectator" ReceiveRestartRequestOk
+            |> Socket.on "move:response" "spectator" ReceiveMoveResponse
 
 
 adminCmd : String -> Model -> ( Model, Cmd Msg )

@@ -2,6 +2,8 @@ alias Bs.Event
 alias Bs.Game.PubSub
 
 defmodule Bs.Notification do
+  require Logger
+
   @moduledoc ~S"""
   Convience module for sending formatted events about a running game.
   """
@@ -11,6 +13,8 @@ defmodule Bs.Notification do
     rel = Keyword.fetch!(opts, :rel)
     data = Keyword.fetch!(opts, :data)
     view = Keyword.get(opts, :view)
+
+    Logger.info("[Notification] #{id}//#{name}")
 
     data =
       if view do

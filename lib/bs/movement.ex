@@ -81,11 +81,17 @@ defmodule Bs.Movement.Worker do
 
     data = Poison.encode!(view)
 
-    headers = ["Content-Type": "application/json"]
+    {tc, response} =
+      :timer.tc(HTTPoison, :post!, [
+        "#{snake.url}/move",
+        data,
+        ["Content-Type": "application/json"],
+        [recv_timeout: recv_timeout]
+      ])
 
     params =
-      "#{snake.url}/move"
-      |> HTTPoison.post!(data, headers, recv_timeout: recv_timeout)
+      response
+      |> notify(id: world.game_id, snake_id: snake.id, tc: tc)
       |> Map.get(:body)
       |> Poison.decode!()
 
@@ -98,5 +104,21 @@ defmodule Bs.Movement.Worker do
       |> inspect
       |> raise
     end
+  end
+
+  def notify(response, opts) do
+    id = Keyword.fetch!(opts, :id)
+    snake_id = Keyword.fetch!(opts, :snake_id)
+    tc = Keyword.fetch!(opts, :tc)
+
+    Notification.broadcast!(
+      id,
+      name: "move:response",
+      rel: %{game_id: id, snake_id: snake_id},
+      view: "response.json",
+      data: [response: response, tc: tc]
+    )
+
+    response
   end
 end
