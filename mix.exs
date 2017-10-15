@@ -4,19 +4,21 @@ defmodule Bs.Mixfile do
   @version String.trim(File.read!("VERSION"))
 
   def project do
-    [app: :bs,
-     version: @version,
-     elixir: "~> 1.5",
-     elixirc_paths: elixirc_paths(Mix.env),
-     compilers: [:phoenix, :gettext] ++ Mix.compilers,
-     build_embedded: Mix.env == :prod,
-     start_permanent: Mix.env == :prod,
-     preferred_cli_env: preferred_cli_env(),
-     test_coverage: [tool: ExCoveralls],
-     erlc_options: erlc_options(Mix.env),
-     dialyzer: dialyzer(),
-     aliases: aliases(),
-     deps: deps()]
+    [
+      app: :bs,
+      version: @version,
+      elixir: "~> 1.5",
+      elixirc_paths: elixirc_paths(Mix.env()),
+      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
+      build_embedded: Mix.env() == :prod,
+      start_permanent: Mix.env() == :prod,
+      preferred_cli_env: preferred_cli_env(),
+      test_coverage: [tool: ExCoveralls],
+      erlc_options: erlc_options(Mix.env()),
+      dialyzer: dialyzer(),
+      aliases: aliases(),
+      deps: deps()
+    ]
   end
 
   # Configuration for the OTP application.
@@ -25,7 +27,7 @@ defmodule Bs.Mixfile do
   def application do
     [
       mod: {Bs, []},
-      extra_applications: extra_applications(Mix.env)
+      extra_applications: extra_applications(Mix.env())
     ]
   end
 
@@ -34,7 +36,7 @@ defmodule Bs.Mixfile do
   end
 
   def extra_applications(:dev) do
-    [:mix| extra_applications(:all)]
+    [:mix | extra_applications(:all)]
   end
 
   def extra_applications(_all) do
@@ -43,7 +45,7 @@ defmodule Bs.Mixfile do
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(_),     do: ["lib"]
+  defp elixirc_paths(_), do: ["lib"]
 
   def preferred_cli_env do
     [
@@ -51,10 +53,10 @@ defmodule Bs.Mixfile do
       "vcr.delete": :test,
       "vcr.check": :test,
       "vcr.show": :test,
-      "coveralls": :test,
+      coveralls: :test,
       "coveralls.detail": :test,
       "coveralls.post": :test,
-      "coveralls.html": :test,
+      "coveralls.html": :test
     ]
   end
 
@@ -85,57 +87,46 @@ defmodule Bs.Mixfile do
       {:poison, "~> 3.0"},
       {:postgrex, ">= 0.0.0"},
       {:proper, github: "manopapad/proper", tag: "v1.2", only: :test},
-      {:reprise, "~> 0.5.0", only: :dev},
+      {:reprise, "~> 0.5.0", only: :dev}
     ]
   end
 
   defp dialyzer do
-    [plt_add_deps: :transitive,
-     plt_add_apps: [:mnesia],
-    ]
+    [plt_add_deps: :transitive, plt_add_apps: [:mnesia]]
   end
 
   defp aliases do
-    [setup: [
-        &check_prereqs/1,
-        &npm_install/1,
-        "deps.get",
-        "compile",
-        "bs.schema",
-        &test/1],
+    exclusions =
+      [
+        "lib/bs.ex",
+        "lib/bs_web.ex",
+        "lib/bs_web/gettext.ex",
+        "lib/bs_web/router.ex",
+        "lib/bs_web/views/error_helpers.ex",
+      ]
+      |> Enum.map(&("--exclude " <> &1))
+      |> Enum.join(" ")
 
-     "bs.schema": [
-       "bs.schema.drop",
-       "bs.schema.install",
-     ],
-     "watch": &watch/1,
-     "bs.dot2svg": [&dot2svg/1]
+    [
+      "bs.watch": &watch/1,
+      "bs.xref": [
+        "xref graph --format dot #{exclusions}",
+        &xref/1
+      ]
     ]
   end
 
-  defp npm_install(_) do
-    Mix.shell.cmd("npm install")
+  def test _ do
+    Mix.shell().cmd("MIX_ENV=test mix test")
   end
 
-  def test(_) do
-    Mix.shell.cmd("MIX_ENV=test mix test")
-  end
-
-  def check_prereqs(_) do
-    prereq("sass")
-    prereq("npm")
-  end
-
-  def dot2svg(_) do
-    Mix.shell.cmd("dot -Ksfdp xref_graph.dot -Tsvg -o xref_graph.svg")
+  def xref(_) do
+    Mix.shell().cmd("dot xref_graph.dot -Tsvg -o xref_graph.svg")
   end
 
   def watch(_) do
-    Mix.shell.cmd "watchman-make -p 'lib/**/*.ex' 'test/**/*.ex' 'test/**/*.exs' --run 'mix test --stale'"
-  end
-
-  def prereq(cmd) do
-    if Mix.shell.cmd("command -v #{cmd} >/dev/null 2>&1") != 0,
-      do: Mix.raise("#{cmd} is required, but could not be found. Aborting.")
+    Mix.shell().cmd(
+      "watchman-make -p 'lib/**/*.ex' 'test/**/*.ex' 'test/**/*.exs' --run 'mix test --stale'"
+    )
   end
 end
