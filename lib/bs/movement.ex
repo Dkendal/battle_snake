@@ -1,6 +1,7 @@
 alias Bs.GameState
 alias Bs.Move
 alias Bs.Movement.Worker
+alias Bs.Notification
 alias Bs.Snake
 alias Bs.World
 
