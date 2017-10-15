@@ -1,8 +1,6 @@
-alias Bs.Event
-alias Bs.Game.PubSub
 alias Bs.Snake
 alias Bs.World
-alias Bs.World.Factory.Notification
+alias Bs.Notification
 alias Bs.World.Factory.Worker
 
 defmodule Bs.World.Factory do
@@ -96,28 +94,6 @@ defmodule Bs.World.Factory do
         put_in(snake.coords, coords)
       end
     end)
-  end
-end
-
-defmodule Bs.World.Factory.Notification do
-  def broadcast!(id, opts) do
-    name = Keyword.fetch!(opts, :name)
-    rel = Keyword.fetch!(opts, :rel)
-    data = Keyword.fetch!(opts, :data)
-    view = Keyword.get(opts, :view)
-
-    data =
-      if view do
-        Phoenix.View.render(BsWeb.EventView, view, data)
-      else
-        data
-      end
-
-    PubSub.broadcast!(id, %Event{
-      name: name,
-      rel: rel,
-      data: data
-    })
   end
 end
 
