@@ -22,21 +22,22 @@ type alias Flags =
 type Msg
     = KeyDown Keyboard.KeyCode
     | JoinAdminChannel
-    | JoinSpectatorChannel
     | JoinChannelFailed Json.Encode.Value
     | JoinChannelSuccess Json.Encode.Value
+    | JoinSpectatorChannel
     | MountCanvasApp
     | NextStep
     | PauseGame
     | PhxMsg PhxSockMsg
     | PrevStep
-    | ResumeGame
-    | StopGame
-    | RecieveTick Json.Encode.Value
-    | ReceiveRestartInit Json.Encode.Value
     | ReceiveRestartFinished Json.Encode.Value
+    | ReceiveRestartInit Json.Encode.Value
     | ReceiveRestartRequestError Json.Encode.Value
     | ReceiveRestartRequestOk Json.Encode.Value
+    | ReceiveMoveResponse Json.Encode.Value
+    | RecieveTick Json.Encode.Value
+    | ResumeGame
+    | StopGame
 
 
 type alias PhxSock =
