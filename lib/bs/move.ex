@@ -2,7 +2,15 @@ defmodule Bs.Move do
   alias __MODULE__
   alias Bs.Point
 
-  defstruct [:move, :taunt, :snake_id]
+  use Ecto.Schema
+
+  import Ecto.Changeset
+
+  embedded_schema do
+    field(:move, :string, default: "up")
+    field(:taunt, :string)
+    field(:snake_id, :string)
+  end
 
   @up %Point{x: 0, y: -1}
   def up, do: @up
@@ -65,5 +73,18 @@ defmodule Bs.Move do
       _ ->
         :error
     end
+  end
+
+  @permitted [:move]
+  @required [:move]
+  @moves ["up", "down", "left", "right"]
+
+  def changeset(model, params \\ %{})
+
+  def changeset(model, params) do
+    model
+    |> cast(params, @permitted)
+    |> validate_required(@required)
+    |> validate_inclusion(:move, @moves)
   end
 end

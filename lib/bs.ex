@@ -12,7 +12,6 @@ defmodule Bs do
       supervisor(BsWeb.Endpoint, []),
       supervisor(BsRepo, []),
       supervisor(Bs.Game.Supervisor, []),
-      supervisor(Task.Supervisor, [[name: Bs.MoveSupervisor]]),
       supervisor(Registry, [:unique, Bs.Game.Registry]),
       supervisor(Phoenix.PubSub.PG2, [Bs.Game.PubSub, []])
     ]

@@ -1,8 +1,6 @@
 defmodule Bs.GameStateTest do
   alias Bs.Case
   alias Bs.GameState
-  alias Bs.MockApi
-  alias HTTPoison.Response
 
   use Case, async: false
 
@@ -12,7 +10,19 @@ defmodule Bs.GameStateTest do
 
   def ping(pid), do: &send(pid, {:ping, &1})
 
-  describe "GameState.set_winners(t) when everyone is dead" do
+  setup do
+    mock(HTTPoison)
+
+    expect(HTTPoison, :post!, fn "/move", _, _, _ ->
+      %HTTPoison.Response{body: ~s({"move":"up"})}
+    end)
+
+    on_exit(&unload/0)
+
+    :ok
+  end
+
+  describe "#set_winners(t) when everyone is dead" do
     test "sets the winner to whoever died last" do
       world =
         build(:world, snakes: [], dead_snakes: [
@@ -27,7 +37,7 @@ defmodule Bs.GameStateTest do
     end
   end
 
-  describe "GameState.set_winners(t)" do
+  describe "#set_winners(t)" do
     test "sets the winner to anyone that is still alive" do
       world =
         build(:world, snakes: [build(:snake, id: 1)], dead_snakes: [
@@ -40,7 +50,7 @@ defmodule Bs.GameStateTest do
     end
   end
 
-  describe "GameState.step_back/1" do
+  describe "#step_back/1" do
     test "does nothing when the history is empty" do
       assert GameState.step_back(@empty_state) == @empty_state
     end
@@ -50,18 +60,7 @@ defmodule Bs.GameStateTest do
     end
   end
 
-  describe "GameState.step(t)" do
-    setup do
-      request_move = fn _, _, _ ->
-        {:ok, %Response{body: "{\"move\":\"up\"}"}}
-      end
-
-      mocks = %{request_move: request_move}
-
-      MockApi.start_link(mocks)
-      :ok
-    end
-
+  describe "#step(t)" do
     test "doesn't set the winner" do
       snake = build(:snake)
       world = build(:world, snakes: [snake])
@@ -71,16 +70,8 @@ defmodule Bs.GameStateTest do
     end
   end
 
-  describe "GameState.step(t) when the game is done" do
+  describe "#step(t) when the game is done" do
     setup do
-      request_move = fn _, _, _ ->
-        {:ok, %Response{body: "{\"move\":\"up\"}"}}
-      end
-
-      mocks = %{request_move: request_move}
-
-      MockApi.start_link(mocks)
-
       snake = build(:snake)
       world = build(:world, snakes: [snake])
       state = build(:state, world: world, objective: fn _ -> true end)
@@ -98,7 +89,7 @@ defmodule Bs.GameStateTest do
     end
   end
 
-  describe "GameState.step(%{status: :replay})" do
+  describe "#step(%{status: :replay})" do
     test "halts the game if the history is empty" do
       state = GameState.replay!(build(:state, hist: []))
       new_state = GameState.step(state)
@@ -120,13 +111,13 @@ defmodule Bs.GameStateTest do
   for status <- GameState.statuses() do
     method = "#{status}!"
 
-    test "GameState.#{method}/1" do
+    test "##{method}/1" do
       assert GameState.unquote(:"#{method}")(@state).status == unquote(status)
     end
 
     method = "#{status}?"
 
-    test "GameState.#{method}/1" do
+    test "##{method}/1" do
       state = put_in(@state.status, unquote(status))
       assert GameState.unquote(:"#{method}")(state) == true
 
