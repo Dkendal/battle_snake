@@ -199,22 +199,3 @@ defmodule Bs.World do
     |> cast(params, permitted)
   end
 end
-
-defimpl Poison.Encoder, for: Bs.World do
-  def encode(world, opts) do
-    me = Keyword.get(opts, :me)
-
-    attrs = [:food, :turn, :snakes, :dead_snakes, :width, :height, :game_id]
-
-    map = Map.take(world, attrs)
-
-    map =
-      if me do
-        Map.put(map, "you", me)
-      else
-        map
-      end
-
-    Poison.encode!(map, opts)
-  end
-end
