@@ -114,7 +114,7 @@ defmodule Bs.World.Factory.Worker do
       ])
 
     Notification.broadcast!(
-      id,
+      gameid,
       name: "restart:request",
       rel: %{game_id: gameid, snake_id: id},
       view: "response.json",
