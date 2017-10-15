@@ -17,6 +17,8 @@ assets/.awcache
 assets/.sass-cache
 assets/elm/elm-stuff
 assets/node_modules
+cover/
 databases/
 erl_crash.dump
 priv/data/mnesia
+xref_graph.*
