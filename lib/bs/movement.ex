@@ -1,10 +1,10 @@
-defmodule Bs.Movement do
-  alias Bs.World
-  alias Bs.Snake
-  alias Bs.Api
-  alias Bs.Move
-  alias Bs.GameState
+alias Bs.GameState
+alias Bs.Move
+alias Bs.Movement.Worker
+alias Bs.Snake
+alias Bs.World
 
+defmodule Bs.Movement do
   require Logger
 
   @sup_timeout 10000
@@ -12,36 +12,6 @@ defmodule Bs.Movement do
   @moduledoc """
   Updates the positions of all snakes on the board.
   """
-
-  defmodule Worker do
-    @api Application.get_env(:bs, :snake_api)
-
-    def run(%Snake{} = snake, %World{} = world, recv_timeout) do
-      response = @api.request_move(snake, world, recv_timeout: recv_timeout)
-
-      process_response(response)
-    end
-
-    def process_response(val, acc \\ [])
-
-    def process_response({:error, e}, acc) do
-      Process.exit(self(), {:shutdown, {e, acc}})
-    end
-
-    def process_response({:ok, %Move{} = move}, _acc) do
-      move
-    end
-
-    def process_response({:ok, %HTTPoison.Response{} = response}, acc) do
-      Poison.decode(response.body)
-      |> process_response([response | acc])
-    end
-
-    def process_response({:ok, json}, acc) when is_map(json) do
-      Api.cast_move(json)
-      |> process_response([json | acc])
-    end
-  end
 
   def next(%GameState{} = state) do
     recv_timeout = state.game_form.recv_timeout
@@ -59,15 +29,19 @@ defmodule Bs.Movement do
 
     snakes = world.snakes
 
+    {:ok, sup} = Task.Supervisor.start_link()
+
+    args = [world, recv_timeout]
+
     snakes =
-      Task.Supervisor.async_stream_nolink(
-        Bs.MoveSupervisor,
-        snakes,
-        Worker,
-        :run,
-        [world, recv_timeout],
-        options
-      )
+      sup
+      |> Task.Supervisor.async_stream_nolink(
+           snakes,
+           Worker,
+           :run,
+           args,
+           options
+         )
       |> Stream.zip(snakes)
       |> Stream.map(&get_move_for_snake/1)
       |> Stream.map(&move_snake/1)
@@ -96,16 +70,26 @@ defmodule Bs.Movement do
   end
 end
 
-defmodule Bs.MoveSupervisor do
-  use Supervisor
+defmodule Bs.Movement.Worker do
+  def run(%Snake{} = snake, %World{} = world, recv_timeout) do
+    data = Poison.encode!(world, me: snake.id)
 
-  def init(:ok) do
-    import Supervisor.Spec
+    headers = ["Content-Type": "application/json"]
 
-    children = [
-      worker(Task, [], restart: :temporary)
-    ]
+    params =
+      "#{snake.url}/move"
+      |> HTTPoison.post!(data, headers, recv_timeout: recv_timeout)
+      |> Map.get(:body)
+      |> Poison.decode!()
 
-    supervise(children, strategy: :simple_one_for_one)
+    changeset = Move.changeset(%Move{}, params)
+
+    if changeset.valid? do
+      Ecto.Changeset.apply_changes(changeset)
+    else
+      changeset.errors
+      |> inspect
+      |> raise
+    end
   end
 end
