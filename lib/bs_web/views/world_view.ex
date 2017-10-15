@@ -4,6 +4,25 @@ defmodule BsWeb.WorldView do
 
   use BsWeb, :view
 
+  def render("show.json", %{v: 2, world: world, snake: snake}) do
+    %{
+      object: :world,
+      id: world.game_id,
+      height: world.height,
+      turn: world.turn,
+      width: world.width,
+      you: render(SnakeView, "show.json", snake: snake, v: 2),
+      food: %{
+        object: :list,
+        data: render_many(world.food, PointView, "show.json", v: 2)
+      },
+      snakes: %{
+        object: :list,
+        data: render_many( world.snakes, SnakeView, "show.json", v: 2)
+      }
+    }
+  end
+
   def render("show.json", %{v: 1, world: world, snake: snake}) do
     %{
       dead_snakes: render_many(
