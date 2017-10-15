@@ -50,7 +50,10 @@ defmodule DeathTest do
                  2,
                  %Death{
                    turn: 0,
-                   causes: [%HeadCollisionCause{with: 1}, %HeadCollisionCause{with: 5}]
+                   causes: [
+                     %HeadCollisionCause{with: 1},
+                     %HeadCollisionCause{with: 5}
+                   ]
                  }
                },
                {3, %Death{turn: 0, causes: [%BodyCollisionCause{with: 1}]}},
@@ -59,7 +62,10 @@ defmodule DeathTest do
                  5,
                  %Death{
                    turn: 0,
-                   causes: [%HeadCollisionCause{with: 1}, %HeadCollisionCause{with: 2}]
+                   causes: [
+                     %HeadCollisionCause{with: 1},
+                     %HeadCollisionCause{with: 2}
+                   ]
                  }
                },
                {6, %Death{turn: 0, causes: [%SelfCollisionCause{}]}}

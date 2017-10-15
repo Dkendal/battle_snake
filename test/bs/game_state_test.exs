@@ -52,7 +52,9 @@ defmodule Bs.GameStateTest do
 
   describe "GameState.step(t)" do
     setup do
-      request_move = fn _, _, _ -> {:ok, %Response{body: "{\"move\":\"up\"}"}} end
+      request_move = fn _, _, _ ->
+        {:ok, %Response{body: "{\"move\":\"up\"}"}}
+      end
 
       mocks = %{request_move: request_move}
 
@@ -71,7 +73,9 @@ defmodule Bs.GameStateTest do
 
   describe "GameState.step(t) when the game is done" do
     setup do
-      request_move = fn _, _, _ -> {:ok, %Response{body: "{\"move\":\"up\"}"}} end
+      request_move = fn _, _, _ ->
+        {:ok, %Response{body: "{\"move\":\"up\"}"}}
+      end
 
       mocks = %{request_move: request_move}
 

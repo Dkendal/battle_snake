@@ -15,7 +15,8 @@ defmodule Bs.WorldTest do
       world = build(:world)
       snake = build(:snake, health_points: 50)
 
-      [snake: _, world: world] = with_snake_in_world(snake: snake, world: world, length: 1)
+      [snake: _, world: world] =
+        with_snake_in_world(snake: snake, world: world, length: 1)
 
       world = World.dec_health_points(world)
 
@@ -34,7 +35,8 @@ defmodule Bs.WorldTest do
       world = build(:world)
       snake = build(:snake, health_points: 50)
 
-      [snake: snake, world: world] = with_snake_in_world(snake: snake, world: world, length: 1)
+      [snake: snake, world: world] =
+        with_snake_in_world(snake: snake, world: world, length: 1)
 
       world = with_food_on_snake(world: world, snake: snake)
       world = World.grow_snakes(world)
@@ -43,7 +45,9 @@ defmodule Bs.WorldTest do
       {:ok, snake: snake, world: world}
     end
 
-    test "resets the health_points of snakes that are eating this turn", %{snake: snake} do
+    test "resets the health_points of snakes that are eating this turn", %{
+      snake: snake
+    } do
       assert snake.health_points == 100
     end
 
@@ -117,7 +121,9 @@ defmodule Bs.WorldTest do
     test "kills same length snakes" do
       big_snake = build(:snake, id: :big, coords: line(p(0, 0), p(0, 1), 3))
       small_snake = build(:snake, id: :small, coords: line(p(0, 0), p(1, 0), 3))
-      world = build(:world, width: 100, height: 100, snakes: [big_snake, small_snake])
+
+      world =
+        build(:world, width: 100, height: 100, snakes: [big_snake, small_snake])
 
       world = World.clean_up_dead(world)
 
@@ -130,7 +136,9 @@ defmodule Bs.WorldTest do
     test "kills the smaller snake" do
       big_snake = build(:snake, id: :big, coords: line(p(0, 0), p(0, 1), 10))
       small_snake = build(:snake, id: :small, coords: line(p(0, 0), p(1, 0), 3))
-      world = build(:world, width: 100, height: 100, snakes: [big_snake, small_snake])
+
+      world =
+        build(:world, width: 100, height: 100, snakes: [big_snake, small_snake])
 
       world = World.clean_up_dead(world)
 

@@ -39,9 +39,15 @@ defmodule Bs.Repo.GameTest do
 
       refute changeset.valid?
 
-      assert changeset.errors[:delay] == {"is invalid", [type: :integer, validation: :cast]}
+      assert changeset.errors[:delay] == {
+               "is invalid",
+               [type: :integer, validation: :cast]
+             }
 
-      assert changeset.errors[:game_mode] == {"is invalid", [validation: :inclusion]}
+      assert changeset.errors[:game_mode] == {
+               "is invalid",
+               [validation: :inclusion]
+             }
     end
   end
 end

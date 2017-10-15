@@ -21,7 +21,9 @@ defmodule BsWeb.SpectatorChannelTest do
     id = insert(:game_form).id
 
     {:ok, _, socket} =
-      subscribe_and_join(socket(), SpectatorChannel, "spectator", %{"id" => to_string(id)})
+      subscribe_and_join(socket(), SpectatorChannel, "spectator", %{
+        "id" => to_string(id)
+      })
 
     [socket: socket, id: id]
   end

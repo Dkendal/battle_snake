@@ -89,7 +89,8 @@ defmodule Bs.Death do
     acc
   end
 
-  def do_starvation([%{health_points: hp} = snake | rest], {live, dead}) when hp <= 0 do
+  def do_starvation([%{health_points: hp} = snake | rest], {live, dead})
+      when hp <= 0 do
     reason = [%StarvationCause{}]
     snake = put_in(snake.cause_of_death, reason)
     do_starvation(rest, {live, [snake | dead]})
@@ -110,7 +111,10 @@ defmodule Bs.Death do
     acc
   end
 
-  def do_wall_collision([%{coords: [p(x, y) | _]} = snake | rest], {w, h}, {live, dead})
+  def do_wall_collision([%{coords: [p(x, y) | _]} = snake | rest], {w, h}, {
+        live,
+        dead
+      })
       when x not in 0..(w - 1) or y not in 0..(h - 1) do
     reason = [%WallCollisionCause{}]
     snake = put_in(snake.cause_of_death, reason)

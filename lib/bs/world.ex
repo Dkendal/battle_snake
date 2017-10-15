@@ -61,7 +61,9 @@ defmodule Bs.World do
     height = world.height - 1
 
     stream =
-      Stream.flat_map(0..width, fn x -> Stream.flat_map(0..height, fn y -> [p(x, y)] end) end)
+      Stream.flat_map(0..width, fn x ->
+        Stream.flat_map(0..height, fn y -> [p(x, y)] end)
+      end)
 
     stream = Stream.filter(stream, fn p -> !MapSet.member?(spaces, p) end)
 
@@ -90,7 +92,9 @@ defmodule Bs.World do
 
   @doc "Reduce all snakes health points by 1"
   def dec_health_points(world) do
-    update_in(world.snakes, fn snakes -> Enum.map(snakes, &Snake.dec_health_points/1) end)
+    update_in(world.snakes, fn snakes ->
+      Enum.map(snakes, &Snake.dec_health_points/1)
+    end)
   end
 
   @doc """

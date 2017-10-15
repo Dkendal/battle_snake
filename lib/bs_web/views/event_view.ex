@@ -37,7 +37,7 @@ defmodule BsWeb.EventView do
     msg =
       case error do
         %HTTPoison.Error{reason: reason} ->
-          to_string reason
+          to_string(reason)
 
         %{message: message} ->
           message

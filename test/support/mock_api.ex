@@ -34,7 +34,8 @@ defmodule Bs.MockApi do
   def mock_post(return) do
     fn
       url, body, headers, options
-      when is_binary(url) and is_binary(body) and is_list(headers) and is_list(options) ->
+      when is_binary(url) and is_binary(body) and is_list(headers) and
+             is_list(options) ->
         return
 
       url, body, headers, options ->

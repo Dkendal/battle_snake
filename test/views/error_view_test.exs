@@ -9,10 +9,12 @@ defmodule BsWeb.ErrorViewTest do
   end
 
   test "render 500.html" do
-    assert render_to_string(BsWeb.ErrorView, "500.html", []) == "Internal server error"
+    assert render_to_string(BsWeb.ErrorView, "500.html", []) ==
+             "Internal server error"
   end
 
   test "render any other" do
-    assert render_to_string(BsWeb.ErrorView, "505.html", []) == "Internal server error"
+    assert render_to_string(BsWeb.ErrorView, "505.html", []) ==
+             "Internal server error"
   end
 end

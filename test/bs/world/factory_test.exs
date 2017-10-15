@@ -58,7 +58,9 @@ defmodule Bs.World.FactoryTest do
   end
 
   test "when a request fails", c do
-    expect(HTTPoison, :post!, fn @url, @json, _, _ -> raise "expected failure" end)
+    expect(HTTPoison, :post!, fn @url, @json, _, _ ->
+      raise "expected failure"
+    end)
 
     world = Factory.build(c.game_form)
 

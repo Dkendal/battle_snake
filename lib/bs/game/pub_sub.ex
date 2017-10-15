@@ -8,11 +8,21 @@ defmodule Bs.Game.PubSub do
   end
 
   def broadcast_from(from_pid, topic, message) do
-    Phoenix.PubSub.broadcast_from(__MODULE__, from_pid, to_string(topic), message)
+    Phoenix.PubSub.broadcast_from(
+      __MODULE__,
+      from_pid,
+      to_string(topic),
+      message
+    )
   end
 
   def broadcast_from!(from_pid, topic, message) do
-    Phoenix.PubSub.broadcast_from!(__MODULE__, from_pid, to_string(topic), message)
+    Phoenix.PubSub.broadcast_from!(
+      __MODULE__,
+      from_pid,
+      to_string(topic),
+      message
+    )
   end
 
   def subscribe(topic, opts \\ [])

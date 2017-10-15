@@ -11,7 +11,8 @@ defmodule Bs.Api do
   @callback request_move(%Snake{}, %World{}) :: HTTPoison.Response.t()
 
   def do_log(response) do
-    with {:error, e} <- response.raw_response, do: Logger.debug("[#{response.url}] #{inspect(e)}")
+    with {:error, e} <- response.raw_response,
+      do: Logger.debug("[#{response.url}] #{inspect(e)}")
 
     with {:error, e} <- response.parsed_response,
       do: Logger.debug("[#{response.url}] #{inspect(e)}")
@@ -79,7 +80,12 @@ defmodule Bs.Api do
     Logger.info("POST #{url}")
 
     {time, value} =
-      :timer.tc(HTTPoison, :post, [url, data, ["content-type": "application/json"], options])
+      :timer.tc(HTTPoison, :post, [
+        url,
+        data,
+        ["content-type": "application/json"],
+        options
+      ])
 
     Logger.info("Response from POST #{url} in #{div(time, 1000)}ms")
 
@@ -87,7 +93,11 @@ defmodule Bs.Api do
   end
 
   def request_move(%Snake{} = snake, %World{} = world, options) do
-    request_move(Bs.URL.move_url(snake.url), Poison.encode!(world, me: snake.id), options)
+    request_move(
+      Bs.URL.move_url(snake.url),
+      Poison.encode!(world, me: snake.id),
+      options
+    )
   end
 
   defp log_error(url, error, response) do
