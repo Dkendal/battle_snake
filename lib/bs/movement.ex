@@ -69,15 +69,16 @@ defmodule Bs.Movement.Worker do
   def run(%Snake{} = snake, %World{} = world, opts) do
     recv_timeout = Keyword.fetch!(opts, :recv_timeout)
 
-    data = Poison.encode!(world, me: snake.id)
+    view =
+      Phoenix.View.render(
+        BsWeb.WorldView,
+        "show.json",
+        v: 2,
+        world: world,
+        snake: snake
+      )
 
-    Phoenix.View.render(
-      BsWeb.WorldView,
-      "show.json",
-      v: 1,
-      world: world,
-      snake: snake
-    )
+    data = Poison.encode!(view)
 
     headers = ["Content-Type": "application/json"]
 
