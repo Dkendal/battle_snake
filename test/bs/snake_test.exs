@@ -73,7 +73,8 @@ defmodule Bs.SnakeTest do
       world = build(:world)
       snake = build(:snake)
 
-      [snake: snake, world: world] = with_snake_in_world(snake: snake, world: world, length: 1)
+      [snake: snake, world: world] =
+        with_snake_in_world(snake: snake, world: world, length: 1)
 
       refute Snake.dead?(snake, world)
 

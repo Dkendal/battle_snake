@@ -36,7 +36,9 @@ defmodule Bs.ApiTest do
                parsed_response: {:error, changeset}
              } = move
 
-      assert changeset.errors == [move: {"is invalid", [validation: :inclusion]}]
+      assert changeset.errors == [
+               move: {"is invalid", [validation: :inclusion]}
+             ]
 
       assert_receive {:ok, %{"you" => "1234"}}
     end

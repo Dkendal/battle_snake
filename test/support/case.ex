@@ -24,7 +24,12 @@ defmodule Bs.Case do
       defdelegate(mock(mod, opts), as: :new, to: :meck)
 
       def named_mock_game_server(id) do
-        {:ok, pid} = Agent.start_link(fn -> 0 end, name: {:via, Registry, {Bs.Game.Registry, id}})
+        {:ok, pid} =
+          Agent.start_link(fn -> 0 end, name: {
+            :via,
+            Registry,
+            {Bs.Game.Registry, id}
+          })
 
         pid
       end

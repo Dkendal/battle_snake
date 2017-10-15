@@ -6,7 +6,7 @@ alias Bs.World.Factory.Notification
 alias Bs.World.Factory.Worker
 
 defmodule Bs.World.Factory do
-  @timeout 4_900
+  @timeout 4900
   @new_snake_length 3
 
   def build(%{id: id} = game) when not is_nil(id) do
@@ -36,9 +36,17 @@ defmodule Bs.World.Factory do
       data: [permalinks: permalinks]
     )
 
-    {:ok, supervisor} = Task.Supervisor.start_link(on_timeout: :kill_task, timeout: @timeout)
+    {:ok, supervisor} =
+      Task.Supervisor.start_link(on_timeout: :kill_task, timeout: @timeout)
 
-    stream = Task.Supervisor.async_stream_nolink(supervisor, permalinks, Worker, :run, [id, data])
+    stream =
+      Task.Supervisor.async_stream_nolink(
+        supervisor,
+        permalinks,
+        Worker,
+        :run,
+        [id, data]
+      )
 
     snakes =
       stream
@@ -68,7 +76,12 @@ defmodule Bs.World.Factory do
          end)
       |> Enum.to_list()
 
-    Notification.broadcast!(id, name: "restart:finished", rel: %{game_id: id}, data: %{})
+    Notification.broadcast!(
+      id,
+      name: "restart:finished",
+      rel: %{game_id: id},
+      data: %{}
+    )
 
     world = put_in(world.snakes, snakes)
 
@@ -109,7 +122,7 @@ defmodule Bs.World.Factory.Notification do
 end
 
 defmodule Bs.World.Factory.Worker do
-  @timeout 4_500
+  @timeout 4500
 
   def run(permalink, gameid, opts \\ [])
 

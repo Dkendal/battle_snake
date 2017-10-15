@@ -13,7 +13,8 @@ defmodule Bs.Game.Server do
     {:ok, :no_state}
   end
 
-  def init(%GameState{game_form_id: game_form_id} = state) when is_integer(game_form_id) do
+  def init(%GameState{game_form_id: game_form_id} = state)
+      when is_integer(game_form_id) do
     do_reply({:ok, state})
   end
 
@@ -78,7 +79,11 @@ defmodule Bs.Game.Server do
 
   def handle_call(request, from, state) do
     Logger.error(
-      Exception.format("unmatched call to Bs.Game.Server", request, System.stacktrace())
+      Exception.format(
+        "unmatched call to Bs.Game.Server",
+        request,
+        System.stacktrace()
+      )
     )
 
     super(request, from, state)
@@ -86,7 +91,11 @@ defmodule Bs.Game.Server do
 
   def handle_cast(request, state) do
     Logger.error(
-      Exception.format("unmatched cast to Bs.Game.Server", request, System.stacktrace())
+      Exception.format(
+        "unmatched cast to Bs.Game.Server",
+        request,
+        System.stacktrace()
+      )
     )
 
     super(request, state)

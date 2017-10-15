@@ -8,7 +8,9 @@ defmodule Bs.GameServerTest do
     mock(BsRepo)
     mock(HTTPoison)
 
-    expect(BsRepo, :get!, fn BsRepo.GameForm, 1 -> build(:game_form, id: "1") end)
+    expect(BsRepo, :get!, fn BsRepo.GameForm, 1 ->
+      build(:game_form, id: "1")
+    end)
 
     on_exit(&unload/0)
   end

@@ -29,7 +29,16 @@ defmodule Bs.Snake do
   def changeset(model, params \\ %{})
 
   def changeset(model, params) do
-    permitted = [:color, :head_type, :head_url, :name, :secondary_color, :tail_type, :taunt, :url]
+    permitted = [
+      :color,
+      :head_type,
+      :head_url,
+      :name,
+      :secondary_color,
+      :tail_type,
+      :taunt,
+      :url
+    ]
 
     required = [:name]
 
