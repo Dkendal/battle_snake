@@ -37,7 +37,8 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-width: 400px;
+  width: 300px;
+  word-wrap: break-word;
 }
 
 .scoreboard-snakes {
@@ -45,7 +46,7 @@
 }
 
 .scoreboard-header {
-  margin-bottom: 2lh;
+  margin-bottom: 1lh;
 }
 
 .scoreboard-snake ~ .scoreboard-snake {
@@ -73,3 +74,8 @@
   stroke: var(--font-accent-color);
 }
 
+.avatar {
+  margin-right: 0.5lh;
+  width: 2lh;
+  height: 2lh;
+}

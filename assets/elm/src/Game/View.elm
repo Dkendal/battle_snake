@@ -125,12 +125,12 @@ snakeView alive snake =
             , div [ style snakeStyle, class "healthbar" ] []
             ]
     in
-        flag (avatar snake.headUrl) body
+        div props [ flag (avatar snake.headUrl) body ]
 
 
 avatar : String -> Html msg
 avatar src_ =
-    img [ src src_, height 60, width 60 ] []
+    img [ src src_, class "avatar" ] []
 
 
 flag : Html msg -> List (Html msg) -> Html msg
