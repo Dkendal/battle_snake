@@ -1,3 +1,7 @@
+declare module "elm/Test" {
+  export const Test: Elm.App<{}>;
+}
+
 declare module "elm/Game" {
   interface Ports {
     mount: Elm.Port<(args: { fgId: string, bgId: string }) => void>
@@ -5,12 +9,6 @@ declare module "elm/Game" {
   }
 
   export const Game: Elm.App<Ports>;
-}
-
-declare module "elm/SnakeTest" {
-  interface Ports { }
-
-  export const SnakeTest: Elm.App<Ports>;
 }
 
 declare module Elm {
