@@ -1,9 +1,15 @@
-<h2>Show game</h2>
+<%= for asset <- snake_assets() do %>
+  <link
+  id="<%= asset[:id] %>"
+  href="<%= static_path(@conn, "/#{asset[:src]}") %>"
+  charset="utf-8"
+  rel="prefetch"
+  type="image/svg+xml"
+  ></link>
+<% end %>
 
-<%= @game.id %>
+<script id="bs-config" type="application/json">
+  <%= raw bs_js_object(assigns) %>
+</script>
 
-<%= inspect @game %>
-
-<%= link "Play", to: play_path(@conn, :show, @game) %>
-<%= link "Edit", to: game_path(@conn, :edit, @game) %>
-<%= link "Back", to: game_path(@conn, :index) %>
+<%= content_tag :Game, "", [gameid: @game.id] %>

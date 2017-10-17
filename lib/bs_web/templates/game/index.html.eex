@@ -9,24 +9,23 @@
     </tr>
   </thead>
   <tbody>
-<%= for {game, game_server} <- @game_servers do %>
-    <tr>
-      <td>
-        <%= game.id %>
-      </td>
+    <%= for {game, game_server} <- @game_servers do %>
+      <tr>
+        <td>
+          <%= game.id %>
+        </td>
 
-      <td>
-        <%= inspect game_server %>
-      </td>
+        <td>
+          <%= inspect game_server %>
+        </td>
 
-      <td class="text-right">
-        <%= link "Play", to: play_path(@conn, :show, game), class: "btn btn-default btn-xs" %>
-        <%= link "Show", to: game_path(@conn, :show, game), class: "btn btn-default btn-xs" %>
-        <%= link "Edit", to: game_path(@conn, :edit, game), class: "btn btn-default btn-xs" %>
-        <%= link "Delete", to: game_path(@conn, :delete, game), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %>
-      </td>
-    </tr>
-<% end %>
+        <td class="text-right">
+          <%= link "Show", to: game_path(@conn, :show, game), class: "btn btn-default btn-xs" %>
+          <%= link "Edit", to: game_path(@conn, :edit, game), class: "btn btn-default btn-xs" %>
+          <%= link "Delete", to: game_path(@conn, :delete, game), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %>
+        </td>
+      </tr>
+    <% end %>
   </tbody>
 </table>
 

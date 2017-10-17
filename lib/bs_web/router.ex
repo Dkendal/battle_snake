@@ -16,9 +16,6 @@ defmodule BsWeb.Router do
     pipe_through(:browser)
 
     resources("/", GameController)
-
-    resources("/play", PlayController, only: [:show])
-    resources("/skin", SkinController, only: [:show])
   end
 
   scope "/", BsWeb do
