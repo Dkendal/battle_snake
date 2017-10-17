@@ -12,6 +12,7 @@ module.exports = config;
 
 config.entry = {
   app: "./src/app.ts",
+  test: "./src/app/test.ts",
   index: "./src/index.ts",
   vendor: ["phoenix", "phoenix_html"],
 };
