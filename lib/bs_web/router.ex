@@ -15,6 +15,7 @@ defmodule BsWeb.Router do
     # Use the default browser stack
     pipe_through(:browser)
 
+    resources("/test", TestController)
     resources("/", GameController)
   end
 
