@@ -1,3 +1,5 @@
+<script src="<%= static_path(@conn, "/js/app.js") %>"></script>
+
 <%= for asset <- snake_assets() do %>
   <link
   id="<%= asset[:id] %>"
