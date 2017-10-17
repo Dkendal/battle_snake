@@ -21,20 +21,10 @@ defmodule BsWeb.Router do
     resources("/skin", SkinController, only: [:show])
   end
 
-  scope "/test", BsWeb.Test, as: :test do
+  scope "/", BsWeb do
     pipe_through(:api)
 
     post("/example/start", ExampleController, :start)
     post("/example/move", ExampleController, :move)
-
-    resources("/snake", SnakeTestController, only: [:index])
-  end
-
-  scope "/api", BsWeb.Api, as: :api do
-    pipe_through(:api)
-
-    resources("/games", GameController)
-    resources("/game_forms", GameFormController)
-    resources("/game_servers", GameServerController)
   end
 end

@@ -1,4 +1,4 @@
-defmodule BsWeb.Test.ExampleController do
+defmodule BsWeb.ExampleController do
   use BsWeb, :controller
 
   def start(conn, _params) do

@@ -1,4 +1,4 @@
-defmodule BsWeb.Test.ExampleView do
+defmodule BsWeb.ExampleView do
   use BsWeb, :view
 
   @heads Bs.Const.heads()
