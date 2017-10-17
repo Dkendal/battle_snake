@@ -5,6 +5,7 @@ defmodule BsWeb.UserSocket do
   # channel "room:*", Bs.RoomChannel
   channel("spectator", BsWeb.SpectatorChannel)
   channel("admin", BsWeb.GameAdminChannel)
+  channel("test", BsWeb.TestChannel)
 
   ## Transports
   transport(:websocket, Phoenix.Transports.WebSocket)
