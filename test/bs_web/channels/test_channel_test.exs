@@ -12,7 +12,7 @@ defmodule BsWeb.TestChannelTest do
   end
 
   test "running the test suite", %{socket: socket} do
-    ref = push(socket, "run:suite", %{})
+    ref = push(socket, "run:suite", %{"url" => "http://localhost:4000"})
 
     assert_reply(ref, :ok)
   end
