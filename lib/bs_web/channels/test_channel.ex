@@ -10,10 +10,9 @@ defmodule BsWeb.TestChannel do
   def handle_in("run:suite", %{"url" => url}, socket) do
     scenarios = Test.scenarios()
 
-    assertions = Test.suite(scenarios, url)
+    assertions = Test.start(scenarios, url)
 
     payload = %{
-      scenarios: scenarios,
       assertions: assertions
     }
 

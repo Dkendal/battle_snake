@@ -190,6 +190,10 @@ defmodule Bs.World do
     end
   end
 
+  def find_snake(world, id) do
+    Enum.find(world.snakes ++ world.dead_snakes, &(&1.id == id))
+  end
+
   def changeset(world, params) do
     import Ecto.Changeset
 
