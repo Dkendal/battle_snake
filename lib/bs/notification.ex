@@ -14,8 +14,6 @@ defmodule Bs.Notification do
     data = Keyword.fetch!(opts, :data)
     view = Keyword.get(opts, :view)
 
-    Logger.info("[Notification] #{id}//#{name}")
-
     data =
       if view do
         Phoenix.View.render(BsWeb.EventView, view, data)
