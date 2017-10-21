@@ -3,7 +3,7 @@ module Game exposing (..)
 import Char
 import Debug exposing (..)
 import Dict
-import Game.Decoder as Decoder
+import Decoder as Decoder
 import Game.Types exposing (..)
 import Game.Util exposing (..)
 import Game.View exposing (..)
@@ -17,6 +17,7 @@ import Phoenix.Push as Push
 import Phoenix.Socket as Socket
 import Task exposing (..)
 import Tuple exposing (..)
+import Types exposing (..)
 
 
 -- MAIN
