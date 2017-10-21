@@ -98,6 +98,7 @@ defmodule Bs.World.Factory do
 end
 
 defmodule Bs.World.Factory.Worker do
+  @http Application.get_env(:bs, :http)
   @timeout 4500
 
   def run(permalink, gameid, opts \\ [])
@@ -106,7 +107,7 @@ defmodule Bs.World.Factory.Worker do
     start_url = "#{url}/start"
 
     {tc, response} =
-      :timer.tc(HTTPoison, :post!, [
+      :timer.tc(@http, :post!, [
         start_url,
         data,
         ["content-type": "application/json"],
