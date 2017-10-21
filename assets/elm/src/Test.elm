@@ -1,6 +1,7 @@
 module Test exposing (..)
 
 import Debug exposing (..)
+import Decoder exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -10,11 +11,53 @@ import Navigation exposing (Location)
 import Phoenix.Channel as Channel exposing (Channel)
 import Phoenix.Push as Push exposing (Push)
 import Phoenix.Socket as Socket exposing (Socket)
-import Tuple
-import UrlParser as Url exposing (..)
 import Task exposing (..)
-import Test.Types exposing (..)
-import Test.Decoder exposing (..)
+import Tuple
+import Types exposing (..)
+import UrlParser as Url exposing (..)
+
+
+type alias Model =
+    { agentUrl : String
+    , results : List (Result AssertionError Pass)
+    , scenarios : List Scenario
+    , socket : Socket Msg
+    }
+
+
+type Msg
+    = NoOp
+    | JoinChannel ChannelName
+    | ChanMsg ChannelMsg Value
+    | PhxMsg (Socket.Msg Msg)
+    | SetNewUrl
+    | UpdateAgentUrl String
+    | RunSuite
+    | PushMsg PushMessage
+    | PushReply PushMessage (Result Value Value)
+    | ReceiveTestCase (Result Value Value)
+
+
+type Pass
+    = Pass
+
+
+type PushMessage
+    = PushRunSuite
+
+
+type ChannelMsg
+    = Joined
+    | JoinError
+    | Error
+
+
+type ChannelName
+    = TestChannel
+
+
+type Route
+    = Test (Maybe String)
 
 
 main : Program Never Model Msg

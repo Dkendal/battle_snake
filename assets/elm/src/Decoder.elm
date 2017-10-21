@@ -1,7 +1,7 @@
-module Game.Decoder exposing (..)
+module Decoder exposing (..)
 
 import Json.Decode exposing (..)
-import Game.Types exposing (..)
+import Types exposing (..)
 import Dict
 
 
@@ -112,3 +112,31 @@ lobbySnake =
                 (maybeWithDefault defaultHeadUrl <| "headUrl" := string)
     in
         snakeEvent (field "data" data)
+
+
+v : Decoder V
+v =
+    map2 V
+        ("x" := int)
+        ("y" := int)
+
+
+agent : Decoder Agent
+agent =
+    "body" := list v
+
+
+scenario : Decoder Scenario
+scenario =
+    map5 Scenario
+        ("agents" := list agent)
+        ("player" := agent)
+        ("food" := list v)
+        ("width" := int)
+        ("height" := int)
+
+
+assertionError : Decoder AssertionError
+assertionError =
+    map AssertionError
+        ("scenario" := scenario)

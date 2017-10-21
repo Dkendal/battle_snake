@@ -1,6 +1,7 @@
 module Game.View exposing (..)
 
 import Dict
+import Types exposing (..)
 import Game.Types exposing (..)
 import Game.Util exposing (..)
 import Html exposing (..)
