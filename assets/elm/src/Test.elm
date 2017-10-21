@@ -17,9 +17,15 @@ import Task exposing (..)
 
 type alias Model =
     { agentUrl : String
+    , testStatuses : List Status
     , scenarios : List Scenario
     , socket : Socket Msg
     }
+
+
+type Status
+    = Pass
+    | Fail
 
 
 type Msg
@@ -32,6 +38,7 @@ type Msg
     | RunSuite
     | PushMsg PushMessage
     | PushReply PushMessage (Result Value Value)
+    | ReceiveTestCase (Result Value Value)
 
 
 type PushMessage
@@ -105,25 +112,21 @@ init location =
 
         socket =
             Socket.init "ws://localhost:3000/socket/websocket"
-
-        simple =
-            { width = 2
-            , height = 2
-            , agents = []
-            , food = [ ( 1, 0 ) ]
-            , player = [ ( 0, 0 ) ]
-            }
-
-        scenarios : List Scenario
-        scenarios =
-            [ simple ]
+                |> Socket.withDebug
+                |> Socket.on "test:failed"
+                    "test"
+                    (Err >> ReceiveTestCase)
+                |> Socket.on "test:pass"
+                    "test"
+                    (Ok >> ReceiveTestCase)
 
         cmds =
             [ perform identity (succeed (JoinChannel TestChannel)) ]
 
         model =
             { agentUrl = ""
-            , scenarios = scenarios
+            , testStatuses = []
+            , scenarios = []
             , socket = socket
             }
     in
@@ -145,6 +148,12 @@ subscriptions model =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case (log "update" msg) of
+        ReceiveTestCase (Err raw) ->
+            model ! []
+
+        ReceiveTestCase (Ok raw) ->
+            model ! []
+
         JoinChannel TestChannel ->
             let
                 channel =

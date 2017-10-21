@@ -12,10 +12,16 @@ defmodule BsWeb.TestChannel do
 
     assertions = Test.start(scenarios, url)
 
-    payload = %{
-      assertions: assertions
-    }
+    spawn_link(fn ->
+      Enum.map(assertions, fn
+        :ok ->
+          push(socket, "test:pass", %{})
 
-    {:reply, {:ok, payload}, socket}
+        assertion ->
+          push(socket, "test:failed", assertion)
+      end)
+    end)
+
+    {:reply, :ok, socket}
   end
 end
