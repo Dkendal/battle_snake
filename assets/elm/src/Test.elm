@@ -13,73 +13,8 @@ import Phoenix.Socket as Socket exposing (Socket)
 import Tuple
 import UrlParser as Url exposing (..)
 import Task exposing (..)
-
-
-type alias Model =
-    { agentUrl : String
-    , testStatuses : List Status
-    , scenarios : List Scenario
-    , socket : Socket Msg
-    }
-
-
-type Status
-    = Pass
-    | Fail
-
-
-type Msg
-    = NoOp
-    | JoinChannel ChannelName
-    | ChanMsg ChannelMsg Value
-    | PhxMsg (Socket.Msg Msg)
-    | SetNewUrl
-    | UpdateAgentUrl String
-    | RunSuite
-    | PushMsg PushMessage
-    | PushReply PushMessage (Result Value Value)
-    | ReceiveTestCase (Result Value Value)
-
-
-type PushMessage
-    = PushRunSuite
-
-
-type ChannelMsg
-    = Joined
-    | JoinError
-    | Error
-
-
-type ChannelName
-    = TestChannel
-
-
-type Route
-    = Test (Maybe String)
-
-
-{-| 2d vector
--}
-type alias V =
-    ( Int, Int )
-
-
-type alias Food =
-    V
-
-
-type alias Agent =
-    List V
-
-
-type alias Scenario =
-    { agents : List Agent
-    , player : Agent
-    , food : List Food
-    , width : Int
-    , height : Int
-    }
+import Test.Types exposing (..)
+import Test.Decoder exposing (..)
 
 
 main : Program Never Model Msg
@@ -113,19 +48,15 @@ init location =
         socket =
             Socket.init "ws://localhost:3000/socket/websocket"
                 |> Socket.withDebug
-                |> Socket.on "test:failed"
-                    "test"
-                    (Err >> ReceiveTestCase)
-                |> Socket.on "test:pass"
-                    "test"
-                    (Ok >> ReceiveTestCase)
+                |> Socket.on "test:failed" "test" (Err >> ReceiveTestCase)
+                |> Socket.on "test:pass" "test" (Ok >> ReceiveTestCase)
 
         cmds =
             [ perform identity (succeed (JoinChannel TestChannel)) ]
 
         model =
             { agentUrl = ""
-            , testStatuses = []
+            , results = []
             , scenarios = []
             , socket = socket
             }
@@ -149,10 +80,29 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case (log "update" msg) of
         ReceiveTestCase (Err raw) ->
-            model ! []
+            case Decode.decodeValue assertionError raw of
+                Err err ->
+                    crash err
+
+                Ok assertionError ->
+                    let
+                        results =
+                            (Err assertionError) :: model.results
+
+                        model_ =
+                            { model | results = results }
+                    in
+                        model_ ! []
 
         ReceiveTestCase (Ok raw) ->
-            model ! []
+            let
+                results =
+                    (Ok Pass) :: model.results
+
+                model_ =
+                    { model | results = results }
+            in
+                model_ ! []
 
         JoinChannel TestChannel ->
             let
@@ -193,7 +143,7 @@ update msg model =
                         |> mapPhxMsg
 
                 model_ =
-                    { model | socket = socket }
+                    { model | socket = socket, results = [] }
 
                 cmds =
                     [ cmd ]
@@ -269,6 +219,13 @@ view model =
                     ]
                 ]
             ]
+        , div []
+            (model.results
+                |> List.map
+                    (\result ->
+                        div [] [ text (toString result) ]
+                    )
+            )
         ]
 
 
