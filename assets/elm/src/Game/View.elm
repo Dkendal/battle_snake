@@ -1,11 +1,11 @@
 module Game.View exposing (..)
 
 import Dict
+import Game.Types exposing (..)
 import Game.Util exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Route exposing (..)
-import Types exposing (..)
 
 
 view : Model -> Html Msg

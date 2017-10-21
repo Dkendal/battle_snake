@@ -1,4 +1,4 @@
-module Types exposing (..)
+module Game.Types exposing (..)
 
 import Dict exposing (Dict)
 import Phoenix.Socket

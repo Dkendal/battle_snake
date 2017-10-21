@@ -1,7 +1,7 @@
-module Decoder exposing (..)
+module Game.Decoder exposing (..)
 
 import Json.Decode exposing (..)
-import Types exposing (..)
+import Game.Types exposing (..)
 import Dict
 
 
