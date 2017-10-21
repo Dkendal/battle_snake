@@ -1,5 +1,6 @@
 defmodule Bs.Death do
   alias Bs.GameState
+  alias Bs.World
   alias Bs.Death.Collision
   alias Bs.Point
   alias Bs.Snake
@@ -60,10 +61,15 @@ defmodule Bs.Death do
 
   def reap(%GameState{} = state) do
     world = state.world
+    world = reap(world)
+    put_in(state.world, world)
+  end
+
+  def reap(%World{} = world) do
     turn = world.turn
     dim = {world.width, world.height}
 
-    snakes = state.world.snakes
+    snakes = world.snakes
 
     {l1, d1} = starvation(snakes)
     {l2, d2} = wall_collision(snakes, dim)
@@ -73,8 +79,7 @@ defmodule Bs.Death do
     dead = combine_dead([d1, d2, d3], turn)
 
     world = put_in(world.snakes, live)
-    world = update_in(world.dead_snakes, &(dead ++ &1))
-    put_in(state.world, world)
+    update_in(world.dead_snakes, &(dead ++ &1))
   end
 
   @doc "Kill all snakes that starved this turn"

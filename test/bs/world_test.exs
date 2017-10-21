@@ -177,4 +177,13 @@ defmodule Bs.WorldTest do
       assert world.deaths == [%World.DeathEvent{turn: 10, snake: @snake}]
     end
   end
+
+  test "#find_snake" do
+    snake = build(:snake)
+    world = build(:world, snakes: [snake])
+    assert snake == World.find_snake(world, snake.id)
+
+    world = build(:world, snakes: [])
+    assert nil == World.find_snake(world, snake.id)
+  end
 end

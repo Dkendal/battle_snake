@@ -11,7 +11,13 @@ defmodule BsWeb.TestChannelTest do
     [socket: socket]
   end
 
-  test "running the test suite", %{socket: socket} do
+  test "push run:suite", %{socket: socket} do
+    :meck.new(HTTPoison)
+
+    :meck.expect(HTTPoison, :post!, fn _, _, _, _ ->
+      %HTTPoison.Response{body: ~s/{"move":"up"}/}
+    end)
+
     ref = push(socket, "run:suite", %{"url" => "http://localhost:4000"})
 
     assert_reply(ref, :ok)
