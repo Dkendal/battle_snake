@@ -67,6 +67,8 @@ defmodule Bs.Movement do
 end
 
 defmodule Bs.Movement.Worker do
+  @http Application.get_env(:bs, :http)
+
   def run(%Snake{} = snake, %World{} = world, opts) do
     recv_timeout = Keyword.fetch!(opts, :recv_timeout)
 
@@ -82,7 +84,7 @@ defmodule Bs.Movement.Worker do
     data = Poison.encode!(view)
 
     {tc, response} =
-      :timer.tc(HTTPoison, :post!, [
+      :timer.tc(@http, :post!, [
         "#{snake.url}/move",
         data,
         ["Content-Type": "application/json"],
