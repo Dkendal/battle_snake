@@ -2,10 +2,11 @@ module Game exposing (..)
 
 import Char
 import Debug exposing (..)
-import Decoder
 import Dict
-import Game.View exposing (..)
+import Game.Decoder as Decoder
+import Game.Types exposing (..)
 import Game.Util exposing (..)
+import Game.View exposing (..)
 import GameBoard
 import Html exposing (..)
 import Json.Decode as JD
@@ -16,7 +17,6 @@ import Phoenix.Push as Push
 import Phoenix.Socket as Socket
 import Task exposing (..)
 import Tuple exposing (..)
-import Types exposing (..)
 
 
 -- MAIN

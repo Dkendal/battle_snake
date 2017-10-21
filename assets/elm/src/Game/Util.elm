@@ -1,6 +1,6 @@
 module Game.Util exposing (..)
 
-import Types exposing (..)
+import Game.Types exposing (..)
 
 
 bgId : Model -> String
