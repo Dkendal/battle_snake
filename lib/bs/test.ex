@@ -105,6 +105,13 @@ defmodule Bs.Test do
       %Scenario{
         width: 2,
         height: 2,
+        player: %Agent{body: [%Vector{x: 0, y: 1}]},
+        agents: [],
+        food: []
+      },
+      %Scenario{
+        width: 2,
+        height: 2,
         player: %Agent{body: [%Vector{x: 0, y: 0}]},
         agents: [],
         food: [%Vector{x: 0, y: 1}]
