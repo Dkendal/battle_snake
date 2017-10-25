@@ -43,12 +43,37 @@ point =
         (index 1 int)
 
 
+point2 : Decoder Point
+point2 =
+    map2 Point
+        ("x" := int)
+        ("y" := int)
+
+
+death =
+    map Death
+        ("causes" := list string)
+
+
 snake : Decoder Snake
 snake =
     map8 Snake
-        (maybe <| "causeOfDeath" := string)
+        (maybe <| "causeOfDeath" := death)
         ("color" := string)
         ("coords" := list point)
+        ("health" := int)
+        ("id" := string)
+        ("name" := string)
+        (maybe <| "taunt" := string)
+        (maybeWithDefault defaultHeadUrl <| "headUrl" := string)
+
+
+snake2 : Decoder Snake
+snake2 =
+    map8 Snake
+        (maybe <| "causeOfDeath" := death)
+        ("color" := string)
+        (at [ "body", "data" ] (list point2))
         ("health" := int)
         ("id" := string)
         ("name" := string)
@@ -114,16 +139,16 @@ lobbySnake =
         snakeEvent (field "data" data)
 
 
-v : Decoder V
-v =
-    map2 V
+v2 : Decoder V2
+v2 =
+    map2 V2
         ("x" := int)
         ("y" := int)
 
 
 agent : Decoder Agent
 agent =
-    "body" := list v
+    "body" := list v2
 
 
 scenario : Decoder Scenario
@@ -131,12 +156,13 @@ scenario =
     map5 Scenario
         ("agents" := list agent)
         ("player" := agent)
-        ("food" := list v)
+        ("food" := list v2)
         ("width" := int)
         ("height" := int)
 
 
 assertionError : Decoder AssertionError
 assertionError =
-    map AssertionError
+    map2 AssertionError
         ("scenario" := scenario)
+        ("player" := snake2)

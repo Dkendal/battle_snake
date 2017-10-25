@@ -1,10 +1,11 @@
 defmodule BsWeb.SnakeView do
+  alias BsWeb.Api.DeathView
   alias BsWeb.PointView
 
   use BsWeb, :view
 
-  def render("show.json", %{v: 2, snake: snake}) do
-    %{
+  def render("show.json", %{v: 2, snake: snake} = assigns) do
+    data = %{
       object: :snake,
       id: snake.id,
       body: %{
@@ -15,6 +16,30 @@ defmodule BsWeb.SnakeView do
       name: snake.name,
       taunt: snake.taunt
     }
+
+    data =
+      if snake.cause_of_death do
+        Map.merge(data, %{
+          causeOfDeath: render_one(
+            snake.cause_of_death,
+            DeathView,
+            "show.json"
+          )
+        })
+      else
+        data
+      end
+
+    if assigns[:include_render_props] do
+      Map.merge(data, %{
+        color: snake.color,
+        headType: snake.head_type,
+        tailType: snake.tail_type,
+        headUrl: snake.head_url
+      })
+    else
+      data
+    end
   end
 
   def render("show.json", %{v: 1, snake: snake}) do

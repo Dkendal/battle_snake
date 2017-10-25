@@ -18,7 +18,14 @@ defmodule BsWeb.TestChannel do
           push(socket, "test:pass", %{})
 
         assertion ->
-          push(socket, "test:failed", assertion)
+          view =
+            Phoenix.View.render_one(
+              assertion,
+              BsWeb.AssertionErrorView,
+              "show.json"
+            )
+
+          push(socket, "test:failed", view)
       end)
     end)
 
