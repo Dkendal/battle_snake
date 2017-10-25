@@ -47,8 +47,17 @@ type alias LobbySnake =
     }
 
 
+type alias DeathCause =
+    String
+
+
+type alias Death =
+    { causes : List DeathCause
+    }
+
+
 type alias Snake =
-    { causeOfDeath : Maybe String
+    { causeOfDeath : Maybe Death
     , color : String
     , coords : List Point
     , health : Int
@@ -76,18 +85,18 @@ type alias SnakeEvent a =
     }
 
 
-type alias V =
+type alias V2 =
     { x : Int
     , y : Int
     }
 
 
 type alias Food =
-    V
+    V2
 
 
 type alias Agent =
-    List V
+    List V2
 
 
 type alias Scenario =
@@ -100,4 +109,6 @@ type alias Scenario =
 
 
 type alias AssertionError =
-    { scenario : Scenario }
+    { scenario : Scenario
+    , player : Snake
+    }

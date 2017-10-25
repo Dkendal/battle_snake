@@ -41,7 +41,6 @@ end
 defmodule Bs.Test.Scenario do
   alias Bs.Test.Agent
   alias Bs.Test.Vector
-  alias Bs.Test.Assertion
   alias Bs.World
 
   use Ecto.Schema
