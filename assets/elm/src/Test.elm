@@ -5,6 +5,7 @@ import Decoder exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
+import HtmlUtil exposing (..)
 import Json.Decode as Decode
 import Json.Encode as Encode exposing (Value)
 import Navigation exposing (Location)
@@ -239,37 +240,55 @@ update msg model =
 
 view : Model -> Html Msg
 view model =
-    div []
-        [ h1 []
-            [ text "Snake Test"
-            ]
-        , div []
-            [ label
-                [ onEnter RunSuite
+    let
+        summaryView result =
+            case result of
+                Err err ->
+                    p [ class "failed" ]
+                        [ span [] [ text "Failed: " ]
+                        , span [] [ text (toString err) ]
+                        ]
+
+                Ok _ ->
+                    empty
+
+        progressView result =
+            case result of
+                Ok _ ->
+                    span [ class "pass" ] [ text "." ]
+
+                Err result_ ->
+                    span [ class "failed" ] [ text "F" ]
+    in
+        div []
+            [ h1 []
+                [ text "Snake Test"
                 ]
-                [ text "url"
-                , input
-                    [ type_ "url"
-                    , tabindex 0
-                    , defaultValue model.agentUrl
-                    , onInput UpdateAgentUrl
+            , div []
+                [ label
+                    [ onEnter RunSuite
                     ]
-                    []
-                , button
-                    [ onClick RunSuite
-                    ]
-                    [ text "run test"
+                    [ text "url"
+                    , input
+                        [ type_ "url"
+                        , tabindex 0
+                        , defaultValue model.agentUrl
+                        , onInput UpdateAgentUrl
+                        ]
+                        []
+                    , button
+                        [ onClick RunSuite
+                        ]
+                        [ text "run test"
+                        ]
                     ]
                 ]
+            , div []
+                (List.map progressView model.results)
+            , div [] <|
+                (h2 [] [ text "Test Summary:" ])
+                    :: (List.map summaryView model.results)
             ]
-        , div []
-            (model.results
-                |> List.map
-                    (\result ->
-                        div [] [ text (toString result) ]
-                    )
-            )
-        ]
 
 
 onEnter : Msg -> Attribute Msg
@@ -287,3 +306,13 @@ onEnter msg =
 mapPhxMsg : ( a, Cmd (Socket.Msg Msg) ) -> ( a, Cmd Msg )
 mapPhxMsg x =
     Tuple.mapSecond (Cmd.map PhxMsg) x
+
+
+isErr : Result error value -> Bool
+isErr result =
+    case result of
+        Err _ ->
+            True
+
+        Ok _ ->
+            False
