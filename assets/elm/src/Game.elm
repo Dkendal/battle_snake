@@ -34,15 +34,6 @@ main =
 
 
 
--- VIEW
-
-
-empty : Html Msg
-empty =
-    text ""
-
-
-
 -- INIT
 
 
