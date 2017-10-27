@@ -1,39 +1,40 @@
-import "./app.css";
-import "phoenix_html";
-import { Game } from "elm/Game";
-import { embedApp } from "./utils";
-import { GameBoard } from "./game_board";
-import css from './css-variables'
+import './app.css';
+import 'phoenix_html';
+import {Game} from 'elm/Game';
+import {embedApp} from './utils';
+import {GameBoard} from './game_board';
+import css from './css-variables';
 
 const colorPallet = new Map<string, string>(Object.entries(css));
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener('DOMContentLoaded', () => {
   const gameAppConfig = {
-    websocket: `ws://${window.location.host}/socket/websocket`
+    websocket: `ws://${window.location.host}/socket/websocket`,
   };
 
-  embedApp('Game', Game, gameAppConfig).map((program) => {
-    program.ports.mount.subscribe(({ fgId, bgId }) => {
-      const fg = <HTMLCanvasElement>document.getElementById(fgId);
-      const bg = <HTMLCanvasElement>document.getElementById(bgId);
+  embedApp('Game', Game, gameAppConfig).map(program => {
+    program.ports.mount.subscribe((id: string) => {
+      const canvas = document.getElementById(id);
 
-      const [fgctx, bgctx] = [fg, bg].map(x => x && x.getContext("2d"));
-
-      if (!fgctx || !bgctx) {
-        return;
+      if (!(canvas instanceof HTMLCanvasElement)) {
+        throw new Error(`Expected ${canvas} to be of type HTMLCanvasElement`);
       }
 
-      const board = new GameBoard(fgctx, bgctx, colorPallet);
+      const ctx = canvas.getContext('2d');
 
-      program.ports.draw.subscribe(({ content }) => {
+      if (!ctx) {
+        throw new Error('ctx was null');
+      }
+
+      const board = new GameBoard(ctx, colorPallet);
+
+      program.ports.draw.subscribe(({content}) => {
         requestAnimationFrame(() => {
-          fg.width = fg.clientWidth;
-          fg.height = fg.clientHeight;
-          bg.width = fg.clientWidth;
-          bg.height = fg.clientHeight;
-          board.draw(content)
+          canvas.width = canvas.clientWidth;
+          canvas.height = canvas.clientHeight;
+          board.draw(content);
         });
-      })
-    })
+      });
+    });
   });
 });

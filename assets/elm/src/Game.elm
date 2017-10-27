@@ -5,7 +5,6 @@ import Debug exposing (..)
 import Dict
 import Decoder as Decoder
 import Game.Types exposing (..)
-import Game.Util exposing (..)
 import Game.View exposing (..)
 import GameBoard
 import Html exposing (..)
@@ -167,10 +166,7 @@ update msg model =
 
         MountCanvasApp ->
             ( model
-            , GameBoard.mount
-                { fgId = fgId model
-                , bgId = bgId model
-                }
+            , GameBoard.mount model.gameid
             )
 
 

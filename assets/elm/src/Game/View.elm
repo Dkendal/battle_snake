@@ -3,7 +3,6 @@ module Game.View exposing (..)
 import Dict
 import Types exposing (..)
 import Game.Types exposing (..)
-import Game.Util exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Route exposing (..)
@@ -13,19 +12,8 @@ view : Model -> Html Msg
 view model =
     div []
         [ div [ class "gameapp" ]
-            [ div [ class "main" ] <|
-                [ canvas
-                    [ id (fgId model)
-                    , class "gameboard-canvas"
-                    , style [ ( "z-index", "1" ) ]
-                    ]
-                    []
-                , canvas
-                    [ id (bgId model)
-                    , class "gameboard-canvas"
-                    ]
-                    []
-                ]
+            [ div [ class "main" ]
+                [ canvas [ id model.gameid, class "gameboard-canvas" ] [] ]
             , scoreboardView model
             ]
         ]

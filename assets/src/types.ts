@@ -8,7 +8,7 @@ declare module "elm/Test" {
 
 declare module "elm/Game" {
   interface Ports {
-    mount: Elm.Port<(args: { fgId: string, bgId: string }) => void>
+    mount: Elm.Port<(id: string) => void>
     draw: Elm.Port<(response: bs.TickResponse) => void>
   }
 
