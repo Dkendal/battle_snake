@@ -5,7 +5,3 @@ defmodule BsWeb.TestController do
     render(conn, "index.html")
   end
 end
-
-defmodule BsWeb.TestView do
-  use BsWeb, :view
-end

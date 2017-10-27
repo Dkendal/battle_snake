@@ -111,7 +111,9 @@ export class GameBoard {
   }
 
   async drawImages(board: bs.Board): Promise<{}> {
-    board.snakes.forEach((snake: bs.Snake) => this.drawSnakeBody(snake));
+    board.snakes.forEach((snake: bs.Snake) => {
+      this.drawSnakeBody(snake)
+    });
 
     const tasks = board.snakes
       .map((snake) => {
