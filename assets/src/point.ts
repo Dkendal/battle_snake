@@ -56,21 +56,30 @@ export function shrink(points: bs.Point[], scaler: number): bs.Point[] {
   const [p0, p1] = points.slice(0, 2);
   const [s1, s0] = points.slice(-2);
 
-  const pPrime = pipe(p0)
-    .map(p => sub(p, p1))
-    .map(normalize)
-    .map(p => mul(p, scaler))
-    .map(p => add(p, p1))
-    .value;
+  let pPrime = p0;
+  let sPrime = s1;
 
-  const sPrime = pipe(s0)
-    .map(p => sub(p, s1))
-    .map(normalize)
-    .map(p => mul(p, scaler))
-    .map(p => add(p, s1))
-    .value;
+  if (p1) {
+    pPrime = pipe(p0)
+      .map(p => sub(p, p1))
+      .map(normalize)
+      .map(p => mul(p, scaler))
+      .map(p => add(p, p1))
+      .value;
+  }
 
-  return [pPrime, p1, ...points.slice(1, -1), s1, sPrime];
+  if (s0) {
+    sPrime = pipe(s0)
+      .map(p => sub(p, s1))
+      .map(normalize)
+      .map(p => mul(p, scaler))
+      .map(p => add(p, s1))
+      .value;
+  }
+
+  const result = [pPrime, p1, ...points.slice(1, -1), s1, sPrime];
+
+  return result.filter(x => x);
 }
 
 export function map<T>(a: bs.Point, fn: (x: number) => T): [T, T] {

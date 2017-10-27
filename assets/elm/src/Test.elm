@@ -16,6 +16,7 @@ import Task exposing (..)
 import Tuple
 import Types exposing (..)
 import UrlParser as Url exposing (..)
+import TestBoard
 
 
 type alias Model =
@@ -135,8 +136,14 @@ update msg model =
 
                         model_ =
                             { model | results = results }
+
+                        cmd =
+                            TestBoard.render
+                                { id = assertionError.id
+                                , world = assertionError.world
+                                }
                     in
-                        model_ ! []
+                        model_ ! [ cmd ]
 
         ReceiveTestCase (Ok raw) ->
             let
@@ -244,9 +251,16 @@ view model =
         summaryView result =
             case result of
                 Err err ->
-                    p [ class "failed" ]
-                        [ span [] [ text "Failed: " ]
-                        , span [] [ text (toString err) ]
+                    div []
+                        [ p [ class "failed" ]
+                            [ span [] [ text "Failed: " ]
+                            , span [] [ text (toString err) ]
+                            ]
+                        , div
+                            [ id err.id ]
+                            [ canvas [ style [ ( "position", "absolute" ) ] ] []
+                            , canvas [] []
+                            ]
                         ]
 
                 Ok _ ->

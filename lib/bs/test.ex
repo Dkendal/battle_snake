@@ -63,8 +63,11 @@ defmodule Bs.Test.Scenario do
 
     [player | _] = snakes
 
+    id = Ecto.UUID.generate()
+
     world = %World{
-      game_id: Ecto.UUID.generate(),
+      id: id,
+      game_id: id,
       snakes: snakes,
       width: scenario.width,
       height: scenario.height,
@@ -126,6 +129,9 @@ defmodule Bs.Test do
 
   def test(scenario, url, move_fun \\ &Worker.run/3) do
     {world, player} = Scenario.to_world(scenario)
+
+    require Logger
+    Logger.debug(inspect(world))
 
     player = %{player | url: url}
 

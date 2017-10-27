@@ -1,5 +1,9 @@
 declare module "elm/Test" {
-  export const Test: Elm.App<{}>;
+  interface Ports {
+    render: Elm.Port<(args: { id: string, world: bs.Board }) => void>
+  }
+
+  export const Test: Elm.App<Ports>;
 }
 
 declare module "elm/Game" {
@@ -21,7 +25,7 @@ declare module Elm {
   }
 
   export interface App<T> {
-    fullscreen(): void;
+    fullscreen(): Program<T>;
     embed(node: Element, options?: MetaData): Program<T>;
   }
 

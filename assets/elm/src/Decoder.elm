@@ -163,6 +163,8 @@ scenario =
 
 assertionError : Decoder AssertionError
 assertionError =
-    map2 AssertionError
+    map4 AssertionError
+        ("id" := string)
         ("scenario" := scenario)
         ("player" := snake2)
+        ("world" := value)

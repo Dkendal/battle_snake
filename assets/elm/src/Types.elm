@@ -1,6 +1,7 @@
 module Types exposing (..)
 
 import Dict exposing (..)
+import Json.Encode exposing (Value)
 
 
 type alias Board =
@@ -109,6 +110,8 @@ type alias Scenario =
 
 
 type alias AssertionError =
-    { scenario : Scenario
+    { id : String
+    , scenario : Scenario
     , player : Snake
+    , world : Value
     }
