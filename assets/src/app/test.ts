@@ -1,6 +1,6 @@
-import { Test } from 'elm/Test';
-import { GameBoard } from '../game_board';
-import css from '../css-variables'
+import {Test} from 'elm/Test';
+import {GameBoard} from '../game_board';
+import css from '../css-variables';
 
 const colorPallet = new Map<string, string>(Object.entries(css));
 
@@ -8,38 +8,34 @@ const test = Test.fullscreen();
 
 test.ports.render.subscribe(({id, world}) => {
   const timer = window.setInterval(callback, 1);
+  const clearInterval = () => window.clearInterval(timer);
 
-  window.setTimeout(clear, 100);
+  window.setTimeout(clearInterval, 100);
 
   function callback() {
-    const node = document.getElementById(id);
+    const canvas = document.getElementById(id);
 
-    if (!node) {
+    if (!canvas) {
+      return;
+    }
+
+    clearInterval();
+
+    if (!(canvas instanceof HTMLCanvasElement)) {
+      const msg = `Expected ${canvas} to be of type HTMLCanvasElement`
+      console.error(msg, canvas, new Error());
+      return;
+    }
+
+    const ctx = canvas.getContext('2d');
+
+    if (!ctx) {
+      console.error('ctx was null', new Error());
       return
     }
 
-    clear();
+    const board = new GameBoard(ctx, colorPallet);
 
-    const [fg, bg] = node.querySelectorAll('canvas')
-
-    if (!(fg instanceof HTMLCanvasElement && bg instanceof HTMLCanvasElement)) {
-      throw new Error("");
-    }
-
-    const fgCtx = fg.getContext("2d");
-    const bgCtx = bg.getContext("2d");
-
-    if (!(fgCtx && bgCtx)) {
-      throw new Error("");
-    }
-
-    const board = new GameBoard(fgCtx, bgCtx, colorPallet);
-
-    console.log(id, world)
     board.draw(world);
-  }
-
-  function clear() {
-    window.clearInterval(timer);
   }
 });

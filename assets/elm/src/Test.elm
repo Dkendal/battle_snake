@@ -256,11 +256,9 @@ view model =
                             [ span [] [ text "Failed: " ]
                             , span [] [ text (toString err) ]
                             ]
-                        , div
-                            [ id err.id ]
-                            [ canvas [ style [ ( "position", "absolute" ) ] ] []
-                            , canvas [] []
-                            ]
+                        , canvas
+                            [ id err.id, style [ ( "position", "absolute" ) ] ]
+                            []
                         ]
 
                 Ok _ ->

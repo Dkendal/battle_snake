@@ -1,6 +1,6 @@
-import { add, sub, uniq } from './point';
+import {loadImage} from './images';
+import {add, sub, uniq} from './point';
 import * as P from './point';
-import { loadImage } from './images';
 
 const gutter = 0.1;
 const unit = 1 - gutter * 2;
@@ -9,7 +9,7 @@ const offset = unit / 2 * -1;
 const coordCache: WeakMap<bs.Snake, Array<bs.Point>> = new WeakMap();
 
 function coords(snake: bs.Snake): bs.Point[] {
-  const coords = coordCache.get(snake)
+  const coords = coordCache.get(snake);
 
   if (coords) {
     return coords;
@@ -22,19 +22,87 @@ function coords(snake: bs.Snake): bs.Point[] {
   return arr;
 }
 
+function clear(ctx: bs.Ctx) {
+  const {width, height} = ctx.canvas;
+  ctx.clearRect(0, 0, width, height);
+}
+
+function drawFood(layer: bs.Ctx, [x, y]: bs.Food) {
+  layer.beginPath();
+  layer.arc(x, y, halfUnit, 0, 2 * Math.PI);
+  layer.fill();
+}
+
+function drawGrid(layer: bs.Ctx, width: number, height: number) {
+  for (let i = 0; i < width; i++) {
+    for (let j = 0; j < height; j++) {
+      layer.fillRect(i + gutter, j + gutter, unit, unit);
+    }
+  }
+}
+
+function drawSnakeBody(layer: bs.Ctx, snake: bs.Snake) {
+  const points = P.shrink(P.smooth(snake.coords), 0.12);
+
+  layer.save();
+
+  layer.strokeStyle = snake.color;
+
+  layer.lineWidth = unit;
+
+  layer.lineJoin = 'round';
+
+  layer.translate(0.5, 0.5);
+
+  layer.beginPath();
+
+  layer.moveTo(points[0][0], points[0][1]);
+
+  for (let i = 1; i < points.length; i += 1) {
+    const x0 = points[i];
+    layer.lineTo(x0[0], x0[1]);
+  }
+
+  layer.stroke();
+
+  layer.restore();
+}
+
+function drawImage(layer: bs.Ctx, image: bs.Image, h0: bs.Point, h1: bs.Point) {
+  const v = sub(h0, h1);
+
+  let a = add([0.5, 0.5], h0);
+
+  layer.save();
+
+  layer.translate(a[0], a[1]);
+
+  switch (v.join(' ')) {
+    case '0 -1':
+      layer.rotate(-Math.PI / 2);
+      break;
+
+    case '0 1':
+      layer.rotate(Math.PI / 2);
+      break;
+
+    case '-1 0':
+      layer.scale(-1, 1);
+      break;
+  }
+
+  layer.drawImage(image, offset, offset, unit, unit);
+
+  layer.restore();
+}
+
 export class GameBoard {
-  private readonly bgctx: bs.Ctx;
-  private readonly fgctx: bs.Ctx;
+  private readonly ctx: bs.Ctx;
   private readonly images = new Map();
   private readonly colorPallet: Map<string, string>;
 
-  constructor(
-    fgctx: bs.Ctx,
-    bgctx: bs.Ctx,
-    colorPallet: Map<string, string>
-  ) {
-    this.bgctx = bgctx;
-    this.fgctx = fgctx;
+  constructor(ctx: bs.Ctx, colorPallet: Map<string, string>) {
+    this.ctx = ctx;
     this.colorPallet = colorPallet;
   }
 
@@ -42,20 +110,8 @@ export class GameBoard {
     return this.colorPallet.get(name) || 'pink';
   }
 
-  drawGrid(width: number, height: number) {
-    this.clear(this.bgctx);
-
-    this.bgctx.fillStyle = this.color('tile-color');
-
-    for (let i = 0; i < width; i++) {
-      for (let j = 0; j < height; j++) {
-        this.bgctx.fillRect(i + gutter, j + gutter, unit, unit);
-      }
-    }
-  }
-
   async getImage(id: string, color: string): Promise<bs.Image> {
-    const key = `${id}-${color}`
+    const key = `${id}-${color}`;
 
     const image = this.images.get(key);
 
@@ -80,141 +136,71 @@ export class GameBoard {
     return this.getImage(id, snake.color);
   }
 
-  drawSnakeBody(snake: bs.Snake) {
-    const points = P.shrink(P.smooth(snake.coords), 0.12);
-
-    const ctx = this.fgctx;
-
-    ctx.save();
-
-    ctx.strokeStyle = snake.color;
-
-    ctx.lineWidth = unit;
-
-    ctx.lineJoin = "round";
-
-    ctx.translate(0.5, 0.5);
-
-    ctx.beginPath();
-
-    ctx.moveTo(points[0][0], points[0][1]);
-
-    for (let i = 1; i < points.length;) {
-      const x0 = points[i];
-      ctx.lineTo(x0[0], x0[1]);
-      i += 1;
+  async drawImages(layer: bs.Ctx, board: bs.Board): Promise<{}> {
+    for (const snake of board.snakes) {
+      drawSnakeBody(layer, snake);
     }
 
-    ctx.stroke();
+    const tasks = board.snakes.map(async snake => {
+      const head = this.headImage(snake);
+      const tail = this.tailImage(snake);
 
-    ctx.restore();
-  }
+      const coordinates = coords(snake);
 
-  async drawImages(board: bs.Board): Promise<{}> {
-    board.snakes.forEach((snake: bs.Snake) => {
-      this.drawSnakeBody(snake)
+      const [h0, h1] = coordinates;
+      const [t1, t0] = coordinates.slice(-2);
+
+      const headImg = await head;
+      const tailImg = await tail;
+
+      drawImage(layer, headImg, h0, h1 || h0);
+
+      if (coordinates.length > 1) {
+        drawImage(layer, tailImg, t0 || t1, t1);
+      }
     });
 
-    const tasks = board.snakes
-      .map((snake) => {
-        const head = this.headImage(snake);
-        const tail = this.tailImage(snake);
-        return { snake, head, tail }
-      })
-      .map(async ({ snake, head, tail }) => {
-        const coordinates = coords(snake);
-        const [h0, h1] = coordinates;
-        const [t1, t0] = coordinates.slice(-2);
-
-        const headImg = await head;
-        const tailImg = await tail;
-
-        this.drawImage(headImg, h0, h1 || h0);
-
-        if (coordinates.length > 1) {
-          this.drawImage(tailImg, t0 || t1, t1);
-        }
-      });
-
-    return Promise.all(tasks)
+    return Promise.all(tasks);
   }
-
-  drawImage(image: bs.Image, h0: bs.Point, h1: bs.Point) {
-    const ctx = this.fgctx;
-
-    const v = sub(h0, h1);
-
-    let a = add([0.5, 0.5], h0)
-
-    ctx.save();
-
-    ctx.translate(a[0], a[1]);
-
-    switch (v.join(' ')) {
-      case '0 -1':
-        ctx.rotate(-Math.PI / 2);
-        break;
-
-      case '0 1':
-        ctx.rotate(Math.PI / 2);
-        break;
-
-      case '-1 0':
-        ctx.scale(-1, 1);
-        break;
-    }
-
-    ctx.drawImage(image, offset, offset, unit, unit);
-
-    ctx.restore();
-  }
-
-  drawFood([x, y]: bs.Food) {
-    const ctx = this.fgctx;
-    ctx.fillStyle = this.color('food-color');
-    ctx.beginPath();
-    ctx.arc(x, y, halfUnit, 0, 2 * Math.PI);
-    ctx.fill();
-  }
-
-  clear(ctx: bs.Ctx) {
-    const { width, height } = ctx.canvas;
-    ctx.clearRect(0, 0, width, height);
-  }
-
   async draw(board: bs.Board) {
-    const ctxs = [this.bgctx, this.fgctx];
+    const ctx = this.ctx;
 
-    const clientWidth = this.bgctx.canvas.width;
-    const clientHeight = this.bgctx.canvas.height;
-    const { width, height } = board;
+    // Adjust coordinate system if the window has been resized
+    // since the last draw.
+    const clientWidth = this.ctx.canvas.width;
+    const clientHeight = this.ctx.canvas.height;
+    const {width, height} = board;
 
     const h = clientHeight / height;
     const w = clientWidth / width;
-    const sign = (clientWidth / clientHeight) > (width / height)
-    const scaler = sign ? h : w
+    const sign = clientWidth / clientHeight > width / height;
+    const scaler = sign ? h : w;
 
     const xT = sign ? (clientWidth - h * width) / 2 : 0;
     const yT = sign ? 0 : (clientHeight - w * height) / 2;
 
-    this.clear(this.fgctx);
-    this.clear(this.bgctx)
+    // Scale the board and set the coordinate system so that 1
+    // unit corresponds to a single tile and the board is
+    // centered.
+    clear(ctx);
+    ctx.translate(xT, yT);
+    ctx.scale(scaler, scaler);
 
-    ctxs.forEach(ctx => {
-      ctx.translate(xT, yT);
-      ctx.scale(scaler, scaler)
-    });
+    // Draw the grid
+    ctx.fillStyle = this.color('tile-color');
+    drawGrid(ctx, width, height);
 
-    this.drawGrid(width, height);
+    // Draw food
+    ctx.save();
+    ctx.translate(0.5, 0.5);
+    ctx.fillStyle = this.color('food-color');
 
-    this.fgctx.translate(0.5, 0.5);
+    for (const food of board.food) {
+      drawFood(ctx, food);
+    }
+    ctx.restore();
 
-    board.food.forEach((food: bs.Point) => this.drawFood(food));
-
-    this.fgctx.translate(-0.5, -0.5);
-
-    await this.drawImages(board);
-
-    ctxs.forEach(x => x.setTransform(1, 0, 0, 1, 0, 0));
+    // Draw snakes
+    await this.drawImages(ctx, board);
   }
 }
