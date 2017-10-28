@@ -1,21 +1,20 @@
-declare module "elm/Test" {
+declare module 'elm/Test' {
   interface Ports {
-    render: Elm.Port<(args: { id: string, world: bs.Board }) => void>
+    render: Elm.Port<(world: bs.Board) => void>;
   }
 
   export const Test: Elm.App<Ports>;
 }
 
-declare module "elm/Game" {
+declare module 'elm/Game' {
   interface Ports {
-    mount: Elm.Port<(id: string) => void>
-    draw: Elm.Port<(response: bs.TickResponse) => void>
+    render: Elm.Port<(world: bs.Board) => void>;
   }
 
   export const Game: Elm.App<Ports>;
 }
 
-declare module Elm {
+declare namespace Elm {
   export interface Port<T> {
     subscribe(callback: T): void;
   }
@@ -30,11 +29,11 @@ declare module Elm {
   }
 
   export interface MetaData {
-    [key: string]: any
+    [key: string]: any;
   }
 }
 
-declare module bs {
+declare namespace bs {
   export type Point = [number, number];
 
   export type Food = Point;
@@ -43,7 +42,7 @@ declare module bs {
 
   export type Image = HTMLImageElement;
 
-  export type List<T> = { length: number, item: (i: number) => T }
+  export type List<T> = {length: number; item: (i: number) => T};
 
   export interface Snake {
     taunt?: any;

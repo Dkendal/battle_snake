@@ -13,27 +13,34 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   embedApp('Game', Game, gameAppConfig).map(program => {
-    program.ports.mount.subscribe((id: string) => {
-      const canvas = document.getElementById(id);
+    let board: GameBoard;
+    let canvas: HTMLCanvasElement;
 
-      if (!(canvas instanceof HTMLCanvasElement)) {
-        throw new Error(`Expected ${canvas} to be of type HTMLCanvasElement`);
+    program.ports.render.subscribe(world => {
+      const id = world.gameId;
+
+      if (!board) {
+        const node = document.getElementById(id);
+
+        if (!(node instanceof HTMLCanvasElement)) {
+          throw new Error(`Expected ${canvas} to be of type HTMLCanvasElement`);
+        }
+
+        canvas = node;
+
+        const ctx = canvas.getContext('2d');
+
+        if (!ctx) {
+          throw new Error('ctx was null');
+        }
+
+        board = new GameBoard(ctx, colorPallet);
       }
 
-      const ctx = canvas.getContext('2d');
-
-      if (!ctx) {
-        throw new Error('ctx was null');
-      }
-
-      const board = new GameBoard(ctx, colorPallet);
-
-      program.ports.draw.subscribe(({content}) => {
-        requestAnimationFrame(() => {
-          canvas.width = canvas.clientWidth;
-          canvas.height = canvas.clientHeight;
-          board.draw(content);
-        });
+      requestAnimationFrame(() => {
+        canvas.width = canvas.clientWidth;
+        canvas.height = canvas.clientHeight;
+        board.draw(world);
       });
     });
   });
