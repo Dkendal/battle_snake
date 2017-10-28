@@ -92,13 +92,10 @@ defmodule Bs.Test.ScenarioTest do
 
     assert(
       %Snake{
-        id: id,
         coords: [
           %Point{x: 0, y: 0}
         ]
       } = player
     )
-
-    assert not is_nil(id)
   end
 end
