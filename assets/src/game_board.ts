@@ -177,6 +177,7 @@ export class GameBoard {
 
   async draw(world: bs.Board) {
     const ctx = this.ctx;
+    const padding = 1;
 
     // Adjust coordinate system if the window has been resized
     // since the last draw.
@@ -199,6 +200,9 @@ export class GameBoard {
     ctx.translate(xT, yT);
     ctx.scale(scaler, scaler);
 
+    ctx.translate(padding / 2, padding / 2);
+    ctx.scale((width - padding) / width, (height - padding) / height);
+
     // Draw the grid
     ctx.fillStyle = this.color('tile-color');
     drawGrid(ctx, width, height);
@@ -214,8 +218,8 @@ export class GameBoard {
     });
 
     for (const snake of world.deadSnakes) {
-      const x =  snake.death.turn - world.turn
-      const a = 1.1 ** x
+      const x = snake.death.turn - world.turn;
+      const a = 1.1 ** x;
 
       if (a < 0.05) {
         continue;

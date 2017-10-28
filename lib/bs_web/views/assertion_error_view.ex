@@ -6,12 +6,12 @@ defmodule BsWeb.AssertionErrorView do
   use BsWeb, :view
 
   def render("show.json", %{assertion_error: err}) do
-    {world, _snake} = Scenario.to_world(err.scenario)
+    require Logger
 
     %{
       id: err.world.id,
       scenario: err.scenario,
-      world: render_one(world, BoardView, "show.json", v: 2),
+      world: render_one(err.world, BoardView, "show.json", v: 2),
       player: render_one(
         err.player,
         SnakeView,
