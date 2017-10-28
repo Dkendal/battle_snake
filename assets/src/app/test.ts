@@ -6,11 +6,18 @@ const colorPallet = new Map<string, string>(Object.entries(css));
 
 const test = Test.fullscreen();
 
-test.ports.render.subscribe(({id, world}) => {
-  const timer = window.setInterval(callback, 1);
-  const clearInterval = () => window.clearInterval(timer);
+test.ports.render.subscribe(world => {
+  const id = world.gameId;
+  const inverval = window.setInterval(callback, 1);
 
-  window.setTimeout(clearInterval, 100);
+  const timeout = window.setTimeout(() => {
+    console.error(
+      `Couldn't find an HTMLCanvasElement with id ${id}`,
+      new Error()
+    );
+
+    window.clearInterval(inverval);
+  }, 100);
 
   function callback() {
     const canvas = document.getElementById(id);
@@ -19,10 +26,11 @@ test.ports.render.subscribe(({id, world}) => {
       return;
     }
 
-    clearInterval();
+    window.clearInterval(inverval);
+    window.clearTimeout(timeout);
 
     if (!(canvas instanceof HTMLCanvasElement)) {
-      const msg = `Expected ${canvas} to be of type HTMLCanvasElement`
+      const msg = `Expected ${canvas} to be of type HTMLCanvasElement`;
       console.error(msg, canvas, new Error());
       return;
     }
@@ -31,11 +39,13 @@ test.ports.render.subscribe(({id, world}) => {
 
     if (!ctx) {
       console.error('ctx was null', new Error());
-      return
+      return;
     }
 
     const board = new GameBoard(ctx, colorPallet);
 
-    board.draw(world);
+    requestAnimationFrame(() => {
+      board.draw(world);
+    });
   }
 });

@@ -1,3 +1,5 @@
+import Ecto.Changeset
+
 defmodule Bs.Test.Agent do
   alias Bs.Test.Vector
   alias Bs.Snake
@@ -12,7 +14,7 @@ defmodule Bs.Test.Agent do
     coords = for x <- agent.body, do: Vector.to_point(x)
 
     %Snake{
-      id: Ecto.UUID.generate(),
+      id: agent.id,
       coords: coords
     }
   end
@@ -63,11 +65,9 @@ defmodule Bs.Test.Scenario do
 
     [player | _] = snakes
 
-    id = Ecto.UUID.generate()
-
     world = %World{
-      id: id,
-      game_id: id,
+      id: scenario.id,
+      game_id: scenario.id,
       snakes: snakes,
       width: scenario.width,
       height: scenario.height,
@@ -127,11 +127,33 @@ defmodule Bs.Test do
     end
   end
 
-  def test(scenario, url, move_fun \\ &Worker.run/3) do
-    {world, player} = Scenario.to_world(scenario)
+  def generate_ids(model) when is_map(model) do
+    model =
+      if Map.has_key?(model, :id) do
+        %{model | id: Ecto.UUID.generate()}
+      else
+        model
+      end
 
-    require Logger
-    Logger.debug(inspect(world))
+    model
+    |> Map.from_struct()
+    |> Enum.reduce(model, fn {k, v}, model ->
+         %{model | k => generate_ids(v)}
+       end)
+  end
+
+  def generate_ids(model) when is_list(model) do
+    Enum.map(model, &generate_ids/1)
+  end
+
+  def generate_ids(model) do
+    model
+  end
+
+  def test(scenario, url, move_fun \\ &Worker.run/3) do
+    scenario = generate_ids(scenario)
+
+    {world, player} = Scenario.to_world(scenario)
 
     player = %{player | url: url}
 

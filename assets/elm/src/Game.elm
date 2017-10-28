@@ -48,7 +48,6 @@ init flags =
         cmds =
             [ emit JoinSpectatorChannel
             , emit JoinAdminChannel
-            , emit MountCanvasApp
             ]
     in
         model ! cmds
@@ -158,16 +157,12 @@ update msg model =
 
         RecieveTick raw ->
             case JD.decodeValue Decoder.tick raw of
-                Ok { content } ->
-                    { model | phase = GamePhase content } ! [ GameBoard.draw raw ]
+                Ok ( world, rawWorld ) ->
+                    { model | phase = GamePhase world }
+                        ! [ GameBoard.render rawWorld ]
 
                 Err e ->
                     Debug.crash e
-
-        MountCanvasApp ->
-            ( model
-            , GameBoard.mount model.gameid
-            )
 
 
 

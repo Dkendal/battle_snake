@@ -25,7 +25,6 @@ type Msg
     | JoinChannelFailed Json.Encode.Value
     | JoinChannelSuccess Json.Encode.Value
     | JoinSpectatorChannel
-    | MountCanvasApp
     | NextStep
     | PauseGame
     | PhxMsg PhxSockMsg

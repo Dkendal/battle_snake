@@ -1,9 +1,6 @@
 port module GameBoard exposing (..)
 
-import Json.Encode as JE
+import Json.Encode exposing (Value)
 
 
-port mount : String -> Cmd msg
-
-
-port draw : JE.Value -> Cmd msg
+port render : Value -> Cmd msg

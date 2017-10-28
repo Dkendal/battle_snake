@@ -16,7 +16,7 @@ import Task exposing (..)
 import Tuple
 import Types exposing (..)
 import UrlParser as Url exposing (..)
-import TestBoard
+import GameBoard
 
 
 type alias Model =
@@ -138,10 +138,7 @@ update msg model =
                             { model | results = results }
 
                         cmd =
-                            TestBoard.render
-                                { id = assertionError.id
-                                , world = assertionError.world
-                                }
+                            GameBoard.render assertionError.world
                     in
                         model_ ! [ cmd ]
 

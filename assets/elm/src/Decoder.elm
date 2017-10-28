@@ -20,10 +20,11 @@ maybeWithDefault value decoder =
     decoder |> maybe |> map (Maybe.withDefault value)
 
 
-tick : Decoder TickMsg
+tick : Decoder ( Board, Value )
 tick =
-    map TickMsg
-        (field "content" board)
+    map2 (\x y -> ( x, y ))
+        ("content" := board)
+        ("content" := value)
 
 
 board : Decoder Board
