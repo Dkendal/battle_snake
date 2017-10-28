@@ -99,24 +99,28 @@ defmodule Bs.Test do
   alias Bs.Test.Agent
   alias Bs.Test.AssertionError
   alias Bs.Test.Scenario
-  alias Bs.Test.Vector
+  alias Bs.Test.Vector, as: V
   alias Bs.World
+
+  import List, only: [duplicate: 2]
 
   def scenarios do
     [
       %Scenario{
         width: 2,
         height: 2,
-        player: %Agent{body: [%Vector{x: 0, y: 1}]},
+        player: %Agent{
+          body: duplicate(%V{x: 0, y: 1}, 3)
+        },
         agents: [],
         food: []
       },
       %Scenario{
         width: 2,
         height: 2,
-        player: %Agent{body: [%Vector{x: 0, y: 0}]},
+        player: %Agent{body: duplicate(%V{x: 0, y: 0}, 3)},
         agents: [],
-        food: [%Vector{x: 0, y: 1}]
+        food: []
       }
     ]
   end

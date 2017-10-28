@@ -8,7 +8,7 @@ const test = Test.fullscreen();
 
 test.ports.render.subscribe(world => {
   const id = world.gameId;
-  const inverval = window.setInterval(callback, 1);
+  const inverval = window.setInterval(callback, 20);
 
   const timeout = window.setTimeout(() => {
     console.error(
@@ -44,8 +44,6 @@ test.ports.render.subscribe(world => {
 
     const board = new GameBoard(ctx, colorPallet);
 
-    requestAnimationFrame(() => {
-      board.draw(world);
-    });
+    board.draw(world);
   }
 });

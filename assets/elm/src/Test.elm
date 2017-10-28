@@ -254,7 +254,7 @@ view model =
                             , span [] [ text (toString err) ]
                             ]
                         , canvas
-                            [ id err.id, style [ ( "position", "absolute" ) ] ]
+                            [ id err.id, width 500, height 500 ]
                             []
                         ]
 
