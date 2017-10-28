@@ -50,7 +50,7 @@ function within(ctx: bs.Ctx, fn: Function): void {
   ctx.restore();
 }
 
-function drawSnakeBody(layer: bs.Ctx, snake: bs.Snake) {
+function drawSnakeBody(layer: bs.Ctx, snake: bs.Snake, prepare?: Function) {
   const points = P.shrink(P.smooth(snake.coords), 0.12);
 
   within(layer, () => {
@@ -61,6 +61,8 @@ function drawSnakeBody(layer: bs.Ctx, snake: bs.Snake) {
     layer.lineWidth = unit;
 
     layer.lineJoin = 'round';
+
+    prepare && prepare();
 
     layer.beginPath();
 
@@ -83,7 +85,13 @@ function tailImgId(snake: bs.Snake): string {
   return `snake-tail-${snake.tailType}`;
 }
 
-function drawImage(layer: bs.Ctx, image: bs.Image, h0: bs.Point, h1: bs.Point) {
+function drawImage(
+  layer: bs.Ctx,
+  image: bs.Image,
+  h0: bs.Point,
+  h1: bs.Point,
+  prepare?: Function
+) {
   const v = sub(h0, h1);
 
   let a = add([0.5, 0.5], h0);
@@ -105,19 +113,19 @@ function drawImage(layer: bs.Ctx, image: bs.Image, h0: bs.Point, h1: bs.Point) {
         break;
     }
 
+    prepare && prepare();
+
     layer.drawImage(image, offset, offset, unit, unit);
   });
 }
 
 async function drawSnake(
   layer: bs.Ctx,
-  getImage: (id: string, color: string) => Promise<bs.Image>,
-  snake: bs.Snake
+  head: Promise<bs.Image>,
+  tail: Promise<bs.Image>,
+  snake: bs.Snake,
+  prepare?: Function
 ): Promise<null> {
-  const head = getImage(headImgId(snake), snake.color);
-
-  const tail = getImage(tailImgId(snake), snake.color);
-
   const coordinates = coords(snake);
 
   const [h0, h1] = coordinates;
@@ -126,12 +134,12 @@ async function drawSnake(
   const headImg = await head;
   const tailImg = await tail;
 
-  drawSnakeBody(layer, snake);
+  drawSnakeBody(layer, snake, prepare);
 
-  drawImage(layer, headImg, h0, h1 || h0);
+  drawImage(layer, headImg, h0, h1 || h0, prepare);
 
   if (coordinates.length > 1) {
-    drawImage(layer, tailImg, t0 || t1, t1);
+    drawImage(layer, tailImg, t0 || t1, t1, prepare);
   }
 
   return null;
@@ -167,14 +175,14 @@ export class GameBoard {
     return img;
   }
 
-  async draw(board: bs.Board) {
+  async draw(world: bs.Board) {
     const ctx = this.ctx;
 
     // Adjust coordinate system if the window has been resized
     // since the last draw.
     const clientWidth = this.ctx.canvas.width;
     const clientHeight = this.ctx.canvas.height;
-    const {width, height} = board;
+    const {width, height} = world;
 
     const h = clientHeight / height;
     const w = clientWidth / width;
@@ -184,8 +192,8 @@ export class GameBoard {
     const xT = sign ? (clientWidth - h * width) / 2 : 0;
     const yT = sign ? 0 : (clientHeight - w * height) / 2;
 
-    // Scale the board and set the coordinate system so that 1
-    // unit corresponds to a single tile and the board is
+    // Scale the world and set the coordinate system so that 1
+    // unit corresponds to a single tile and the world is
     // centered.
     clear(ctx);
     ctx.translate(xT, yT);
@@ -200,13 +208,33 @@ export class GameBoard {
       ctx.fillStyle = this.color('food-color');
       ctx.translate(0.5, 0.5);
 
-      for (const food of board.food) {
+      for (const food of world.food) {
         drawFood(ctx, food);
       }
     });
 
-    for (const snake of board.snakes) {
-      drawSnake(ctx, this.getImage.bind(this), snake);
+    for (const snake of world.deadSnakes) {
+      const x =  snake.death.turn - world.turn
+      const a = 1.1 ** x
+
+      if (a < 0.05) {
+        continue;
+      }
+
+      const head = this.getImage(headImgId(snake), snake.color);
+      const tail = this.getImage(tailImgId(snake), snake.color);
+
+      drawSnake(ctx, head, tail, snake, () => {
+        ctx.filter = `grayscale(${20 + Math.abs(x * 10)}%)`;
+        ctx.globalAlpha = a;
+      });
+    }
+
+    for (const snake of world.snakes) {
+      const head = this.getImage(headImgId(snake), snake.color);
+      const tail = this.getImage(tailImgId(snake), snake.color);
+
+      drawSnake(ctx, head, tail, snake);
     }
   }
 }

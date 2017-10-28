@@ -2,17 +2,30 @@ defmodule BsWeb.BoardView do
   use BsWeb, :view
 
   def render("snake.json", %{snake: snake}) do
-    %{
-      health: snake.health_points,
-      coords: snake.coords,
+    data = %{
       color: snake.color,
+      coords: snake.coords,
+      headType: snake.head_type,
+      headUrl: snake.head_url,
+      health: snake.health_points,
       id: snake.id,
       name: snake.name,
-      taunt: snake.taunt,
-      headType: snake.head_type,
       tailType: snake.tail_type,
-      headUrl: snake.head_url
+      taunt: snake.taunt
     }
+
+    data =
+      if snake.cause_of_death do
+        Map.merge(data, %{
+          death: render_one(
+            snake.cause_of_death,
+            BsWeb.Api.DeathView,
+            "show.json"
+          )
+        })
+      else
+        data
+      end
   end
 
   def render("show.json", %{board: board}) do

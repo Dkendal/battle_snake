@@ -38,7 +38,10 @@ declare namespace bs {
 
   export type Food = Point;
 
-  export type Ctx = CanvasRenderingContext2D;
+  export type Ctx = CanvasRenderingContext2D & {
+    filter: string;
+    currentTransform: SVGMatrix;
+  };
 
   export type Image = HTMLImageElement;
 
