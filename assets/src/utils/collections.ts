@@ -1,4 +1,4 @@
-export function* entries<T>(list: bs.List<T>) {
+export function* entries<T>(list: List<T>) {
   for (let i = 0; i < list.length; i++) {
     yield list.item(i);
   }

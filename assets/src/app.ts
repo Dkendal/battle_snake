@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         canvas = node;
 
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d') as any as Ctx;
 
         if (!ctx) {
           throw new Error('ctx was null');

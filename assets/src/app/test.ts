@@ -20,22 +20,19 @@ test.ports.render.subscribe(world => {
   }, 100);
 
   function callback() {
-    const canvas = document.getElementById(id);
+    const node = document.getElementById(id);
 
-    if (!canvas) {
+    if (!node) {
       return;
     }
 
     window.clearInterval(inverval);
     window.clearTimeout(timeout);
 
-    if (!(canvas instanceof HTMLCanvasElement)) {
-      const msg = `Expected ${canvas} to be of type HTMLCanvasElement`;
-      console.error(msg, canvas, new Error());
-      return;
-    }
+    const canvas = document.createElement('canvas');
+    node.appendChild(canvas);
 
-    const ctx = canvas.getContext('2d');
+    const ctx = (canvas.getContext('2d') as any) as Ctx;
 
     if (!ctx) {
       console.error('ctx was null', new Error());
