@@ -1,5 +1,5 @@
 import {Test} from 'elm/Test';
-import {GameBoard} from '../game_board';
+import {GameBoard} from '../GameBoard';
 import css from '../css-variables';
 
 const colorPallet = new Map<string, string>(Object.entries(css));
