@@ -11,8 +11,8 @@ const config: Configuration = {};
 module.exports = config;
 
 config.entry = {
-  app: "./src/app.ts",
-  test: "./src/app/test.ts",
+  game: "./src/app/Game.ts",
+  test: "./src/app/Test.ts",
   index: "./src/index.ts",
   vendor: ["phoenix", "phoenix_html"],
 };
