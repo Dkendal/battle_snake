@@ -2,7 +2,7 @@ import './app.css';
 import 'phoenix_html';
 import {Game} from 'elm/Game';
 import {embedApp} from './utils';
-import {GameBoard} from './game_board';
+import {GameBoard} from './GameBoard';
 import css from './css-variables';
 
 const colorPallet = new Map<string, string>(Object.entries(css));
