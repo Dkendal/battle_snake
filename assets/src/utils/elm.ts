@@ -1,10 +1,13 @@
 import {entries, map} from './collections';
 
-export function embedApp<T>(tag: string, App: Elm.App<T>, config?: Elm.MetaData): Elm.Program<T>[] {
-  const elements = entries(document.querySelectorAll(tag))
+export function embedApp<T>(
+  tag: string,
+  App: Elm.App<T>,
+  config?: Elm.MetaData
+): Elm.Program<T>[] {
+  const elements = entries(document.querySelectorAll(tag));
 
-  return map(elements, (element) => {
-
+  return map(elements, element => {
     const attrs = entries(element.attributes);
 
     let options: Elm.MetaData = {};
@@ -17,8 +20,8 @@ export function embedApp<T>(tag: string, App: Elm.App<T>, config?: Elm.MetaData)
       Object.assign(options, config);
     }
 
-    return (Object.keys(options).length < 1) ?
-      App.embed(element) :
-      App.embed(element, options);
+    return Object.keys(options).length < 1
+      ? App.embed(element)
+      : App.embed(element, options);
   });
 }

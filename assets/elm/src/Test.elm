@@ -253,7 +253,7 @@ view model =
                             [ span [] [ text "Failed: " ]
                             , span [] [ text (toString err) ]
                             ]
-                        , canvas
+                        , div
                             [ id err.id, width 500, height 500 ]
                             []
                         ]

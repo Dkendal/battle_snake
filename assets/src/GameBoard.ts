@@ -6,9 +6,9 @@ const gutter = 0.1;
 const unit = 1 - gutter * 2;
 const halfUnit = unit / 2;
 const offset = unit / 2 * -1;
-const coordCache: WeakMap<bs.Snake, Array<bs.Point>> = new WeakMap();
+const coordCache: WeakMap<Snake, Array<Point>> = new WeakMap();
 
-function coords(snake: bs.Snake): bs.Point[] {
+function coords(snake: Snake): Point[] {
   const coords = coordCache.get(snake);
 
   if (coords) {
@@ -22,18 +22,18 @@ function coords(snake: bs.Snake): bs.Point[] {
   return arr;
 }
 
-function clear(ctx: bs.Ctx) {
+function clear(ctx: Ctx) {
   const {width, height} = ctx.canvas;
   ctx.clearRect(0, 0, width, height);
 }
 
-function drawFood(layer: bs.Ctx, [x, y]: bs.Food) {
+function drawFood(layer: Ctx, [x, y]: Food) {
   layer.beginPath();
   layer.arc(x, y, halfUnit, 0, 2 * Math.PI);
   layer.fill();
 }
 
-function drawGrid(layer: bs.Ctx, width: number, height: number) {
+function drawGrid(layer: Ctx, width: number, height: number) {
   for (let i = 0; i < width; i++) {
     for (let j = 0; j < height; j++) {
       layer.fillRect(i + gutter, j + gutter, unit, unit);
@@ -44,13 +44,13 @@ function drawGrid(layer: bs.Ctx, width: number, height: number) {
 /**
  * Save the transform, apply a function, and restore the transform.
  */
-function within(ctx: bs.Ctx, fn: Function): void {
+function within(ctx: Ctx, fn: Function): void {
   ctx.save();
   fn();
   ctx.restore();
 }
 
-function drawSnakeBody(layer: bs.Ctx, snake: bs.Snake, prepare?: Function) {
+function drawSnakeBody(layer: Ctx, snake: Snake, prepare?: Function) {
   const points = P.shrink(P.smooth(snake.coords), 0.12);
 
   within(layer, () => {
@@ -77,19 +77,19 @@ function drawSnakeBody(layer: bs.Ctx, snake: bs.Snake, prepare?: Function) {
   });
 }
 
-function headImgId(snake: bs.Snake): string {
+function headImgId(snake: Snake): string {
   return `snake-head-${snake.headType}`;
 }
 
-function tailImgId(snake: bs.Snake): string {
+function tailImgId(snake: Snake): string {
   return `snake-tail-${snake.tailType}`;
 }
 
 function drawImage(
-  layer: bs.Ctx,
-  image: bs.Image,
-  h0: bs.Point,
-  h1: bs.Point,
+  layer: Ctx,
+  image: Image,
+  h0: Point,
+  h1: Point,
   prepare?: Function
 ) {
   const v = sub(h0, h1);
@@ -120,10 +120,10 @@ function drawImage(
 }
 
 async function drawSnake(
-  layer: bs.Ctx,
-  head: Promise<bs.Image>,
-  tail: Promise<bs.Image>,
-  snake: bs.Snake,
+  layer: Ctx,
+  head: Promise<Image>,
+  tail: Promise<Image>,
+  snake: Snake,
   prepare?: Function
 ): Promise<null> {
   const coordinates = coords(snake);
@@ -146,11 +146,11 @@ async function drawSnake(
 }
 
 export class GameBoard {
-  private readonly ctx: bs.Ctx;
+  private readonly ctx: Ctx;
   private readonly images = new Map();
   private readonly colorPallet: Map<string, string>;
 
-  constructor(ctx: bs.Ctx, colorPallet: Map<string, string>) {
+  constructor(ctx: Ctx, colorPallet: Map<string, string>) {
     this.ctx = ctx;
     this.colorPallet = colorPallet;
   }
@@ -159,7 +159,7 @@ export class GameBoard {
     return this.colorPallet.get(name) || 'pink';
   }
 
-  async getImage(id: string, color: string): Promise<bs.Image> {
+  async getImage(id: string, color: string): Promise<Image> {
     const key = `${id}-${color}`;
 
     const image = this.images.get(key);
@@ -175,7 +175,7 @@ export class GameBoard {
     return img;
   }
 
-  async draw(world: bs.Board) {
+  async draw(world: Board) {
     const ctx = this.ctx;
     const padding = 1;
 
