@@ -17,29 +17,20 @@ document.addEventListener('DOMContentLoaded', () => {
     let canvas: HTMLCanvasElement;
 
     program.ports.render.subscribe(world => {
-      const id = world.gameId;
-
       if (!board) {
+        const id = world.gameId;
         const node = document.getElementById(id);
 
-        if (!(node instanceof HTMLCanvasElement)) {
-          throw new Error(`Expected ${canvas} to be of type HTMLCanvasElement`);
+        if (!node) {
+          throw new Error(`could not find an element with id ${id}`);
         }
 
-        canvas = node;
-
-        const ctx = canvas.getContext('2d') as any as Ctx;
-
-        if (!ctx) {
-          throw new Error('ctx was null');
-        }
-
-        board = new GameBoard(ctx, colorPallet);
+        board = new GameBoard(node, colorPallet);
       }
 
       requestAnimationFrame(() => {
-        canvas.width = canvas.clientWidth;
-        canvas.height = canvas.clientHeight;
+        // canvas.width = canvas.clientWidth;
+        // canvas.height = canvas.clientHeight;
         board.draw(world);
       });
     });

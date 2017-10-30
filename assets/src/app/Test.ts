@@ -29,17 +29,7 @@ test.ports.render.subscribe(world => {
     window.clearInterval(inverval);
     window.clearTimeout(timeout);
 
-    const canvas = document.createElement('canvas');
-    node.appendChild(canvas);
-
-    const ctx = (canvas.getContext('2d') as any) as Ctx;
-
-    if (!ctx) {
-      console.error('ctx was null', new Error());
-      return;
-    }
-
-    const board = new GameBoard(ctx, colorPallet);
+    const board = new GameBoard(node, colorPallet);
 
     board.draw(world);
   }

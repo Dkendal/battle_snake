@@ -5,13 +5,6 @@
   width: 100vw;
 }
 
-.gameboard-canvas {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  left: 0;
-}
-
 .lobby {
   z-index: 1;
   position: relative;
@@ -23,6 +16,13 @@
   flex: 1;
   position: relative;
   margin: 1lh;
+}
+
+.main > canvas {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  left: 0;
 }
 
 .controls {
