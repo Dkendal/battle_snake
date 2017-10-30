@@ -149,14 +149,27 @@ export class GameBoard {
   private readonly ctx: Ctx;
   private readonly images = new Map();
   private readonly colorPallet: Map<string, string>;
+  private readonly canvas: HTMLCanvasElement;
 
-  constructor(ctx: Ctx, colorPallet: Map<string, string>) {
-    this.ctx = ctx;
+  constructor(node: HTMLElement, colorPallet: Map<string, string>) {
+    this.canvas = document.createElement('canvas');
+    this.ctx = (this.canvas.getContext('2d') as any) as Ctx;
     this.colorPallet = colorPallet;
+
+    for (const child of node.childNodes) {
+      node.removeChild(child);
+    }
+
+    node.appendChild(this.canvas);
   }
 
   color(name: string): string {
     return this.colorPallet.get(name) || 'pink';
+  }
+
+  resize() {
+    this.canvas.width = this.canvas.clientWidth;
+    this.canvas.height = this.canvas.clientHeight;
   }
 
   async getImage(id: string, color: string): Promise<Image> {
@@ -176,6 +189,8 @@ export class GameBoard {
   }
 
   async draw(world: Board) {
+    this.resize();
+
     const ctx = this.ctx;
     const padding = 1;
 

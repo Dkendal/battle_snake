@@ -12,8 +12,7 @@ view : Model -> Html Msg
 view model =
     div []
         [ div [ class "gameapp" ]
-            [ div [ class "main" ]
-                [ canvas [ id model.gameid, class "gameboard-canvas" ] [] ]
+            [ div [ id model.gameid, class "main" ] []
             , scoreboardView model
             ]
         ]
