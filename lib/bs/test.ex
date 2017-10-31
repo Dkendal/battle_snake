@@ -104,25 +104,121 @@ defmodule Bs.Test do
 
   import List, only: [duplicate: 2]
 
+  defmacro agent(ast) do
+    body =
+      Macro.postwalk(ast, fn
+        {:*, _, [x, y]} ->
+          quote bind_quoted: [x: x, y: y], do: List.duplicate(x, y)
+
+        [x, y] when is_number(x) and is_number(y) ->
+          quote bind_quoted: [x: x, y: y], do: %V{x: x, y: y}
+
+        x ->
+          x
+      end)
+
+    quote do
+      %Agent{
+        body: List.flatten(unquote(body))
+      }
+    end
+  end
+
+  defmacro v(x, y) do
+    quote bind_quoted: [x: x, y: y], do: %V{x: x, y: y}
+  end
+
+  def transform(model, f, dim \\ {:error, :error})
+
+  def transform(list, f, dim) when is_list(list) do
+    for x <- list, do: transform(x, f, dim)
+  end
+
+  def transform(%Scenario{width: width, height: height} = model, f, dim) do
+    model
+    |> Map.from_struct()
+    |> Enum.reduce(model, fn {k, v}, s ->
+         %{s | k => transform(v, f, {width, height})}
+       end)
+  end
+
+  def transform(%V{x: x, y: y}, f, {w, h}) do
+    apply(f, [{w, h}, {x, y}])
+  end
+
+  def transform(%{__struct__: _} = model, f, dim) do
+    model
+    |> Map.from_struct()
+    |> Enum.reduce(model, fn {k, v}, s ->
+         %{s | k => transform(v, f, dim)}
+       end)
+  end
+
+  def transform(model, _, _) do
+    model
+  end
+
   def scenarios do
-    [
+    s = [
+      # H 0
+      # 0 0
       %Scenario{
         width: 2,
         height: 2,
-        player: %Agent{
-          body: duplicate(%V{x: 0, y: 1}, 3)
-        },
+        player: agent([[0, 0] * 3]),
         agents: [],
         food: []
       },
+      # H T
+      # 0 0
       %Scenario{
         width: 2,
         height: 2,
-        player: %Agent{body: duplicate(%V{x: 0, y: 0}, 3)},
+        player: agent([[0, 0], [1, 0] * 2]),
         agents: [],
+        food: []
+      },
+      # X Y
+      # 0 0
+      %Scenario{
+        width: 2,
+        height: 2,
+        player: agent([[1, 0] * 2]),
+        agents: [agent([[0, 0] * 3])],
         food: []
       }
     ]
+
+    s =
+      transform(s, fn {_w, _h}, {x, y} ->
+        v(y, x)
+      end)
+
+    s =
+      transform(s, fn {_w, h}, {x, y} ->
+        v(x, h - y - 1)
+      end) ++ s
+
+    s = [
+      # X Y
+      %Scenario{
+        width: 2,
+        height: 1,
+        player: agent([[1, 0] * 3]),
+        agents: [agent([[0, 0] * 2])],
+        food: []
+      }
+      | s
+    ]
+
+    s =
+      transform(s, fn {w, _h}, {x, y} ->
+        v(w - x - 1, y)
+      end) ++ s
+
+    s
+    |> List.flatten()
+    |> Enum.uniq()
   end
 
   def start(scenarios, url) do
