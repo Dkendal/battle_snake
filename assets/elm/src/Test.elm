@@ -254,7 +254,12 @@ view model =
                             , span [] [ text (toString err) ]
                             ]
                         , div
-                            [ id err.id, width 500, height 500 ]
+                            [ id err.id
+                            , style
+                                [ ( "width", "300px" )
+                                , ( "height", "500px" )
+                                ]
+                            ]
                             []
                         ]
 
