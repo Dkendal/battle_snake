@@ -198,7 +198,8 @@ export class GameBoard {
     // since the last draw.
     const clientWidth = this.ctx.canvas.width;
     const clientHeight = this.ctx.canvas.height;
-    const {width, height} = world;
+    const width = world.width + padding * 2
+    const height = world.height + padding * 2
 
     const h = clientHeight / height;
     const w = clientWidth / width;
@@ -216,11 +217,10 @@ export class GameBoard {
     ctx.scale(scaler, scaler);
 
     ctx.translate(padding / 2, padding / 2);
-    ctx.scale((width - padding) / width, (height - padding) / height);
 
     // Draw the grid
     ctx.fillStyle = this.color('tile-color');
-    drawGrid(ctx, width, height);
+    drawGrid(ctx, world.width, world.height);
 
     // Draw food
     within(ctx, () => {
