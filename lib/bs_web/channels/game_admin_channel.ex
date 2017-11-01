@@ -7,7 +7,6 @@ defmodule BsWeb.GameAdminChannel do
 
   def join("admin", %{"id" => id}, socket) do
     socket = assign(socket, :id, id)
-    # IO.inspect Game.Registry.whereis_name id
     {:ok, socket}
   end
 
