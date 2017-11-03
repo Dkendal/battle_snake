@@ -105,9 +105,20 @@ defmodule Bs.Test do
   end
 
   def start(scenarios, url) do
-    for scenario <- scenarios do
-      test(scenario, url)
-    end
+    {:ok, sup} = Task.Supervisor.start_link()
+
+    sup
+    |> Task.Supervisor.async_stream_nolink(scenarios, fn scenario ->
+         test(scenario, url)
+       end)
+    |> Stream.map(fn
+         {:ok, result} ->
+           result
+
+         {:exit, err} ->
+           err
+       end)
+    |> Enum.to_list()
   end
 
   def generate_ids(model) when is_map(model) do
