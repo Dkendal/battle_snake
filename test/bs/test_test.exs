@@ -9,6 +9,24 @@ defmodule Bs.TestTest do
 
   require Bs.Test.Agent
 
+  test "#start collects results from all scenarios" do
+    scenarios = [
+      %Scenario{
+        player: %Agent{body: [%Vector{x: 0, y: 0}]},
+        agents: [%Agent{body: [%Vector{x: 0, y: 1}]}],
+        food: [%Vector{x: 1, y: 0}],
+        width: 2,
+        height: 2
+      }
+    ]
+
+    actual =
+      scenarios
+      |> Test.start("http://localhost:4001")
+
+    assert [_] = actual
+  end
+
   test "#test passes when the move does not kill the snake" do
     url = "http://localhost:4000"
 
