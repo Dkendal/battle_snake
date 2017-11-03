@@ -10,17 +10,17 @@ defmodule Bs.Test.Vector do
     field(:y, :integer)
   end
 
-  def to_point(vector) do
-    %Point{
-      x: vector.x,
-      y: vector.y
-    }
-  end
-
   defmacro v(x, y) do
     quote bind_quoted: [x: x, y: y], do: %Bs.Test.Vector{
       x: x,
       y: y
+    }
+  end
+
+  def to_point(vector) do
+    %Point{
+      x: vector.x,
+      y: vector.y
     }
   end
 end
