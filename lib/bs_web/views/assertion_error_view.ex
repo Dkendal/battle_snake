@@ -1,6 +1,7 @@
 defmodule BsWeb.AssertionErrorView do
   alias BsWeb.SnakeView
   alias BsWeb.BoardView
+  alias Bs.Test.AssertionError
   alias Bs.Test.Scenario
 
   use BsWeb, :view
