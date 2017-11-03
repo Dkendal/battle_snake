@@ -1,37 +1,15 @@
-import Ecto.Changeset
-
 defmodule Bs.Test do
   alias Bs.Movement.Worker
-  alias Bs.Test.Agent
   alias Bs.Test.AssertionError
   alias Bs.Test.Scenario
   alias Bs.Test.Vector, as: V
   alias Bs.World
 
-  import List, only: [duplicate: 2]
-  import Bs.Test.Vector, only: :macros
-
+  require Bs.Test.Agent
   require Bs.Test.Vector
 
-  defmacro agent(ast) do
-    body =
-      Macro.postwalk(ast, fn
-        {:*, _, [x, y]} ->
-          quote bind_quoted: [x: x, y: y], do: List.duplicate(x, y)
-
-        [x, y] when is_number(x) and is_number(y) ->
-          quote bind_quoted: [x: x, y: y], do: %V{x: x, y: y}
-
-        x ->
-          x
-      end)
-
-    quote do
-      %Agent{
-        body: List.flatten(unquote(body))
-      }
-    end
-  end
+  import Bs.Test.Vector, only: :macros
+  import Bs.Test.Agent, only: :macros
 
   def transform(model, f, dim \\ {:error, :error})
 

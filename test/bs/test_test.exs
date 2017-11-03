@@ -7,17 +7,7 @@ defmodule Bs.TestTest do
 
   use Bs.Case, async: true
 
-  test "#agent" do
-    require Test
-
-    assert %Agent{
-             body: [
-               %Vector{x: 0, y: 1},
-               %Vector{x: 0, y: 1},
-               %Vector{x: 0, y: 1}
-             ]
-           } = Test.agent([[0, 1] * 3])
-  end
+  require Bs.Test.Agent
 
   test "#test passes when the move does not kill the snake" do
     url = "http://localhost:4000"
