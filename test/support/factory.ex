@@ -10,7 +10,7 @@ defmodule Bs.Factory do
 
   def snake_form_factory do
     %BsWeb.SnakeForm{
-      url: "http://example.com"
+      url: "up.mock"
     }
   end
 

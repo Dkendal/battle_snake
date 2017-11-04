@@ -4,15 +4,12 @@ defmodule Bs.GameTest do
 
   use Bs.Case, async: false
 
-  setup do
+  setup_all do
     mock(BsRepo)
-    mock(HTTPoison)
 
     expect(BsRepo, :get!, fn BsRepo.GameForm, 1 ->
       build(:game_form, id: "1")
     end)
-
-    on_exit(&unload/0)
   end
 
   test "#resume calls resume on the gen server" do

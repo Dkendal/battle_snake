@@ -10,18 +10,6 @@ defmodule Bs.GameStateTest do
 
   def ping(pid), do: &send(pid, {:ping, &1})
 
-  setup do
-    mock(HTTPoison)
-
-    expect(HTTPoison, :post!, fn "/move", _, _, _ ->
-      %HTTPoison.Response{body: ~s({"move":"up"})}
-    end)
-
-    on_exit(&unload/0)
-
-    :ok
-  end
-
   describe "#set_winners(t) when everyone is dead" do
     test "sets the winner to whoever died last" do
       world =
