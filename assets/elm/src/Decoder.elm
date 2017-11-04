@@ -10,6 +10,10 @@ import Dict
     field
 
 
+(@=) =
+    at
+
+
 defaultHeadUrl : String
 defaultHeadUrl =
     ""
@@ -59,7 +63,7 @@ death =
 snake : Decoder Snake
 snake =
     map8 Snake
-        (maybe <| "causeOfDeath" := death)
+        (maybe <| "death" := death)
         ("color" := string)
         ("coords" := list point)
         ("health" := int)
@@ -72,7 +76,7 @@ snake =
 snake2 : Decoder Snake
 snake2 =
     map8 Snake
-        (maybe <| "causeOfDeath" := death)
+        (maybe <| "death" := death)
         ("color" := string)
         (at [ "body", "data" ] (list point2))
         ("health" := int)
@@ -162,10 +166,33 @@ scenario =
         ("height" := int)
 
 
+testCaseError : Decoder TestCaseError
+testCaseError =
+    ("object" := string)
+        |> andThen
+            (\object ->
+                case object of
+                    "connection_error" ->
+                        map Connection connectionError
+
+                    "assertion_error" ->
+                        map Assertion assertionError
+
+                    x ->
+                        fail (x ++ " is not a known test case error")
+            )
+
+
+connectionError : Decoder ConnectionError
+connectionError =
+    map ConnectionError ("reason" := string)
+
+
 assertionError : Decoder AssertionError
 assertionError =
-    map4 AssertionError
+    map5 AssertionError
         ("id" := string)
+        ("reason" := string)
         ("scenario" := scenario)
         ("player" := snake2)
         ("world" := value)

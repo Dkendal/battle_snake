@@ -58,7 +58,7 @@ type alias Death =
 
 
 type alias Snake =
-    { causeOfDeath : Maybe Death
+    { death : Maybe Death
     , color : String
     , coords : List Point
     , health : Int
@@ -109,8 +109,19 @@ type alias Scenario =
     }
 
 
+type TestCaseError
+    = Assertion AssertionError
+    | Connection ConnectionError
+
+
+type alias ConnectionError =
+    { reason : String
+    }
+
+
 type alias AssertionError =
     { id : String
+    , reason : String
     , scenario : Scenario
     , player : Snake
     , world : Value

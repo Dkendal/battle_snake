@@ -32,14 +32,14 @@ defmodule Bs.Death do
 
   defp do_combine_dead([], turn, acc) do
     to_death = fn snake ->
-      causes = snake.cause_of_death
+      causes = snake.death
 
       death = %Death{
         turn: turn,
         causes: causes
       }
 
-      put_in(snake.cause_of_death, death)
+      put_in(snake.death, death)
     end
 
     acc
@@ -53,9 +53,9 @@ defmodule Bs.Death do
   end
 
   defp update_dead_snake(%Snake{} = snake, acc) do
-    cause = snake.cause_of_death
+    cause = snake.death
     merge_cause = &(cause ++ &1)
-    update_snake = &update_in(&1.cause_of_death, merge_cause)
+    update_snake = &update_in(&1.death, merge_cause)
     Map.update(acc, snake.id, snake, update_snake)
   end
 
@@ -97,7 +97,7 @@ defmodule Bs.Death do
   def do_starvation([%{health_points: hp} = snake | rest], {live, dead})
       when hp <= 0 do
     reason = [%StarvationCause{}]
-    snake = put_in(snake.cause_of_death, reason)
+    snake = put_in(snake.death, reason)
     do_starvation(rest, {live, [snake | dead]})
   end
 
@@ -122,7 +122,7 @@ defmodule Bs.Death do
       })
       when x not in 0..(w - 1) or y not in 0..(h - 1) do
     reason = [%WallCollisionCause{}]
-    snake = put_in(snake.cause_of_death, reason)
+    snake = put_in(snake.death, reason)
     do_wall_collision(rest, {w, h}, {live, [snake | dead]})
   end
 
@@ -151,7 +151,7 @@ defmodule Bs.Death do
   end
 
   defp unzip_result({{:ok, reason}, snake}) do
-    snake = put_in(snake.cause_of_death, reason)
+    snake = put_in(snake.death, reason)
     {:dead, snake}
   end
 

@@ -21,7 +21,7 @@ import GameBoard
 
 type alias Model =
     { agentUrl : String
-    , results : List (Result AssertionError Pass)
+    , results : List (Result TestCaseError Pass)
     , scenarios : List Scenario
     , socket : Socket Msg
     }
@@ -125,7 +125,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case (log "update" msg) of
         ReceiveTestCase (Err raw) ->
-            case Decode.decodeValue assertionError raw of
+            case Decode.decodeValue testCaseError raw of
                 Err err ->
                     crash err
 
@@ -138,7 +138,12 @@ update msg model =
                             { model | results = results }
 
                         cmd =
-                            GameBoard.render assertionError.world
+                            case assertionError of
+                                Assertion { world } ->
+                                    GameBoard.render world
+
+                                _ ->
+                                    Cmd.none
                     in
                         model_ ! [ cmd ]
 
@@ -247,11 +252,11 @@ view model =
     let
         summaryView result =
             case result of
-                Err err ->
+                Err (Assertion err) ->
                     div []
                         [ p [ class "failed" ]
                             [ span [] [ text "Failed: " ]
-                            , span [] [ text (toString err) ]
+                            , span [] [ text err.reason ]
                             ]
                         , div
                             [ id err.id
@@ -261,6 +266,14 @@ view model =
                                 ]
                             ]
                             []
+                        ]
+
+                Err (Connection { reason }) ->
+                    div []
+                        [ p [ class "failed" ]
+                            [ span [] [ text "Failed: " ]
+                            , span [] [ text reason ]
+                            ]
                         ]
 
                 Ok _ ->

@@ -1,0 +1,17 @@
+msgid "econnrefused"
+msgstr "Connection to the server could not be established - are you sure it's running?"
+
+msgid "body collision"
+msgstr "Your snake collided with another snake's body when there was a move that would have allowed it to survive."
+
+msgid "head collision"
+msgstr "Your snake collided with another snake's head when there was a move that would have allowed it to survive."
+
+msgid "self collision"
+msgstr "Your snake collided with it's own body when there was a move that would have allowed it to have survived."
+
+msgid "starvation"
+msgstr "Your snake starved to death."
+
+msgid "wall collision"
+msgstr "Your snake collided with one of the walls when there was move that would have allowed it to have survived."

@@ -42,7 +42,7 @@ defmodule DeathTest do
     test "sets the cause of death", %{state: state} do
       dead = state.world.dead_snakes
 
-      causes = for x <- dead, do: {x.id, x.cause_of_death}
+      causes = for x <- dead, do: {x.id, x.death}
 
       assert [
                {1, %Death{turn: 0, causes: [%StarvationCause{}]}},
@@ -91,7 +91,7 @@ defmodule DeathTest do
     end
 
     test "sets the cause of death", %{result: {_live, dead}} do
-      assert [%StarvationCause{}] == hd(dead).cause_of_death
+      assert [%StarvationCause{}] == hd(dead).death
     end
   end
 
@@ -117,7 +117,7 @@ defmodule DeathTest do
     end
 
     test "sets the cause of death", %{result: {_live, dead}} do
-      assert [%WallCollisionCause{}] == hd(dead).cause_of_death
+      assert [%WallCollisionCause{}] == hd(dead).death
     end
   end
 
@@ -146,7 +146,7 @@ defmodule DeathTest do
 
     test "sets the cause of death", %{result: {_live, dead}} do
       assert [%HeadCollisionCause{with: 1}, %HeadCollisionCause{with: 3}] ==
-               hd(dead).cause_of_death
+               hd(dead).death
     end
   end
 
@@ -164,9 +164,9 @@ defmodule DeathTest do
       cause_c = {:kill_c, []}
 
       l = [
-        [%{s1 | cause_of_death: [cause_a]}],
-        [%{s1 | cause_of_death: [cause_b]}, s2],
-        [%{s1 | cause_of_death: [cause_c]}, s3]
+        [%{s1 | death: [cause_a]}],
+        [%{s1 | death: [cause_b]}, s2],
+        [%{s1 | death: [cause_c]}, s3]
       ]
 
       result = Death.combine_dead(l, 0)
@@ -182,7 +182,7 @@ defmodule DeathTest do
     test "merges the causes of death", %{result: result} do
       [s1 | _] = result
       causes = [kill_c: [], kill_b: [], kill_a: []]
-      assert %Death{turn: 0, causes: causes} == s1.cause_of_death
+      assert %Death{turn: 0, causes: causes} == s1.death
     end
   end
 

@@ -11,7 +11,7 @@ defmodule Bs.Snake do
   @tails Bs.Const.tails()
 
   embedded_schema do
-    field(:cause_of_death, :string)
+    field(:death, :string)
     field(:head_url, :string)
     field(:secondary_color, :string)
     field(:head_type, :string, default: "regular")
@@ -151,14 +151,14 @@ defmodule Bs.Snake do
   end
 
   def died_on(snake) do
-    case snake.cause_of_death do
+    case snake.death do
       nil -> {:error, :alive}
       %{turn: turn} -> {:ok, turn}
     end
   end
 
   def dead?(snake) do
-    case snake.cause_of_death do
+    case snake.death do
       nil -> false
       _ -> true
     end

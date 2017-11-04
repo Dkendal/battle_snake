@@ -55,7 +55,7 @@ interface Snake {
   tailType: string;
   coords: Point[];
   color: string;
-  causeOfDeath: string;
+  death: string;
 }
 
 interface Board {

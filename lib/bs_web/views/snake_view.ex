@@ -18,10 +18,10 @@ defmodule BsWeb.SnakeView do
     }
 
     data =
-      if snake.cause_of_death do
+      if snake.death do
         Map.merge(data, %{
-          causeOfDeath: render_one(
-            snake.cause_of_death,
+          death: render_one(
+            snake.death,
             DeathView,
             "show.json"
           )

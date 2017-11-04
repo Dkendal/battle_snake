@@ -2,6 +2,7 @@ defmodule Bs.TestTest do
   alias Bs.Move
   alias Bs.Test
   alias Bs.Test.AssertionError
+  alias Bs.Test.ConnectionError
   alias Bs.Test.Scenario
   alias Bs.Test.Vector
 
@@ -9,6 +10,8 @@ defmodule Bs.TestTest do
 
   import Bs.Test.Agent, only: :macros
   require Bs.Test.Agent
+
+  @econnrefused %ConnectionError{reason: :econnrefused}
 
   @scenario %Scenario{
     player: agent([[0, 0]]),
@@ -39,12 +42,12 @@ defmodule Bs.TestTest do
     assert [:ok, %AssertionError{}] = actual
   end
 
-  test "#start returns a single error if there is a connection problem" do
+  test "#start an error if there is a connection problem" do
     actual =
       @scenarios
       |> Test.start("econnrefused.mock")
 
-    assert [%AssertionError{reason: :econnrefused}] = actual
+    assert [@econnrefused, @econnrefused] = actual
   end
 
   test "#test passes when the move does not kill the snake" do

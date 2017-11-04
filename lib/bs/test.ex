@@ -1,6 +1,23 @@
+defmodule Bs.Test.AssertionError do
+  defstruct [
+    :id,
+    :scenario,
+    :world,
+    :player,
+    :reason
+  ]
+end
+
+defmodule Bs.Test.ConnectionError do
+  defstruct [
+    :reason
+  ]
+end
+
 defmodule Bs.Test do
   alias Bs.Movement.Worker
   alias Bs.Test.AssertionError
+  alias Bs.Test.ConnectionError
   alias Bs.Test.Scenario
   alias Bs.Test.Vector, as: V
   alias Bs.World
@@ -116,9 +133,8 @@ defmodule Bs.Test do
            result
 
          {:exit, {%{reason: reason}, _stack}} ->
-           %AssertionError{reason: reason}
+           %ConnectionError{reason: reason}
        end)
-    |> Enum.uniq()
     |> Enum.to_list()
   end
 
@@ -164,7 +180,7 @@ defmodule Bs.Test do
 
     player = World.find_snake(world, player.id)
 
-    if is_nil(player.cause_of_death) do
+    if is_nil(player.death) do
       :ok
     else
       %AssertionError{

@@ -8,14 +8,14 @@ defmodule Bs.Rules do
   end
 
   defp do_last_standing([], dead) do
-    mapper = & &1.cause_of_death.turn
+    mapper = & &1.death.turn
 
     reduce_while = fn
       snake, [] ->
         {:cont, [snake]}
 
-      %{cause_of_death: %{turn: t}} = s,
-      [%{cause_of_death: %{turn: t}} | _] = acc ->
+      %{death: %{turn: t}} = s,
+      [%{death: %{turn: t}} | _] = acc ->
         {:cont, [s | acc]}
 
       _, acc ->

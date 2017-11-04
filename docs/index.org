@@ -206,7 +206,7 @@ All responses are expected to have a =200 OK= status code.
         name: "other-snake",
         taunt: "gotta go fast",
         url: "localhost:4001",
-        cause_of_death: %Bs.Death{
+        death: %Bs.Death{
           turn: 0,
           causes: [
             %Bs.Death.StarvationCause{}

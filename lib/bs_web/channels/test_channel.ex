@@ -21,7 +21,7 @@ defmodule BsWeb.TestChannel do
           view =
             Phoenix.View.render_one(
               assertion,
-              BsWeb.AssertionErrorView,
+              BsWeb.TestCaseErrorView,
               "show.json"
             )
 
