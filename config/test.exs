@@ -7,4 +7,4 @@ config(:bs, BsWeb.Endpoint, http: [port: 4001], server: false)
 config :bs, :http, Bs.HTTPMock
 
 # Print only warnings and errors during test
-config(:logger, level: :warn)
+config(:logger, level: :debug)

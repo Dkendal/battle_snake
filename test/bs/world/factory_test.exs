@@ -34,7 +34,7 @@ defmodule Bs.World.FactoryTest do
 
   test "when a request fails" do
     game_form =
-      build(:game_form, id: 1, snakes: [build(:snake_form, url: "fail")])
+      build(:game_form, id: 1, snakes: [build(:snake_form, url: "econnrefused.mock")])
 
     world = Factory.build(game_form)
 

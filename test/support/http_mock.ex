@@ -4,8 +4,10 @@ defmodule Bs.HTTPMock do
   import Poison
   require Logger
 
+  @econnrefused %Error{id: nil, reason: :econnrefused}
+
   def post!(url, _, _, _) do
-    Logger.warn("[http_mock] called: #{url}")
+    Logger.debug("[http_mock] called: #{url}")
 
     try do
       case url do
@@ -26,13 +28,13 @@ defmodule Bs.HTTPMock do
 
         _ ->
           cond do
-            url =~ ~r{fail} ->
-              Logger.debug("[http_mock] force failure")
+            url =~ ~r{econnrefused.mock} ->
+              raise @econnrefused
+
+            url =~ ~r{fail.mock} ->
               raise %Error{}
 
             url =~ ~r{/start} ->
-              Logger.debug("[http_mock] /start 200")
-
               %Response{
                 status_code: 200,
                 body: encode!(%{
@@ -44,12 +46,12 @@ defmodule Bs.HTTPMock do
       end
     rescue
       err ->
-        Logger.warn("[http_mock] raised: #{inspect(err)}")
+        Logger.debug("[http_mock] raised: #{inspect(err)}")
         raise err
     end
     |> case do
          response ->
-           Logger.warn("[http_mock] returned: #{inspect(response)}")
+           Logger.debug("[http_mock] returned: #{inspect(response)}")
            response
        end
   end

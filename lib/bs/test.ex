@@ -115,9 +115,10 @@ defmodule Bs.Test do
          {:ok, result} ->
            result
 
-         {:exit, err} ->
-           err
+         {:exit, {%{reason: reason}, _stack}} ->
+           %AssertionError{reason: reason}
        end)
+    |> Enum.uniq()
     |> Enum.to_list()
   end
 
