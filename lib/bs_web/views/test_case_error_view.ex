@@ -6,7 +6,6 @@ defmodule BsWeb.TestCaseErrorView do
   alias Bs.Death.WallCollisionCause
   alias Bs.Test.AssertionError
   alias Bs.Test.ConnectionError
-  alias Bs.Test.Scenario
   alias BsWeb.BoardView
   alias BsWeb.SnakeView
 

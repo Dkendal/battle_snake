@@ -14,18 +14,13 @@ defmodule BsWeb.BoardView do
       taunt: snake.taunt
     }
 
-    data =
-      if snake.death do
-        Map.merge(data, %{
-          death: render_one(
-            snake.death,
-            BsWeb.Api.DeathView,
-            "show.json"
-          )
-        })
-      else
-        data
-      end
+    if snake.death do
+      Map.merge(data, %{
+        death: render_one(snake.death, BsWeb.Api.DeathView, "show.json")
+      })
+    else
+      data
+    end
   end
 
   def render("show.json", %{board: board}) do

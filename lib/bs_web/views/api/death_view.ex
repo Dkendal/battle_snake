@@ -10,8 +10,6 @@ defmodule BsWeb.Api.DeathView do
   end
 
   def render("cause.json", %{death: death}) do
-    data = %{object: :cause, type: nil, data: nil}
-
     case death do
       %D.BodyCollisionCause{} ->
         "body collision"
