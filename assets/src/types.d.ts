@@ -3,7 +3,7 @@ declare module 'elm/Test' {
     render: Elm.Port<(world: Board) => void>;
   }
 
-  export const Test: Elm.App<Ports>;
+  export const Test: Elm.App<Ports, {websocket: string}>;
 }
 
 declare module 'elm/Game' {
@@ -11,7 +11,7 @@ declare module 'elm/Game' {
     render: Elm.Port<(world: Board) => void>;
   }
 
-  export const Game: Elm.App<Ports>;
+  export const Game: Elm.App<Ports, {websocket: string}>;
 }
 
 declare namespace Elm {
@@ -23,13 +23,9 @@ declare namespace Elm {
     ports: T;
   }
 
-  export interface App<T> {
-    fullscreen(): Program<T>;
-    embed(node: Element, options?: MetaData): Program<T>;
-  }
-
-  export interface MetaData {
-    [key: string]: any;
+  export interface App<T, Options> {
+    fullscreen(options?: Options): Program<T>;
+    embed(node: Element, options?: Options): Program<T>;
   }
 }
 

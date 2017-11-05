@@ -4,7 +4,9 @@ import css from '../css-variables';
 
 const colorPallet = new Map<string, string>(Object.entries(css));
 
-const test = Test.fullscreen();
+const test = Test.fullscreen({
+  websocket: `ws://${window.location.host}/socket/websocket`,
+});
 
 test.ports.render.subscribe(world => {
   const id = world.gameId;

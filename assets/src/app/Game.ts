@@ -14,7 +14,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   embedApp('Game', Game, gameAppConfig).map(program => {
     let board: GameBoard;
-    let canvas: HTMLCanvasElement;
 
     program.ports.render.subscribe(world => {
       if (!board) {

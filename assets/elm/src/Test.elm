@@ -62,9 +62,13 @@ type Route
     = Test (Maybe String)
 
 
-main : Program Never Model Msg
+type alias Flags =
+    { websocket : String }
+
+
+main : Program Flags Model Msg
 main =
-    Navigation.program router
+    Navigation.programWithFlags router
         { init = init
         , view = view
         , update = update
@@ -84,14 +88,14 @@ route =
         ]
 
 
-init : Location -> ( Model, Cmd Msg )
-init location =
+init : Flags -> Location -> ( Model, Cmd Msg )
+init flags location =
     let
         model_ =
             { model | socket = socket }
 
         socket =
-            Socket.init "ws://localhost:3000/socket/websocket"
+            Socket.init flags.websocket
                 |> Socket.withDebug
                 |> Socket.on "test:failed" "test" (Err >> ReceiveTestCase)
                 |> Socket.on "test:pass" "test" (Ok >> ReceiveTestCase)
