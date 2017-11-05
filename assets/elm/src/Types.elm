@@ -112,10 +112,16 @@ type alias Scenario =
 type TestCaseError
     = Assertion AssertionError
     | Connection ConnectionError
+    | Changeset ChangesetError
 
 
 type alias ConnectionError =
     { reason : String
+    }
+
+
+type alias ChangesetError =
+    { errors : List String
     }
 
 

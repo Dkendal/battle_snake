@@ -276,6 +276,18 @@ view model =
                             ]
                         ]
 
+                Err (Changeset { errors }) ->
+                    div [] <|
+                        [ p [ class "failed" ]
+                            [ span [] [ text "Failed: " ]
+                            ]
+                        ]
+                            ++ List.map
+                                (\error ->
+                                    div [] [ text error ]
+                                )
+                                errors
+
                 Ok _ ->
                     empty
 

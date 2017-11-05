@@ -6,9 +6,9 @@ defmodule BsWeb.TestCaseErrorView do
   alias Bs.Death.WallCollisionCause
   alias Bs.Test.AssertionError
   alias Bs.Test.ConnectionError
+  alias Bs.Test.ChangesetError
   alias BsWeb.BoardView
   alias BsWeb.SnakeView
-
   use BsWeb, :view
 
   def render("show.json", %{test_case_error: %ConnectionError{} = err}) do
@@ -20,6 +20,20 @@ defmodule BsWeb.TestCaseErrorView do
     %{
       object: "connection_error",
       reason: reason
+    }
+  end
+
+  def render("show.json", %{
+        test_case_error: %ChangesetError{changeset: changeset}
+      }) do
+    errors =
+      Enum.map(changeset.errors, fn {:move, {"is invalid", _}} ->
+        dgettext("test", "move is invalid", move: changeset.changes.move)
+      end)
+
+    %{
+      object: "changeset_error",
+      errors: errors
     }
   end
 

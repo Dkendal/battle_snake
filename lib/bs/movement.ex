@@ -1,5 +1,6 @@
 alias Bs.GameState
 alias Bs.Move
+alias Bs.ChangesetError
 alias Bs.Movement.Worker
 alias Bs.Notification
 alias Bs.Snake
@@ -102,9 +103,7 @@ defmodule Bs.Movement.Worker do
     if changeset.valid? do
       Ecto.Changeset.apply_changes(changeset)
     else
-      changeset.errors
-      |> inspect
-      |> raise
+      raise(ChangesetError, changeset)
     end
   end
 

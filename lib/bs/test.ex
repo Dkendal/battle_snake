@@ -63,12 +63,8 @@ defmodule Bs.Test do
     ])
   )
 
-  defmodule(
-    ConnectionError,
-    do: defstruct([
-      :reason
-    ])
-  )
+  defmodule(ConnectionError, do: defstruct([:reason]))
+  defmodule(ChangesetError, do: defstruct([:changeset]))
 
   @doc ~S"Run a scenario, returns ok if it passes, or a test case error."
   def test(scenario, url, move_fun \\ &Worker.run/3) do
@@ -142,8 +138,11 @@ defmodule Bs.Test do
          {:ok, result} ->
            result
 
-         {:exit, {%{reason: reason}, _stack}} ->
+         {:exit, {%HTTPoison.Error{reason: reason}, _stack}} ->
            %ConnectionError{reason: reason}
+
+         {:exit, {%Bs.ChangesetError{} = err, _stack}} ->
+           %ChangesetError{changeset: err.changeset}
        end)
     |> Enum.to_list()
   end

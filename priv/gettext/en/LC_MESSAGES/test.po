@@ -15,3 +15,6 @@ msgstr "Your snake starved to death."
 
 msgid "wall collision"
 msgstr "Your snake collided with one of the walls when there was move that would have allowed it to have survived."
+
+msgid "move is invalid"
+msgstr "The move you provided me, \"%{move}\", was invalid. Your move should be one of \"up\", \"down\", \"left\", or \"right\", all in lower case."

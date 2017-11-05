@@ -178,6 +178,9 @@ testCaseError =
                     "assertion_error" ->
                         map Assertion assertionError
 
+                    "changeset_error" ->
+                        map Changeset changesetError
+
                     x ->
                         fail (x ++ " is not a known test case error")
             )
@@ -186,6 +189,11 @@ testCaseError =
 connectionError : Decoder ConnectionError
 connectionError =
     map ConnectionError ("reason" := string)
+
+
+changesetError : Decoder ChangesetError
+changesetError =
+    map ChangesetError ("errors" := list string)
 
 
 assertionError : Decoder AssertionError
