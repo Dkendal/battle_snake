@@ -5,7 +5,7 @@ defmodule BsWeb.GameAdminChannel do
 
   use BsWeb, :channel
 
-  def join("admin", %{"id" => id}, socket) do
+  def join("admin:" <> id, _params, socket) do
     socket = assign(socket, :id, id)
     {:ok, socket}
   end

@@ -85,10 +85,10 @@ update msg model =
                 |> pushCmd model
 
         JoinSpectatorChannel ->
-            joinChannel "spectator" model
+            joinChannel ("spectator:" ++ model.gameid) model
 
         JoinAdminChannel ->
-            joinChannel "admin" model
+            joinChannel ("admin:" ++ model.gameid) model
 
         JoinChannelSuccess _ ->
             model ! []
@@ -210,21 +210,24 @@ joinChannel channel model =
 socket : String -> String -> PhxSock
 socket url gameid =
     let
+        topic =
+            "spectator:" ++ gameid
+
         model =
             { gameid = gameid }
     in
         Socket.init url
-            |> Socket.on "tick" "spectator" RecieveTick
-            |> Socket.on "restart:init" "spectator" ReceiveRestartInit
-            |> Socket.on "restart:finished" "spectator" ReceiveRestartFinished
-            |> Socket.on "restart:request:error" "spectator" ReceiveRestartRequestError
-            |> Socket.on "restart:request:ok" "spectator" ReceiveRestartRequestOk
-            |> Socket.on "move:response" "spectator" ReceiveMoveResponse
+            |> Socket.on "tick" topic RecieveTick
+            |> Socket.on "restart:init" topic ReceiveRestartInit
+            |> Socket.on "restart:finished" topic ReceiveRestartFinished
+            |> Socket.on "restart:request:error" topic ReceiveRestartRequestError
+            |> Socket.on "restart:request:ok" topic ReceiveRestartRequestOk
+            |> Socket.on "move:response" topic ReceiveMoveResponse
 
 
 adminCmd : String -> Model -> ( Model, Cmd Msg )
 adminCmd cmd model =
-    Push.init cmd "admin"
+    Push.init cmd ("admin:" ++ model.gameid)
         |> flip Socket.push model.socket
         |> pushCmd model
 

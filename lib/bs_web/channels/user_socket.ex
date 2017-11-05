@@ -3,8 +3,8 @@ defmodule BsWeb.UserSocket do
 
   ## Channels
   # channel "room:*", Bs.RoomChannel
-  channel("spectator", BsWeb.SpectatorChannel)
-  channel("admin", BsWeb.GameAdminChannel)
+  channel("spectator:*", BsWeb.SpectatorChannel)
+  channel("admin:*", BsWeb.GameAdminChannel)
   channel("test", BsWeb.TestChannel)
 
   ## Transports

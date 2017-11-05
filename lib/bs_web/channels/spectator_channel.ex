@@ -6,7 +6,7 @@ defmodule BsWeb.SpectatorChannel do
 
   use BsWeb, :channel
 
-  def join("spectator", %{"id" => id}, socket) do
+  def join("spectator:" <> id, _params, socket) do
     :ok = Game.subscribe(id)
 
     send(self(), :after_join)
