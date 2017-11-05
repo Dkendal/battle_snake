@@ -31,6 +31,7 @@ defmodule BsWeb.WorldViewTest do
             body: %{data: [%{object: :point, x: 0, y: 0}], object: :list},
             health: 100,
             id: 1,
+            length: 1,
             name: "",
             object: :snake,
             taunt: ""
@@ -44,6 +45,7 @@ defmodule BsWeb.WorldViewTest do
         body: %{data: [%{object: :point, x: 0, y: 0}], object: :list},
         health: 100,
         id: 1,
+        length: 1,
         name: "",
         object: :snake,
         taunt: ""

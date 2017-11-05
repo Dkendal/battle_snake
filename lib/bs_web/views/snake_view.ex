@@ -12,6 +12,7 @@ defmodule BsWeb.SnakeView do
         object: :list,
         data: render_many(snake.coords, PointView, "show.json", v: 2)
       },
+      length: Enum.count(snake.coords),
       health: snake.health_points,
       name: snake.name,
       taunt: snake.taunt

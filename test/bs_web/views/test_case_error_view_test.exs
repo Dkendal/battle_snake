@@ -35,6 +35,7 @@ defmodule BsWeb.TestCaseErrorViewTest do
         headUrl: nil,
         health: 100,
         id: nil,
+        length: 1,
         name: "",
         object: :snake,
         tailType: "regular",
