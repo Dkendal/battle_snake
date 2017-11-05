@@ -172,28 +172,28 @@ testCaseError =
         |> andThen
             (\object ->
                 case object of
-                    "connection_error" ->
-                        map Connection connectionError
-
                     "assertion_error" ->
                         map Assertion assertionError
 
-                    "changeset_error" ->
-                        map Changeset changesetError
+                    "error_with_reason" ->
+                        map Reason errorWithReason
+
+                    "error_with_multiple_reasons" ->
+                        map MultipleReasons errorWithMultipleReasons
 
                     x ->
                         fail (x ++ " is not a known test case error")
             )
 
 
-connectionError : Decoder ConnectionError
-connectionError =
-    map ConnectionError ("reason" := string)
+errorWithReason : Decoder ErrorWithReason
+errorWithReason =
+    map ErrorWithReason ("reason" := string)
 
 
-changesetError : Decoder ChangesetError
-changesetError =
-    map ChangesetError ("errors" := list string)
+errorWithMultipleReasons : Decoder ErrorWithMultipleReasons
+errorWithMultipleReasons =
+    map ErrorWithMultipleReasons ("errors" := list string)
 
 
 assertionError : Decoder AssertionError

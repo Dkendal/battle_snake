@@ -1,17 +1,21 @@
 defmodule BsWeb.TestCaseErrorViewTest do
   alias Bs.Test.AssertionError
-  alias Bs.Test.ConnectionError
-  alias Bs.Test.ChangesetError
   alias BsWeb.TestCaseErrorView
   use Bs.Case, async: true
 
   @fail %AssertionError{world: build(:world, id: 1), player: build(:dead_snake)}
 
-  @changeset_error %ChangesetError{
+  @changeset_error %Bs.ChangesetError{
     changeset: Bs.Move.changeset(%Bs.Move{}, %{move: "UP"})
   }
 
-  @econnrefused %ConnectionError{reason: :econnrefused}
+  @econnrefused %HTTPoison.Error{reason: :econnrefused}
+
+  @syntax %Poison.SyntaxError{
+    message: "Unexpected token at position 0: <",
+    pos: nil,
+    token: "<"
+  }
 
   test "#render a test failure" do
     expected = %{
@@ -51,7 +55,7 @@ defmodule BsWeb.TestCaseErrorViewTest do
 
   test "#render a connection failure" do
     expected = %{
-      object: "connection_error",
+      object: "error_with_reason",
       reason: "Connection to the server could not be established - are you sure it's running?"
     }
 
@@ -63,7 +67,7 @@ defmodule BsWeb.TestCaseErrorViewTest do
 
   test "#render a changeset error" do
     expected = %{
-      object: "changeset_error",
+      object: "error_with_multiple_reasons",
       errors: [
         "The move you provided me, \"UP\", was invalid. Your move should be one of \"up\", \"down\", \"left\", or \"right\", all in lower case."
       ]
@@ -72,6 +76,21 @@ defmodule BsWeb.TestCaseErrorViewTest do
     actual =
       TestCaseErrorView.render("show.json", %{
         test_case_error: @changeset_error
+      })
+
+    assert actual == expected
+  end
+
+  test "#render a syntax error during parsing" do
+    expected =
+      %{
+        object: "error_with_reason",
+        reason: "You didn't send anything in the body of your response, I was expecting a JSON body."
+      }
+
+    actual =
+      TestCaseErrorView.render("show.json", %{
+        test_case_error: @syntax
       })
 
     assert actual == expected

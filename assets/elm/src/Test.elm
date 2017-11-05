@@ -268,7 +268,7 @@ view model =
                             []
                         ]
 
-                Err (Connection { reason }) ->
+                Err (Reason { reason }) ->
                     div []
                         [ p [ class "failed" ]
                             [ span [] [ text "Failed: " ]
@@ -276,7 +276,7 @@ view model =
                             ]
                         ]
 
-                Err (Changeset { errors }) ->
+                Err (MultipleReasons { errors }) ->
                     div [] <|
                         [ p [ class "failed" ]
                             [ span [] [ text "Failed: " ]

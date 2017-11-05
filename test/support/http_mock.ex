@@ -34,6 +34,12 @@ defmodule Bs.HTTPMock do
             url =~ ~r{fail.mock} ->
               raise %Error{}
 
+            url =~ ~r{html.mock} ->
+              %Response{
+                status_code: 200,
+                body: "<html><body>text</body></html>"
+              }
+
             url =~ ~r{/start} ->
               %Response{
                 status_code: 200,

@@ -2,8 +2,6 @@ defmodule Bs.TestTest do
   alias Bs.Move
   alias Bs.Test
   alias Bs.Test.AssertionError
-  alias Bs.Test.ConnectionError
-  alias Bs.Test.ChangesetError
   alias Bs.Test.Scenario
   alias Bs.Test.Vector
 
@@ -11,12 +9,6 @@ defmodule Bs.TestTest do
 
   import Bs.Test.Agent, only: :macros
   require Bs.Test.Agent
-
-  @econnrefused %ConnectionError{reason: :econnrefused}
-
-  @changeset_error %ChangesetError{
-    changeset: Bs.Move.changeset(%Bs.Move{}, %{move: "UP"})
-  }
 
   @scenario %Scenario{
     player: agent([[0, 0]]),
@@ -52,15 +44,21 @@ defmodule Bs.TestTest do
       @scenarios
       |> Test.start("econnrefused.mock")
 
-    assert @econnrefused in actual
+    expected = %HTTPoison.Error{reason: :econnrefused}
+
+    assert expected == List.first(actual)
   end
 
-  test "#start an error if the move is invalid" do
+  test "#start returns an error if one occurs" do
     actual =
       @scenarios
       |> Test.start("invalid.mock")
 
-    assert @changeset_error == List.first(actual)
+    expected = %Bs.ChangesetError{
+      changeset: Bs.Move.changeset(%Bs.Move{}, %{move: "UP"})
+    }
+
+    assert expected == List.first(actual)
   end
 
   test "#test passes when the move does not kill the snake" do

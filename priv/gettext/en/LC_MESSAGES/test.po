@@ -18,3 +18,18 @@ msgstr "Your snake collided with one of the walls when there was move that would
 
 msgid "move is invalid"
 msgstr "The move you provided me, \"%{move}\", was invalid. Your move should be one of \"up\", \"down\", \"left\", or \"right\", all in lower case."
+
+msgid "unexpected end of input"
+msgstr "Unexpected end of input at position: %{pos}, you probably have an open quote, or an unterminated brace or bracket somewhere."
+
+msgid "unexpected token"
+msgstr "Unexpected token \"%{token}\" position: %{pos}, the body that you're sending doesn't look like valid JSON to me."
+
+msgid "no input"
+msgstr "You didn't send anything in the body of your response, I was expecting a JSON body."
+
+msgid "badarg"
+msgstr "Something went wrong attempting to contact your server, check to see if your URL is valid. I use the URL you provide me by appending a path to the end of it, so make it doesn't have any query params."
+
+msgid "expected object"
+msgstr "I was expecting a JSON object in your response's body, but you sent: %{token}."
