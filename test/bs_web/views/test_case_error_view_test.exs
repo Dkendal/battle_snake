@@ -23,6 +23,7 @@ defmodule BsWeb.TestCaseErrorViewTest do
       object: "assertion_error",
       scenario: nil,
       world: %{
+        id: 1,
         deadSnakes: [],
         food: [],
         gameId: 0,

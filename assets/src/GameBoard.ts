@@ -41,19 +41,48 @@ function drawGrid(layer: Ctx, width: number, height: number) {
   }
 }
 
+function setCoordinateSystem(layer: Ctx, world: Board): void {
+  const padding = 1;
+
+  // Adjust coordinate system if the window has been resized
+  // since the last draw.
+  const clientWidth = layer.canvas.width;
+  const clientHeight = layer.canvas.height;
+  const width = world.width + padding * 2;
+  const height = world.height + padding * 2;
+
+  const h = clientHeight / height;
+  const w = clientWidth / width;
+  const sign = clientWidth / clientHeight > width / height;
+  const scaler = sign ? h : w;
+
+  const xT = sign ? (clientWidth - h * width) / 2 : 0;
+  const yT = sign ? 0 : (clientHeight - w * height) / 2;
+
+  // Scale the world and set the coordinate system so that 1
+  // unit corresponds to a single tile and the world is
+  // centered.
+  layer.translate(xT, yT);
+  layer.scale(scaler, scaler);
+  layer.translate(padding / 2, padding / 2);
+}
+
 /**
  * Save the transform, apply a function, and restore the transform.
  */
-function within(ctx: Ctx, fn: Function): void {
+function within<T>(ctx: Ctx, fn: ((...x: any[]) => T)): T {
   ctx.save();
-  fn();
+  const result = fn();
   ctx.restore();
+  return result;
 }
 
 function drawSnakeBody(layer: Ctx, snake: Snake, prepare?: Function) {
   const points = P.shrink(P.smooth(snake.coords), 0.12);
 
   within(layer, () => {
+    prepare && prepare();
+
     layer.translate(0.5, 0.5);
 
     layer.strokeStyle = snake.color;
@@ -61,8 +90,6 @@ function drawSnakeBody(layer: Ctx, snake: Snake, prepare?: Function) {
     layer.lineWidth = unit;
 
     layer.lineJoin = 'round';
-
-    prepare && prepare();
 
     layer.beginPath();
 
@@ -97,6 +124,8 @@ function drawImage(
   let a = add([0.5, 0.5], h0);
 
   within(layer, () => {
+    prepare && prepare();
+
     layer.translate(a[0], a[1]);
 
     switch (v.join(' ')) {
@@ -112,8 +141,6 @@ function drawImage(
         layer.scale(-1, 1);
         break;
     }
-
-    prepare && prepare();
 
     layer.drawImage(image, offset, offset, unit, unit);
   });
@@ -145,22 +172,44 @@ async function drawSnake(
   return null;
 }
 
+interface Layers {
+  fg: Ctx;
+  grid: Ctx;
+}
+
 export class GameBoard {
-  private readonly ctx: Ctx;
+  private readonly layers: Layers;
+  private readonly canvasses: HTMLCanvasElement[];
   private readonly images = new Map();
   private readonly colorPallet: Map<string, string>;
-  private readonly canvas: HTMLCanvasElement;
+  private worldId: string;
 
   constructor(node: HTMLElement, colorPallet: Map<string, string>) {
-    this.canvas = document.createElement('canvas');
-    this.ctx = (this.canvas.getContext('2d') as any) as Ctx;
+    this.canvasses = [];
+
+    const layer = () => {
+      const canvas = document.createElement('canvas');
+      const ctx = (canvas.getContext('2d') as any) as Ctx;
+      this.canvasses.push(canvas);
+      return ctx;
+    };
+
+    this.layers = {
+      grid: layer(),
+      fg: layer(),
+    };
+
     this.colorPallet = colorPallet;
 
     for (const child of node.childNodes) {
       node.removeChild(child);
     }
 
-    node.appendChild(this.canvas);
+    for (const canvas of this.canvasses) {
+      node.appendChild(canvas);
+    }
+
+    this.resize();
   }
 
   color(name: string): string {
@@ -168,8 +217,18 @@ export class GameBoard {
   }
 
   resize() {
-    this.canvas.width = this.canvas.clientWidth;
-    this.canvas.height = this.canvas.clientHeight;
+    for (const canvas of this.canvasses) {
+      canvas.width = canvas.clientWidth;
+      canvas.height = canvas.clientHeight;
+    }
+  }
+
+  sizeChanged(): boolean {
+    const canvas = this.canvasses[0];
+    return (
+      canvas.width !== canvas.clientWidth ||
+      canvas.height !== canvas.clientHeight
+    );
   }
 
   async getImage(id: string, color: string): Promise<Image> {
@@ -189,46 +248,33 @@ export class GameBoard {
   }
 
   async draw(world: Board) {
-    this.resize();
+    const {grid, fg} = this.layers;
+    const sizeChanged = this.sizeChanged();
 
-    const ctx = this.ctx;
-    const padding = 1;
+    if (sizeChanged) {
+      this.resize();
+    }
 
-    // Adjust coordinate system if the window has been resized
-    // since the last draw.
-    const clientWidth = this.ctx.canvas.width;
-    const clientHeight = this.ctx.canvas.height;
-    const width = world.width + padding * 2
-    const height = world.height + padding * 2
+    if (sizeChanged || this.worldId !== world.id) {
+      this.worldId = world.id;
 
-    const h = clientHeight / height;
-    const w = clientWidth / width;
-    const sign = clientWidth / clientHeight > width / height;
-    const scaler = sign ? h : w;
+      within(grid, () => {
+        grid.fillStyle = this.color('tile-color');
+        clear(grid);
+        setCoordinateSystem(grid, world);
+        drawGrid(grid, world.width, world.height);
+      });
+    }
 
-    const xT = sign ? (clientWidth - h * width) / 2 : 0;
-    const yT = sign ? 0 : (clientHeight - w * height) / 2;
-
-    // Scale the world and set the coordinate system so that 1
-    // unit corresponds to a single tile and the world is
-    // centered.
-    clear(ctx);
-    ctx.translate(xT, yT);
-    ctx.scale(scaler, scaler);
-
-    ctx.translate(padding / 2, padding / 2);
-
-    // Draw the grid
-    ctx.fillStyle = this.color('tile-color');
-    drawGrid(ctx, world.width, world.height);
+    clear(fg);
 
     // Draw food
-    within(ctx, () => {
-      ctx.fillStyle = this.color('food-color');
-      ctx.translate(0.5, 0.5);
-
+    within(fg, () => {
+      fg.fillStyle = this.color('food-color');
+      setCoordinateSystem(fg, world);
+      fg.translate(0.5, 0.5);
       for (const food of world.food) {
-        drawFood(ctx, food);
+        drawFood(fg, food);
       }
     });
 
@@ -243,9 +289,10 @@ export class GameBoard {
       const head = this.getImage(headImgId(snake), snake.color);
       const tail = this.getImage(tailImgId(snake), snake.color);
 
-      drawSnake(ctx, head, tail, snake, () => {
-        ctx.filter = `grayscale(${20 + Math.abs(x * 10)}%)`;
-        ctx.globalAlpha = a;
+      drawSnake(fg, head, tail, snake, () => {
+        setCoordinateSystem(fg, world);
+        fg.filter = `grayscale(${20 + Math.abs(x * 10)}%)`;
+        fg.globalAlpha = a;
       });
     }
 
@@ -253,7 +300,11 @@ export class GameBoard {
       const head = this.getImage(headImgId(snake), snake.color);
       const tail = this.getImage(tailImgId(snake), snake.color);
 
-      drawSnake(ctx, head, tail, snake);
+      drawSnake(fg, head, tail, snake, () => {
+        // These methods are called asyncronously and thus will not have the
+        // same transformation matrix.
+        setCoordinateSystem(fg, world);
+      });
     }
   }
 }

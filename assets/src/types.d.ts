@@ -55,13 +55,14 @@ interface Snake {
 }
 
 interface Board {
-  width: number;
-  turn: number;
-  snakes: Snake[];
-  height: number;
-  gameId: string;
-  food: Food[];
   deadSnakes: any[];
+  food: Food[];
+  gameId: string;
+  height: number;
+  id: string
+  snakes: Snake[];
+  turn: number;
+  width: number;
 }
 
 interface TickResponse {

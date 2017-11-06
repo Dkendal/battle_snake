@@ -9,6 +9,7 @@ defmodule Bs.World.Factory do
 
   def build(%{id: id} = game) when not is_nil(id) do
     world = %World{
+      id: Ecto.UUID.generate(),
       game_id: id,
       height: game.height,
       max_food: game.max_food,
