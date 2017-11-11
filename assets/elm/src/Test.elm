@@ -306,8 +306,7 @@ view model =
                 ]
             , div []
                 [ label
-                    [ onEnter RunSuite
-                    ]
+                    []
                     [ text "url"
                     , input
                         [ type_ "url"
