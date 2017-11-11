@@ -190,14 +190,19 @@ export class GameBoard {
     const layer = () => {
       const canvas = document.createElement('canvas');
       const ctx = (canvas.getContext('2d') as any) as Ctx;
+      canvas.classList.add('gameboard-canvas');
       this.canvasses.push(canvas);
       return ctx;
     };
 
     this.layers = {
-      grid: layer(),
       fg: layer(),
+      grid: layer(),
     };
+
+    Object.values(this.layers).reverse().map(({canvas}, idx) => {
+      canvas.style.zIndex = idx;
+    });
 
     this.colorPallet = colorPallet;
 

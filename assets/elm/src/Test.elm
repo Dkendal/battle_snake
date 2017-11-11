@@ -264,10 +264,7 @@ view model =
                             ]
                         , div
                             [ id err.id
-                            , style
-                                [ ( "width", "300px" )
-                                , ( "height", "500px" )
-                                ]
+                            , class "test-gameboard"
                             ]
                             []
                         ]
