@@ -6,6 +6,7 @@ const gutter = 0.1;
 const unit = 1 - gutter * 2;
 const halfUnit = unit / 2;
 const offset = unit / 2 * -1;
+const padding = 2;
 const coordCache: WeakMap<Snake, Array<Point>> = new WeakMap();
 
 function coords(snake: Snake): Point[] {
@@ -42,8 +43,6 @@ function drawGrid(layer: Ctx, width: number, height: number) {
 }
 
 function setCoordinateSystem(layer: Ctx, world: Board): void {
-  const padding = 1;
-
   // Adjust coordinate system if the window has been resized
   // since the last draw.
   const clientWidth = layer.canvas.width;
