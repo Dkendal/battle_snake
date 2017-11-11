@@ -36,8 +36,7 @@ export async function svg2image(
 
   image.src = url;
 
-  const promise: Promise<Image> = new Promise((resolve, reject) => {
-    window.setTimeout(reject, 100);
+  const promise: Promise<Image> = new Promise((resolve) => {
     image.onload = () => resolve(image);
   });
 
