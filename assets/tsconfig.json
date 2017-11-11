@@ -1,26 +1,26 @@
 {
   "compilerOptions": {
-    "target": "ESNEXT",
-    "module": "ESNext",
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "jsx": "preserve",
     "lib": [
       "dom",
       "dom.iterable",
       "esnext",
       "es2017"
     ],
-    "allowJs": true,
-    "jsx": "preserve",
-    "sourceMap": true,
-    "removeComments": true,
+    "module": "ESNext",
+    "moduleResolution": "node",
     "noEmit": true,
-    "strict": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "removeComments": true,
+    "sourceMap": true,
+    "strict": true,
+    "target": "ES2017"
   }
 }

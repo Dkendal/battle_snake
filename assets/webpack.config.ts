@@ -3,6 +3,7 @@ import {Configuration} from "webpack";
 const webpack = require("webpack");
 const {CheckerPlugin} = require("awesome-typescript-loader");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const {BundleAnalyzerPlugin} = require("webpack-bundle-analyzer");
 const path = require("path");
 
 const relativePath = path.resolve.bind(path, __dirname);
@@ -31,10 +32,15 @@ config.plugins = [
   new webpack.optimize.CommonsChunkPlugin({
     name: "runtime",
   }),
-  new CopyWebpackPlugin([{
-    context: "static",
-    from: "**/*",
-  }]),
+  new CopyWebpackPlugin([
+    {
+      context: "static",
+      from: "**/*",
+    },
+  ]),
+  new BundleAnalyzerPlugin({
+    openAnalyzer: false,
+  }),
 ];
 
 const tsRule = {
@@ -44,6 +50,25 @@ const tsRule = {
     useBabel: true,
     useCache: true,
     reportFiles: ["src/**/*.{ts,tsx}"],
+  },
+};
+
+const jsRule = {
+  test: /\.jsx?$/,
+  exclude: /(node_modules|bower_components)/,
+  use: {
+    loader: "babel-loader",
+    options: {
+      plugins: [
+        [
+          "@babel/transform-async-to-generator",
+          {
+            module: "bluebird",
+            method: "coroutine",
+          },
+        ],
+      ],
+    },
   },
 };
 
@@ -81,7 +106,7 @@ const elmRule = {
 };
 
 config.module = {
-  rules: [tsRule, cssRule, elmRule],
+  rules: [jsRule, tsRule, cssRule, elmRule],
 };
 
 config.resolve = {
