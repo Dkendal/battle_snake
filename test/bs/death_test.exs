@@ -121,7 +121,7 @@ defmodule DeathTest do
     end
   end
 
-  describe "Death.collision/1" do
+  describe ".collision" do
     setup do
       snakes = [
         build(:snake, id: 1, coords: [p(0, 0), p(1, 0), p(2, 0)]),
@@ -147,6 +147,20 @@ defmodule DeathTest do
     test "sets the cause of death", %{result: {_live, dead}} do
       assert [%HeadCollisionCause{with: 1}, %HeadCollisionCause{with: 3}] ==
                hd(dead).death
+    end
+
+    test "head collisions are still counted when the tail is stacked" do
+      snakes = [
+        build(:snake, id: 1, coords: [p(0, 0), p(1, 0), p(1, 0)]),
+        build(:snake, id: 2, coords: [p(0, 0), p(0, 1)])
+      ]
+
+      import Access
+
+      assert [[%HeadCollisionCause{with: 1}]] ==
+               snakes
+               |> Death.collision()
+               |> get_in([elem(1), all(), :death])
     end
   end
 

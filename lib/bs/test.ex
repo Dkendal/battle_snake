@@ -45,10 +45,10 @@ defmodule Bs.Test do
 
   # X Y
   @head_on %Scenario{
-    width: 2,
+    width: 3,
     height: 1,
-    player: agent([[1, 0] * 3]),
-    agents: [agent([[0, 0] * 2])],
+    player: agent([[0, 0] * 3]),
+    agents: [agent([[1, 0], [2, 0]])],
     food: []
   }
 
