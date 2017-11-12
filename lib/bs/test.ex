@@ -64,14 +64,20 @@ defmodule Bs.Test do
   )
 
   @doc ~S"Run a scenario, returns ok if it passes, or a test case error."
-  def test(scenario, url, move_fun \\ &Worker.run/3) do
+  def test(scenario, url) do
     scenario = generate_ids(scenario)
 
     {world, player} = Scenario.to_world(scenario)
 
-    player = %{player | url: url}
+    player =
+      %{player | url: url}
+      |> Bs.World.Factory.Worker.run(world.id)
+      |> Map.put(:coords, player.coords)
 
-    move = apply(move_fun, [player, world, [recv_timeout: 5000]])
+    # snake = Map.take(snake, [:color, :head_type, :tail_type, :name])
+    # player = Map.merge(player, snake)
+
+    move = Worker.run(player, world, recv_timeout: 5000)
 
     player = Bs.Snake.move(player, move)
 
@@ -130,7 +136,9 @@ defmodule Bs.Test do
     {:ok, sup} = Task.Supervisor.start_link()
 
     sup
-    |> Task.Supervisor.async_stream_nolink(scenarios, __MODULE__, :test, [url])
+    |> Task.Supervisor.async_stream_nolink(scenarios, __MODULE__, :test, [
+         url
+       ])
     |> Stream.map(fn
          {:ok, result} ->
            result

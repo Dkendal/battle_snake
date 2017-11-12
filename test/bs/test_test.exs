@@ -1,5 +1,4 @@
 defmodule Bs.TestTest do
-  alias Bs.Move
   alias Bs.Test
   alias Bs.Test.AssertionError
   alias Bs.Test.Scenario
@@ -62,19 +61,13 @@ defmodule Bs.TestTest do
   end
 
   test "#test passes when the move does not kill the snake" do
-    result =
-      Test.test(@scenario, "", fn _, _, _ ->
-        %Move{move: "right"}
-      end)
+    result = Test.test(@scenario, "right.mock")
 
     assert result == :ok
   end
 
   test "#test fail when the move does kills the snake" do
-    result =
-      Test.test(@scenario, "", fn _, _, _ ->
-        %Move{move: "down"}
-      end)
+    result = Test.test(@scenario, "down.mock")
 
     assert %Bs.Test.AssertionError{} = result
   end

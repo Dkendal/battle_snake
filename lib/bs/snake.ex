@@ -142,6 +142,10 @@ defmodule Bs.Snake do
   @doc """
   Update the snake by moving the snake's cooridinates by the vector "move".
   """
+  def move(%{coords: []}, _) do
+    raise "Snake can't move, it has no body segments."
+  end
+
   def move(snake, %Point{} = point) do
     body = body(snake)
     head = head(snake)
