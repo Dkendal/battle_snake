@@ -31,9 +31,10 @@ defmodule Bs.Move do
   end
 
   defp do_default_move([v1, v2 | _]),
-    do: Point.sub(v1, v2)
-    |> from_point
-    |> do_default_move
+    do:
+      Point.sub(v1, v2)
+      |> from_point
+      |> do_default_move
 
   defp do_default_move({:ok, move}), do: move
 

@@ -17,7 +17,7 @@ defmodule Bs.SnakeTest do
   end
 
   property "wall collision" do
-    xs = suchthat(integer(), & &1 not in 0..9)
+    xs = suchthat(integer(), &(&1 not in 0..9))
 
     forall({xs, xs}, fn {x, y} ->
       snake = %Snake{coords: [%Point{x: x, y: y}]}

@@ -48,13 +48,14 @@ defmodule BsWeb.TestCaseErrorView do
       reason: reason,
       scenario: err.scenario,
       world: render_one(err.world, BoardView, "show.json", v: 2),
-      player: render_one(
-        err.player,
-        SnakeView,
-        "show.json",
-        v: 2,
-        include_render_props: true
-      )
+      player:
+        render_one(
+          err.player,
+          SnakeView,
+          "show.json",
+          v: 2,
+          include_render_props: true
+        )
     }
   end
 
@@ -65,10 +66,11 @@ defmodule BsWeb.TestCaseErrorView do
     reoi = ~r/Unexpected end of input at position (?<pos>\d+)/
     rtok = ~r/Unexpected token at position (?<pos>\d+): (?<token>\S+)|/
 
-    captures = {
-      named_captures(reoi, err.message),
-      named_captures(rtok, err.message)
-    }
+    captures =
+      {
+        named_captures(reoi, err.message),
+        named_captures(rtok, err.message)
+      }
 
     reason =
       case captures do

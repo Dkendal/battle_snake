@@ -51,28 +51,28 @@ defmodule Bs.World.Factory do
       stream
       |> Stream.zip(permalinks)
       |> Stream.flat_map(fn
-           {{:ok, snake}, _} ->
-             Notification.broadcast!(
-               id,
-               name: "restart:request:ok",
-               rel: %{game_id: id, snake_id: snake.id},
-               view: "snake_loaded.json",
-               data: [snake: snake]
-             )
+        {{:ok, snake}, _} ->
+          Notification.broadcast!(
+            id,
+            name: "restart:request:ok",
+            rel: %{game_id: id, snake_id: snake.id},
+            view: "snake_loaded.json",
+            data: [snake: snake]
+          )
 
-             [snake]
+          [snake]
 
-           {{:exit, {error, _stack}}, permalink} ->
-             Notification.broadcast!(
-               id,
-               name: "restart:request:error",
-               rel: %{game_id: id, snake_id: permalink.id},
-               view: "error.json",
-               data: [error: error]
-             )
+        {{:exit, {error, _stack}}, permalink} ->
+          Notification.broadcast!(
+            id,
+            name: "restart:request:error",
+            rel: %{game_id: id, snake_id: permalink.id},
+            view: "error.json",
+            data: [error: error]
+          )
 
-             []
-         end)
+          []
+      end)
       |> Enum.to_list()
 
     Notification.broadcast!(

@@ -57,7 +57,8 @@ defmodule BsWeb.TestCaseErrorViewTest do
   test "#render a connection failure" do
     expected = %{
       object: "error_with_reason",
-      reason: "Connection to the server could not be established - are you sure it's running?"
+      reason:
+        "Connection to the server could not be established - are you sure it's running?"
     }
 
     actual =
@@ -83,11 +84,11 @@ defmodule BsWeb.TestCaseErrorViewTest do
   end
 
   test "#render a syntax error during parsing" do
-    expected =
-      %{
-        object: "error_with_reason",
-        reason: "You didn't send anything in the body of your response, I was expecting a JSON body."
-      }
+    expected = %{
+      object: "error_with_reason",
+      reason:
+        "You didn't send anything in the body of your response, I was expecting a JSON body."
+    }
 
     actual =
       TestCaseErrorView.render("show.json", %{

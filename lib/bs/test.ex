@@ -54,13 +54,14 @@ defmodule Bs.Test do
 
   defmodule(
     AssertionError,
-    do: defstruct([
-      :id,
-      :scenario,
-      :world,
-      :player,
-      :reason
-    ])
+    do:
+      defstruct([
+        :id,
+        :scenario,
+        :world,
+        :player,
+        :reason
+      ])
   )
 
   @doc ~S"Run a scenario, returns ok if it passes, or a test case error."
@@ -137,15 +138,15 @@ defmodule Bs.Test do
 
     sup
     |> Task.Supervisor.async_stream_nolink(scenarios, __MODULE__, :test, [
-         url
-       ])
+      url
+    ])
     |> Stream.map(fn
-         {:ok, result} ->
-           result
+      {:ok, result} ->
+        result
 
-         {:exit, {err, _stack}} ->
-           err
-       end)
+      {:exit, {err, _stack}} ->
+        err
+    end)
     |> Enum.to_list()
   end
 
@@ -159,8 +160,8 @@ defmodule Bs.Test do
     model
     |> Map.from_struct()
     |> Enum.reduce(model, fn {k, v}, s ->
-         %{s | k => transform(v, f, {width, height})}
-       end)
+      %{s | k => transform(v, f, {width, height})}
+    end)
   end
 
   defp transform(%V{x: x, y: y}, f, {w, h}) do
@@ -171,8 +172,8 @@ defmodule Bs.Test do
     model
     |> Map.from_struct()
     |> Enum.reduce(model, fn {k, v}, s ->
-         %{s | k => transform(v, f, dim)}
-       end)
+      %{s | k => transform(v, f, dim)}
+    end)
   end
 
   defp transform(model, _, _) do
@@ -190,8 +191,8 @@ defmodule Bs.Test do
     model
     |> Map.from_struct()
     |> Enum.reduce(model, fn {k, v}, model ->
-         %{model | k => generate_ids(v)}
-       end)
+      %{model | k => generate_ids(v)}
+    end)
   end
 
   defp generate_ids(model) when is_list(model) do

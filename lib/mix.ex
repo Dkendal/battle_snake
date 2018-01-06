@@ -44,10 +44,13 @@ defmodule Mix.Tasks.Phx.Gen.View do
     assign = Macro.var(key, nil)
 
     dict =
-      for f <- fields, to_string(f) =~ ~r"^[a-zA-Z]", do: {
-        f,
-        {{:., [], [assign, f]}, [], []}
-      }
+      for f <- fields,
+          to_string(f) =~ ~r"^[a-zA-Z]",
+          do:
+            {
+              f,
+              {{:., [], [assign, f]}, [], []}
+            }
 
     dict = {:%{}, [], dict}
 

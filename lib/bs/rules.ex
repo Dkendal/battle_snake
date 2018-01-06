@@ -14,8 +14,7 @@ defmodule Bs.Rules do
       snake, [] ->
         {:cont, [snake]}
 
-      %{death: %{turn: t}} = s,
-      [%{death: %{turn: t}} | _] = acc ->
+      %{death: %{turn: t}} = s, [%{death: %{turn: t}} | _] = acc ->
         {:cont, [s | acc]}
 
       _, acc ->

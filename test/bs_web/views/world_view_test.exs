@@ -6,9 +6,14 @@ defmodule BsWeb.WorldViewTest do
 
   @snake build(:snake, id: 1)
 
-  @world build(:world, snakes: [@snake], food: [p(0, 0)], dead_snakes: [
-           build(:snake, id: 2)
-         ])
+  @world build(
+           :world,
+           snakes: [@snake],
+           food: [p(0, 0)],
+           dead_snakes: [
+             build(:snake, id: 2)
+           ]
+         )
 
   test "v2" do
     actual =

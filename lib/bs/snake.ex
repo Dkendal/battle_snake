@@ -55,7 +55,8 @@ defmodule Bs.Snake do
   Only checks the head, because it's the only part that moves.
   """
   def dead?(%{coords: [%{y: y, x: x} | _]}, %{width: w, height: h})
-      when y not in 0..(w - 1) or x not in 0..(h - 1), do: true
+      when y not in 0..(w - 1) or x not in 0..(h - 1),
+      do: true
 
   def dead?(%{health_points: hp}, _) when hp <= 0, do: true
 
@@ -112,25 +113,25 @@ defmodule Bs.Snake do
     snakes
     |> Enum.group_by(&hd(&1.coords))
     |> Enum.map(fn
-         {_, [snake]} ->
-           snake
+      {_, [snake]} ->
+        snake
 
-         {_, snakes} ->
-           snakes =
-             snakes
-             |> Enum.map(&{len(&1), &1})
-             |> Enum.sort_by(&-elem(&1, 0))
+      {_, snakes} ->
+        snakes =
+          snakes
+          |> Enum.map(&{len(&1), &1})
+          |> Enum.sort_by(&(-elem(&1, 0)))
 
-           case snakes do
-             [{size, _}, {size, _} | _] ->
-               # one or more are the same size
-               # all die
-               nil
+        case snakes do
+          [{size, _}, {size, _} | _] ->
+            # one or more are the same size
+            # all die
+            nil
 
-             [{_, snake} | _] ->
-               snake
-           end
-       end)
+          [{_, snake} | _] ->
+            snake
+        end
+    end)
     |> Enum.reject(&(&1 == nil))
   end
 

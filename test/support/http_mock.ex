@@ -43,10 +43,11 @@ defmodule Bs.HTTPMock do
             url =~ ~r{/start} ->
               %Response{
                 status_code: 200,
-                body: encode!(%{
-                  name: "mock snake",
-                  taunt: "mock taunt"
-                })
+                body:
+                  encode!(%{
+                    name: "mock snake",
+                    taunt: "mock taunt"
+                  })
               }
           end
       end
@@ -56,9 +57,9 @@ defmodule Bs.HTTPMock do
         raise err
     end
     |> case do
-         response ->
-           Logger.debug("[http_mock] returned: #{inspect(response)}")
-           response
-       end
+      response ->
+        Logger.debug("[http_mock] returned: #{inspect(response)}")
+        response
+    end
   end
 end

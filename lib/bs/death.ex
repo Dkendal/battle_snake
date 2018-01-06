@@ -116,10 +116,14 @@ defmodule Bs.Death do
     acc
   end
 
-  def do_wall_collision([%{coords: [p(x, y) | _]} = snake | rest], {w, h}, {
-        live,
-        dead
-      })
+  def do_wall_collision(
+        [%{coords: [p(x, y) | _]} = snake | rest],
+        {w, h},
+        {
+          live,
+          dead
+        }
+      )
       when x not in 0..(w - 1) or y not in 0..(h - 1) do
     reason = [%WallCollisionCause{}]
     snake = put_in(snake.death, reason)

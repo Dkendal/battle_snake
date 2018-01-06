@@ -13,11 +13,15 @@ defmodule Bs.GameStateTest do
   describe "#set_winners(t) when everyone is dead" do
     test "sets the winner to whoever died last" do
       world =
-        build(:world, snakes: [], dead_snakes: [
-          build(:snake, id: 3) |> kill_snake(1),
-          build(:snake, id: 2) |> kill_snake(2),
-          build(:snake, id: 1) |> kill_snake(2)
-        ])
+        build(
+          :world,
+          snakes: [],
+          dead_snakes: [
+            build(:snake, id: 3) |> kill_snake(1),
+            build(:snake, id: 2) |> kill_snake(2),
+            build(:snake, id: 1) |> kill_snake(2)
+          ]
+        )
 
       state = build(:state, world: world)
       state = GameState.set_winners(state)
@@ -28,9 +32,13 @@ defmodule Bs.GameStateTest do
   describe "#set_winners(t)" do
     test "sets the winner to anyone that is still alive" do
       world =
-        build(:world, snakes: [build(:snake, id: 1)], dead_snakes: [
-          build(:snake, id: 2) |> kill_snake(1)
-        ])
+        build(
+          :world,
+          snakes: [build(:snake, id: 1)],
+          dead_snakes: [
+            build(:snake, id: 2) |> kill_snake(1)
+          ]
+        )
 
       state = build(:state, world: world)
       state = GameState.set_winners(state)

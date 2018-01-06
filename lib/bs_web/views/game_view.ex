@@ -12,30 +12,30 @@ defmodule BsWeb.GameView do
     Path.join(img_dir, "images/snake/{head,tail}/*.svg")
     |> Path.wildcard()
     |> Enum.map(fn path ->
-         rel_path = Path.relative_to(path, img_dir)
+      rel_path = Path.relative_to(path, img_dir)
 
-         id =
-           rel_path
-           |> Path.relative_to("images/")
-           |> Path.rootname(".svg")
-           |> String.replace("/", "-")
+      id =
+        rel_path
+        |> Path.relative_to("images/")
+        |> Path.rootname(".svg")
+        |> String.replace("/", "-")
 
-         [id: id, src: rel_path]
-       end)
+      [id: id, src: rel_path]
+    end)
   end
 
   def snake_img_tags(conn) do
     snake_assets()
     |> Enum.map(fn asset ->
-         content_tag(
-           :object,
-           "",
-           id: asset[:id],
-           data: static_path(conn, "/#{asset[:src]}"),
-           charset: "utf-8",
-           type: "image/svg+xml"
-         )
-       end)
+      content_tag(
+        :object,
+        "",
+        id: asset[:id],
+        data: static_path(conn, "/#{asset[:src]}"),
+        charset: "utf-8",
+        type: "image/svg+xml"
+      )
+    end)
   end
 
   def bs_js_object(assigns, _ \\ %{}) do
