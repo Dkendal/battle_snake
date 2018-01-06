@@ -86,7 +86,7 @@ defmodule Bs.Mixfile do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:apex, "~> 0.7"},
+      {:apex, "~> 1.2"},
       {:cowboy, "~> 1.0"},
       {:credo, "~> 0.8", only: [:dev, :text], runtime: false},
       {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
