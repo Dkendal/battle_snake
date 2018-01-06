@@ -5,20 +5,41 @@ defmodule Bs.Mixfile do
 
   def project do
     [
+      aliases: aliases(),
       app: :bs,
-      version: @version,
+      build_embedded: Mix.env() == :prod,
+      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
+      deps: deps(),
+      dialyzer: dialyzer(),
+      name: "BattleSnake",
+      docs: [
+        debug: true,
+        main: "Bs",
+        logo: "assets/static/images/division-advanced.png",
+        assets: "assets/docs",
+        before_closing_head_tag: &before_closing_head_tag/1,
+        extras: [
+          "README.md"
+          | Path.wildcard("lib/bs/pages/**/*.md")
+        ]
+      ],
       elixir: "~> 1.5",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
-      build_embedded: Mix.env() == :prod,
-      start_permanent: Mix.env() == :prod,
-      preferred_cli_env: preferred_cli_env(),
-      test_coverage: [tool: ExCoveralls],
       erlc_options: erlc_options(Mix.env()),
-      dialyzer: dialyzer(),
-      aliases: aliases(),
-      deps: deps()
+      homepage_url: "https://github.com/battle-snake/battle_snake",
+      preferred_cli_env: preferred_cli_env(),
+      source_url: "https://github.com/battle-snake/battle_snake",
+      start_permanent: Mix.env() == :prod,
+      test_coverage: [tool: ExCoveralls],
+      version: @version
     ]
+  end
+
+  def before_closing_head_tag(:html) do
+    """
+    <script src="assets/node_modules/mermaid/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true});</script>
+    """
   end
 
   # Configuration for the OTP application.
@@ -73,6 +94,7 @@ defmodule Bs.Mixfile do
       {:ecto, "~> 2.1"},
       {:ecto_mnesia, "~> 0.9.0"},
       {:edeliver, "~> 1.4"},
+      {:ex_doc, "~> 0.16", only: :dev, runtime: false},
       {:ex_machina, "~> 1.0", only: :test},
       {:excoveralls, "~> 0.6", only: :test},
       {:exvcr, "~> 0.8", only: :test, runtime: false},
@@ -102,7 +124,7 @@ defmodule Bs.Mixfile do
         "lib/bs_web.ex",
         "lib/bs_web/gettext.ex",
         "lib/bs_web/router.ex",
-        "lib/bs_web/views/error_helpers.ex",
+        "lib/bs_web/views/error_helpers.ex"
       ]
       |> Enum.map(&("--exclude " <> &1))
       |> Enum.join(" ")

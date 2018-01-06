@@ -17,6 +17,7 @@ assets/.awcache
 assets/.sass-cache
 assets/elm/elm-stuff
 assets/node_modules
+doc
 cover/
 databases/
 erl_crash.dump

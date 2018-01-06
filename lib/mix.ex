@@ -1,6 +1,9 @@
 defmodule Mix.Tasks.Phx.Gen.View do
+  use Mix.Task
+
   @app BsWeb
 
+  @doc "Generate a phoenix view"
   def run(opts) do
     path = path(opts)
 
