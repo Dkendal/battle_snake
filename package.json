@@ -1,0 +1,16 @@
+{
+  "author": "Dylan Kendal <dylan.kendal@shopify.com>",
+  "devDependencies": {
+    "cypress": "^1.4.1"
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "name": "battle_snake",
+  "repository": "git@github.com:Dkendal/battle_snake.git",
+  "scripts": {
+    "cypress": "cypress open",
+    "cypress:run": "cypress run",
+    "server": "PORT=3000 mix phx.server"
+  },
+  "version": "1.0.0"
+}
