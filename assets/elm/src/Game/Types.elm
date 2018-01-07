@@ -29,11 +29,11 @@ type Msg
     | PauseGame
     | PhxMsg PhxSockMsg
     | PrevStep
+    | ReceiveMoveResponse Json.Encode.Value
     | ReceiveRestartFinished Json.Encode.Value
     | ReceiveRestartInit Json.Encode.Value
     | ReceiveRestartRequestError Json.Encode.Value
     | ReceiveRestartRequestOk Json.Encode.Value
-    | ReceiveMoveResponse Json.Encode.Value
     | RecieveTick Json.Encode.Value
     | ResumeGame
     | StopGame

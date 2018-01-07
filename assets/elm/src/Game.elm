@@ -59,9 +59,9 @@ init flags =
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case (log "msg" msg) of
-        KeyDown keyCode ->
-            case Char.fromCode keyCode of
+    let
+        updateKeyDown code =
+            case Char.fromCode code of
                 'H' ->
                     model ! [ emit ResumeGame ]
 
@@ -79,90 +79,94 @@ update msg model =
 
                 _ ->
                     model ! []
+    in
+        case (log "msg" msg) of
+            KeyDown code ->
+                updateKeyDown code
 
-        PhxMsg msg ->
-            Socket.update msg model.socket
-                |> pushCmd model
+            PhxMsg msg ->
+                Socket.update msg model.socket
+                    |> pushCmd model
 
-        JoinSpectatorChannel ->
-            joinChannel ("spectator:" ++ model.gameid) model
+            JoinSpectatorChannel ->
+                joinChannel ("spectator:" ++ model.gameid) model
 
-        JoinAdminChannel ->
-            joinChannel ("admin:" ++ model.gameid) model
+            JoinAdminChannel ->
+                joinChannel ("admin:" ++ model.gameid) model
 
-        JoinChannelSuccess _ ->
-            model ! []
+            JoinChannelSuccess _ ->
+                model ! []
 
-        JoinChannelFailed error ->
-            Debug.crash (toString error)
+            JoinChannelFailed error ->
+                Debug.crash (toString error)
 
-        ResumeGame ->
-            adminCmd "resume" model
+            ResumeGame ->
+                adminCmd "resume" model
 
-        PauseGame ->
-            adminCmd "pause" model
+            PauseGame ->
+                adminCmd "pause" model
 
-        StopGame ->
-            adminCmd "stop" model
+            StopGame ->
+                adminCmd "stop" model
 
-        NextStep ->
-            adminCmd "next" model
+            NextStep ->
+                adminCmd "next" model
 
-        PrevStep ->
-            adminCmd "prev" model
+            PrevStep ->
+                adminCmd "prev" model
 
-        ReceiveMoveResponse raw ->
-            model ! []
+            ReceiveMoveResponse raw ->
+                model ! []
 
-        ReceiveRestartRequestOk raw ->
-            case JD.decodeValue (Decoder.lobbySnake) raw of
-                Ok { snakeId, data } ->
-                    let
-                        updateSnake snake =
-                            { snake | loadingState = Ready data }
+            ReceiveRestartRequestOk raw ->
+                case JD.decodeValue (Decoder.lobbySnake) raw of
+                    Ok { snakeId, data } ->
+                        let
+                            updateSnake snake =
+                                { snake | loadingState = Ready data }
 
-                        model_ =
-                            updateLobbyMember updateSnake model snakeId
-                    in
-                        model_ ! []
+                            model_ =
+                                updateLobbyMember updateSnake model snakeId
+                        in
+                            model_ ! []
 
-                Err err ->
-                    Debug.crash err
+                    Err err ->
+                        Debug.crash err
 
-        ReceiveRestartRequestError raw ->
-            case JD.decodeValue Decoder.error raw of
-                Ok { snakeId, data } ->
-                    let
-                        updateSnake snake =
-                            { snake | loadingState = Failed data }
+            ReceiveRestartRequestError raw ->
+                case JD.decodeValue Decoder.error raw of
+                    Ok { snakeId, data } ->
+                        let
+                            updateSnake snake =
+                                { snake | loadingState = Failed data }
 
-                        model_ =
-                            updateLobbyMember updateSnake model snakeId
-                    in
-                        model_ ! []
+                            model_ =
+                                updateLobbyMember updateSnake model snakeId
+                        in
+                            model_ ! []
 
-                Err e ->
-                    Debug.crash e
+                    Err e ->
+                        Debug.crash e
 
-        ReceiveRestartFinished _ ->
-            model ! []
+            ReceiveRestartFinished _ ->
+                model ! []
 
-        ReceiveRestartInit raw ->
-            case JD.decodeValue Decoder.lobby raw of
-                Ok lobby ->
-                    { model | phase = LobbyPhase lobby } ! []
+            ReceiveRestartInit raw ->
+                case JD.decodeValue Decoder.lobby raw of
+                    Ok lobby ->
+                        { model | phase = LobbyPhase lobby } ! []
 
-                Err e ->
-                    Debug.crash e
+                    Err e ->
+                        Debug.crash e
 
-        RecieveTick raw ->
-            case JD.decodeValue Decoder.tick raw of
-                Ok ( world, rawWorld ) ->
-                    { model | phase = GamePhase world }
-                        ! [ GameBoard.render rawWorld ]
+            RecieveTick raw ->
+                case JD.decodeValue Decoder.tick raw of
+                    Ok ( world, rawWorld ) ->
+                        { model | phase = GamePhase world }
+                            ! [ GameBoard.render rawWorld ]
 
-                Err e ->
-                    Debug.crash e
+                    Err e ->
+                        Debug.crash e
 
 
 
