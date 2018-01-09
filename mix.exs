@@ -131,7 +131,7 @@ defmodule Bs.Mixfile do
 
     [
       "bs.watch": &watch/1,
-      "bs.xref": [
+      "bs.graph": [
         "xref graph --format dot #{exclusions}",
         &xref/1
       ]
@@ -148,7 +148,7 @@ defmodule Bs.Mixfile do
 
   def watch(_) do
     Mix.shell().cmd(
-      "watchman-make -p 'lib/**/*.ex' 'test/**/*.ex' 'test/**/*.exs' --run 'mix test --stale'"
+      "watchman-make -p 'lib/**/*.ex' 'test/**/*.ex' 'test/**/*.exs' --run 'mix test --stale --color=true'"
     )
   end
 end
