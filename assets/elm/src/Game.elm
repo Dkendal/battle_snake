@@ -63,7 +63,7 @@ update msg model =
             "game:" ++ model.gameid
 
         updateBroadcast cmd =
-            case cmd of
+            case (log "broadcast" cmd) of
                 RecieveTick raw ->
                     case decodeValue Decoder.tick raw of
                         Ok ( world, rawWorld ) ->

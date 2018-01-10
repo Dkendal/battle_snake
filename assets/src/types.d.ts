@@ -1,6 +1,6 @@
 declare module 'elm/Test' {
   interface Ports {
-    render: Elm.Port<(gameState: GameState) => void>;
+    render: Elm.Port<(world: World) => void>;
   }
 
   export const Test: Elm.App<Ports, {websocket: string}>;

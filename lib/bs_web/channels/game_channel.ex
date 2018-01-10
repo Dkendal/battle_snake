@@ -50,8 +50,7 @@ defmodule BsWeb.GameChannel do
 
     case message do
       {:tick, state} ->
-        content = render(state)
-        broadcast(socket, "tick", %{content: content})
+        broadcast(socket, "tick", %{content: render(state)})
         {:noreply, socket}
 
       %Event{name: name} ->

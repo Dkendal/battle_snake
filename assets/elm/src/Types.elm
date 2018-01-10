@@ -4,8 +4,16 @@ import Dict exposing (..)
 import Json.Encode exposing (Value)
 
 
+type Status
+    = Cont
+    | Halted
+    | Suspended
+
+
 type alias GameState =
-    { board : Board }
+    { board : Board
+    , status : Status
+    }
 
 
 type alias Board =

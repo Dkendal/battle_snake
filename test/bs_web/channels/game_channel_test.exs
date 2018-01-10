@@ -19,6 +19,7 @@ defmodule BsWeb.Channels.GameChannelTest do
 
     assert_broadcast("tick", %{
       content: %{
+        status: _,
         board: %{
           id: _,
           gameId: _,

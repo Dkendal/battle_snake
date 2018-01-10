@@ -32,10 +32,36 @@ tick =
         ("content" := value)
 
 
+parseError : String -> Decoder a
+parseError val =
+    fail ("don't know how to parse [" ++ val ++ "]")
+
+
+status : Decoder Status
+status =
+    andThen
+        (\x ->
+            case x of
+                "cont" ->
+                    succeed Cont
+
+                "suspend" ->
+                    succeed Suspended
+
+                "halted" ->
+                    succeed Halted
+
+                _ ->
+                    parseError x
+        )
+        string
+
+
 gameState : Decoder GameState
 gameState =
-    map GameState
+    map2 GameState
         ("board" := board)
+        ("status" := status)
 
 
 board : Decoder Board
@@ -190,7 +216,7 @@ testCaseError =
                         map MultipleReasons errorWithMultipleReasons
 
                     x ->
-                        fail (x ++ " is not a known test case error")
+                        parseError x
             )
 
 
