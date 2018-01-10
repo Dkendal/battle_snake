@@ -101,6 +101,7 @@ defmodule Bs.Mixfile do
       {:gettext, "~> 0.11"},
       {:httpoison, "~> 0.11"},
       {:meck, "~> 0.8.8", only: :test},
+      {:mox, "~> 0.3", only: :test},
       {:phoenix, "~> 1.3"},
       {:phoenix_ecto, "~> 3.0"},
       {:phoenix_html, "~> 2.9"},
