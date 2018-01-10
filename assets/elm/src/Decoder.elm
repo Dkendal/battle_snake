@@ -10,6 +10,7 @@ import Dict
     field
 
 
+(@=) : List String -> Decoder a -> Decoder a
 (@=) =
     at
 
@@ -24,11 +25,17 @@ maybeWithDefault value decoder =
     decoder |> maybe |> map (Maybe.withDefault value)
 
 
-tick : Decoder ( Board, Value )
+tick : Decoder ( GameState, Value )
 tick =
     map2 (\x y -> ( x, y ))
-        ("content" := board)
+        ("content" := gameState)
         ("content" := value)
+
+
+gameState : Decoder GameState
+gameState =
+    map GameState
+        ("board" := board)
 
 
 board : Decoder Board
@@ -55,6 +62,7 @@ point2 =
         ("y" := int)
 
 
+death : Decoder Death
 death =
     map Death
         ("causes" := list string)

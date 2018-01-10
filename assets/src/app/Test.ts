@@ -9,8 +9,9 @@ const test = Test.fullscreen({
   websocket: `ws://${window.location.host}/socket/websocket`,
 });
 
-test.ports.render.subscribe(world => {
-  const id = world.gameId;
+test.ports.render.subscribe(({board: board_}) => {
+  console.debug('render', board_);
+  const id = board_.gameId;
   const inverval = window.setInterval(callback, 20);
 
   const timeout = window.setTimeout(() => {
@@ -34,6 +35,6 @@ test.ports.render.subscribe(world => {
 
     const board = new GameBoard(node, colorPallet);
 
-    board.draw(world);
+    board.draw(board_);
   }
 });

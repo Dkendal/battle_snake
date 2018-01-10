@@ -17,7 +17,6 @@ import Tuple
 import Types exposing (..)
 import UrlParser as Url exposing (..)
 import GameBoard
-import String
 
 
 type alias Model =

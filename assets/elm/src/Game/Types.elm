@@ -1,8 +1,8 @@
 module Game.Types exposing (..)
 
 import Phoenix.Socket
-import Json.Encode
-import Keyboard
+import Json.Encode exposing (Value)
+import Keyboard exposing (KeyCode)
 import Types exposing (..)
 
 
@@ -20,23 +20,26 @@ type alias Flags =
 
 
 type Msg
-    = KeyDown Keyboard.KeyCode
-    | JoinAdminChannel
-    | JoinChannelFailed Json.Encode.Value
-    | JoinChannelSuccess Json.Encode.Value
-    | JoinSpectatorChannel
+    = KeyDown KeyCode
+    | JoinChannelFailed Value
+    | JoinChannelSuccess Value
+    | JoinGameChannel
+    | PhxMsg PhxSockMsg
+    | Broadcast BroadcastMsg
+    | Push PushMsg
+
+
+type PushMsg
+    = ResumeGame
+    | StopGame
     | NextStep
     | PauseGame
-    | PhxMsg PhxSockMsg
     | PrevStep
-    | ReceiveMoveResponse Json.Encode.Value
-    | ReceiveRestartFinished Json.Encode.Value
-    | ReceiveRestartInit Json.Encode.Value
-    | ReceiveRestartRequestError Json.Encode.Value
-    | ReceiveRestartRequestOk Json.Encode.Value
-    | RecieveTick Json.Encode.Value
-    | ResumeGame
-    | StopGame
+
+
+type BroadcastMsg
+    = LobbyInfo Value
+    | RecieveTick Value
 
 
 type alias PhxSock =
@@ -50,5 +53,5 @@ type alias PhxSockMsg =
 type Phase
     = InitPhase
     | LobbyPhase Lobby
-    | GamePhase Board
+    | GamePhase GameState
     | ResultPhase

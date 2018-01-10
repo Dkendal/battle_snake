@@ -15,9 +15,10 @@ document.addEventListener('DOMContentLoaded', () => {
   embedApp('Game', Game, gameAppConfig).map(program => {
     let board: GameBoard;
 
-    program.ports.render.subscribe(world => {
+    program.ports.render.subscribe(({board: board_}) => {
+      console.debug('render', board_)
       if (!board) {
-        const id = world.gameId;
+        const id = board_.gameId;
         const node = document.getElementById(id);
 
         if (!node) {
@@ -28,9 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       requestAnimationFrame(() => {
-        // canvas.width = canvas.clientWidth;
-        // canvas.height = canvas.clientHeight;
-        board.draw(world);
+        board.draw(board_);
       });
     });
   });

@@ -8,7 +8,7 @@ import Game.Types exposing (..)
 import Game.View exposing (..)
 import GameBoard
 import Html exposing (..)
-import Json.Decode as JD
+import Json.Decode as JD exposing (decodeValue)
 import Json.Encode as JE
 import Keyboard
 import Phoenix.Channel as Channel
@@ -46,8 +46,7 @@ init flags =
             }
 
         cmds =
-            [ emit JoinSpectatorChannel
-            , emit JoinAdminChannel
+            [ emit JoinGameChannel
             ]
     in
         model ! cmds
@@ -60,27 +59,67 @@ init flags =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     let
+        topic =
+            "game:" ++ model.gameid
+
+        updateBroadcast cmd =
+            case cmd of
+                RecieveTick raw ->
+                    case decodeValue Decoder.tick raw of
+                        Ok ( world, rawWorld ) ->
+                            { model | phase = GamePhase world }
+                                ! [ GameBoard.render rawWorld ]
+
+                        Err e ->
+                            Debug.crash e
+
+                LobbyInfo raw ->
+                    model ! []
+
         updateKeyDown code =
             case Char.fromCode code of
                 'H' ->
-                    model ! [ emit ResumeGame ]
+                    model ! [ emit (Push ResumeGame) ]
 
                 'J' ->
-                    model ! [ emit NextStep ]
+                    model ! [ emit (Push NextStep) ]
 
                 'K' ->
-                    model ! [ emit PrevStep ]
+                    model ! [ emit (Push PrevStep) ]
 
                 'L' ->
-                    model ! [ emit PauseGame ]
+                    model ! [ emit (Push PauseGame) ]
 
                 'Q' ->
-                    model ! [ emit StopGame ]
+                    model ! [ emit (Push StopGame) ]
 
                 _ ->
                     model ! []
+
+        updatePush msg =
+            case msg of
+                ResumeGame ->
+                    push topic "resume" model
+
+                PauseGame ->
+                    push topic "pause" model
+
+                StopGame ->
+                    push topic "stop" model
+
+                NextStep ->
+                    push topic "next" model
+
+                PrevStep ->
+                    push topic "prev" model
     in
-        case (log "msg" msg) of
+        case msg of
+            Push msg ->
+                updatePush msg
+
+            Broadcast msg ->
+                updateBroadcast msg
+
             KeyDown code ->
                 updateKeyDown code
 
@@ -88,85 +127,14 @@ update msg model =
                 Socket.update msg model.socket
                     |> pushCmd model
 
-            JoinSpectatorChannel ->
-                joinChannel ("spectator:" ++ model.gameid) model
-
-            JoinAdminChannel ->
-                joinChannel ("admin:" ++ model.gameid) model
+            JoinGameChannel ->
+                joinChannel topic model
 
             JoinChannelSuccess _ ->
                 model ! []
 
             JoinChannelFailed error ->
                 Debug.crash (toString error)
-
-            ResumeGame ->
-                adminCmd "resume" model
-
-            PauseGame ->
-                adminCmd "pause" model
-
-            StopGame ->
-                adminCmd "stop" model
-
-            NextStep ->
-                adminCmd "next" model
-
-            PrevStep ->
-                adminCmd "prev" model
-
-            ReceiveMoveResponse raw ->
-                model ! []
-
-            ReceiveRestartRequestOk raw ->
-                case JD.decodeValue (Decoder.lobbySnake) raw of
-                    Ok { snakeId, data } ->
-                        let
-                            updateSnake snake =
-                                { snake | loadingState = Ready data }
-
-                            model_ =
-                                updateLobbyMember updateSnake model snakeId
-                        in
-                            model_ ! []
-
-                    Err err ->
-                        Debug.crash err
-
-            ReceiveRestartRequestError raw ->
-                case JD.decodeValue Decoder.error raw of
-                    Ok { snakeId, data } ->
-                        let
-                            updateSnake snake =
-                                { snake | loadingState = Failed data }
-
-                            model_ =
-                                updateLobbyMember updateSnake model snakeId
-                        in
-                            model_ ! []
-
-                    Err e ->
-                        Debug.crash e
-
-            ReceiveRestartFinished _ ->
-                model ! []
-
-            ReceiveRestartInit raw ->
-                case JD.decodeValue Decoder.lobby raw of
-                    Ok lobby ->
-                        { model | phase = LobbyPhase lobby } ! []
-
-                    Err e ->
-                        Debug.crash e
-
-            RecieveTick raw ->
-                case JD.decodeValue Decoder.tick raw of
-                    Ok ( world, rawWorld ) ->
-                        { model | phase = GamePhase world }
-                            ! [ GameBoard.render rawWorld ]
-
-                    Err e ->
-                        Debug.crash e
 
 
 
@@ -215,42 +183,20 @@ socket : String -> String -> PhxSock
 socket url gameid =
     let
         topic =
-            "spectator:" ++ gameid
+            "game:" ++ gameid
 
         model =
             { gameid = gameid }
     in
         Socket.init url
-            |> Socket.on "tick" topic RecieveTick
-            |> Socket.on "restart:init" topic ReceiveRestartInit
-            |> Socket.on "restart:finished" topic ReceiveRestartFinished
-            |> Socket.on "restart:request:error" topic ReceiveRestartRequestError
-            |> Socket.on "restart:request:ok" topic ReceiveRestartRequestOk
-            |> Socket.on "move:response" topic ReceiveMoveResponse
+            |> Socket.on "tick" topic (Broadcast << RecieveTick)
+            |> Socket.on "lobbyinfo" topic (Broadcast << LobbyInfo)
 
 
-adminCmd : String -> Model -> ( Model, Cmd Msg )
-adminCmd cmd model =
-    Push.init cmd ("admin:" ++ model.gameid)
+{-| Push a command to a topic.
+-}
+push : String -> String -> Model -> ( Model, Cmd Msg )
+push topic cmd model =
+    Push.init cmd topic
         |> flip Socket.push model.socket
         |> pushCmd model
-
-
-updateLobbyMember : (Permalink -> Permalink) -> Model -> String -> Model
-updateLobbyMember update model id =
-    let
-        updateSnakes snakes =
-            Dict.update id (Maybe.map update) snakes
-
-        updateLobby lobby =
-            { lobby | snakes = updateSnakes lobby.snakes }
-
-        phase =
-            case model.phase of
-                LobbyPhase lobby ->
-                    LobbyPhase (updateLobby lobby)
-
-                x ->
-                    x
-    in
-        { model | phase = phase }

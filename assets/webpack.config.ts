@@ -8,6 +8,7 @@ const path = require("path");
 
 const relativePath = path.resolve.bind(path, __dirname);
 const config: Configuration = {};
+const isProduction = process.env.NODE_ENV === 'production';
 
 module.exports = config;
 
@@ -101,6 +102,7 @@ const elmRule = {
     loader: "elm-webpack-loader",
     options: {
       cwd: relativePath("elm"),
+      debug: !isProduction,
     },
   },
 };

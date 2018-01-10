@@ -2,9 +2,7 @@ defmodule BsWeb.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "room:*", Bs.RoomChannel
-  channel("spectator:*", BsWeb.SpectatorChannel)
-  channel("admin:*", BsWeb.GameAdminChannel)
+  channel("game:*", BsWeb.GameChannel)
   channel("test", BsWeb.TestChannel)
 
   ## Transports

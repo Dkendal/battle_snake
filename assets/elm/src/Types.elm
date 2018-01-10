@@ -4,6 +4,10 @@ import Dict exposing (..)
 import Json.Encode exposing (Value)
 
 
+type alias GameState =
+    { board : Board }
+
+
 type alias Board =
     { turn : Int
     , snakes : List Snake

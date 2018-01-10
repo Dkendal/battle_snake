@@ -10,7 +10,8 @@
   "scripts": {
     "cypress": "cypress open",
     "cypress:run": "cypress run",
-    "server": "PORT=3000 mix phx.server"
+    "reactor": "cd ./assets/elm && ../node_modules/elm/binwrappers/elm-reactor",
+    "server": "PORT=5678 mix phx.server"
   },
   "version": "1.0.0"
 }

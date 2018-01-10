@@ -74,7 +74,7 @@ scoreboardView model =
                 LobbyPhase lobby ->
                     lobbyPhaseView lobby
 
-                GamePhase board ->
+                GamePhase { board } ->
                     gamePhaseView board
 
                 _ ->

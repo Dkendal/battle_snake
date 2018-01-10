@@ -1,6 +1,6 @@
 declare module 'elm/Test' {
   interface Ports {
-    render: Elm.Port<(world: Board) => void>;
+    render: Elm.Port<(gameState: GameState) => void>;
   }
 
   export const Test: Elm.App<Ports, {websocket: string}>;
@@ -8,7 +8,7 @@ declare module 'elm/Test' {
 
 declare module 'elm/Game' {
   interface Ports {
-    render: Elm.Port<(world: Board) => void>;
+    render: Elm.Port<(gameState: GameState) => void>;
   }
 
   export const Game: Elm.App<Ports, {websocket: string}>;
@@ -52,6 +52,10 @@ interface Snake {
   coords: Point[];
   color: string;
   death: string;
+}
+
+interface GameState {
+  board: Board
 }
 
 interface Board {

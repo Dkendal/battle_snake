@@ -42,6 +42,14 @@ defmodule Bs.GameTest do
     assert :ok = Game.prev("1")
   end
 
+  test "#get_state_async" do
+    Elixir.Registry.register(Bs.Game.Registry, "1", %{})
+
+    Elixir.Registry.dispatch(Bs.Game.Registry, "1", fn [{pid, state}] ->
+      IO.inspect(state)
+    end)
+  end
+
   test "#stop" do
     {:ok, pid, _} = Game.ensure_started("1")
 
