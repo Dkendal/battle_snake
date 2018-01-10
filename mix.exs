@@ -95,7 +95,7 @@ defmodule Bs.Mixfile do
       {:ecto_mnesia, "~> 0.9.0"},
       {:edeliver, "~> 1.4"},
       {:ex_doc, "~> 0.16", only: :dev, runtime: false},
-      {:ex_machina, "~> 1.0", only: :test},
+      {:ex_machina, "~> 2.1", only: :test},
       {:excoveralls, "~> 0.6", only: :test},
       {:exvcr, "~> 0.8", only: :test, runtime: false},
       {:gettext, "~> 0.11"},
@@ -139,16 +139,21 @@ defmodule Bs.Mixfile do
   end
 
   def test _ do
-    Mix.shell().cmd("MIX_ENV=test mix test")
+    "MIX_ENV=test mix test"
+    |> Mix.shell().cmd()
   end
 
   def xref(_) do
-    Mix.shell().cmd("dot xref_graph.dot -Tsvg -o xref_graph.svg")
+    "dot xref_graph.dot -Tsvg -o xref_graph.svg"
+    |> Mix.shell().cmd()
   end
 
   def watch(_) do
-    Mix.shell().cmd(
-      "watchman-make -p 'lib/**/*.ex' 'test/**/*.ex' 'test/**/*.exs' --run 'mix test --stale --color=true'"
-    )
+    """
+    watchman-make -p 'lib/**/*.ex' \
+      'test/**/*.ex' \ 'test/**/*.exs' \
+      --run 'mix test --stale --color=true'
+    """
+    |> Mix.shell().cmd()
   end
 end
