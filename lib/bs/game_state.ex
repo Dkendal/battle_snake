@@ -11,7 +11,6 @@ defmodule Bs.GameState do
   defstruct [
     :world,
     :objective,
-    :game_form_id,
     snakes: %{},
     game_form: {:error, :init},
     delay: 0,

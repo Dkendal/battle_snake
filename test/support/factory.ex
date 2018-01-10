@@ -61,7 +61,6 @@ defmodule Bs.Factory do
     game = insert(:game_form)
 
     %Bs.GameState{
-      game_form_id: game.id,
       world: build(:world),
       game_form: game,
       objective: fn _ -> false end

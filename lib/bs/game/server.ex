@@ -13,8 +13,8 @@ defmodule Bs.Game.Server do
     {:ok, :no_state}
   end
 
-  def init(%GameState{game_form_id: game_form_id} = state)
-      when is_integer(game_form_id) do
+  def init(%GameState{game_form: %{id: id}} = state)
+      when is_integer(id) do
     do_reply({:ok, state})
   end
 
@@ -123,7 +123,6 @@ defmodule Bs.Game.Server do
     state = %Bs.GameState{
       delay: delay,
       game_form: game_form,
-      game_form_id: id,
       objective: objective,
       world: world
     }
@@ -172,12 +171,13 @@ defmodule Bs.Game.Server do
     end
   end
 
-  defp broadcast(%{game_form_id: topic} = state) when is_integer(topic) do
+  defp broadcast(%Bs.GameState{game_form: %{id: id}} = state)
+       when not is_nil(id) do
     ignored_fields = [:hist, :objective]
 
     broadcast_state = Map.drop(state, ignored_fields)
 
-    PubSub.broadcast(topic, {:tick, broadcast_state})
+    PubSub.broadcast(id, {:tick, broadcast_state})
 
     state
   end
