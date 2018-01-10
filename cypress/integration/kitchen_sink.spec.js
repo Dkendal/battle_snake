@@ -1,4 +1,11 @@
-it('can create a game', () => {
+it('tests a snake', () => {
+  cy.visit('/test');
+  cy.get('input').type('http://localhost:5678/example')
+  cy.get('button').click()
+  cy.contains('Failed:')
+})
+
+it('play a game', () => {
   cy.visit('/');
 
   cy.contains('New game').click();
@@ -29,3 +36,4 @@ it('can create a game', () => {
 
   cy.get('.scoreboard-snake-dead').should('have.length.least', 1);
 });
+

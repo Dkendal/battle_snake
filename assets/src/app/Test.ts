@@ -1,7 +1,7 @@
-import {Test} from 'elm/Test';
+import './Test.css';
 import {GameBoard} from '../GameBoard';
 import css from '../css-variables';
-import './Test.css';
+import {Test} from 'elm/Test';
 
 const colorPallet = new Map<string, string>(Object.entries(css));
 
@@ -9,9 +9,8 @@ const test = Test.fullscreen({
   websocket: `ws://${window.location.host}/socket/websocket`,
 });
 
-test.ports.render.subscribe(({board: board_}) => {
-  console.debug('render', board_);
-  const id = board_.gameId;
+test.ports.render.subscribe(world => {
+  const id = world.gameId;
   const inverval = window.setInterval(callback, 20);
 
   const timeout = window.setTimeout(() => {
@@ -35,6 +34,6 @@ test.ports.render.subscribe(({board: board_}) => {
 
     const board = new GameBoard(node, colorPallet);
 
-    board.draw(board_);
+    board.draw(world);
   }
 });
