@@ -25,11 +25,9 @@ maybeWithDefault value decoder =
     decoder |> maybe |> map (Maybe.withDefault value)
 
 
-tick : Decoder ( GameState, Value )
+tick : Decoder GameState
 tick =
-    map2 (\x y -> ( x, y ))
-        ("content" := gameState)
-        ("content" := value)
+    ("content" := gameState)
 
 
 parseError : String -> Decoder a

@@ -7,6 +7,7 @@
     <meta name="description" content="">
     <meta name="author" content="Dylan C. Kendal">
 
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="<%= static_path(@conn, "/js/runtime.js") %>"></script>
     <script src="<%= static_path(@conn, "/js/vendor.js") %>"></script>
     <script src="<%= static_path(@conn, "/js/index.js") %>"></script>

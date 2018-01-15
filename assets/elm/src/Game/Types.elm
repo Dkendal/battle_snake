@@ -9,7 +9,7 @@ import Types exposing (..)
 type alias Model =
     { socket : Phoenix.Socket.Socket Msg
     , gameid : String
-    , phase : Phase
+    , gameState : Maybe GameState
     }
 
 

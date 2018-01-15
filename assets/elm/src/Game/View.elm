@@ -1,129 +1,350 @@
 module Game.View exposing (..)
 
-import Dict
-import Types exposing (..)
+import Css exposing (..)
 import Game.Types exposing (..)
-import Html exposing (..)
-import Html.Attributes exposing (..)
+import Html.Styled exposing (..)
+import Html.Styled.Attributes as Attr exposing (..)
+import Html.Styled.Events exposing (..)
+import Md exposing (..)
 import Route exposing (..)
+import Types exposing (..)
+
+
+assets : { logoAdvanced : String, logoLight : String }
+assets =
+    { logoAdvanced = "/images/division-advanced.svg"
+    , logoLight = "/images/bs-logo-light.svg"
+    }
+
+
+pallet :
+    { blue : Color
+    , grey : Color
+    , lightgrey : Color
+    , pink : Color
+    , white : Color
+    , yellow : Color
+    }
+pallet =
+    { white = hex "#fcfcfc"
+    , lightgrey = hex "#e8e8e8"
+    , pink = hex "#f7567c"
+    , yellow = hex "#fffae3"
+    , blue = hex "#99e1d9"
+    , grey = hex "#5d576b"
+    }
+
+
+ms : Float -> Px
+ms number =
+    Css.px (16 * (1.5 ^ number))
+
+
+ms_3 : Px
+ms_3 =
+    ms -3
+
+
+ms_2 : Px
+ms_2 =
+    ms -2
+
+
+ms_1 : Px
+ms_1 =
+    ms -1
+
+
+ms0 : Px
+ms0 =
+    ms 0
+
+
+ms1 : Px
+ms1 =
+    ms 1
+
+
+ms2 : Px
+ms2 =
+    ms 2
+
+
+ms3 : Px
+ms3 =
+    ms 3
+
+
+ms4 : Px
+ms4 =
+    ms 4
+
+
+theme =
+    { bgPrimary = pallet.grey
+    , bgSecondary = pallet.white
+    , sidebarPlayerHeight = ms 3
+    , buttonAccent = pallet.lightgrey
+    }
+
+
+sidebarTheme : Style
+sidebarTheme =
+    batch
+        [ backgroundColor theme.bgPrimary
+        , color theme.bgSecondary
+        ]
 
 
 view : Model -> Html Msg
 view model =
     div []
-        [ div [ class "gameapp" ]
-            [ div [ id model.gameid, class "main" ] []
-            , scoreboardView model
+        [ viewPort []
+            [ column
+                [ css [ flex auto ] ]
+                [ board model
+                , div [ css [ alignSelf center ] ] [ text (turn model) ]
+                , avControls []
+                    [ btn
+                        [ onClick (Push PrevStep)
+                        , title "Previous turn (k)"
+                        ]
+                        [ mdSkipPrev ]
+                    , btn
+                        [ onClick (Push StopGame)
+                        , title "Reset Game (q)"
+                        ]
+                        [ mdReplay ]
+                    , playPause model
+                    , btn
+                        [ onClick (Push NextStep)
+                        , title "Next turn (j)"
+                        ]
+                        [ mdSkipNext ]
+                    ]
+                ]
+            , sidebar model
             ]
         ]
 
 
-scoreboardView : Model -> Html Msg
-scoreboardView model =
+board : Model -> Html msg
+board { gameid } =
+    container
+        [ css
+            [ position relative
+            , margin ms0
+            ]
+        ]
+        [ div [ id gameid ] []
+        ]
+
+
+sidebar : Model -> Html Msg
+sidebar model =
     let
-        logoAdvanced =
-            "/images/division-advanced.svg"
-
-        logoLight =
-            "/images/bs-logo-light.svg"
-
-        lobbyPhaseView lobby =
-            lobby.snakes
-                |> Dict.values
-                |> List.map lobbyItemView
-                |> div [ class "scoreboard-snakes" ]
-
-        lobbyItemView snake =
-            case snake.loadingState of
-                Loading ->
-                    flag
-                        (avatar "/images/rolling.svg")
-                        [ div [] [ text snake.url ]
-                        , div [] [ text "loading..." ]
-                        ]
-
-                Ready snake ->
-                    flag
-                        (avatar snake.headUrl)
-                        [ div [] [ text snake.name ]
-                        , div [] [ text <| Maybe.withDefault "" snake.taunt ]
-                        ]
-
-                Failed reason ->
-                    flag
-                        (avatar "")
-                        [ div [] [ text snake.url ]
-                        , div [] [ text reason ]
-                        ]
-
-        gamePhaseView board =
-            div [ class "scoreboard-snakes" ] <|
-                List.concat
-                    [ List.map (snakeView True) board.snakes
-                    , List.map (snakeView False) board.deadSnakes
-                    ]
-    in
-        div [ class "scoreboard" ]
-            [ div [ class "scoreboard-header" ]
+        sidebarLogo =
+            div [ css [ marginBottom ms0 ] ]
                 [ div []
-                    [ img [ src logoLight ] []
-                    , img [ src logoAdvanced, class "division-logo" ] []
+                    [ img [ src assets.logoLight ] []
+                    , img
+                        [ src assets.logoAdvanced
+                        , css [ margin2 (px 0) ms4 ]
+                        ]
+                        []
                     ]
                 ]
-            , case model.phase of
-                LobbyPhase lobby ->
-                    lobbyPhaseView lobby
 
-                GamePhase { board } ->
-                    gamePhaseView board
+        content =
+            case model.gameState of
+                Nothing ->
+                    text "loading..."
 
-                _ ->
-                    text "other"
-            , div [ class "controls" ]
+                Just { board } ->
+                    container []
+                        (List.concat
+                            [ List.map (snake True) board.snakes
+                            , List.map (snake False) board.deadSnakes
+                            ]
+                        )
+    in
+        column
+            [ css
+                [ padding ms1
+                , justifyContent spaceBetween
+                , minWidth (px 300)
+                , overflowWrap breakWord
+                , sidebarTheme
+                ]
+            ]
+            [ sidebarLogo
+            , content
+            , sidebarControls []
                 [ a [ href <| editGamePath model.gameid ] [ text "Edit" ]
                 , a [ href <| gamesPath ] [ text "Games" ]
                 ]
             ]
 
 
-snakeView : Bool -> Snake -> Html msg
-snakeView alive snake =
+snake : Bool -> Snake -> Html msg
+snake alive snake =
     let
         healthRemaining =
             (toString snake.health) ++ "%"
 
-        snakeStyle =
-            [ ( "background-color", snake.color )
-            , ( "width", healthRemaining )
-            ]
-
-        props =
-            [ classList
-                [ ( "scoreboard-snake", True )
-                , ( "scoreboard-snake-dead", not alive )
-                , ( "scoreboard-snake-alive", alive )
+        healthbar =
+            div
+                [ style
+                    [ ( "background-color", snake.color )
+                    , ( "width", healthRemaining )
+                    ]
+                , css [ Css.height (ms_3) ]
                 ]
-            ]
-
-        body =
-            [ div [ class "healthbar-text" ]
-                [ span [] [ text snake.name ]
-                , span [] [ text <| toString snake.health ]
-                ]
-            , div [ style snakeStyle, class "healthbar" ] []
-            ]
+                []
     in
-        div props [ flag (avatar snake.headUrl) body ]
+        div
+            [ css
+                [ marginBottom ms0
+                , opacity
+                    (num
+                        (if alive then
+                            1
+                         else
+                            0.5
+                        )
+                    )
+                ]
+            ]
+            [ flag (avatar [ src snake.headUrl ] [])
+                [ div
+                    [ css
+                        [ displayFlex
+                        , justifyContent spaceBetween
+                        ]
+                    ]
+                    [ span [] [ text snake.name ]
+                    , span [] [ text <| toString snake.health ]
+                    ]
+                , healthbar
+                ]
+            ]
 
 
-avatar : String -> Html msg
-avatar src_ =
-    img [ src src_, class "avatar" ] []
+playPause : Model -> Html Msg
+playPause { gameState } =
+    let
+        gameEnded =
+            btn [ title "Game ended", Attr.disabled True ] [ mdStop ]
+    in
+        case gameState of
+            Nothing ->
+                gameEnded
+
+            Just { status } ->
+                case status of
+                    Halted ->
+                        gameEnded
+
+                    Suspended ->
+                        btn
+                            [ onClick (Push ResumeGame)
+                            , title "Resume game (h)"
+                            ]
+                            [ mdPause ]
+
+                    Cont ->
+                        btn
+                            [ onClick (Push PauseGame)
+                            , title "Pause game (l)"
+                            ]
+                            [ mdPlayArrow ]
+
+
+column : List (Attribute msg) -> List (Html msg) -> Html msg
+column =
+    styled div
+        [ displayFlex
+        , flexDirection Css.column
+        ]
+
+
+row : List (Attribute msg) -> List (Html msg) -> Html msg
+row =
+    styled div
+        [ displayFlex
+        , flexDirection Css.row
+        ]
+
+
+viewPort : List (Attribute msg) -> List (Html msg) -> Html msg
+viewPort =
+    styled row [ Css.height (vh 100), Css.width (vw 100) ]
+
+
+avControls : List (Attribute msg) -> List (Html msg) -> Html msg
+avControls =
+    styled div [ alignSelf center, flex Css.content, margin ms0 ]
+
+
+sidebarControls : List (Attribute msg) -> List (Html msg) -> Html msg
+sidebarControls =
+    styled div
+        [ displayFlex
+        , justifyContent spaceAround
+        ]
+
+
+avatar : List (Attribute msg) -> List (Html msg) -> Html msg
+avatar =
+    styled img
+        [ marginRight ms0
+        , Css.width theme.sidebarPlayerHeight
+        , Css.height theme.sidebarPlayerHeight
+        ]
+
+
+container : List (Attribute msg) -> List (Html msg) -> Html msg
+container =
+    styled div [ flex auto ]
+
+
+btn : List (Attribute msg) -> List (Html msg) -> Html msg
+btn =
+    styled button
+        [ border inherit
+        , outline inherit
+        , Css.property "-webkit-appearance" "none"
+        , Css.property "-moz-appearance" "none"
+        , backgroundColor inherit
+        , color inherit
+        , cursor pointer
+        , Css.disabled
+            [ backgroundColor inherit
+            , color theme.buttonAccent
+            ]
+        , hover
+            [ backgroundColor theme.buttonAccent ]
+        ]
 
 
 flag : Html msg -> List (Html msg) -> Html msg
 flag img_ body =
-    div [ style [ ( "display", "flex" ), ( "min-height", "60px" ) ] ]
-        [ img_
-        , div [ style [ ( "flex", "1" ) ] ] body
+    div
+        [ css
+            [ displayFlex
+            , minHeight theme.sidebarPlayerHeight
+            ]
         ]
+        [ img_
+        , container [] body
+        ]
+
+
+turn : Model -> String
+turn { gameState } =
+    case gameState of
+        Just { board } ->
+            toString board.turn
+
+        Nothing ->
+            ""
