@@ -23,7 +23,7 @@ defmodule Bs.Mixfile do
           | Path.wildcard("lib/bs/pages/**/*.md")
         ]
       ],
-      elixir: "~> 1.6.0-rc.0",
+      elixir: ">= 1.5.3",
       elixirc_paths: elixirc_paths(Mix.env()),
       erlc_options: erlc_options(Mix.env()),
       homepage_url: "https://github.com/battle-snake/battle_snake",
