@@ -90,7 +90,7 @@ defmodule Bs.Mixfile do
       {:cowboy, "~> 1.0"},
       {:credo, "~> 0.8", only: [:dev, :text], runtime: false},
       {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
-      {:distillery, "~> 1.1"},
+      {:distillery, "~> 1.5", runtime: false},
       {:ecto, "~> 2.1"},
       {:ecto_mnesia, "~> 0.9.0"},
       {:edeliver, "~> 1.4"},
