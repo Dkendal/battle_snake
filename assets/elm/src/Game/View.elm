@@ -189,30 +189,50 @@ sidebar model =
 snake : Bool -> Snake -> Html msg
 snake alive snake =
     let
-        healthRemaining =
-            (toString snake.health) ++ "%"
+        healthbarWidth =
+            if alive then
+                (toString snake.health) ++ "%"
+            else
+                "0%"
+
+        transition =
+            Css.batch <|
+                if alive then
+                    []
+                else
+                    [ Css.property "transition-property" "width, background-color"
+                    , Css.property "transition-duration" "1s"
+                    , Css.property "transition-timing-function" "ease"
+                    ]
+
+        healthbarStyle =
+            [ ( "background-color", snake.color )
+            , ( "width", healthbarWidth )
+            ]
 
         healthbar =
             div
-                [ style
-                    [ ( "background-color", snake.color )
-                    , ( "width", healthRemaining )
-                    ]
-                , css [ Css.height (ms_3) ]
+                [ style healthbarStyle
+                , css [ Css.height (ms_3), transition ]
                 ]
                 []
+
+        healthText =
+            if alive then
+                (toString snake.health)
+            else
+                "Dead"
+
+        containerOpacity =
+            if alive then
+                1
+            else
+                0.5
     in
         div
             [ css
                 [ marginBottom ms0
-                , opacity
-                    (num
-                        (if alive then
-                            1
-                         else
-                            0.5
-                        )
-                    )
+                , opacity (num containerOpacity)
                 ]
             ]
             [ flag (avatar [ src snake.headUrl ] [])
@@ -223,7 +243,7 @@ snake alive snake =
                         ]
                     ]
                     [ span [] [ text snake.name ]
-                    , span [] [ text <| toString snake.health ]
+                    , span [] [ text healthText ]
                     ]
                 , healthbar
                 ]
