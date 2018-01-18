@@ -31,6 +31,11 @@
   </div>
 
   <div>
+    <%= label @form, :snake_start_length %>
+    <%= number_input @form, :snake_start_length, required: true %>
+  </div>
+
+  <div>
     <%= label @form, :game_mode %>
     <%= select @form, :game_mode, BsRepo.GameForm.game_modes(), required: true %>
   </div>

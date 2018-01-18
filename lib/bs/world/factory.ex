@@ -5,7 +5,6 @@ alias Bs.World.Factory.Worker
 
 defmodule Bs.World.Factory do
   @timeout 4900
-  @new_snake_length 3
 
   def build(%{id: id} = game) when not is_nil(id) do
     world = %World{
@@ -90,7 +89,7 @@ defmodule Bs.World.Factory do
       for snake <- snakes do
         {:ok, point} = World.rand_unoccupied_space(world)
 
-        coords = List.duplicate(point, @new_snake_length)
+        coords = List.duplicate(point, game.snake_start_length)
 
         put_in(snake.coords, coords)
       end
