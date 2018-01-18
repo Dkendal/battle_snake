@@ -15,6 +15,7 @@ defmodule Bs.Repo.GameTest do
         game_mode: "singleplayer",
         height: 2,
         max_food: 3,
+        snake_start_length: 5,
         recv_timeout: 4,
         width: 5,
         snakes: ["https://example.com"]
@@ -31,6 +32,7 @@ defmodule Bs.Repo.GameTest do
         game_mode: "sup",
         height: -1,
         max_food: -1,
+        snake_start_length: 0,
         recv_timeout: -1,
         width: -1
       }
@@ -49,6 +51,30 @@ defmodule Bs.Repo.GameTest do
                {
                  "is invalid",
                  [validation: :inclusion]
+               }
+
+      assert changeset.errors[:height] ==
+               {
+                 "must be greater than or equal to %{number}",
+                 [validation: :number, number: 2]
+               }
+      
+      assert changeset.errors[:width] ==
+               {
+                 "must be greater than or equal to %{number}",
+                 [validation: :number, number: 2]
+               }
+
+      assert changeset.errors[:max_food] ==
+               {
+                 "must be greater than or equal to %{number}",
+                 [validation: :number, number: 0]
+               }
+
+      assert changeset.errors[:snake_start_length] ==
+               {
+                 "must be greater than or equal to %{number}",
+                 [validation: :number, number: 1]
                }
     end
   end
