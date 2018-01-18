@@ -28,12 +28,6 @@ defmodule Bs.Game do
     id |> do_ensure_started |> call(:get_game_state)
   end
 
-  def get_state_async(id, callback) when is_binary(id) do
-    Elixir.Registry.dispatch(Game.Registry, id, fn entries ->
-      nil
-    end)
-  end
-
   def next(id) when is_binary(id) do
     id |> do_ensure_started |> call(:next)
   end
