@@ -20,17 +20,43 @@ defmodule BsRepo.GameForm do
     field(:snake_start_length, :integer, default: 3)
     field(:game_mode, :string, default: @multiplayer)
     field(:recv_timeout, :integer, default: 200)
+    field(:dec_health_points, :integer, default: 1)
   end
 
-  @required  [:delay, :game_mode, :height, :max_food, :snake_start_length, :recv_timeout, :width]
-  @permitted [:delay, :game_mode, :height, :max_food, :snake_start_length, :recv_timeout, :width]
+  @required [
+    :delay,
+    :game_mode,
+    :height,
+    :max_food,
+    :snake_start_length,
+    :recv_timeout,
+    :width,
+    :dec_health_points
+  ]
+
+  @permitted [
+    :delay,
+    :game_mode,
+    :height,
+    :max_food,
+    :snake_start_length,
+    :recv_timeout,
+    :width,
+    :dec_health_points
+  ]
+
   def changeset(game, params \\ %{}) do
     game
     |> cast(params, @permitted)
     |> cast_embed(:snakes)
     |> validate_inclusion(:game_mode, @game_modes)
     |> validate_number(:recv_timeout, greater_than_or_equal_to: 0)
+    |> validate_number(:height, greater_than_or_equal_to: 2)
+    |> validate_number(:width, greater_than_or_equal_to: 2)
     |> validate_number(:delay, greater_than_or_equal_to: 0)
+    |> validate_number(:max_food, greater_than_or_equal_to: 0)
+    |> validate_number(:snake_start_length, greater_than_or_equal_to: 1)
+    |> validate_number(:dec_health_points, greater_than_or_equal_to: 0)
     |> validate_required(@required)
     |> remove_empty_snakes()
   end
