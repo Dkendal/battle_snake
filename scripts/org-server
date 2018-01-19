@@ -1,2 +1,0 @@
-#!/bin/bash
-iex --sname org-server@localhost -S mix
