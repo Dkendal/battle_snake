@@ -10,9 +10,10 @@ defmodule Bs.WorldTest do
     Map.put(context, :world, world)
   end
 
-  describe "World.dec_health_points/1" do
-    setup do
-      world = build(:world)
+  describe "World.dec_health_points/2" do
+    setup %{world: context_world, dec_health_points: dec} do
+
+      world = %{context_world | dec_health_points: dec}
       snake = build(:snake, health_points: 50)
 
       [snake: _, world: world] =
@@ -25,8 +26,14 @@ defmodule Bs.WorldTest do
       {:ok, snake: snake, world: world}
     end
 
-    test "reduces snake health points by 1", %{snake: snake} do
+    @tag dec_health_points: 1
+    test "reduces snake health points by 1 (default)", %{snake: snake} do
       assert snake.health_points == 49
+    end
+
+    @tag dec_health_points: 2
+    test "reduces snake health points by 2", %{snake: snake} do
+      assert snake.health_points == 48
     end
   end
 
