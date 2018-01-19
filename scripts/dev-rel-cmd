@@ -1,2 +1,0 @@
-#!/bin/sh
-./_build/prod/rel/bs/bin/bs $@
