@@ -61,7 +61,7 @@ defmodule Bs.Mixfile do
   end
 
   def extra_applications(_all) do
-    [:logger, :ecto_mnesia]
+    [:logger, :ecto_mnesia, :confex]
   end
 
   # Specifies which paths to compile per environment.
@@ -75,24 +75,23 @@ defmodule Bs.Mixfile do
       "vcr.check": :test,
       "vcr.show": :test,
       coveralls: :test,
-      "coveralls.detail": :test,
-      "coveralls.post": :test,
-      "coveralls.html": :test
+      release: :prod,
+      test: :test,
+      vcr: :test
     ]
   end
 
-  # Specifies your project dependencies.
-  #
-  # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:apex, "~> 1.2"},
+      {:apex, "~> 1.2", only: [:dev]},
+      # Conflict with ecto_mnesia
+      {:confex, "~> 3.3.1"},
       {:cowboy, "~> 1.0"},
       {:credo, "~> 0.8", only: [:dev, :text], runtime: false},
       {:dialyxir, "~> 0.5", only: [:dev], runtime: false},
       {:distillery, "~> 1.5", runtime: false},
       {:ecto, "~> 2.1"},
-      {:ecto_mnesia, "~> 0.9.0"},
+      {:ecto_mnesia, github: "Nebo15/ecto_mnesia", ref: "592cc472"},
       {:edeliver, "~> 1.4"},
       {:ex_doc, "~> 0.16", only: :dev, runtime: false},
       {:ex_machina, "~> 2.1", only: :test},
@@ -109,8 +108,7 @@ defmodule Bs.Mixfile do
       {:phoenix_pubsub, "~> 1.0"},
       {:poison, "~> 3.0"},
       {:postgrex, ">= 0.0.0"},
-      {:proper, github: "manopapad/proper", tag: "v1.2", only: :test},
-      {:reprise, "~> 0.5.0", only: :dev}
+      {:proper, github: "manopapad/proper", tag: "v1.2", only: :test}
     ]
   end
 

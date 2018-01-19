@@ -1,4 +1,0 @@
-#!/bin/bash
-PORT=3000 iex \
-    --sname bs-dev@localhost \
-    -S mix phoenix.server
