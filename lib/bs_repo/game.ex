@@ -11,13 +11,32 @@ defmodule BsRepo.Game do
     field(:recv_timeout, :integer, default: 200)
     field(:snakes, {:array, :string})
     field(:width, :integer, default: 20)
+    field(:dec_health_points, :integer, default: 1)
 
     timestamps()
   end
 
-  @required [:delay, :game_mode, :height, :max_food, :snake_start_length, :recv_timeout, :width]
+  @required [
+    :delay,
+    :game_mode,
+    :height,
+    :max_food,
+    :snake_start_length,
+    :recv_timeout,
+    :width,
+    :dec_health_points
+  ]
 
-  @permitted [:delay, :game_mode, :height, :max_food, :snake_start_length, :recv_timeout, :width]
+  @permitted [
+    :delay,
+    :game_mode,
+    :height,
+    :max_food,
+    :snake_start_length,
+    :recv_timeout,
+    :width,
+    :dec_health_points
+  ]
 
   def changeset(model, params \\ %{}) do
     model
@@ -29,6 +48,7 @@ defmodule BsRepo.Game do
     |> validate_number(:snake_start_length, greater_than_or_equal_to: 1)
     |> validate_number(:recv_timeout, greater_than_or_equal_to: 0)
     |> validate_number(:width, greater_than_or_equal_to: 2)
+    |> validate_number(:dec_health_points, greater_than_or_equal_to: 0)
     |> validate_required(@required)
   end
 end

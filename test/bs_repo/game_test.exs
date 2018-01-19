@@ -18,6 +18,7 @@ defmodule Bs.Repo.GameTest do
         snake_start_length: 5,
         recv_timeout: 4,
         width: 5,
+        dec_health_points: 0,
         snakes: ["https://example.com"]
       }
 
@@ -34,7 +35,8 @@ defmodule Bs.Repo.GameTest do
         max_food: -1,
         snake_start_length: 0,
         recv_timeout: -1,
-        width: -1
+        width: -1,
+        dec_health_points: -1
       }
 
       changeset = Game.changeset(%Game{}, params)
@@ -75,6 +77,12 @@ defmodule Bs.Repo.GameTest do
                {
                  "must be greater than or equal to %{number}",
                  [validation: :number, number: 1]
+               }
+
+      assert changeset.errors[:dec_health_points] ==
+               {
+                 "must be greater than or equal to %{number}",
+                 [validation: :number, number: 0]
                }
     end
   end

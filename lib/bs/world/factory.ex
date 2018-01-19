@@ -14,7 +14,8 @@ defmodule Bs.World.Factory do
       max_food: game.max_food,
       snakes: [],
       width: game.width,
-      game_form_id: id
+      game_form_id: id,
+      dec_health_points: game.dec_health_points
     }
 
     data =

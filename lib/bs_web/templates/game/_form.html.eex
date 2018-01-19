@@ -36,6 +36,11 @@
   </div>
 
   <div>
+    <%= label @form, "Health lost per turn" %>
+    <%= number_input @form, :dec_health_points, required: true %>
+  </div>
+
+  <div>
     <%= label @form, :game_mode %>
     <%= select @form, :game_mode, BsRepo.GameForm.game_modes(), required: true %>
   </div>

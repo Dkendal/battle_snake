@@ -24,6 +24,7 @@ defmodule Bs.World do
     field(:moves, :any, default: %{}, virtual: true)
     field(:deaths, :any, default: [], virtual: true)
     field(:game_id, :any, default: 0, virtual: true)
+    field(:dec_health_points, :any, default: 1, virtual: true)
   end
 
   @doc """
@@ -93,7 +94,7 @@ defmodule Bs.World do
   @doc "Reduce all snakes health points by 1"
   def dec_health_points(world) do
     update_in(world.snakes, fn snakes ->
-      Enum.map(snakes, &Snake.dec_health_points/1)
+      Enum.map(snakes, &Snake.dec_health_points(&1, world.dec_health_points))
     end)
   end
 
