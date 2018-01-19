@@ -1,6 +1,7 @@
 defmodule BsWeb.GameChannel do
   alias Bs.Event
   alias Bs.Game
+  alias BsWeb.BoardView
   alias Phoenix.View
 
   use BsWeb, :channel
