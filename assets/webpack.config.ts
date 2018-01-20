@@ -1,10 +1,10 @@
-import {Configuration} from "webpack";
+import {Configuration} from 'webpack';
 
-const webpack = require("webpack");
-const {CheckerPlugin} = require("awesome-typescript-loader");
-const CopyWebpackPlugin = require("copy-webpack-plugin");
-const {BundleAnalyzerPlugin} = require("webpack-bundle-analyzer");
-const path = require("path");
+const webpack = require('webpack');
+const {CheckerPlugin} = require('awesome-typescript-loader');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const {BundleAnalyzerPlugin} = require('webpack-bundle-analyzer');
+const path = require('path');
 
 const relativePath = path.resolve.bind(path, __dirname);
 const config: Configuration = {};
@@ -13,44 +13,49 @@ const isProduction = process.env.NODE_ENV === 'production';
 module.exports = config;
 
 config.entry = {
-  game: "./src/app/Game.ts",
-  test: "./src/app/Test.ts",
-  index: "./src/index.ts",
-  vendor: ["phoenix", "phoenix_html"],
+  game: './src/app/Game.ts',
+  test: './src/app/Test.ts',
+  index: './src/index.ts',
+  vendor: ['phoenix', 'phoenix_html'],
 };
 
 config.output = {
-  path: relativePath("../priv/static"),
-  filename: "js/[name].js",
+  path: relativePath('../priv/static'),
+  filename: 'js/[name].js',
 };
 
 config.plugins = [
   new CheckerPlugin(),
   new webpack.HashedModuleIdsPlugin(),
   new webpack.optimize.CommonsChunkPlugin({
-    name: "vendor",
+    name: 'vendor',
   }),
   new webpack.optimize.CommonsChunkPlugin({
-    name: "runtime",
+    name: 'runtime',
   }),
   new CopyWebpackPlugin([
     {
-      context: "static",
-      from: "**/*",
+      context: 'static',
+      from: '**/*',
     },
   ]),
-  new BundleAnalyzerPlugin({
-    openAnalyzer: false,
-  }),
 ];
+
+if (!isProduction) {
+  config.plugins.push(
+    new BundleAnalyzerPlugin({
+      openAnalyzer: false,
+    })
+  );
+}
 
 const tsRule = {
   test: /\.tsx?$/,
-  loader: "awesome-typescript-loader",
+  loader: 'awesome-typescript-loader',
   options: {
     useBabel: true,
     useCache: true,
-    reportFiles: ["src/**/*.{ts,tsx}"],
+    reportFiles: ['src/**/*.{ts,tsx}'],
   },
 };
 
@@ -58,14 +63,14 @@ const jsRule = {
   test: /\.jsx?$/,
   exclude: /(node_modules|bower_components)/,
   use: {
-    loader: "babel-loader",
+    loader: 'babel-loader',
     options: {
       plugins: [
         [
-          "@babel/transform-async-to-generator",
+          '@babel/transform-async-to-generator',
           {
-            module: "bluebird",
-            method: "coroutine",
+            module: 'bluebird',
+            method: 'coroutine',
           },
         ],
       ],
@@ -77,20 +82,20 @@ const cssRule = {
   test: /\.css$/,
   use: [
     {
-      loader: "style-loader",
+      loader: 'style-loader',
       options: {
         sourceMap: true,
       },
     },
     {
-      loader: "css-loader",
+      loader: 'css-loader',
       options: {
         sourceMap: true,
         importLoaders: 1,
       },
     },
     {
-      loader: "postcss-loader",
+      loader: 'postcss-loader',
     },
   ],
 };
@@ -99,9 +104,9 @@ const elmRule = {
   test: /\.elm$/,
   exclude: [/elm-stuff/, /node_modules/],
   use: {
-    loader: "elm-webpack-loader",
+    loader: 'elm-webpack-loader',
     options: {
-      cwd: relativePath("elm"),
+      cwd: relativePath('elm'),
       debug: !isProduction,
     },
   },
@@ -112,11 +117,11 @@ config.module = {
 };
 
 config.resolve = {
-  modules: ["node_modules", "src"],
+  modules: ['node_modules', 'src'],
   alias: {
-    elm: relativePath("elm/src"),
+    elm: relativePath('elm/src'),
   },
-  extensions: [".js", ".jsx", ".ts", ".tsx", ".elm", ".json"],
+  extensions: ['.js', '.jsx', '.ts', '.tsx', '.elm', '.json'],
 };
 
-config.devtool = "#source-map";
+config.devtool = '#source-map';

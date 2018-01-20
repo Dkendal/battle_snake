@@ -47,4 +47,14 @@ defmodule BsWeb.Endpoint do
   )
 
   plug(BsWeb.Router)
+
+  def init(_type, config) do
+    {:ok, config} = Confex.Resolver.resolve(config)
+
+    unless config[:secret_key_base] do
+      raise "Set SECRET_KEY environment variable!"
+    end
+
+    {:ok, config}
+  end
 end
