@@ -1,0 +1,4 @@
+# pre_start
+echo "pre start hook..."
+$RELEASE_ROOT_DIR/bin/bs storage_up
+$RELEASE_ROOT_DIR/bin/bs migrate

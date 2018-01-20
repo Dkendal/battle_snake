@@ -9,7 +9,7 @@ config :bs, snake_api: Bs.Api
 # watchers to your application. For example, we use it
 # with brunch.io to recompile .js and .css sources.
 config :bs, BsWeb.Endpoint,
-  http: [port: {:system, "PORT"}],
+  http: [port: {:system, :integer, "PORT", 3000}],
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
@@ -20,8 +20,9 @@ config :bs, BsWeb.Endpoint,
       "--stdin",
       "--verbose",
       "--colors",
-      cd: Path.expand("../assets", __DIR__)]]
-
+      cd: Path.expand("../assets", __DIR__)
+    ]
+  ]
 
 # Watch static and templates for browser reloading.
 config :bs, BsWeb.Endpoint,
