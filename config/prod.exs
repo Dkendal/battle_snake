@@ -16,7 +16,7 @@ config :bs, BsWeb.Endpoint,
   http: [port: {:system, :integer, "PORT"}],
   url: [host: {:system, :string, "HOST"}, port: {:system, :string, "PORT"}],
   root: ".",
-  version: Mix.Project.config[:version],
+  version: Mix.Project.config()[:version],
   cache_static_manifest: "priv/static/cache_manifest.json",
   server: true
 
@@ -58,6 +58,15 @@ config :phoenix, :serve_endpoints, true
 # start per endpoint:
 #
 #     config :bs, BsWeb.Endpoint, server: true
+#
+config :bs, BsRepo,
+  adapter: EctoMnesia.Adapter,
+  host: :"bs@127.0.0.1",
+  storage_type: :disc_copies
+
+config :ecto_mnesia,
+  host: :"bs@127.0.0.1",
+  storage_type: :disc_copies
 
 config :mnesia, dir: 'data'
 

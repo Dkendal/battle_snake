@@ -25,7 +25,6 @@ defmodule Bs.ReleaseTasks do
         :ok
     end
 
-    :mnesia.info()
     Logger.info("Done")
   end
 
@@ -36,18 +35,21 @@ defmodule Bs.ReleaseTasks do
     Application.ensure_all_started(:mnesia)
     Application.ensure_all_started(:ecto)
     Application.ensure_all_started(:ecto_mnesia)
+    Logger.info("[ecto_mnesia] config: #{inspect(config())}")
     Logger.info("Running migrations for #{inspect(@repos)}")
     Logger.info("Starting repos..")
     Enum.each(@repos, & &1.start_link(pool_size: 1))
     Enum.each(@repos, &run_migrations_for/1)
-    :mnesia.info()
     Logger.info("Done")
   end
 
   defp run_migrations_for(repo) do
     app = Keyword.get(repo.config, :otp_app)
     Logger.info("Running migrations for #{app}")
-    Ecto.Migrator.run(repo, migrations_path(repo), :up, all: true)
+    path = migrations_path(repo)
+    Logger.info("Migrations path: #{path}")
+    Logger.info("Repo config: #{inspect(EctoMnesia.Storage.conf(repo.config))}")
+    Ecto.Migrator.run(repo, path, :up, all: true)
   end
 
   defp print_header(text) do
@@ -70,11 +72,14 @@ defmodule Bs.ReleaseTasks do
   end
 
   defp config do
-    Application.get_all_env(:ecto_mnesia)
+    :ecto_mnesia |> Application.get_all_env() |> EctoMnesia.Storage.conf()
   end
 
   defp boot() do
-    Application.load(:bs)
+    Application.load(@app)
     Application.ensure_all_started(:logger)
+    Logger.info("Loaded [#{@app}] app")
+    Logger.info("Started [logger] app")
+    Logger.info("Running on node [#{node()}]")
   end
 end

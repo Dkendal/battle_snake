@@ -13,7 +13,7 @@ config :bs, BsWeb.Endpoint,
   render_errors: [view: BsWeb.ErrorView, accepts: ~w(html json)],
   pubsub: [name: Bs.PubSub, adapter: Phoenix.PubSub.PG2]
 
-config :bs, start_timeout: 10000
+config :bs, start_timeout: 10_000
 
 config :bs, :http, HTTPoison
 
@@ -22,7 +22,7 @@ config :bs, ecto_repos: [BsRepo]
 config :bs, BsRepo, adapter: EctoMnesia.Adapter
 
 config :ecto_mnesia,
-  host: {:system, :atom, "MNESIA_HOST", node()},
+  host: {:system, :atom, "MNESIA_HOST", Kernel.node()},
   storage_type: {:system, :atom, "MNESIA_STORAGE_TYPE", :disc_copies}
 
 config :mnesia, dir: 'priv/data/mnesia'

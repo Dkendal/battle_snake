@@ -84,7 +84,6 @@ defmodule Bs.Mixfile do
   defp deps do
     [
       {:apex, "~> 1.2", only: [:dev]},
-      # Conflict with ecto_mnesia
       {:confex, "~> 3.3.1"},
       {:cowboy, "~> 1.0"},
       {:credo, "~> 0.8", only: [:dev, :text], runtime: false},
