@@ -8,10 +8,9 @@
   "name": "battle_snake",
   "repository": "git@github.com:Dkendal/battle_snake.git",
   "scripts": {
-    "cypress": "cypress open",
+    "cypress:open": "cypress open",
     "cypress:run": "cypress run",
-    "reactor": "cd ./assets/elm && ../node_modules/elm/binwrappers/elm-reactor",
-    "server": "PORT=5678 mix phx.server"
+    "install": "sh -c 'cd ./assets && yarn'"
   },
   "version": "1.0.0"
 }

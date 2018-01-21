@@ -1,14 +1,87 @@
+defaults: &defaults
+  working_directory: /tmp/battle_snake
+  docker:
+    # - image: elixir:1.6
+    #   environment:
+    #     MIX_ENV: test
+    - image: cypress/base:8
+      environment:
+        TERM: xterm
+
 version: 2
 jobs:
   build:
-    working_directory: ~/app
-    docker:
-      - image: elixir:1.6
+    <<: *defaults
     steps:
       - checkout
+      - run: npm install
+      - restore_cache:
+          keys:
+            - deps-{{ checksum "mix.lock" }}
+            - deps-{{ checksum "mix.exs" }}
+            - deps-
       - run: mix local.hex --force
       - run: mix local.rebar
       - run: mix deps.get
+      - run: mix deps.compile
+      - save_cache:
+          key: deps-{{ checksum "mix.exs" }}
+          paths:
+            - /tmp/battle_snake/deps/*
+            - /tmp/battle_snake/_build/*
+            - /root/.cache/*
+      - save_cache:
+          key: deps-{{ checksum "mix.lock" }}
+          paths:
+            - /tmp/battle_snake/deps/*
+            - /tmp/battle_snake/_build/*
+            - /root/.cache/*
       - run: mix ecto.create
       - run: mix ecto.migrate
+      - run: mix compile
+      - persist_to_workspace:
+          root: /tmp/battle_snake
+          paths:
+            - deps/*
+            - _build/*
+            - assets/node_modules/*
+            - priv/*
+
+  unit-test:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/battle_snake
+      - mix local.hex --force
+      - mix local.rebar
       - run: mix test
+
+  e2e-test:
+    <<: *defaults
+    docker:
+      - image: elixir:1.6
+        environment:
+          MIX_ENV: test
+
+      - image: circleci/node:latest
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/battle_snake
+      - mix local.hex --force
+      - mix local.rebar
+      - run: mix phx.server &
+      - run: yarn cypress:run
+
+workflows:
+  version: 2
+  build-and-test:
+    jobs:
+      - build
+      - unit-test:
+          requires:
+            - build
+      - e2e-test:
+          requires:
+            - build
