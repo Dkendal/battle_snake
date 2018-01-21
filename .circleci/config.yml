@@ -1,14 +1,64 @@
+defaults: &defaults
+  working_directory: /tmp/battle_snake
+  docker:
+    - image: elixir:1.6
+      environment:
+        MIX_ENV: test
+
 version: 2
 jobs:
   build:
-    working_directory: ~/app
-    docker:
-      - image: elixir:1.6
+    <<: *defaults
     steps:
       - checkout
+      - restore_cache:
+          keys:
+            - deps-{{ checksum "mix.lock" }}
+            - deps-{{ checksum "mix.exs" }}
+            - deps-
       - run: mix local.hex --force
       - run: mix local.rebar
       - run: mix deps.get
+      - run: mix deps.compile
+      - save_cache:
+          key: deps-{{ checksum "mix.exs" }}
+          paths:
+            - /tmp/battle_snake/deps/*
+            - /tmp/battle_snake/_build/*
+            - /root/.cache/*
+      - save_cache:
+          key: deps-{{ checksum "mix.lock" }}
+          paths:
+            - /tmp/battle_snake/deps/*
+            - /tmp/battle_snake/_build/*
+            - /root/.cache/*
       - run: mix ecto.create
       - run: mix ecto.migrate
+      - run: mix compile
+      - persist_to_workspace:
+          root: /tmp/battle_snake
+          paths:
+            - deps/*
+            - _build/*
+            - priv/*
+
+  unit-test:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/battle_snake
+      - run: mix local.hex --force
+      - run: mix local.rebar
       - run: mix test
+      - store_test_results:
+          path: /tmp/battle_snake/_build/test/lib
+
+workflows:
+  version: 2
+  build-and-test:
+    jobs:
+      - build
+      - unit-test:
+          requires:
+            - build
