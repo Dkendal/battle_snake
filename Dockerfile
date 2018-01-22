@@ -1,15 +1,9 @@
-FROM elixir:1.6 as elixir-build
+FROM elixir:1.6 as builder
 
-ENV HOST=localhost \
-    MIX_ENV=prod \
-    MNESIA_HOST=bs@127.0.0.1 \
-    MNESIA_STORAGE_TYPE=disc_copies \
-    PORT=3000 \
-    REPLACE_OS_VARS=1 \
-    SECRET_KEY_BASE=tbFePEIYrMaNfKmTHZZT9IrdebmVbS3FnCTOp/AAWklO9Jxnhua1YlGaMLzYz2yy \
-    VERBOSE=1
+ENV MIX_ENV=prod VERBOSE=1
 
 WORKDIR /app
+
 COPY . .
 
 RUN apt-get update && apt-get install -y apt-transport-https \
@@ -26,6 +20,15 @@ RUN mix do local.hex --force, \
     compile
 
 RUN yarn install && yarn webpack:production || : && mix phx.digest
-run mix release --verbose
+run mix release --env=prod --verbose
+
+FROM elixir:1.6
+WORKDIR /root
+COPY --from=builder /app/_build/ .
+ENV HOST=localhost \
+    MNESIA_HOST=bs@127.0.0.1 \
+    MNESIA_STORAGE_TYPE=ram_copies \
+    PORT=3000 \
+    SECRET_KEY_BASE=tbFePEIYrMaNfKmTHZZT9IrdebmVbS3FnCTOp/AAWklO9Jxnhua1YlGaMLzYz2yy
 EXPOSE 3000
-cmd ./_build/prod/rel/bs/bin/bs foreground
+cmd /root/prod/rel/bs/bin/bs foreground
