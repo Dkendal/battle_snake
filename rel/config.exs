@@ -37,6 +37,7 @@ end
 
 environment :prod do
   set(include_erts: true)
+  set(include_system_libs: true)
   set(include_src: false)
 
   set(

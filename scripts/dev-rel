@@ -12,7 +12,7 @@ export HOST=localhost
 export PORT=3000
 export MIX_ENV=prod
 export REL_ROOT=./_build/prod/rel/bs
-export REPlACE_OS_VARS=1
+export REPLACE_OS_VARS=1
 export VERBOSE=1
 
 [[ ! ($SKIP_ASSETS && ${SKIP_ASSETS-x}) ]] && \

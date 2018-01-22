@@ -15,6 +15,7 @@ config :bs, snake_api: Bs.Api
 config :bs, BsWeb.Endpoint,
   http: [port: {:system, :integer, "PORT"}],
   url: [host: {:system, :string, "HOST"}, port: {:system, :string, "PORT"}],
+  secret_key_base: {:system, :string, "SECRET_KEY_BASE"},
   root: ".",
   version: Mix.Project.config()[:version],
   cache_static_manifest: "priv/static/cache_manifest.json",
@@ -61,15 +62,14 @@ config :phoenix, :serve_endpoints, true
 #
 config :bs, BsRepo,
   adapter: EctoMnesia.Adapter,
-  host: :"bs@127.0.0.1",
-  storage_type: :disc_copies
+  host: {:system, :atom, "MNESIA_HOST"},
+  storage_type: {:system, :atom, "MNESIA_STORAGE_TYPE"}
 
 config :ecto_mnesia,
-  host: :"bs@127.0.0.1",
-  storage_type: :disc_copies
+  host: {:system, :atom, "MNESIA_HOST"},
+  storage_type: {:system, :atom, "MNESIA_STORAGE_TYPE"}
 
 config :mnesia, dir: 'data'
 
 # Finally import the config/prod.secret.exs
 # which should be versioned separately.
-import_config "prod.secret.exs"
