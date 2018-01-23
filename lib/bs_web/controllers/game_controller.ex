@@ -1,19 +1,13 @@
 defmodule BsWeb.GameController do
-  alias Bs.Game
   alias BsRepo.GameForm
+
+  import Ecto.Query
 
   use BsWeb, :controller
 
   def index(conn, _params) do
-    games = BsRepo.all(GameForm)
-
-    game_servers =
-      for game <- games do
-        status = if Game.alive?(game.id), do: :alive, else: :dead
-        {game, status}
-      end
-
-    render(conn, "index.html", games: games, game_servers: game_servers)
+    games = BsRepo.all(from(g in GameForm, order_by: [desc: g.id]))
+    render(conn, "index.html", games: games)
   end
 
   def new(conn, _params) do
