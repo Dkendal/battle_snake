@@ -1,7 +1,6 @@
 [![CircleCI](https://circleci.com/gh/battle-snake/battle_snake.svg?style=svg)](https://circleci.com/gh/battle-snake/battle_snake)
 
-![BattleSnake 2018 Logo](./docs/images/logo-18.png)
-
+[![BattleSnake 2018 Logo](./docs/images/logo-18.png)](https://www.battlesnake.io/)
 The 2018 Official Game Server
 
 * [Event Information](https://www.battlesnake.io/)
