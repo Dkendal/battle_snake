@@ -31,6 +31,8 @@ snake alive wins.
         - [POST /start](#post-start)
             - [The StartRequest Object](#the-startrequest-object)
             - [The StartResponse Object](#the-startresponse-object)
+            - [The HeadType Type](#the-headtype-type)
+            - [The TailType Type](#the-tailtype-type)
             - [Example Request](#example-request)
             - [Example Response](#example-response)
         - [POST /move](#post-move)
@@ -121,6 +123,8 @@ then on each turn a request to the `/move` endpoint.
 
 ### POST /start
 
+|                        |                                                    |
+|------------------------|----------------------------------------------------|
 | URL                    | /start                                             |
 | Method                 | POST                                               |
 | request body JSON      | ![StartRequest](#the-startrequest-object) object   |
@@ -138,16 +142,62 @@ interface StartRequest {
 
 ```typescript
 interface StartResponse {
+  /**
+   * What color your snake should be on the board.
+   * Accepts any valid CSS color.
+   * https://developer.mozilla.org/en-US/docs/Web/CSS/color
+   */
   color: string;
   name: string;
+  /**
+   * URL of the image to display as your avatar.
+   */
   head_url: string;
   taunt: string;
-  head_type: string;
-  tail_type: string;
+  head_type: HeadType;
+  tail_type: TailType;
   secondary_color: string;
 }
 ```
 
+#### The HeadType Type
+
+String referring to what head image should be used for your snake.
+
+Renders one of the matching images in [this directory](./assets/static/images/snake/head/).
+
+```typescript
+type HeadType = 
+  | 'bendr'
+  | 'dead'
+  | 'fang'
+  | 'pixel'
+  | 'regular'
+  | 'safe'
+  | 'sand-worm'
+  | 'shades'
+  | 'smile'
+  | 'tongue';
+```
+
+#### The TailType Type
+
+String referring to what tail image should be used for your snake.
+
+Renders one of the matching images in [this directory](./assets/static/images/snake/tail/).
+
+```typescript
+type TailType = 
+  | 'block-bum'
+  | 'curled'
+  | 'fat-rattle'
+  | 'freckled'
+  | 'pixel'
+  | 'regular'
+  | 'round-bum'
+  | 'skinny'
+  | 'small-rattle'
+```
 #### Example Request
 
 ```json
@@ -176,6 +226,8 @@ interface StartResponse {
 A request including all the current game information will be issued to this
 endpoint on each turn. The game server expects a JSON response within 200ms.
 
+|                        |                                              |
+|------------------------|----------------------------------------------|
 | URL                    | /move                                        |
 | Method                 | POST                                         |
 | request body JSON      | ![World](#the-world-object) object           |
