@@ -4,7 +4,7 @@
 
 The 2018 Official Game Server
 
-* [Event Information](https://wwww.battlesnake.io/)
+* [Event Information](https://www.battlesnake.io/)
 
 ![Example Game Animation](./docs/images/game.gif)
 
