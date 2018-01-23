@@ -1,32 +1,38 @@
 <h2>Listing games</h2>
 
-<table class="table">
+<%= link "New game", to: game_path(@conn, :new) %>
+
+<table>
   <thead>
     <tr>
-      <th></th>
-      <th></th>
+      <th>Game number</th>
+      <th># of players</th>
+      <th>Dimensions</th>
+      <th>Max # of food</th>
       <th></th>
     </tr>
   </thead>
   <tbody>
-    <%= for {game, game_server} <- @game_servers do %>
+    <%= for game <- @games do %>
       <tr>
         <td>
           <%= game.id %>
         </td>
-
         <td>
-          <%= inspect game_server %>
+          <%= game.snakes |> length %>
         </td>
-
-        <td class="text-right">
-          <%= link "Show", to: game_path(@conn, :show, game), class: "btn btn-default btn-xs" %>
-          <%= link "Edit", to: game_path(@conn, :edit, game), class: "btn btn-default btn-xs" %>
-          <%= link "Delete", to: game_path(@conn, :delete, game), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %>
+        <td>
+          <%= "#{game.height}x#{game.width}" %>
+        </td>
+        <td>
+          <%= game.max_food %>
+        </td>
+        <td>
+          <%= link "Show", to: game_path(@conn, :show, game) %>
+          <%= link "Edit", to: game_path(@conn, :edit, game) %>
+          <%= link "Delete", to: game_path(@conn, :delete, game), method: :delete, data: [confirm: "Are you sure?"] %>
         </td>
       </tr>
     <% end %>
   </tbody>
 </table>
-
-<%= link "New game", to: game_path(@conn, :new) %>
