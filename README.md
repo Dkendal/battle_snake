@@ -422,7 +422,8 @@ You can run the official BattleSnake game server through Docker, allowing you to
 
 
 ```
-docker run -it -p 3000:3000 battle-snake/battle_snake
+docker pull battlesnake/battle_snake
+docker run -it -p 3000:3000 battlesnake/battle_snake
 ```
 
 You should be able to view the game server at http://localhost:3000. 
