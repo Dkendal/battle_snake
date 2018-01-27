@@ -12,7 +12,6 @@ defmodule Bs.WorldTest do
 
   describe "World.dec_health_points/2" do
     setup %{world: context_world, dec_health_points: dec} do
-
       world = %{context_world | dec_health_points: dec}
       snake = build(:snake, health_points: 50)
 

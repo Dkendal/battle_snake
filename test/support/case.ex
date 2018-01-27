@@ -27,12 +27,11 @@ defmodule Bs.Case do
         {:ok, pid} =
           Agent.start_link(
             fn -> 0 end,
-            name:
-              {
-                :via,
-                Registry,
-                {Bs.Game.Registry, id}
-              }
+            name: {
+              :via,
+              Registry,
+              {Bs.Game.Registry, id}
+            }
           )
 
         pid

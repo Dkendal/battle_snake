@@ -60,7 +60,7 @@ defmodule Bs.Repo.GameTest do
                  "must be greater than or equal to %{number}",
                  [validation: :number, number: 2]
                }
-      
+
       assert changeset.errors[:width] ==
                {
                  "must be greater than or equal to %{number}",

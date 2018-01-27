@@ -1,7 +1,10 @@
 {
   "author": "Dylan Kendal <dylan.kendal@shopify.com>",
   "devDependencies": {
-    "cypress": "^1.4.1"
+    "cypress": "^1.4.1",
+    "husky": "^0.14.3",
+    "lint-staged": "^6.1.0",
+    "prettier": "^1.10.2"
   },
   "license": "MIT",
   "main": "index.js",
@@ -11,6 +14,7 @@
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "install": "cd ./assets && yarn",
+    "precommit": "lint-staged",
     "webpack": "cd ./assets && yarn webpack",
     "webpack:production": "NODE_ENV=production yarn webpack"
   },

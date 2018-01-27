@@ -17,10 +17,7 @@ defmodule BsWeb.TestCaseErrorView do
         dgettext("test", "move is invalid", move: changeset.changes.move)
       end)
 
-    %{
-      object: "error_with_multiple_reasons",
-      errors: errors
-    }
+    %{object: "error_with_multiple_reasons", errors: errors}
   end
 
   def render("show.json", %{test_case_error: %AssertionError{} = err}) do
@@ -66,11 +63,10 @@ defmodule BsWeb.TestCaseErrorView do
     reoi = ~r/Unexpected end of input at position (?<pos>\d+)/
     rtok = ~r/Unexpected token at position (?<pos>\d+): (?<token>\S+)|/
 
-    captures =
-      {
-        named_captures(reoi, err.message),
-        named_captures(rtok, err.message)
-      }
+    captures = {
+      named_captures(reoi, err.message),
+      named_captures(rtok, err.message)
+    }
 
     reason =
       case captures do

@@ -46,11 +46,10 @@ defmodule Mix.Tasks.Phx.Gen.View do
     dict =
       for f <- fields,
           to_string(f) =~ ~r"^[a-zA-Z]",
-          do:
-            {
-              f,
-              {{:., [], [assign, f]}, [], []}
-            }
+          do: {
+            f,
+            {{:., [], [assign, f]}, [], []}
+          }
 
     dict = {:%{}, [], dict}
 

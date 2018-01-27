@@ -1,0 +1,23 @@
+{
+  "linters": {
+    "*.json": [
+      "jq ."
+    ],
+    "*.{css,scss}": [
+      "yarn prettier --write",
+      "git add"
+    ],
+    "*.{exs,ex}": [
+      "mix format",
+      "git add"
+    ],
+    "*.{js,jsx}": [
+      "yarn prettier --write",
+      "git add"
+    ],
+    "*.{ts,tsx}": [
+      "yarn prettier --write",
+      "git add"
+    ]
+  }
+}
