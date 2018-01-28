@@ -13,15 +13,8 @@ defmodule Bs.Mixfile do
       dialyzer: dialyzer(),
       name: "BattleSnake",
       docs: [
-        debug: true,
         main: "Bs",
-        logo: "assets/static/images/division-advanced.png",
-        assets: "assets/docs",
-        before_closing_head_tag: &before_closing_head_tag/1,
-        extras: [
-          "README.md"
-          | Path.wildcard("lib/bs/pages/**/*.md")
-        ]
+        extras: ["README.md"]
       ],
       elixir: ">= 1.5.3",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -33,13 +26,6 @@ defmodule Bs.Mixfile do
       test_coverage: [tool: ExCoveralls],
       version: @version
     ]
-  end
-
-  def before_closing_head_tag(:html) do
-    """
-    <script src="assets/node_modules/mermaid/dist/mermaid.min.js"></script>
-    <script>mermaid.initialize({startOnLoad:true});</script>
-    """
   end
 
   # Configuration for the OTP application.
