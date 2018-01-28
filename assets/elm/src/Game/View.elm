@@ -10,13 +10,6 @@ import Route exposing (..)
 import Types exposing (..)
 
 
-assets : { logoAdvanced : String, logoLight : String }
-assets =
-    { logoAdvanced = "/images/division-advanced.svg"
-    , logoLight = "/images/bs-logo-light.svg"
-    }
-
-
 pallet :
     { blue : Color
     , grey : Color
@@ -143,18 +136,6 @@ board { gameid } =
 sidebar : Model -> Html Msg
 sidebar model =
     let
-        sidebarLogo =
-            div [ css [ marginBottom ms0 ] ]
-                [ div []
-                    [ img [ src assets.logoLight ] []
-                    , img
-                        [ src assets.logoAdvanced
-                        , css [ margin2 (px 0) ms4 ]
-                        ]
-                        []
-                    ]
-                ]
-
         content =
             case model.gameState of
                 Nothing ->
@@ -177,8 +158,7 @@ sidebar model =
                 , sidebarTheme
                 ]
             ]
-            [ sidebarLogo
-            , content
+            [ content
             , sidebarControls []
                 [ a [ href <| editGamePath model.gameid ] [ text "Edit" ]
                 , a [ href <| gamesPath ] [ text "Games" ]

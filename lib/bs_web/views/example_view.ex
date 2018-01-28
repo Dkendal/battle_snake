@@ -14,8 +14,7 @@ defmodule BsWeb.ExampleView do
     %{
       color: "#99c1bc",
       head_type: @heads |> Enum.random(),
-      head_url: "/images/division-classic.svg",
-      name: "BATTLE★SNAKE",
+      name: "Example Snake",
       secondary_color: "6a6676",
       tail_type: @tails |> Enum.random()
     }
