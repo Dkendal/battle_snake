@@ -1,25 +1,11 @@
 [![CircleCI](https://circleci.com/gh/battle-snake/battle_snake.svg?style=svg)](https://circleci.com/gh/battle-snake/battle_snake)
 
-[![BattleSnake 2018 Logo](./docs/images/logo-18.png)](https://www.battlesnake.io/)
-The 2018 Official Game Server
-
-* [Event Information](https://www.battlesnake.io/)
-
 ![Example Game Animation](./docs/images/game.gif)
-
-
-BattleSnake is an adaptation of the classic video game "Snake", where the player
-maneuvers a snake around the game board to collect food pellets, which makes the
-snake grow longer. The main objective is to collect as much food as as possible
-while avoiding obstacles like walls and snakes' body.
-
-In BattleSnake a number of snakes are pitted against each other and the last
-snake alive wins.
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
-- [Competitors' Guide](#competitors-guide)
+- [Game play guide](#competitors-guide)
     - [Game Rules](#game-rules)
         - [Avoid Walls](#avoid-walls)
         - [Eat Food](#eat-food)
@@ -80,10 +66,9 @@ random, unoccupied location on the next turn.
 
 ### Don't Starve
 
-Every turn snakes will loose one health-point. In BattleSnake health-points
-serve like the snake's hunger bar, and if it reaches zero, the snake will starve
-and die. Eating food will restore snake's health to one-hundred points on the
-next turn.
+Every turn snakes will loose one health-point. Health-points serve like the
+snake's hunger bar, and if it reaches zero, the snake will starve and die.
+Eating food will restore snake's health to one-hundred points on the next turn.
 
 ![](./docs/images/rule-starvation.gif)
 
@@ -418,16 +403,12 @@ interface Point {
 
 ## Running with Docker
 
-You can run the official BattleSnake game server through Docker, allowing you to develop your snakes locally and whenever you want.
-
-
 ```
 docker pull battlesnake/battle_snake
 docker run -it -p 3000:3000 battlesnake/battle_snake
 ```
 
 You should be able to view the game server at http://localhost:3000. 
-
 
 ## Networking issues
 
