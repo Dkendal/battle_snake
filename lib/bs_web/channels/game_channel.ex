@@ -7,11 +7,8 @@ defmodule BsWeb.GameChannel do
 
   def join("game:" <> id, _params, socket) do
     :ok = Game.subscribe(id)
-
     send(self(), :after_join)
-
     socket = assign(socket, :id, id)
-
     {:ok, socket}
   end
 

@@ -68,39 +68,6 @@ defmodule Bs.Game do
     id |> do_ensure_started |> call(:resume)
   end
 
-  def alive?(id) do
-    case Registry.lookup(id) do
-      [_] ->
-        true
-
-      _ ->
-        false
-    end
-  end
-
-  def find!(name) do
-    case lookup_or_create(name) do
-      {:ok, pid} when is_pid(pid) ->
-        pid
-
-      {:error, {:already_started, pid}} when is_pid(pid) ->
-        pid
-
-      {:error, err} ->
-        {:error, err}
-    end
-  end
-
-  def lookup_or_create(id) when is_binary(id) do
-    case Registry.lookup(id) do
-      [{pid, _}] ->
-        {:ok, pid}
-
-      _ ->
-        start(id)
-    end
-  end
-
   def ensure_started(id) do
     with [] <- Registry.lookup(id),
          {:ok, pid} <- start(id) do
