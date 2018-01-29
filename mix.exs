@@ -16,7 +16,7 @@ defmodule Bs.Mixfile do
         main: "Bs",
         extras: ["README.md"]
       ],
-      elixir: ">= 1.5.3",
+      elixir: "~> 1.6",
       elixirc_paths: elixirc_paths(Mix.env()),
       erlc_options: erlc_options(Mix.env()),
       homepage_url: "https://github.com/battle-snake/battle_snake",
