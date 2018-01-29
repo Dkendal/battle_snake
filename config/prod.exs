@@ -1,5 +1,4 @@
 use Mix.Config
-config :bs, snake_api: Bs.Api
 
 # For production, we configure the host to read the PORT
 # from the system environment. Therefore, you will need

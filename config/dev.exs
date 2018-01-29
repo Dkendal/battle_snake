@@ -1,7 +1,5 @@
 use Mix.Config
 
-config :bs, snake_api: Bs.Api
-
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #
