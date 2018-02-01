@@ -52,7 +52,7 @@ update msg model =
                         ! [ GameBoard.render raw ]
 
                 Err e ->
-                    Debug.crash e
+                    Debug.crash (JE.encode 4 raw)
 
         updateBroadcast cmd =
             case cmd of
