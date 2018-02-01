@@ -7,7 +7,7 @@ use Mix.Config
 # watchers to your application. For example, we use it
 # with brunch.io to recompile .js and .css sources.
 config :bs, BsWeb.Endpoint,
-  http: [port: {:system, :integer, "PORT", 3000}],
+  http: [port: {:system, :integer, "PORT", 9876}],
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
