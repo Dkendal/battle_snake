@@ -4,7 +4,7 @@ defmodule Bs.TestTest do
   alias Bs.Test.Scenario
   alias Bs.Test.Vector
 
-  use Bs.Case, async: true
+  use Bs.Case, async: false
 
   import Bs.Test.Agent, only: :macros
   require Bs.Test.Agent
@@ -31,17 +31,32 @@ defmodule Bs.TestTest do
   ]
 
   test "#start collects results from all scenarios" do
+    Bs.ApiMock
+    |> expect(:start, 2, fn "my.snake", json, _ ->
+      assert {:ok, _} = Poison.decode(json)
+      %Response{body: ~s({"name":"my-snake"})}
+    end)
+    |> expect(:move, 2, fn "my.snake", json, _ ->
+      assert {:ok, _} = Poison.decode(json)
+      %Response{body: ~s({"move":"up"})}
+    end)
+
     actual =
       @scenarios
-      |> Test.start("up.mock")
+      |> Test.start("my.snake")
 
     assert [:ok, %AssertionError{}] = actual
   end
 
   test "#start an error if there is a connection problem" do
+    Bs.ApiMock
+    |> expect(:start, fn "my.snake", _, _ ->
+      raise Error, reason: :econnrefused
+    end)
+
     actual =
       @scenarios
-      |> Test.start("econnrefused.mock")
+      |> Test.start("my.snake")
 
     expected = %HTTPoison.Error{reason: :econnrefused}
 
@@ -49,9 +64,15 @@ defmodule Bs.TestTest do
   end
 
   test "#start returns an error if one occurs" do
-    actual =
-      @scenarios
-      |> Test.start("invalid.mock")
+    Bs.ApiMock
+    |> expect(:start, 2, fn "my.snake", _, _ ->
+      %Response{body: ~s({"name":"my-snake"})}
+    end)
+    |> expect(:move, 2, fn "my.snake", _, _ ->
+      %Response{body: ~s({"move":"UP"})}
+    end)
+
+    actual = Test.start(@scenarios, "my.snake")
 
     expected = %Bs.ChangesetError{
       changeset: Bs.Move.changeset(%Bs.Move{}, %{move: "UP"})
@@ -61,13 +82,29 @@ defmodule Bs.TestTest do
   end
 
   test "#test passes when the move does not kill the snake" do
-    result = Test.test(@scenario, "right.mock")
+    Bs.ApiMock
+    |> expect(:start, fn "my.snake", _, _ ->
+      %Response{body: ~s({"name":"my-snake"})}
+    end)
+    |> expect(:move, fn "my.snake", _, _ ->
+      %Response{body: ~s({"move":"right"})}
+    end)
+
+    result = Test.test(@scenario, "my.snake")
 
     assert result == :ok
   end
 
   test "#test fail when the move does kills the snake" do
-    result = Test.test(@scenario, "down.mock")
+    Bs.ApiMock
+    |> expect(:start, fn "my.snake", _, _ ->
+      %Response{body: ~s({"name":"my-snake"})}
+    end)
+    |> expect(:move, fn "my.snake", _, _ ->
+      %Response{body: ~s({"move":"down"})}
+    end)
+
+    result = Test.test(@scenario, "my.snake")
 
     assert %Bs.Test.AssertionError{} = result
   end

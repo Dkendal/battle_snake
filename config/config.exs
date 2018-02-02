@@ -15,7 +15,9 @@ config :bs, BsWeb.Endpoint,
 
 config :bs, start_timeout: 10_000
 
+config :bs, :api, Bs.Api
 config :bs, :http, HTTPoison
+config :bs, :db, BsRepo
 
 config :bs, ecto_repos: [BsRepo]
 

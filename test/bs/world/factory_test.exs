@@ -1,52 +1,62 @@
 defmodule Bs.World.FactoryTest do
   alias Bs.World.Factory
-  alias Bs.World
-  alias Bs.Snake
 
   use Bs.Case, async: false
 
-  test "#build when snakes respond" do
-    game_form = build(:game_form, id: 1, snakes: [build(:snake_form)])
+  test "#build populates the world" do
+    game_form = build(:game_form, id: 1, snakes: [])
 
     world = Factory.build(game_form)
 
-    food = world.food
+    assert world.game_form_id == 1
+    assert world.height == 20
+    assert world.width == 20
+    assert world.max_food == 1
+    assert world.game_id == 1
+    assert length(world.food) == 1
+    assert length(world.snakes) == 0
+  end
 
-    assert [%{coords: coords}] = world.snakes
+  test "#build when snakes respond" do
+    Bs.ApiMock
+    |> expect(:start, fn "snake1", _, _ ->
+      %Response{body: encode!(%{name: "name", taunt: "taunt"})}
+    end)
 
-    assert [_, _, _] = coords
+    game_form =
+      build(:game_form, id: 1, snakes: [build(:snake_form, url: "snake1")])
 
-    assert %World{
-             id: _,
-             game_form_id: 1,
-             height: 20,
-             width: 20,
-             max_food: 1,
-             game_id: 1,
-             food: ^food,
-             snakes: [
-               %Snake{
-                 coords: ^coords,
-                 url: "up.mock",
-                 taunt: "mock taunt",
-                 name: "mock snake"
-               }
-             ]
-           } = world
+    world = Factory.build(game_form)
+
+    assert length(world.snakes) == 1
+
+    [snake] = world.snakes
+
+    assert snake.url == "snake1"
+    assert snake.taunt == "taunt"
+    assert snake.name == "name"
+    assert length(snake.coords) == 3
+    assert snake.status.type == :alive
   end
 
   test "when a request fails" do
+    Bs.ApiMock
+    |> expect(:start, fn "snake1", _, _ ->
+      raise Error
+    end)
+
     game_form =
-      build(
-        :game_form,
-        id: 1,
-        snakes: [
-          build(:snake_form, url: "econnrefused.mock")
-        ]
-      )
+      build(:game_form, id: 1, snakes: [build(:snake_form, url: "snake1")])
 
     world = Factory.build(game_form)
 
-    assert world.snakes == []
+    assert length(world.snakes) == 0
+    assert length(world.dead_snakes) == 1
+
+    [snake] = world.dead_snakes
+
+    assert snake.url == "snake1"
+    assert snake.status.type == :connection_failure
+    assert snake.coords |> length == 0
   end
 end

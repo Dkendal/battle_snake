@@ -7,11 +7,15 @@ defmodule Bs.MovementTest do
   import Map
   import List
 
-  @moduletag :capture_log
-
   test ".next updates snake locations" do
+    Bs.ApiMock
+    |> expect(:move, fn "my.snake", json, _ ->
+      assert {:ok, _} = Poison.decode(json)
+      %Response{body: encode!(%{move: "down"})}
+    end)
+
     actual =
-      build(:world, snakes: [build(:snake, url: "down.mock")])
+      build(:world, snakes: [build(:snake, url: "my.snake")])
       |> Movement.next()
 
     assert [p(0, 1)] = actual.snakes |> first() |> get(:coords)
@@ -19,7 +23,7 @@ defmodule Bs.MovementTest do
 
   test ".next provides a default" do
     actual =
-      build(:world, snakes: [build(:snake, url: "invalid.mock")])
+      build(:world, snakes: [build(:snake, url: "my.snake")])
       |> Movement.next()
 
     assert [p(0, -1)] = actual.snakes |> first() |> get(:coords)

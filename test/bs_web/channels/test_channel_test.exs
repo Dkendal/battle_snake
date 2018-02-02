@@ -11,6 +11,7 @@ defmodule BsWeb.TestChannelTest do
     [socket: socket]
   end
 
+  @tag :skip
   test "push run:suite", %{socket: socket} do
     ref = push(socket, "run:suite", %{"url" => "up.mock"})
 

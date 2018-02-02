@@ -64,19 +64,22 @@ defmodule Bs.Test do
       ])
   )
 
-  @doc ~S"Run a scenario, returns ok if it passes, or a test case error."
+  @shortdoc """
+  Run a scenario, returns ok if it passes, or a test case error.
+  """
   def test(scenario, url) do
     scenario = generate_ids(scenario)
 
     {world, player} = Scenario.to_world(scenario)
 
+    json =
+      %{game_id: world.id, width: world.width, height: world.height}
+      |> Poison.encode!()
+
     player =
       %{player | url: url}
-      |> Bs.World.Factory.Worker.run(world.id)
+      |> Bs.World.Factory.Worker.run(json)
       |> Map.put(:coords, player.coords)
-
-    # snake = Map.take(snake, [:color, :head_type, :tail_type, :name])
-    # player = Map.merge(player, snake)
 
     move = Worker.run(player, world, recv_timeout: 5000)
 

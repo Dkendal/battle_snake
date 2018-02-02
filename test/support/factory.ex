@@ -36,6 +36,17 @@ defmodule Bs.Factory do
     %Bs.Snake{
       coords: [p(0, 0)]
     }
+    |> Bs.Snake.alive!()
+  end
+
+  def with_death(snake) do
+    snake
+    |> kill_snake(1)
+  end
+
+  def with_connection_failure(snake) do
+    snake
+    |> Bs.Snake.connection_failure!()
   end
 
   def dead_snake_factory do
@@ -43,7 +54,7 @@ defmodule Bs.Factory do
   end
 
   def kill_snake(snake, turn) do
-    %{snake | death: build(:death, turn: turn)}
+    Bs.Snake.dead!(snake, build(:death, turn: turn))
   end
 
   def with_snake_in_world(snake: snake, world: world, length: length) do

@@ -4,7 +4,9 @@ use Mix.Config
 # you can enable the server option below.
 config(:bs, BsWeb.Endpoint, http: [port: 4001], server: false)
 
-config :bs, :http, Bs.HTTPMock
+config(:bs, :http, Bs.HTTPMock)
+config(:bs, :db, Bs.RepoMock)
+config(:bs, :api, Bs.ApiMock)
 
 # Print only warnings and errors during test
 config(:logger, level: :debug)

@@ -169,4 +169,11 @@ defmodule Bs.SnakeTest do
       assert expected == actual
     end
   end
+
+  test "#died_on" do
+    snake = build(:snake)
+    assert Snake.died_on(snake) == {:error, :alive}
+    snake = snake |> with_death
+    assert Snake.died_on(snake) == {:ok, 1}
+  end
 end

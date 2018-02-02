@@ -25,6 +25,7 @@ it("play a game", () => {
   cy.get("canvas").should("have.length", 2);
 
   cy.contains("Example Snake");
+  cy.contains("http://example.com");
 
   cy.contains("100");
 

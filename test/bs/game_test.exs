@@ -4,12 +4,9 @@ defmodule Bs.GameTest do
 
   use Bs.Case, async: false
 
-  setup_all do
-    mock(BsRepo)
-
-    expect(BsRepo, :get!, fn BsRepo.GameForm, 1 ->
-      build(:game_form, id: "1")
-    end)
+  setup do
+    insert(:game_form, id: 1)
+    :ok
   end
 
   test "#resume calls resume on the gen server" do

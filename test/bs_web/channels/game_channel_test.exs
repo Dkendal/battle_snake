@@ -1,11 +1,27 @@
 defmodule BsWeb.Channels.GameChannelTest do
   alias BsWeb.GameChannel
-
   use BsWeb.ChannelCase
 
   test "can control stepping back and forth" do
+    Bs.ApiMock
+    |> expect(:start, fn "snake1", _, _ ->
+      %Response{status_code: 200, body: encode!(%{name: "snake1"})}
+    end)
+    |> expect(:start, fn "snake2", _, _ ->
+      raise Error
+    end)
+    |> expect(:move, fn "snake1", _, _ ->
+      %Response{status_code: 200, body: encode!(%{move: "up"})}
+    end)
+
     game_form =
-      insert(:game_form, snakes: [build(:snake_form), build(:snake_form)])
+      insert(
+        :game_form,
+        snakes: [
+          build(:snake_form, url: "snake1"),
+          build(:snake_form, url: "snake2")
+        ]
+      )
 
     id = game_form.id
 
@@ -17,8 +33,12 @@ defmodule BsWeb.Channels.GameChannelTest do
 
     assert msg.content.status == :suspend
     assert msg.content.board.turn == 0
-    assert 2 == length(msg.content.board.snakes)
-    assert 0 == length(msg.content.board.deadSnakes)
+    assert 1 == length(msg.content.board.snakes)
+    assert 1 == length(msg.content.board.deadSnakes)
+    [snake1] = msg.content.board.snakes
+    [snake2] = msg.content.board.deadSnakes
+    assert snake1.id |> String.length() == 36
+    assert snake2.id |> String.length() == 36
 
     push(sock, "next")
 

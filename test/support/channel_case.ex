@@ -17,9 +17,22 @@ defmodule BsWeb.ChannelCase do
 
   using do
     quote do
-      # Import conveniences for testing with channels
-      use Phoenix.ChannelTest
+      alias Bs.Game
+      alias Bs.GameForm
+      alias Bs.Point
+      alias Bs.Snake
+      alias Bs.SnakeForm
+      alias Bs.World
+      alias HTTPoison.Error
+      alias HTTPoison.Response
+
       import Bs.Factory
+      import Mox
+      import Poison, only: [encode!: 1]
+
+      use Phoenix.ChannelTest
+
+      setup [:verify_on_exit!, :set_mox_from_context]
 
       # The default endpoint for testing
       @endpoint BsWeb.Endpoint

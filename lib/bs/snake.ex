@@ -1,29 +1,34 @@
 defmodule Bs.Snake do
-  alias Bs.Point
+  defmodule Status do
+    defstruct [:type, :data]
+    def alive, do: %Status{type: :alive}
+    def connection_failure(), do: %Status{type: :connection_failure}
+    def dead(death), do: %Status{type: :dead, data: death}
+  end
+
   alias Bs.Move
-
-  use Ecto.Schema
-
+  alias Bs.Point
   import Ecto.Changeset
+  use Ecto.Schema
 
   @max_health_points 100
   @heads Bs.Const.heads()
   @tails Bs.Const.tails()
 
   embedded_schema do
+    embeds_many(:coords, Point)
+    embeds_one(:status, Status)
+    field(:color, :string, default: "black")
+    # TODO deprecated
     field(:death, :string)
-    field(:head_url, :string)
-    field(:secondary_color, :string)
     field(:head_type, :string, default: "regular")
-    field(:tail_type, :string, default: "regular")
+    field(:head_url, :string)
+    field(:health_points, :string, default: @max_health_points)
     field(:name, :string, default: "")
+    field(:secondary_color, :string)
+    field(:tail_type, :string, default: "regular")
     field(:taunt, :string, default: "")
     field(:url, :string, default: "")
-    field(:health_points, :string, default: @max_health_points)
-    field(:color, :string, default: "black")
-    field(:health, :any, default: {:error, :init}, virtual: true)
-
-    embeds_many(:coords, Point)
   end
 
   def changeset(model, params \\ %{})
@@ -55,10 +60,13 @@ defmodule Bs.Snake do
   Only checks the head, because it's the only part that moves.
   """
   def dead?(%{coords: [%{y: y, x: x} | _]}, %{width: w, height: h})
-      when y not in 0..(w - 1) or x not in 0..(h - 1),
-      do: true
+      when y not in 0..(w - 1) or x not in 0..(h - 1) do
+    true
+  end
 
-  def dead?(%{health_points: hp}, _) when hp <= 0, do: true
+  def dead?(%{health_points: hp}, _) when hp <= 0 do
+    true
+  end
 
   @doc """
   Checks if the snake has collided with any one snake's body.
@@ -156,21 +164,28 @@ defmodule Bs.Snake do
   end
 
   def died_on(snake) do
-    case snake.death do
-      nil -> {:error, :alive}
-      %{turn: turn} -> {:ok, turn}
+    case snake.status do
+      %{type: :dead, data: %{turn: turn}} -> {:ok, turn}
+      _ -> {:error, :alive}
     end
   end
 
-  def dead?(snake) do
-    case snake.death do
-      nil -> false
-      _ -> true
-    end
+  def dead!(model, death) do
+    # TODO deprecated
+    model = %{model | death: death}
+    %{model | status: Status.dead(death)}
   end
 
-  def alive?(snake) do
-    !dead?(snake)
+  def alive?(model) do
+    model.status.type == :alive
+  end
+
+  def alive!(model) do
+    %{model | status: Status.alive()}
+  end
+
+  def connection_failure!(model) do
+    %{model | status: Status.connection_failure()}
   end
 
   defdelegate(fetch(snake, key), to: Map)

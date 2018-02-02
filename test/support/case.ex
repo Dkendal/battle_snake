@@ -17,11 +17,18 @@ defmodule Bs.Case do
 
   using do
     quote do
+      alias Bs.Game
+      alias Bs.Point
+      alias Bs.Snake
+      alias Bs.World
+      alias HTTPoison.Error
+      alias HTTPoison.Response
+
       import Bs.Factory
-      import :meck
+      import Mox
       import Poison, only: [encode!: 1]
-      defdelegate(mock(mod), as: :new, to: :meck)
-      defdelegate(mock(mod, opts), as: :new, to: :meck)
+
+      setup [:verify_on_exit!, :set_mox_from_context]
 
       def named_mock_game_server(id) do
         {:ok, pid} =
