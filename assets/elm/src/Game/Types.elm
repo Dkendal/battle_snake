@@ -48,10 +48,3 @@ type alias PhxSock =
 
 type alias PhxSockMsg =
     Phoenix.Socket.Msg Msg
-
-
-type Phase
-    = InitPhase
-    | LobbyPhase Lobby
-    | GamePhase GameState
-    | ResultPhase
