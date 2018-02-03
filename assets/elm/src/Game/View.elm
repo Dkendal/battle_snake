@@ -5,6 +5,7 @@ import Game.Types exposing (..)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as Attr exposing (..)
 import Html.Styled.Events exposing (..)
+import Game.Board
 import Md exposing (..)
 import Route exposing (..)
 import Types exposing (..)
@@ -95,41 +96,33 @@ view model =
         [ viewPort []
             [ column
                 [ css [ flex auto ] ]
-                [ board model
-                , div [ css [ alignSelf center ] ] [ text (turn model) ]
-                , avControls []
-                    [ btn
-                        [ onClick (Push PrevStep)
-                        , title "Previous turn (k)"
+                [ model.board
+                    |> Maybe.map Game.Board.view
+                    |> Maybe.withDefault (text "")
+                , container []
+                    [ div [ css [ alignSelf center ] ] [ text (turn model) ]
+                    , avControls []
+                        [ btn
+                            [ onClick (Push PrevStep)
+                            , title "Previous turn (k)"
+                            ]
+                            [ mdSkipPrev ]
+                        , btn
+                            [ onClick (Push StopGame)
+                            , title "Reset Game (q)"
+                            ]
+                            [ mdReplay ]
+                        , playPause model
+                        , btn
+                            [ onClick (Push NextStep)
+                            , title "Next turn (j)"
+                            ]
+                            [ mdSkipNext ]
                         ]
-                        [ mdSkipPrev ]
-                    , btn
-                        [ onClick (Push StopGame)
-                        , title "Reset Game (q)"
-                        ]
-                        [ mdReplay ]
-                    , playPause model
-                    , btn
-                        [ onClick (Push NextStep)
-                        , title "Next turn (j)"
-                        ]
-                        [ mdSkipNext ]
                     ]
                 ]
             , sidebar model
             ]
-        ]
-
-
-board : Model -> Html msg
-board { gameid } =
-    container
-        [ css
-            [ position relative
-            , margin ms0
-            ]
-        ]
-        [ div [ id gameid ] []
         ]
 
 

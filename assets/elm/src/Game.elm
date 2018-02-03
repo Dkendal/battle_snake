@@ -9,7 +9,7 @@ import Html.Styled exposing (..)
 
 main : Program Flags Model Msg
 main =
-    programWithFlags
+    Html.programWithFlags
         { init = init
         , view = view >> toUnstyled
         , update = update

@@ -13,6 +13,12 @@ import Phoenix.Push as Push
 import Phoenix.Socket as Socket
 import Task exposing (..)
 import Tuple exposing (..)
+import Time exposing (..)
+
+
+fps : Float
+fps =
+    (Time.second / 60)
 
 
 init : Flags -> ( Model, Cmd Msg )
@@ -22,6 +28,7 @@ init { websocket, gameid } =
             { socket = socket websocket gameid
             , gameid = gameid
             , gameState = Nothing
+            , board = Nothing
             }
 
         cmds =
@@ -36,6 +43,7 @@ subscriptions { socket } =
     Sub.batch
         [ Socket.listen socket PhxMsg
         , Keyboard.downs KeyDown
+        , every fps Tick
         ]
 
 
@@ -49,7 +57,7 @@ update msg model =
             case decodeValue Decoder.tick raw of
                 Ok gameState ->
                     { model | gameState = Just gameState }
-                        ! [ GameBoard.render raw ]
+                        ! []
 
                 Err e ->
                     Debug.crash (JE.encode 4 raw)
@@ -100,6 +108,13 @@ update msg model =
                     push topic "prev" model
     in
         case msg of
+            Tick time ->
+                let
+                    board =
+                        Maybe.map .board model.gameState
+                in
+                    { model | board = board } ! []
+
             Push msg ->
                 updatePush msg
 

@@ -64,12 +64,14 @@ gameState =
 
 board : Decoder Board
 board =
-    map5 Board
+    map7 Board
         ("turn" := int)
         ("snakes" := list snake)
         ("deadSnakes" := list snake)
         ("gameId" := int)
         ("food" := list point)
+        ("width" := int)
+        ("height" := int)
 
 
 point : Decoder Point

@@ -22,6 +22,8 @@ type alias Board =
     , deadSnakes : List Snake
     , gameid : Int
     , food : List Point
+    , width : Int
+    , height : Int
     }
 
 
