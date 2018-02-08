@@ -43,7 +43,8 @@ subscriptions { socket } =
     Sub.batch
         [ Socket.listen socket PhxMsg
         , Keyboard.downs KeyDown
-        , every fps Tick
+
+        -- , every fps Tick
         ]
 
 

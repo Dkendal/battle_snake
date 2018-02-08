@@ -1,40 +1,34 @@
 defmodule BsWeb.BoardView do
   use BsWeb, :view
 
-  def render("snake.json", %{snake: snake}) do
-    data = %{
-      color: snake.color,
-      coords: snake.coords,
-      headType: snake.head_type,
-      headUrl: snake.head_url,
-      health: snake.health_points,
-      id: snake.id,
-      name: snake.name,
-      tailType: snake.tail_type,
-      taunt: snake.taunt
-    }
-
-    if snake.death do
-      Map.merge(data, %{
-        death: render_one(snake.death, BsWeb.Api.DeathView, "show.json")
-      })
-    else
-      data
-    end
-  end
-
-  def render("show.json", %{board: world}) do
-    snakes = &render_many(&1, __MODULE__, "snake.json", as: :snake)
+  def render("show.json", %{board: record}) do
+    snakes =
+      (record.snakes ++ record.dead_snakes) |> Enum.sort_by(& &1.id)
+      |> Enum.map(&snake_view/1)
 
     %{
-      id: world.id,
-      deadSnakes: snakes.(world.dead_snakes),
-      food: world.food,
-      gameId: world.game_id,
-      height: world.height,
-      snakes: snakes.(world.snakes),
-      turn: world.turn,
-      width: world.width
+      id: record.id,
+      food: record.food,
+      gameId: record.game_id,
+      height: record.height,
+      snakes: snakes,
+      turn: record.turn,
+      width: record.width
+    }
+  end
+
+  defp snake_view(record) do
+    %{
+      color: record.color,
+      coords: record.coords,
+      headType: record.head_type,
+      headUrl: record.head_url,
+      health: record.health_points,
+      id: record.id,
+      name: record.name,
+      status: record.status,
+      tailType: record.tail_type,
+      taunt: record.taunt
     }
   end
 end

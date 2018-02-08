@@ -24,7 +24,6 @@ defmodule BsWeb.TestCaseErrorViewTest do
       scenario: nil,
       world: %{
         id: 1,
-        deadSnakes: [],
         food: [],
         gameId: 0,
         height: 10,

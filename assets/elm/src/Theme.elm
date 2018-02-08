@@ -18,4 +18,5 @@ theme =
     , bgSecondary = pallet.white
     , buttonAccent = pallet.lightgrey
     , tile = pallet.lightgrey
+    , food = pallet.pink
     }

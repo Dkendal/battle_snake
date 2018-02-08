@@ -39,7 +39,7 @@ defmodule Bs.Death do
         causes: causes
       }
 
-      put_in(snake.death, death)
+      Snake.dead!(snake, death)
     end
 
     acc

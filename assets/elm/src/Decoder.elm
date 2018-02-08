@@ -2,7 +2,8 @@ module Decoder exposing (..)
 
 import Json.Decode exposing (..)
 import Types exposing (..)
-import Dict
+import Json.Decode.Pipeline exposing (..)
+import Math.Vector2 exposing (..)
 
 
 (:=) : String -> Decoder a -> Decoder a
@@ -64,28 +65,27 @@ gameState =
 
 board : Decoder Board
 board =
-    map7 Board
-        ("turn" := int)
-        ("snakes" := list snake)
-        ("deadSnakes" := list snake)
-        ("gameId" := int)
-        ("food" := list point)
-        ("width" := int)
-        ("height" := int)
+    decode Board
+        |> required "turn" (int)
+        |> required "snakes" (list decodeSnake)
+        |> required "gameId" (int)
+        |> required "food" (list decodeVec2)
+        |> required "width" (int)
+        |> required "height" (int)
 
 
-point : Decoder Point
-point =
-    map2 Point
-        (index 0 int)
-        (index 1 int)
+decodeVec2 : Decoder Vec2
+decodeVec2 =
+    map2 vec2
+        (index 0 float)
+        (index 1 float)
 
 
-point2 : Decoder Point
+point2 : Decoder Vec2
 point2 =
-    map2 Point
-        ("x" := int)
-        ("y" := int)
+    map2 vec2
+        ("x" := float)
+        ("y" := float)
 
 
 death : Decoder Death
@@ -94,53 +94,58 @@ death =
         ("causes" := list string)
 
 
-snake : Decoder Snake
-snake =
-    map8 Snake
-        (maybe <| "death" := death)
-        ("color" := string)
-        ("coords" := list point)
-        ("health" := int)
-        ("id" := string)
-        ("name" := string)
-        (maybe <| "taunt" := string)
-        (maybeWithDefault defaultHeadUrl <| "headUrl" := string)
+decodeSnake : Decoder Snake
+decodeSnake =
+    decode Snake
+        |> hardcoded Nothing
+        |> required "color" string
+        |> required "coords" (list decodeVec2)
+        |> required "health" int
+        |> required "id" string
+        |> required "name" string
+        |> required "taunt" (maybe string)
+        |> (string
+                |> maybe
+                |> map (Maybe.withDefault "")
+                |> required "headUrl"
+           )
+        |> required "status" decodeStatus
+        |> required "headType" string
+        |> required "tailType" string
+
+
+decodeStatus : Decoder SnakeStatus
+decodeStatus =
+    let
+        decodeType record =
+            case record of
+                "dead" ->
+                    succeed Dead
+
+                "alive" ->
+                    succeed Alive
+
+                _ ->
+                    fail (toString record)
+    in
+        (field "type" string)
+            |> andThen decodeType
 
 
 snake2 : Decoder Snake
 snake2 =
-    map8 Snake
-        (maybe <| "death" := death)
-        ("color" := string)
-        (at [ "body", "data" ] (list point2))
-        ("health" := int)
-        ("id" := string)
-        ("name" := string)
-        (maybe <| "taunt" := string)
-        (maybeWithDefault defaultHeadUrl <| "headUrl" := string)
-
-
-permalink : Decoder Permalink
-permalink =
-    map3 Permalink
-        ("id" := string)
-        ("url" := string)
-        (succeed Loading)
-
-
-database :
-    Decoder { a | id : comparable }
-    -> Decoder (Dict.Dict comparable { a | id : comparable })
-database decoder =
-    list decoder
-        |> map (List.map (\y -> ( y.id, y )))
-        |> map Dict.fromList
-
-
-lobby : Decoder Lobby
-lobby =
-    map Lobby
-        ("data" := database permalink)
+    decode Snake
+        |> required "death" (maybe death)
+        |> required "color" string
+        |> required "coords" (list decodeVec2)
+        |> required "health" int
+        |> required "id" string
+        |> required "name" string
+        |> required "taunt" (maybe string)
+        |> required "headUrl" string
+        |> required "status" decodeStatus
+        |> required "headType" string
+        |> required "tailType" string
 
 
 gameEvent : Decoder a -> Decoder (GameEvent a)
@@ -161,21 +166,6 @@ snakeEvent decoder =
 error : Decoder (SnakeEvent String)
 error =
     snakeEvent (at [ "data", "error" ] string)
-
-
-lobbySnake : Decoder (SnakeEvent LobbySnake)
-lobbySnake =
-    let
-        data =
-            map6 LobbySnake
-                ("color" := string)
-                ("id" := string)
-                ("name" := string)
-                ("taunt" := maybe string)
-                ("url" := string)
-                (maybeWithDefault defaultHeadUrl <| "headUrl" := string)
-    in
-        snakeEvent (field "data" data)
 
 
 v2 : Decoder V2

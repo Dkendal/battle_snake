@@ -1,17 +1,17 @@
-declare module 'elm/Test' {
+declare module "elm/Test" {
   interface Ports {
     render: Elm.Port<(board: Board) => void>;
   }
 
-  export const Test: Elm.App<Ports, {websocket: string}>;
+  export const Test: Elm.App<Ports, { websocket: string }>;
 }
 
-declare module 'elm/Game' {
+declare module "elm/Game" {
   interface Ports {
-    render: Elm.Port<(raw: {content: GameState}) => void>;
+    render: Elm.Port<(raw: { content: GameState }) => void>;
   }
 
-  export const Game: Elm.App<Ports, {websocket: string}>;
+  export const Game: Elm.App<Ports, { websocket: string; gameid: string }>;
 }
 
 declare namespace Elm {
@@ -40,7 +40,7 @@ type Ctx = CanvasRenderingContext2D & {
 
 type Image = HTMLImageElement;
 
-type List<T> = {length: number; item: (i: number) => T};
+type List<T> = { length: number; item: (i: number) => T };
 
 interface Snake {
   taunt?: any;

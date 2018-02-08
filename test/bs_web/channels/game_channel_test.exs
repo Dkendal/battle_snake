@@ -33,10 +33,8 @@ defmodule BsWeb.Channels.GameChannelTest do
 
     assert msg.content.status == :suspend
     assert msg.content.board.turn == 0
-    assert 1 == length(msg.content.board.snakes)
-    assert 1 == length(msg.content.board.deadSnakes)
-    [snake1] = msg.content.board.snakes
-    [snake2] = msg.content.board.deadSnakes
+    assert 2 == length(msg.content.board.snakes)
+    [snake1, snake2] = msg.content.board.snakes
     assert snake1.id |> String.length() == 36
     assert snake2.id |> String.length() == 36
 

@@ -1,85 +1,20 @@
 module Game.View exposing (..)
 
+import Theme exposing (..)
+import Scale exposing (..)
 import Css exposing (..)
 import Game.Types exposing (..)
 import Html.Styled exposing (..)
 import Html.Styled.Attributes as Attr exposing (..)
 import Html.Styled.Events exposing (..)
-import Game.Board
+import Game.BoardView
 import Md exposing (..)
 import Route exposing (..)
 import Types exposing (..)
 
 
-pallet :
-    { blue : Color
-    , grey : Color
-    , lightgrey : Color
-    , pink : Color
-    , white : Color
-    , yellow : Color
-    }
-pallet =
-    { white = hex "#fcfcfc"
-    , lightgrey = hex "#e8e8e8"
-    , pink = hex "#f7567c"
-    , yellow = hex "#fffae3"
-    , blue = hex "#99e1d9"
-    , grey = hex "#5d576b"
-    }
-
-
-ms : Float -> Px
-ms number =
-    Css.px (16 * (1.5 ^ number))
-
-
-ms_3 : Px
-ms_3 =
-    ms -3
-
-
-ms_2 : Px
-ms_2 =
-    ms -2
-
-
-ms_1 : Px
-ms_1 =
-    ms -1
-
-
-ms0 : Px
-ms0 =
-    ms 0
-
-
-ms1 : Px
-ms1 =
-    ms 1
-
-
-ms2 : Px
-ms2 =
-    ms 2
-
-
-ms3 : Px
-ms3 =
-    ms 3
-
-
-ms4 : Px
-ms4 =
-    ms 4
-
-
-theme =
-    { bgPrimary = pallet.grey
-    , bgSecondary = pallet.white
-    , sidebarPlayerHeight = ms 3
-    , buttonAccent = pallet.lightgrey
-    }
+sidebarPlayerHeight =
+    ms3
 
 
 sidebarTheme : Style
@@ -96,10 +31,11 @@ view model =
         [ viewPort []
             [ column
                 [ css [ flex auto ] ]
-                [ model.board
-                    |> Maybe.map Game.Board.view
+                [ model.gameState
+                    |> Maybe.map .board
+                    |> Maybe.map (Game.BoardView.view)
                     |> Maybe.withDefault (text "")
-                , container []
+                , column [ css [ flexGrow (int 0) ] ]
                     [ div [ css [ alignSelf center ] ] [ text (turn model) ]
                     , avControls []
                         [ btn
@@ -129,18 +65,22 @@ view model =
 sidebar : Model -> Html Msg
 sidebar model =
     let
+        container_ board =
+            container
+                [ css
+                    [ overflow auto
+                    , Css.property "mask-image" "linear-gradient(rgba(0, 0, 0, 1.0), rgba(0, 0, 0, 1.0), rgba(0, 0, 0, 1.0), rgba(0, 0, 0, 1.0), rgba(0, 0, 0, 1.0), transparent)"
+                    ]
+                ]
+                (List.concat [ List.map snakeView board.snakes ])
+
         content =
             case model.gameState of
                 Nothing ->
                     text "loading..."
 
                 Just { board } ->
-                    container []
-                        (List.concat
-                            [ List.map (snake True) board.snakes
-                            , List.map (snake False) board.deadSnakes
-                            ]
-                        )
+                    container_ board
     in
         column
             [ css
@@ -159,34 +99,30 @@ sidebar model =
             ]
 
 
-snake : Bool -> Snake -> Html msg
-snake alive snake =
+snakeView : Snake -> Html msg
+snakeView snake =
     let
+        alive =
+            snake.status == Alive
+
         healthbarWidth =
             if alive then
                 (toString snake.health) ++ "%"
             else
                 "0%"
 
-        transition =
-            Css.batch <|
-                if alive then
-                    []
-                else
-                    [ Css.property "transition-property" "width, background-color"
-                    , Css.property "transition-duration" "1s"
-                    , Css.property "transition-timing-function" "ease"
-                    ]
-
         healthbarStyle =
             [ ( "background-color", snake.color )
             , ( "width", healthbarWidth )
+            , ( "transition-property", "width, background-color" )
+            , ( "transition-duration", "0.2s" )
+            , ( "transition-timing-function", "linear" )
             ]
 
         healthbar =
             div
                 [ style healthbarStyle
-                , css [ Css.height (ms_3), transition ]
+                , css [ Css.height (ms_3) ]
                 ]
                 []
 
@@ -291,8 +227,8 @@ avatar : List (Attribute msg) -> List (Html msg) -> Html msg
 avatar =
     styled img
         [ marginRight ms0
-        , Css.width theme.sidebarPlayerHeight
-        , Css.height theme.sidebarPlayerHeight
+        , Css.width sidebarPlayerHeight
+        , Css.height sidebarPlayerHeight
         ]
 
 
@@ -325,7 +261,7 @@ flag img_ body =
     div
         [ css
             [ displayFlex
-            , minHeight theme.sidebarPlayerHeight
+            , minHeight sidebarPlayerHeight
             ]
         ]
         [ img_
