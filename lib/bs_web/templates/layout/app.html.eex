@@ -12,7 +12,7 @@
     <script src="<%= static_path(@conn, "/js/vendor.js") %>"></script>
     <script src="<%= static_path(@conn, "/js/index.js") %>"></script>
 
-    <title>BattleSnake 2018</title>
+    <title>Snake AI</title>
   </head>
 
   <body>
