@@ -21,38 +21,18 @@ defmodule BsWeb.TestCaseErrorView do
   end
 
   def render("show.json", %{test_case_error: %AssertionError{} = err}) do
-    reason =
-      case err.player.death do
-        %{causes: [%BodyCollisionCause{}]} ->
-          dgettext("test", "body collision")
-
-        %{causes: [%HeadCollisionCause{}]} ->
-          dgettext("test", "head collision")
-
-        %{causes: [%SelfCollisionCause{}]} ->
-          dgettext("test", "self collision")
-
-        %{causes: [%StarvationCause{}]} ->
-          dgettext("test", "starvation")
-
-        %{causes: [%WallCollisionCause{}]} ->
-          dgettext("test", "wall collision")
-      end
+    world = err.world
+    player = err.player
+    id = world.id
+    reason = reason_view(player.death.causes)
 
     %{
-      id: err.world.id,
+      id: id,
       object: "assertion_error",
       reason: reason,
       scenario: err.scenario,
-      world: render_one(err.world, BoardView, "show.json", v: 2),
-      player:
-        render_one(
-          err.player,
-          SnakeView,
-          "show.json",
-          v: 2,
-          include_render_props: true
-        )
+      board: render_one(world, BsWeb.Board.BoardView, "show.json"),
+      player: render_one(player, BsWeb.Board.SnakeView, "show.json")
     }
   end
 
@@ -130,5 +110,24 @@ defmodule BsWeb.TestCaseErrorView do
       object: "error_with_reason",
       reason: dgettext("test", "badarg")
     }
+  end
+
+  def reason_view(causes) do
+    case causes do
+      [%BodyCollisionCause{}] ->
+        dgettext("test", "body collision")
+
+      [%HeadCollisionCause{}] ->
+        dgettext("test", "head collision")
+
+      [%SelfCollisionCause{}] ->
+        dgettext("test", "self collision")
+
+      [%StarvationCause{}] ->
+        dgettext("test", "starvation")
+
+      [%WallCollisionCause{}] ->
+        dgettext("test", "wall collision")
+    end
   end
 end

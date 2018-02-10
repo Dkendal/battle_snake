@@ -107,7 +107,9 @@ const elmRule = {
     loader: "elm-webpack-loader",
     options: {
       cwd: relativePath("elm"),
-      debug: !isProduction
+      debug: !isProduction,
+      cache: true,
+      maxInstances: 2
     }
   }
 };
@@ -124,4 +126,4 @@ config.resolve = {
   extensions: [".js", ".jsx", ".ts", ".tsx", ".elm", ".json"]
 };
 
-config.devtool = "#eval";
+config.devtool = "source-map";

@@ -24,8 +24,8 @@ defmodule Bs.Test.Scenario do
     [player | _] = snakes
 
     world = %World{
-      id: scenario.id,
-      game_id: scenario.id,
+      id: Ecto.UUID.generate(),
+      game_id: :rand.uniform(999_999_999),
       snakes: snakes,
       width: scenario.width,
       height: scenario.height,

@@ -37,9 +37,4 @@ defmodule BsWeb.GameView do
       )
     end)
   end
-
-  def bs_js_object(assigns, _ \\ %{}) do
-    Phoenix.View.render(BsWeb.BoardConfigView, "show.json", assigns)
-    |> Poison.encode!()
-  end
 end

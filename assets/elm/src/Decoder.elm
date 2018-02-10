@@ -135,22 +135,6 @@ decodeSnakeStatus =
             |> andThen decodeType
 
 
-snake2 : Decoder Snake
-snake2 =
-    decode Snake
-        |> required "death" (maybe death)
-        |> required "color" string
-        |> required "coords" (list decodeVec2)
-        |> required "health" int
-        |> required "id" string
-        |> required "name" string
-        |> required "taunt" (maybe string)
-        |> required "headUrl" string
-        |> required "status" decodeSnakeStatus
-        |> required "headType" string
-        |> required "tailType" string
-
-
 gameEvent : Decoder a -> Decoder (GameEvent a)
 gameEvent decoder =
     map2 GameEvent
@@ -178,16 +162,16 @@ v2 =
         ("y" := int)
 
 
-agent : Decoder Agent
-agent =
+decodeAgent : Decoder Agent
+decodeAgent =
     "body" := list v2
 
 
-scenario : Decoder Scenario
-scenario =
+decodeScenario : Decoder Scenario
+decodeScenario =
     map5 Scenario
-        ("agents" := list agent)
-        ("player" := agent)
+        ("agents" := list decodeAgent)
+        ("player" := decodeAgent)
         ("food" := list v2)
         ("width" := int)
         ("height" := int)
@@ -225,9 +209,9 @@ errorWithMultipleReasons =
 
 assertionError : Decoder AssertionError
 assertionError =
-    map5 AssertionError
-        ("id" := string)
-        ("reason" := string)
-        ("scenario" := scenario)
-        ("player" := snake2)
-        ("world" := value)
+    decode AssertionError
+        |> required "id" string
+        |> required "reason" string
+        |> required "scenario" decodeScenario
+        |> required "player" decodeSnake
+        |> required "board" decodeBoard

@@ -35,5 +35,6 @@ defmodule Bs.Test.Agent do
       id: agent.id,
       coords: coords
     }
+    |> Bs.Snake.alive!()
   end
 end

@@ -33,7 +33,7 @@ view model =
                 [ css [ flex auto ] ]
                 [ model.gameState
                     |> Maybe.map .board
-                    |> Maybe.map (Game.BoardView.view)
+                    |> Maybe.map (Game.BoardView.view False)
                     |> Maybe.withDefault (text "")
                 , column [ css [ flexGrow (int 0) ] ]
                     [ div [ css [ alignSelf center ] ] [ text (turn model) ]

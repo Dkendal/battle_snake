@@ -21,31 +21,32 @@ defmodule BsWeb.TestCaseErrorViewTest do
     expected = %{
       id: 1,
       object: "assertion_error",
+      reason: "Your snake starved to death.",
       scenario: nil,
-      world: %{
-        id: 1,
-        food: [],
-        gameId: 0,
-        height: 10,
-        snakes: [],
-        turn: 0,
-        width: 10
-      },
       player: %{
-        body: %{data: [%{object: :point, x: 0, y: 0}], object: :list},
         color: "black",
-        death: %{causes: ["starvation"], turn: 1},
         headType: "regular",
         headUrl: nil,
         health: 100,
         id: nil,
-        length: 1,
         name: "",
-        object: :snake,
         tailType: "regular",
-        taunt: ""
+        taunt: "",
+        coords: [%Bs.Point{x: 0, y: 0}],
+        status: %Bs.Snake.Status{
+          data: %Bs.Death{causes: [%Bs.Death.StarvationCause{}], turn: 1},
+          type: :dead
+        }
       },
-      reason: "Your snake starved to death."
+      board: %{
+        food: [],
+        gameId: 0,
+        height: 10,
+        id: 1,
+        snakes: [],
+        turn: 0,
+        width: 10
+      }
     }
 
     actual = TestCaseErrorView.render("show.json", %{test_case_error: @fail})

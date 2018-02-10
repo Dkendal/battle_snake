@@ -2,12 +2,13 @@ module Test exposing (..)
 
 import Debug exposing (..)
 import Decoder exposing (..)
+import Game.BoardView
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import HtmlUtil exposing (..)
-import Json.Decode as Decode
-import Json.Encode as Encode exposing (Value)
+import Json.Decode as JD
+import Json.Encode as JE exposing (Value)
 import Navigation exposing (Location)
 import Phoenix.Channel as Channel exposing (Channel)
 import Phoenix.Push as Push exposing (Push)
@@ -16,7 +17,7 @@ import Task exposing (..)
 import Tuple
 import Types exposing (..)
 import UrlParser as Url exposing (..)
-import GameBoard
+import Html.Styled exposing (toUnstyled)
 
 
 type alias Model =
@@ -96,7 +97,6 @@ init flags location =
 
         socket =
             Socket.init flags.websocket
-                |> Socket.withDebug
                 |> Socket.on "test:failed" "test" (Err >> ReceiveTestCase)
                 |> Socket.on "test:pass" "test" (Ok >> ReceiveTestCase)
 
@@ -129,9 +129,9 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         ReceiveTestCase (Err raw) ->
-            case Decode.decodeValue testCaseError raw of
+            case JD.decodeValue testCaseError raw of
                 Err err ->
-                    crash err
+                    crash (JE.encode 2 raw)
 
                 Ok assertionError ->
                     let
@@ -140,16 +140,8 @@ update msg model =
 
                         model_ =
                             { model | results = results }
-
-                        cmd =
-                            case assertionError of
-                                Assertion { world } ->
-                                    GameBoard.render world
-
-                                _ ->
-                                    Cmd.none
                     in
-                        model_ ! [ cmd ]
+                        model_ ! []
 
         ReceiveTestCase (Ok raw) ->
             let
@@ -185,8 +177,8 @@ update msg model =
         PushMsg PushRunSuite ->
             let
                 value =
-                    Encode.object
-                        [ ( "url", Encode.string model.agentUrl )
+                    JE.object
+                        [ ( "url", JE.string model.agentUrl )
                         ]
 
                 push =
@@ -262,11 +254,7 @@ view model =
                             [ span [] [ text "Failed: " ]
                             , span [] [ text err.reason ]
                             ]
-                        , div
-                            [ id err.id
-                            , class "test-gameboard"
-                            ]
-                            []
+                        , (toUnstyled << (Game.BoardView.view True)) err.board
                         , details []
                             [ code [] [ toString err |> text ]
                             ]
@@ -338,11 +326,11 @@ onEnter msg =
     let
         isEnter code =
             if code == 13 then
-                Decode.succeed msg
+                JD.succeed msg
             else
-                Decode.fail ""
+                JD.fail ""
     in
-        on "keydown" (Decode.andThen isEnter keyCode)
+        on "keydown" (JD.andThen isEnter keyCode)
 
 
 mapPhxMsg : ( a, Cmd (Socket.Msg Msg) ) -> ( a, Cmd Msg )

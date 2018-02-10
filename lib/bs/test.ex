@@ -183,10 +183,19 @@ defmodule Bs.Test do
     model
   end
 
-  defp generate_ids(model) when is_map(model) do
+  defp generate_ids(%mod{} = model) when is_map(model) do
     model =
-      if Map.has_key?(model, :id) do
-        %{model | id: Ecto.UUID.generate()}
+      if function_exported?(mod, :__schema__, 2) do
+        case mod.__schema__(:type, :id) do
+          :binary_id ->
+            %{model | id: Ecto.UUID.generate()}
+
+          :id ->
+            %{model | id: :rand.uniform(999_999_999)}
+
+          nil ->
+            model
+        end
       else
         model
       end

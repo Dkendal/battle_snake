@@ -1,16 +1,16 @@
 module Game.BoardView exposing (view)
 
-import Math.Vector2 as V2 exposing (..)
 import Css exposing (hex)
 import Game.Types exposing (..)
 import Html.Styled exposing (div)
+import Math.Vector2 as V2 exposing (..)
 import Scale exposing (..)
 import Svg.Styled as Svg exposing (..)
 import Svg.Styled.Attributes as Attrs exposing (..)
 import Svg.Styled.Events exposing (..)
 import Theme exposing (theme)
-import Types exposing (..)
 import Tuple
+import Types exposing (..)
 
 
 scale : number -> number
@@ -38,6 +38,7 @@ gridUnitString =
     gridUnit |> toString
 
 
+gridPathOffset : Float
 gridPathOffset =
     ((scale 1 / 2) + (margin / 2))
 
@@ -68,9 +69,12 @@ circle_ attrs v =
         []
 
 
-view : Board -> Html.Styled.Html Msg
-view board =
+view : Bool -> Board -> Html.Styled.Html msg
+view showDead board =
     let
+        snakeView_ =
+            snakeView showDead
+
         food =
             board.food
 
@@ -83,6 +87,9 @@ view board =
         snakes =
             board.snakes
 
+        gridPattern =
+            "GridPattern" ++ (toString board.gameid)
+
         viewBox_ =
             [ 0, 0, scale (width_ + 1), scale (height_ + 1) ]
                 |> List.map toString
@@ -91,7 +98,7 @@ view board =
         svg [ viewBox viewBox_, css [ 1 |> Css.int |> Css.flexGrow, Css.padding ms1 ] ]
             [ defs []
                 [ pattern
-                    [ id "GridPattern"
+                    [ id gridPattern
                     , x "0"
                     , y "0"
                     , width (1.0 / toFloat width_ |> toString)
@@ -100,7 +107,7 @@ view board =
                     [ square [ fill theme.tile.value ] (vec2 0 0) ]
                 ]
             , rect
-                [ fill "url(#GridPattern)"
+                [ fill <| "url(#" ++ gridPattern ++ ")"
                 , width (width_ |> scale |> toString)
                 , height (height_ |> scale |> toString)
                 ]
@@ -112,7 +119,7 @@ view board =
                 , css [ Css.fill theme.food ]
                 ]
                 (List.map (circle_ []) food)
-            , g [] (List.concatMap snakeView snakes)
+            , g [] (List.concatMap (snakeView_) snakes)
             ]
 
 
@@ -144,9 +151,12 @@ alignWithMargin { dir } vec =
         |> add vec
 
 
-snakeView : Snake -> List (Svg msg)
-snakeView record =
+snakeView : Bool -> Snake -> List (Svg msg)
+snakeView showDead record =
     let
+        shouldRender =
+            alive || showDead
+
         alive =
             record.status == Alive
 
@@ -263,7 +273,7 @@ snakeView record =
                     , end |> (embed "" "tail" record.tailType)
                     ]
     in
-        if alive then
+        if shouldRender then
             [ g
                 [ vec2 gridPathOffset gridPathOffset
                     |> translate
@@ -303,14 +313,17 @@ translate vec =
     )
 
 
+verticalFlip : String
 verticalFlip =
     "scale(-1,1) translate(-1, 0)"
 
 
+transformList : List String -> Attribute msg
 transformList list =
     transform (String.join " " list)
 
 
+transformOrigin : String -> Css.Style
 transformOrigin value =
     Css.property "transform-origin" value
 

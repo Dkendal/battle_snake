@@ -117,5 +117,5 @@ type alias AssertionError =
     , reason : String
     , scenario : Scenario
     , player : Snake
-    , world : Value
+    , board : Board
     }

@@ -6,7 +6,7 @@ defmodule BsWeb.GameStateView do
 
     %{
       status: state.status,
-      board: render_one(state.world, BsWeb.BoardView, "show.json")
+      board: render_one(state.world, BsWeb.Board.BoardView, "show.json")
     }
   end
 end
