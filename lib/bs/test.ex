@@ -64,7 +64,7 @@ defmodule Bs.Test do
       ])
   )
 
-  @shortdoc """
+  @doc """
   Run a scenario, returns ok if it passes, or a test case error.
   """
   def test(scenario, url) do

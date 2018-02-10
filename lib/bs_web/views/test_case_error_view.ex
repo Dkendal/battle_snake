@@ -5,8 +5,6 @@ defmodule BsWeb.TestCaseErrorView do
   alias Bs.Death.StarvationCause
   alias Bs.Death.WallCollisionCause
   alias Bs.Test.AssertionError
-  alias BsWeb.BoardView
-  alias BsWeb.SnakeView
   use BsWeb, :view
 
   def render("show.json", %{
