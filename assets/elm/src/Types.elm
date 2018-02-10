@@ -38,6 +38,7 @@ type alias Death =
 type SnakeStatus
     = Alive
     | Dead
+    | ConnectionFailure
 
 
 type alias Snake =

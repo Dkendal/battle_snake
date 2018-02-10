@@ -127,10 +127,15 @@ snakeView snake =
                 []
 
         healthText =
-            if alive then
-                (toString snake.health)
-            else
-                "Dead"
+            case snake.status of
+                Alive ->
+                    (toString snake.health)
+
+                Dead ->
+                    "Dead"
+
+                ConnectionFailure ->
+                    "Error"
 
         containerOpacity =
             if alive then

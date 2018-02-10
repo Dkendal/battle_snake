@@ -28,7 +28,7 @@ maybeWithDefault value decoder =
 
 tick : Decoder GameState
 tick =
-    ("content" := gameState)
+    ("content" := decodeGameState)
 
 
 parseError : String -> Decoder a
@@ -36,8 +36,8 @@ parseError val =
     fail ("don't know how to parse [" ++ val ++ "]")
 
 
-status : Decoder Status
-status =
+decodeStatus : Decoder Status
+decodeStatus =
     andThen
         (\x ->
             case x of
@@ -56,15 +56,15 @@ status =
         string
 
 
-gameState : Decoder GameState
-gameState =
+decodeGameState : Decoder GameState
+decodeGameState =
     map2 GameState
-        ("board" := board)
-        ("status" := status)
+        ("board" := decodeBoard)
+        ("status" := decodeStatus)
 
 
-board : Decoder Board
-board =
+decodeBoard : Decoder Board
+decodeBoard =
     decode Board
         |> required "turn" (int)
         |> required "snakes" (list decodeSnake)
@@ -109,13 +109,13 @@ decodeSnake =
                 |> map (Maybe.withDefault "")
                 |> required "headUrl"
            )
-        |> required "status" decodeStatus
+        |> required "status" decodeSnakeStatus
         |> required "headType" string
         |> required "tailType" string
 
 
-decodeStatus : Decoder SnakeStatus
-decodeStatus =
+decodeSnakeStatus : Decoder SnakeStatus
+decodeSnakeStatus =
     let
         decodeType record =
             case record of
@@ -124,6 +124,9 @@ decodeStatus =
 
                 "alive" ->
                     succeed Alive
+
+                "connection_failure" ->
+                    succeed ConnectionFailure
 
                 _ ->
                     fail (toString record)
@@ -143,7 +146,7 @@ snake2 =
         |> required "name" string
         |> required "taunt" (maybe string)
         |> required "headUrl" string
-        |> required "status" decodeStatus
+        |> required "status" decodeSnakeStatus
         |> required "headType" string
         |> required "tailType" string
 
