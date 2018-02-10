@@ -110,7 +110,7 @@ init flags location =
             , socket = socket
             }
     in
-        case (log "init parsePath" (parsePath route location)) of
+        case parsePath route location of
             Just (Test (Just agentUrl)) ->
                 { model | agentUrl = agentUrl } ! cmds
 
@@ -127,7 +127,7 @@ subscriptions model =
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
-    case (log "update" msg) of
+    case msg of
         ReceiveTestCase (Err raw) ->
             case Decode.decodeValue testCaseError raw of
                 Err err ->
