@@ -15,7 +15,7 @@ defmodule Bs.Game.Server do
 
   def init(%GameState{game_form: %{id: id}} = state)
       when is_integer(id) do
-    do_reply({:ok, state})
+    broadcast_and_reply({:ok, state})
   end
 
   def handle_call(:get_game_state, _from, state) do
@@ -38,7 +38,7 @@ defmodule Bs.Game.Server do
           |> GameState.suspend!()
       end
 
-    do_reply({:reply, :ok, state})
+    broadcast_and_reply({:reply, :ok, state})
   end
 
   def handle_call(:pause, _from, state) do
@@ -51,7 +51,7 @@ defmodule Bs.Game.Server do
           state
       end
 
-    do_reply({:reply, :ok, state})
+    broadcast_and_reply({:reply, :ok, state})
   end
 
   def handle_call(:prev, _from, state) do
@@ -60,7 +60,7 @@ defmodule Bs.Game.Server do
       |> GameState.step_back()
       |> suspend!
 
-    do_reply({:reply, :ok, state})
+    broadcast_and_reply({:reply, :ok, state})
   end
 
   def handle_call(:resume, _from, state) do
@@ -74,7 +74,7 @@ defmodule Bs.Game.Server do
           state
       end
 
-    do_reply({:reply, :ok, state})
+    broadcast_and_reply({:reply, :ok, state})
   end
 
   def handle_call(request, from, state) do
@@ -87,6 +87,11 @@ defmodule Bs.Game.Server do
     )
 
     super(request, from, state)
+  end
+
+  def handle_cast(:reset, state) do
+    state = reset_state(state.game_form.id)
+    broadcast_and_reply({:noreply, state})
   end
 
   def handle_cast(request, state) do
@@ -102,36 +107,8 @@ defmodule Bs.Game.Server do
   end
 
   def handle_info({:after_init, id}, :no_state) do
-    id = String.to_integer(id)
-
-    game_form = BsRepo.get!(BsRepo.GameForm, id)
-
-    delay = game_form.delay
-
-    world = Factory.build(game_form)
-
-    singleplayer = fn world -> length(world.snakes) <= 0 end
-
-    multiplayer = fn world -> length(world.snakes) <= 1 end
-
-    objective =
-      case game_form.game_mode do
-        "singleplayer" -> singleplayer
-        "multiplayer" -> multiplayer
-      end
-
-    state = %Bs.GameState{
-      delay: delay,
-      game_form: game_form,
-      objective: objective,
-      world: world
-    }
-
-    do_reply({:noreply, state})
-  end
-
-  def handle_info(:get_state, state) do
-    {:reply, state, state.status}
+    state = reset_state(id)
+    broadcast_and_reply({:noreply, state})
   end
 
   def handle_info(:tick, state) do
@@ -141,7 +118,7 @@ defmodule Bs.Game.Server do
         _ -> state
       end
 
-    do_reply({:noreply, state})
+    broadcast_and_reply({:noreply, state})
   end
 
   @doc """
@@ -182,13 +159,44 @@ defmodule Bs.Game.Server do
     state
   end
 
-  defp do_reply({_, state} = reply) do
+  defp broadcast_and_reply({_, state} = reply) do
     broadcast(state)
     reply
   end
 
-  defp do_reply({_, _, state} = reply) do
+  defp broadcast_and_reply({_, _, state} = reply) do
     broadcast(state)
     reply
+  end
+
+  def reset_state(id) do
+    id =
+      cond do
+        is_binary(id) -> String.to_integer(id)
+        is_number(id) -> id
+      end
+
+    game_form = BsRepo.get!(BsRepo.GameForm, id)
+
+    delay = game_form.delay
+
+    world = Factory.build(game_form)
+
+    singleplayer = fn world -> length(world.snakes) <= 0 end
+
+    multiplayer = fn world -> length(world.snakes) <= 1 end
+
+    objective =
+      case game_form.game_mode do
+        "singleplayer" -> singleplayer
+        "multiplayer" -> multiplayer
+      end
+
+    %Bs.GameState{
+      delay: delay,
+      game_form: game_form,
+      objective: objective,
+      world: world
+    }
   end
 end

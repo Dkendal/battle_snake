@@ -30,6 +30,7 @@ defmodule BsWeb.Channels.GameChannelTest do
     {:ok, _, sock} = subscribe_and_join(sock, GameChannel, "game:#{id}")
 
     assert_broadcast("tick", msg)
+    refute_broadcast("tick", _)
 
     assert msg.content.status == :suspend
     assert msg.content.board.turn == 0
@@ -41,6 +42,7 @@ defmodule BsWeb.Channels.GameChannelTest do
     push(sock, "next")
 
     assert_broadcast("tick", msg)
+    refute_broadcast("tick", _)
 
     assert msg.content.status == :suspend
     assert msg.content.board.turn == 1
@@ -48,6 +50,7 @@ defmodule BsWeb.Channels.GameChannelTest do
     push(sock, "prev")
 
     assert_broadcast("tick", msg)
+    refute_broadcast("tick", _)
 
     assert msg.content.status == :suspend
     assert msg.content.board.turn == 0

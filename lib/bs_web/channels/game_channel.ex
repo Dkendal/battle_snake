@@ -13,54 +13,64 @@ defmodule BsWeb.GameChannel do
   end
 
   def handle_in(cmd, _params, socket) do
-    id = socket.assigns.id
+    {:ok, pid} =
+      socket
+      |> get_id
+      |> Game.find_or_start()
 
     case cmd do
-      "stop" ->
-        Game.restart(id)
-        {:reply, :ok, socket}
+      "resume" ->
+        Game.resume(pid)
 
       "next" ->
-        Game.next(id)
-        {:reply, :ok, socket}
+        Game.next(pid)
 
       "prev" ->
-        Game.prev(id)
-        {:reply, :ok, socket}
-
-      "resume" ->
-        Game.resume(id)
-        {:reply, :ok, socket}
+        Game.prev(pid)
 
       "pause" ->
-        Game.pause(id)
-        {:reply, :ok, socket}
+        Game.pause(pid)
 
-      _action ->
-        {:reply, :error, socket}
+      "stop" ->
+        # FIXME rename command to reset
+        Game.reset(pid)
     end
+
+    {:noreply, socket}
   end
 
   def handle_info(message, socket) do
-    id = socket.assigns.id
-
     case message do
       {:tick, state} ->
-        broadcast(socket, "tick", %{content: render(state)})
-        {:noreply, socket}
+        data = render(state)
+        broadcast(socket, "tick", data)
 
       %Event{name: name} ->
+        # FIXME deprecated
+        # Reset events are no longer processed on the front end so this
+        # should be removed.
         broadcast(socket, name, message)
-        {:noreply, socket}
 
       :after_join ->
-        state = Game.get_game_state(id)
-        push(socket, "tick", %{content: render(state)})
-        {:noreply, socket}
+        data =
+          socket
+          |> get_id
+          |> Game.find_or_start!()
+          |> Game.get_game_state()
+          |> render
+
+        push(socket, "tick", data)
     end
+
+    {:noreply, socket}
+  end
+
+  defp get_id(socket) do
+    socket.assigns.id
   end
 
   defp render(state) do
-    View.render(BsWeb.GameStateView, "show.json", game_state: state)
+    content = View.render(BsWeb.GameStateView, "show.json", game_state: state)
+    %{content: content}
   end
 end

@@ -1,12 +1,8 @@
 defmodule Bs.Game do
   alias Bs.Game.PubSub
-  alias Bs.Game.Registry
-  alias Bs.Game.Supervisor
   alias Bs.Game.Server
 
   use GenServer
-
-  import GenServer, only: [call: 2]
 
   defdelegate(handle_call(request, from, state), to: Server)
   defdelegate(handle_cast(request, state), to: Server)
@@ -14,9 +10,14 @@ defmodule Bs.Game do
   defdelegate(init(args), to: Server)
   defdelegate(subscribe(name), to: PubSub)
 
+  @supervisor Bs.Game.Supervisor
+  @registry Bs.Game.Registry
+
   @moduledoc """
   The Game is a GenServer that handles running a single Bs match.
   """
+
+  defguard is_id(id) when is_binary(id)
 
   def start_link(args, opts \\ [])
 
@@ -24,76 +25,55 @@ defmodule Bs.Game do
     GenServer.start_link(__MODULE__, args, opts)
   end
 
-  def get_game_state(id) when is_binary(id) do
-    id |> do_ensure_started |> call(:get_game_state)
+  def get_game_state(pid) when is_pid(pid) do
+    GenServer.call(pid, :get_game_state)
   end
 
-  def next(id) when is_binary(id) do
-    id |> do_ensure_started |> call(:next)
+  def next(pid) when is_pid(pid) do
+    GenServer.call(pid, :next)
   end
 
-  def pause(id) when is_binary(id) do
-    id |> dispatch(&call(&1, :pause))
+  def pause(pid) when is_pid(pid) do
+    GenServer.call(pid, :pause)
   end
 
-  def prev(id) when is_binary(id) do
-    id |> dispatch(&call(&1, :prev))
+  def prev(pid) when is_pid(pid) do
+    GenServer.call(pid, :prev)
   end
 
-  def stop(id, reason \\ :normal)
-
-  def stop(id, reason) when is_binary(id) do
-    id |> dispatch(&GenServer.stop(&1, reason))
+  def resume(pid) when is_pid(pid) do
+    GenServer.call(pid, :resume)
   end
 
-  def restart(id) when is_binary(id) do
-    case ensure_started(id) do
-      {:ok, pid, :already_started} ->
-        ref = Process.monitor(pid)
+  def reset(pid) when is_pid(pid) do
+    GenServer.cast(pid, :reset)
+  end
 
-        GenServer.stop(pid)
+  def dispatch(id, fun) when is_id(id) do
+    Registry.dispatch(@registry, id, fun)
+  end
 
-        receive do
-          {:DOWN, ^ref, _, ^pid, :normal} -> :ok
-        end
+  def start(id) when is_id(id) do
+    Supervisor.start_child(@supervisor, [id, [name: name(id)]])
+  end
 
-        ensure_started(id)
-
-      {:ok, _pid, :started} ->
-        :ok
+  def find_or_start(id) when is_id(id) do
+    case start(id) do
+      {:error, {:already_started, pid}} -> {:ok, pid}
+      x -> x
     end
   end
 
-  def resume(id) when is_binary(id) do
-    id |> do_ensure_started |> call(:resume)
+  def find(id) when is_id(id) do
+    Registry.lookup(@registry, id)
   end
 
-  def ensure_started(id) do
-    with [] <- Registry.lookup(id),
-         {:ok, pid} <- start(id) do
-      {:ok, pid, :started}
-    else
-      [{pid, _}] ->
-        {:ok, pid, :already_started}
-
-      {:error, {:already_started, pid}} ->
-        {:ok, pid, :already_started}
-    end
-  end
-
-  def start(id) when is_binary(id) do
-    Elixir.Supervisor.start_child(Supervisor, [
-      id,
-      [name: {:via, Elixir.Registry, {Registry, id}}]
-    ])
-  end
-
-  defp do_ensure_started(id) do
-    {:ok, pid, _} = ensure_started(id)
+  def find_or_start!(id) when is_id(id) do
+    {:ok, pid} = find_or_start(id)
     pid
   end
 
-  defp dispatch(id, fun) when is_binary(id and is_function(fun)) do
-    Registry.dispatch(id, fn [{pid, _}] -> apply(fun, [pid]) end)
+  defp name(id) do
+    {:via, Registry, {@registry, id}}
   end
 end
